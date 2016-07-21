@@ -10,11 +10,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 @Path("")
 public class GetTp {
-	private static final Logger log = Logger.getLogger(GetTp.class);
+	private static final Logger log = LogManager.getLogger(GetTp.class);
 
 	@GET
 	@Path("/tps/ne/{neId}")
