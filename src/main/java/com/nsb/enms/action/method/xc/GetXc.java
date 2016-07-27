@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.action.common.conf.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import com.nsb.enms.action.common.exception.NbiException;
+import com.nsb.enms.action.common.exception.NbiExceptionType;
 import com.nsb.enms.action.entity.XcEntity;
 import com.nsb.enms.action.method.ExecExternalScript;
 import com.nsb.enms.action.util.JsonUtils;
@@ -25,7 +27,7 @@ public class GetXc
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.XC_GET_REQ, CommonConstants.XC_GET_REQ );
 
-    public String getXc( int groupId, int neId )
+    public String getXc( int groupId, int neId ) throws NbiException
     {
         try
         {
@@ -115,7 +117,8 @@ public class GetXc
 
             if( process.waitFor() != 0 || xcList.size() < 1 )
             {
-                log.error( "get xc failed" );
+                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                        "failed to get xc!!!" );
             }
             return JsonUtils.toJson( xcList );
 
@@ -130,11 +133,5 @@ public class GetXc
         }
 
         return null;
-    }
-
-    public static void main( String[] args )
-    {
-        String xcList = new GetXc().getXc( 100, 1 );
-        System.out.println( xcList );
     }
 }

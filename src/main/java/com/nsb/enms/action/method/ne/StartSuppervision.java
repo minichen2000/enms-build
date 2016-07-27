@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.action.common.conf.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import com.nsb.enms.action.common.exception.NbiException;
 import com.nsb.enms.action.method.ExecExternalScript;
 
 public class StartSuppervision
@@ -25,6 +26,7 @@ public class StartSuppervision
     private boolean flag = false;
 
     public boolean startSuppervision( String groupId, String neId )
+            throws NbiException
     {
         int count = 0;
         while( count < 3 )

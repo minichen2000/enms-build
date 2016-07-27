@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.action.common.conf.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import com.nsb.enms.action.common.exception.NbiException;
+import com.nsb.enms.action.common.exception.NbiExceptionType;
 import com.nsb.enms.action.entity.EquipmentEntity;
 import com.nsb.enms.action.method.ExecExternalScript;
 import com.nsb.enms.action.util.JsonUtils;
@@ -26,7 +28,7 @@ public class GetEquipment
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.EQ_GET_REQ, CommonConstants.EQ_GET_REQ );
 
-    public String getEquipment( int groupId, int neId )
+    public String getEquipment( int groupId, int neId ) throws NbiException
     {
         try
         {
@@ -133,25 +135,20 @@ public class GetEquipment
 
             if( process.waitFor() != 0 || eqList.size() < 1 )
             {
-                log.error( "Get equipment failed!!!" );
+                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                        "failed to get equipment!!!" );
             }
             return JsonUtils.toJson( eqList );
         }
         catch( IOException e )
         {
-            System.out.println( e.getMessage() );
+            log.error( e.getMessage(), e );
         }
         catch( InterruptedException e )
         {
-            e.printStackTrace();
+            log.error( e.getMessage(), e );
         }
 
         return null;
-    }
-
-    public static void main( String[] args )
-    {
-        String eqList = new GetEquipment().getEquipment( 100, 1 );
-        System.out.println( eqList );
     }
 }

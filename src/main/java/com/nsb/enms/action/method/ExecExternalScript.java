@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.action.common.conf.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import com.nsb.enms.action.common.exception.NbiException;
+import com.nsb.enms.action.common.exception.NbiExceptionType;
 
 public class ExecExternalScript
 {
@@ -24,7 +26,7 @@ public class ExecExternalScript
 
     private static File fileDir = new File( tstmgrDir );
 
-    public Process run( String... params )
+    public Process run( String... params ) throws NbiException
     {
         String[] cmdArray = new String[params.length + 1];
         cmdArray[0] = tstmgr;
@@ -33,13 +35,13 @@ public class ExecExternalScript
 
         try
         {
-            return Runtime.getRuntime().exec( cmdArray, null,
-                fileDir );
+            return Runtime.getRuntime().exec( cmdArray, null, fileDir );
         }
         catch( IOException e )
         {
             log.error( e.getMessage(), e );
         }
-        return null;
+        throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                "failed to exec external script!!!" );
     }
 }
