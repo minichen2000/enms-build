@@ -1,4 +1,4 @@
-package com.nsb.enms.action.common;
+package com.nsb.enms.action.common.conf;
 
 public class CommonConstants
 {

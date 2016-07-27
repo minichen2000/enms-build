@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.action.common.CommonConstants;
+import com.nsb.enms.action.common.conf.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
 import com.nsb.enms.action.method.ExecExternalScript;
