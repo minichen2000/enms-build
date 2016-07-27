@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.action.common.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import com.nsb.enms.action.common.exception.NbiException;
+import com.nsb.enms.action.common.exception.NbiExceptionType;
 import com.nsb.enms.action.entity.NeEntity;
 import com.nsb.enms.action.method.ExecExternalScript;
 import com.nsb.enms.action.util.JsonUtils;
@@ -25,7 +27,7 @@ public class GetNe
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.NE_GET_REQ, CommonConstants.NE_GET_REQ );
 
-    public String getNe( String groupId, String neId )
+    public String getNe( String groupId, String neId ) throws NbiException
     {
         Process process = new ExecExternalScript().run( SCENARIO, groupId,
             neId );
@@ -119,7 +121,8 @@ public class GetNe
 
             if( process.waitFor() != 0 || neList.size() < 1 )
             {
-                log.error( "Get ne failed!!!" );
+                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                        "failed to get ne!!!" );
             }
             return JsonUtils.toJson( neList );
         }

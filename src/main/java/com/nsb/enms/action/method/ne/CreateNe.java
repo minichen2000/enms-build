@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.action.common.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import com.nsb.enms.action.common.exception.NbiException;
+import com.nsb.enms.action.common.exception.NbiExceptionType;
 import com.nsb.enms.action.method.ExecExternalScript;
 import com.nsb.enms.action.util.IdGenUtil;
 
@@ -34,7 +36,7 @@ public class CreateNe
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
     public String createNe( String neRelease, String neType, String userLabel,
-            String locationName, String neAddress )
+            String locationName, String neAddress ) throws NbiException
     {
         String groupId = "100";
         String neId = IdGenUtil.getId();
@@ -59,8 +61,8 @@ public class CreateNe
 
             if( process.waitFor() != 0 || !flag )
             {
-                log.error( "Create ne failed!!!" );
-                return "Create ne failed";
+                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                        "Create ne failed!!!" );
             }
             String scenario = setNeAddressScenario;
             if( pattern.matcher( neAddress ).find() )
@@ -82,8 +84,8 @@ public class CreateNe
             br.close();
             if( process.waitFor() != 0 || !flag )
             {
-                log.error( "Set ne address failed!!!" );
-                return "Set ne address failed";
+                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                        "Set ne address failed!!!" );
             }
 
         }
@@ -97,16 +99,5 @@ public class CreateNe
         }
 
         return new GetNe().getNe( groupId, neId );
-    }
-
-    public static void main( String[] args )
-    {
-        String neRelease = "2.7B";
-        String neType = "ne1662smc";
-        String userLabel = "1662_CD_TEST";
-        String locationName = "CD";
-        String neAddress = "47000580000000000000010001002060620A021D";
-        System.out.println( new CreateNe().createNe( neRelease, neType,
-            userLabel, locationName, neAddress ) );
     }
 }
