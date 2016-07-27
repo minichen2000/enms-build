@@ -9,13 +9,13 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.action.common.conf.CommonConstants;
-import com.nsb.enms.restful.adapter.server.action.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.action.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.action.common.exception.NbiException;
-import com.nsb.enms.restful.adapter.server.action.common.exception.NbiExceptionType;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.action.util.IdGenUtil;
+import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
+import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.restful.adapter.server.common.exception.NbiException;
+import com.nsb.enms.restful.adapter.server.common.exception.NbiExceptionType;
+import com.nsb.enms.restful.adapter.server.util.IdGenUtil;
 
 public class CreateNe
 {

@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.action.util;
+package com.nsb.enms.restful.adapter.server.util;
 
 import java.io.IOException;
 import java.text.DateFormat;

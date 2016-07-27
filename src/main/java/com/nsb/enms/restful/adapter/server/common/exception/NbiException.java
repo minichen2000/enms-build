@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.action.common.exception;
+package com.nsb.enms.restful.adapter.server.common.exception;
 
 public class NbiException extends Exception
 {

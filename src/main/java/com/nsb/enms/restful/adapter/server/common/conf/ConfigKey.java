@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.action.common.conf;
+package com.nsb.enms.restful.adapter.server.common.conf;
 
 public class ConfigKey
 {
