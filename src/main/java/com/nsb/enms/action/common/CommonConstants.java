@@ -23,8 +23,9 @@ public class CommonConstants
 
     public static final String SET_NE_ADDR_REQ = TSTMGR_SCENARIO_DIR
             + "SetNeAddress.req";
-    
-    public static final String SET_NE_ISA_ADDR_REQ = TSTMGR_SCENARIO_DIR + "";
+
+    public static final String SET_NE_ISA_ADDR_REQ = TSTMGR_SCENARIO_DIR
+            + "SetNeAddressIsa.req";
 
     public static final String START_SUPERVISION_REQ = TSTMGR_SCENARIO_DIR
             + "StartSupervision.req";

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +26,13 @@ public class CreateNe
             .getConf( ConfigKey.SET_NE_ADDR_REQ,
                 CommonConstants.SET_NE_ADDR_REQ );
 
+    private static String setNeIsaAddressScenario = ConfLoader.getInstance()
+            .getConf( ConfigKey.SET_NE_ISA_ADDR_REQ,
+                CommonConstants.SET_NE_ISA_ADDR_REQ );
+
+    private static Pattern pattern = Pattern
+            .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
+
     public String createNe( String neRelease, String neType, String userLabel,
             String locationName, String neAddress )
     {
@@ -38,11 +46,11 @@ public class CreateNe
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-            String line = null;
+            String line;
             boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-                if( line.indexOf( "CreateReply received" ) >= 0 )
+                if( line.contains( "CreateReply received" ) )
                 {
                     flag = true;
                 }
@@ -54,16 +62,19 @@ public class CreateNe
                 log.error( "Create ne failed!!!" );
                 return "Create ne failed";
             }
-
-            process = new ExecExternalScript().run( setNeAddressScenario,
-                groupId, neId, neAddress );
+            String scenario = setNeAddressScenario;
+            if( pattern.matcher( neAddress ).find() )
+            {
+                scenario = setNeIsaAddressScenario;
+            }
+            process = new ExecExternalScript().run( scenario, groupId, neId,
+                neAddress );
             inputStream = process.getInputStream();
             br = new BufferedReader( new InputStreamReader( inputStream ) );
-            line = null;
             flag = false;
             while( (line = br.readLine()) != null )
             {
-                if( line.indexOf( "SetReply received" ) >= 0 )
+                if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
                 }
@@ -78,11 +89,11 @@ public class CreateNe
         }
         catch( InterruptedException e )
         {
-            log.error( e.getMessage() );
+            log.error( e.getMessage(), e );
         }
         catch( IOException e )
         {
-            log.error( e.getMessage() );
+            log.error( e.getMessage(), e );
         }
 
         return new GetNe().getNe( groupId, neId );

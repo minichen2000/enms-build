@@ -1,15 +1,14 @@
 package com.nsb.enms.action.method;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.nsb.enms.action.common.CommonConstants;
 import com.nsb.enms.action.common.conf.ConfLoader;
 import com.nsb.enms.action.common.conf.ConfigKey;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class ExecExternalScript
 {
@@ -28,17 +27,13 @@ public class ExecExternalScript
     {
         String[] cmdArray = new String[params.length + 1];
         cmdArray[0] = tstmgr;
-        for( int i = 0; i < params.length; i++ )
-        {
-            cmdArray[i + 1] = params[i];
-        }
+        System.arraycopy( params, 0, cmdArray, 1, params.length );
         log.debug( "exec:" + Arrays.asList( cmdArray ) );
 
         try
         {
-            Process process = Runtime.getRuntime().exec( cmdArray, null,
+            return Runtime.getRuntime().exec( cmdArray, null,
                 fileDir );
-            return process;
         }
         catch( IOException e )
         {

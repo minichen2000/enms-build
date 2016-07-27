@@ -15,10 +15,6 @@ import com.nsb.enms.action.method.ExecExternalScript;
 
 public class StartSuppervision
 {
-    // private static String setNeIsaAddressScenario = ConfLoader.getInstance()
-    // .getConf( ConfigKey.SET_NE_ISA_ADDR_REQ,
-    // CommonConstants.SET_NE_ISA_ADDR_REQ );
-
     private static final Logger log = LogManager
             .getLogger( StartSuppervision.class );
 
@@ -40,10 +36,10 @@ public class StartSuppervision
                 InputStream inputStream = process.getInputStream();
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );
-                String line = null;
+                String line;
                 while( (line = br.readLine()) != null )
                 {
-                    if( line.indexOf( "ActionReply received" ) >= 0 )
+                    if( line.contains( "ActionReply received" ) )
                     {
                         flag = true;
                     }

@@ -38,10 +38,10 @@ public class GetTp
 
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-            String line = null;
+            String line;
             while( (line = br.readLine()) != null )
             {
-                if( line.indexOf( "GetReply received" ) >= 0 )
+                if( line.contains( "GetReply received" ) )
                 {
                     TpEntity portEntity = new TpEntity();
                     while( (line = br.readLine()) != null )
