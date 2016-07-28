@@ -1,17 +1,17 @@
 package com.nsb.enms.restful.adapter.server.common.exception;
 
-public class NbiException extends Exception
+public class AdapterException extends Exception
 {
     private static final long serialVersionUID = 479829418798909619L;
 
-    public NbiException( NbiExceptionType type, String errorReason )
+    public AdapterException( AdapterExceptionType type, String errorReason )
     {
         super( "Exception type:" + type + " and errorReason:" + errorReason );
         type_ = type;
         errorReason_ = errorReason;
     }
 
-    public NbiException( NbiExceptionType type, String errorReason,
+    public AdapterException( AdapterExceptionType type, String errorReason,
             Throwable cause )
     {
         super( cause );
@@ -19,7 +19,7 @@ public class NbiException extends Exception
         errorReason_ = errorReason;
     }
 
-    public NbiExceptionType type_;
+    public AdapterExceptionType type_;
 
     public String errorReason_;
 }

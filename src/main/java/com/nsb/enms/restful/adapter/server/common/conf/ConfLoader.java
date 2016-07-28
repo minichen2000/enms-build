@@ -5,8 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.nsb.enms.restful.adapter.server.common.exception.NbiException;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiExceptionType;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
 
 public class ConfLoader
 {
@@ -23,17 +23,17 @@ public class ConfLoader
         return confLoader;
     }
 
-    public void loadConf( String confFile ) throws NbiException
+    public void loadConf( String confFile ) throws AdapterException
     {
         loadOneConfFile( confFile );
         loadReferenceConfFiles( new File( confFile ).getParentFile() );
     }
 
-    public String getConf( String name ) throws NbiException
+    public String getConf( String name ) throws AdapterException
     {
         String value = conf.getProperty( name );
         if( value == null )
-            throw new NbiException( NbiExceptionType.EXCPT_CONF_NOT_FOUND,
+            throw new AdapterException( AdapterExceptionType.EXCPT_CONF_NOT_FOUND,
                     "No such configuration: '" + name + "'" );
         return value.trim();
     }
@@ -48,7 +48,7 @@ public class ConfLoader
         return conf.containsKey( name );
     }
 
-    public int getInt( String name ) throws NbiException
+    public int getInt( String name ) throws AdapterException
     {
         String val = getConf( name );
         try
@@ -57,7 +57,7 @@ public class ConfLoader
         }
         catch( NumberFormatException e )
         {
-            throw new NbiException( NbiExceptionType.EXCPT_CONF_NOT_FOUND,
+            throw new AdapterException( AdapterExceptionType.EXCPT_CONF_NOT_FOUND,
                     "Illegal int format: '" + val + "' for: " + name, e );
         }
     }
@@ -68,20 +68,20 @@ public class ConfLoader
         {
             return getInt( name );
         }
-        catch( NbiException e )
+        catch( AdapterException e )
         {
             return defaultValue;
         }
     }
 
-    public boolean getBoolean( String name ) throws NbiException
+    public boolean getBoolean( String name ) throws AdapterException
     {
         String value = getConf( name );
         if( "TRUE".equalsIgnoreCase( value ) )
             return true;
         if( "FALSE".equalsIgnoreCase( value ) )
             return false;
-        throw new NbiException( NbiExceptionType.EXCPT_CONF_NOT_FOUND,
+        throw new AdapterException( AdapterExceptionType.EXCPT_CONF_NOT_FOUND,
                 "Illegal boolean format: '" + value + "' for: " + name );
     }
 
@@ -91,13 +91,13 @@ public class ConfLoader
         {
             return getBoolean( name );
         }
-        catch( NbiException e )
+        catch( AdapterException e )
         {
             return defaultValue;
         }
     }
 
-    private void loadOneConfFile( String file ) throws NbiException
+    private void loadOneConfFile( String file ) throws AdapterException
     {
         try
         {
@@ -107,19 +107,19 @@ public class ConfLoader
         }
         catch( IOException e )
         {
-            throw new NbiException( NbiExceptionType.EXCPT_IO_ERROR,
+            throw new AdapterException( AdapterExceptionType.EXCPT_IO_ERROR,
                     e.getMessage(), e );
         }
     }
 
-    private void loadReferenceConfFiles( File dir ) throws NbiException
+    private void loadReferenceConfFiles( File dir ) throws AdapterException
     {
         String referenceConfFiles = null;
         try
         {
             referenceConfFiles = getConf( ConfigKey.REFERENCE_CONF_FILES );
         }
-        catch( NbiException e )
+        catch( AdapterException e )
         {
             return;
         }

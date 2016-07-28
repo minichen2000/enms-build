@@ -15,8 +15,8 @@ import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiException;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiExceptionType;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.restful.adapter.server.util.JsonUtils;
 import com.nsb.enms.restful.adapter.server.util.ParseUtil;
 
@@ -27,7 +27,7 @@ public class GetNe
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.NE_GET_REQ, CommonConstants.NE_GET_REQ );
 
-    public String getNe( String groupId, String neId ) throws NbiException
+    public String getNe( String groupId, String neId ) throws AdapterException
     {
         Process process = new ExecExternalScript().run( SCENARIO, groupId,
             neId );
@@ -121,7 +121,7 @@ public class GetNe
 
             if( process.waitFor() != 0 || neList.size() < 1 )
             {
-                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "failed to get ne!!!" );
             }
             return JsonUtils.toJson( neList );
@@ -135,6 +135,7 @@ public class GetNe
             log.error( e.getMessage(), e );
         }
 
-        return null;
+        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                "failed to get ne!!!" );
     }
 }

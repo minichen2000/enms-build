@@ -13,8 +13,8 @@ import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiException;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiExceptionType;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.restful.adapter.server.util.IdGenUtil;
 
 public class CreateNe
@@ -36,7 +36,7 @@ public class CreateNe
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
     public String createNe( String neRelease, String neType, String userLabel,
-            String locationName, String neAddress ) throws NbiException
+            String locationName, String neAddress ) throws AdapterException
     {
         String groupId = "100";
         String neId = IdGenUtil.getId();
@@ -61,7 +61,7 @@ public class CreateNe
 
             if( process.waitFor() != 0 || !flag )
             {
-                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Create ne failed!!!" );
             }
             String scenario = setNeAddressScenario;
@@ -84,9 +84,11 @@ public class CreateNe
             br.close();
             if( process.waitFor() != 0 || !flag )
             {
-                throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Set ne address failed!!!" );
             }
+
+            return new GetNe().getNe( groupId, neId );
 
         }
         catch( InterruptedException e )
@@ -98,6 +100,7 @@ public class CreateNe
             log.error( e.getMessage(), e );
         }
 
-        return new GetNe().getNe( groupId, neId );
+        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                "failed to create ne!!!" );
     }
 }

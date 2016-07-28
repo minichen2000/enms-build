@@ -12,7 +12,7 @@ import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiException;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 
 public class StartSuppervision
 {
@@ -26,7 +26,7 @@ public class StartSuppervision
     private boolean flag = false;
 
     public boolean startSuppervision( String groupId, String neId )
-            throws NbiException
+            throws AdapterException
     {
         int count = 0;
         while( count < 3 )

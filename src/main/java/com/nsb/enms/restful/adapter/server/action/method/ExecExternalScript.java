@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiException;
-import com.nsb.enms.restful.adapter.server.common.exception.NbiExceptionType;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
 
 public class ExecExternalScript
 {
@@ -26,7 +26,7 @@ public class ExecExternalScript
 
     private static File fileDir = new File( tstmgrDir );
 
-    public Process run( String... params ) throws NbiException
+    public Process run( String... params ) throws AdapterException
     {
         String[] cmdArray = new String[params.length + 1];
         cmdArray[0] = tstmgr;
@@ -41,7 +41,7 @@ public class ExecExternalScript
         {
             log.error( e.getMessage(), e );
         }
-        throw new NbiException( NbiExceptionType.EXCPT_INTERNAL_ERROR,
+        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                 "failed to exec external script!!!" );
     }
 }
