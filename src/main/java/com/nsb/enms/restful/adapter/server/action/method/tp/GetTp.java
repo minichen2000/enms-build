@@ -1,7 +1,6 @@
 package com.nsb.enms.restful.adapter.server.action.method.tp;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
@@ -117,21 +116,17 @@ public class GetTp
 
             if( process.waitFor() != 0 || tpList.size() < 1 )
             {
-                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "failed to get tp!!!" );
             }
             return JsonUtils.toJson( tpList );
         }
-        catch( IOException e )
+        catch( Exception e )
         {
             log.error( e.getMessage(), e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
-        catch( InterruptedException e )
-        {
-            log.error( e.getMessage(), e );
-        }
-
-        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                "failed to get tp!!!" );
     }
 }

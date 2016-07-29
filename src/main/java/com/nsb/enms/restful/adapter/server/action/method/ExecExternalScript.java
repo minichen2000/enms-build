@@ -41,8 +41,7 @@ public class ExecExternalScript
         {
             log.error( e.getMessage(), e );
             throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                    "failed to exec external script!!!" );
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
     }
 }

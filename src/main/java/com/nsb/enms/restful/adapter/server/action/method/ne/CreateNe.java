@@ -1,7 +1,6 @@
 package com.nsb.enms.restful.adapter.server.action.method.ne;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.regex.Pattern;
@@ -61,7 +60,8 @@ public class CreateNe
 
             if( process.waitFor() != 0 || !flag )
             {
-                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Create ne failed!!!" );
             }
             String scenario = setNeAddressScenario;
@@ -84,23 +84,19 @@ public class CreateNe
             br.close();
             if( process.waitFor() != 0 || !flag )
             {
-                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Set ne address failed!!!" );
             }
 
             return new GetNe().getNe( groupId, neId );
 
         }
-        catch( InterruptedException e )
+        catch( Exception e )
         {
             log.error( e.getMessage(), e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
-        catch( IOException e )
-        {
-            log.error( e.getMessage(), e );
-        }
-
-        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                "failed to create ne!!!" );
     }
 }
