@@ -150,35 +150,6 @@
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>run</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<version>1.5.0</version>
-						<executions>
-							<execution>
-								<phase>test</phase>
-								<goals>
-									<goal>java</goal>
-								</goals>
-								<configuration>
-									<mainClass>com.rest.test.App</mainClass>
-									<arguments>
-										<argument>arg0</argument>
-										<argument>arg1</argument>
-									</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<build>
 		<plugins>
@@ -270,6 +241,44 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.5</version>
+				<executions>
+					<execution>
+						<id>clean-gen-main</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>gen/restful-api-lib-adp-server/src/main</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+					<execution>
+						<id>clean-all</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>gen</directory>
+								</fileset>
+								<fileset>
+									<directory>target</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>2.10</version>
 				<executions>
@@ -285,7 +294,7 @@
 									<groupId>io.swagger</groupId>
 									<artifactId>swagger-codegen-cli</artifactId>
 									<version>${swagger-codegen-cli-version}</version>
-									<outputDirectory>${basedir}</outputDirectory>
+									<outputDirectory>target</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 							<!-- other configurations here -->
@@ -310,7 +319,7 @@
 							<workingDirectory>${basedir}</workingDirectory>
 							<arguments>
 								<argument>-jar</argument>
-								<argument>./swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
 								<argument>generate</argument>
 								<argument>-i</argument>
 								<argument>./restful_models/adapter.json</argument>
@@ -336,7 +345,7 @@
 							<workingDirectory>${basedir}</workingDirectory>
 							<arguments>
 								<argument>-jar</argument>
-								<argument>./swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
 								<argument>generate</argument>
 								<argument>-i</argument>
 								<argument>./restful_models/db.json</argument>
