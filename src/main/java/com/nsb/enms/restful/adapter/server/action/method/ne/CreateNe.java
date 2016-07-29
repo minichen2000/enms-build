@@ -3,7 +3,6 @@ package com.nsb.enms.restful.adapter.server.action.method.ne;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +35,7 @@ public class CreateNe
     private static Pattern pattern = Pattern
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
-    public List<NeEntity> createNe( String neRelease, String neType,
+    public NeEntity createNe( String neRelease, String neType,
             String userLabel, String locationName, String neAddress )
             throws AdapterException
     {

@@ -1,11 +1,8 @@
 package com.nsb.enms.restful.adapter.server.action.method.ne;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,16 +23,14 @@ public class GetNe
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.NE_GET_REQ, CommonConstants.NE_GET_REQ );
 
-    public List<NeEntity> getNe( String groupId, String neId )
-            throws AdapterException
+    public NeEntity getNe( String groupId, String neId ) throws AdapterException
     {
-        Process process = new ExecExternalScript().run( SCENARIO, groupId,
-            neId );
-
         try
         {
+            Process process = new ExecExternalScript().run( SCENARIO, groupId,
+                neId );
             InputStream inputStream = process.getInputStream();
-            List<NeEntity> neList = new LinkedList<NeEntity>();
+            NeEntity neEntity = new NeEntity();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
 
@@ -44,7 +39,6 @@ public class GetNe
             {
                 if( line.contains( "GetReply received" ) )
                 {
-                    NeEntity neEntity = new NeEntity();
                     while( (line = br.readLine()) != null )
                     {
                         line = line.trim();
@@ -111,7 +105,6 @@ public class GetNe
 
                         if( line.startsWith( "-----------------" ) )
                         {
-                            neList.add( neEntity );
                             break;
                         }
                     }
@@ -119,24 +112,19 @@ public class GetNe
             }
             br.close();
 
-            if( process.waitFor() != 0 || neList.size() < 1 )
+            if( process.waitFor() != 0 )
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "failed to get ne!!!" );
+                        "Get ne failed!!!" );
             }
-            return neList;
+            return neEntity;
         }
-        catch( IOException e )
+        catch( Exception e )
         {
             log.error( e.getMessage(), e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
-        catch( InterruptedException e )
-        {
-            log.error( e.getMessage(), e );
-        }
-
-        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                "failed to get ne!!!" );
     }
 }

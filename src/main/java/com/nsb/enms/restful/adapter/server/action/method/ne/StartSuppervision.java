@@ -1,7 +1,6 @@
 package com.nsb.enms.restful.adapter.server.action.method.ne;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -13,6 +12,7 @@ import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
 
 public class StartSuppervision
 {
@@ -61,13 +61,12 @@ public class StartSuppervision
                 Thread.sleep( 10000 );
 
             }
-            catch( IOException e )
+            catch( Exception e )
             {
                 log.error( e.getMessage(), e );
-            }
-            catch( InterruptedException e )
-            {
-                log.error( e.getMessage(), e );
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                        e.getMessage() );
             }
         }
         return false;

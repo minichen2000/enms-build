@@ -30,8 +30,6 @@ public class GetTp
     {
         try
         {
-            log.debug(
-                "start to getTp with groupId:" + groupId + ", neId:" + neId );
             Process process = new ExecExternalScript().run( SCENARIO, groupId,
                 neId );
             InputStream inputStream = process.getInputStream();
@@ -118,7 +116,7 @@ public class GetTp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "failed to get tp!!!" );
+                        "Get tp failed!!!" );
             }
             return tpList;
         }
