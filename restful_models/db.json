@@ -88,7 +88,7 @@
                     "nes"
                 ],
                 "summary": "Update NE",
-                "description": "Update an existing NE",
+                "description": "Update an existing NE. (Jersey doesn't support Patch,so have to use PUT)",
                 "produces": [
                     "application/json"
                 ],
@@ -100,7 +100,7 @@
                     {
                         "in": "body",
                         "name": "body",
-                        "description": "NE object that needs to be added",
+                        "description": "NE object that needs to be updated",
                         "required": false,
                         "schema": {
                             "$ref": "#/definitions/NE"
@@ -207,6 +207,12 @@
                         "in": "query",
                         "description": "the TP type to query",
                         "type": "string"
+                    },
+                    {
+                        "name": "neid",
+                        "in": "query",
+                        "description": "the ID of NE",
+                        "type": "string"
                     }
                 ],
                 "responses": {
@@ -218,6 +224,81 @@
                                 "$ref": "#/definitions/TP"
                             }
                         }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "tps"
+                ],
+                "summary": "Add TPs",
+                "description": "Store new TPs to Database",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "addTPs",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "TP objects that needs to be added",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TP"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "tps"
+                ],
+                "summary": "Update TP",
+                "description": "Update an existing TP. (Jersey doesn't support Patch,so have to use PUT)",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "updateTP",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "TP object that needs to be updated",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/TP"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "TP not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
                     }
                 }
             }
