@@ -16,7 +16,6 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.JsonUtils;
 import com.nsb.enms.restful.adapter.server.util.ParseUtil;
 
 public class GetTp
@@ -26,7 +25,8 @@ public class GetTp
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.PORT_GET_REQ, CommonConstants.PORT_GET_REQ );
 
-    public String getTp( String groupId, String neId ) throws AdapterException
+    public List<TpEntity> getTp( String groupId, String neId )
+            throws AdapterException
     {
         try
         {
@@ -120,7 +120,7 @@ public class GetTp
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "failed to get tp!!!" );
             }
-            return JsonUtils.toJson( tpList );
+            return tpList;
         }
         catch( Exception e )
         {

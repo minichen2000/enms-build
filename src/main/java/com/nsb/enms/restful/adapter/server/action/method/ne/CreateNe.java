@@ -3,11 +3,13 @@ package com.nsb.enms.restful.adapter.server.action.method.ne;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
@@ -34,8 +36,9 @@ public class CreateNe
     private static Pattern pattern = Pattern
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
-    public String createNe( String neRelease, String neType, String userLabel,
-            String locationName, String neAddress ) throws AdapterException
+    public List<NeEntity> createNe( String neRelease, String neType,
+            String userLabel, String locationName, String neAddress )
+            throws AdapterException
     {
         String groupId = "100";
         String neId = IdGenUtil.getId();
