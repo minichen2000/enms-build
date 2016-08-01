@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
@@ -21,7 +20,7 @@ public class GetNe
     private static final Logger log = LogManager.getLogger( GetNe.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.NE_GET_REQ, CommonConstants.NE_GET_REQ );
+            .getConf( ConfigKey.NE_GET_REQ, ConfigKey.DEFAULT_NE_GET_REQ );
 
     public NeEntity getNe( String groupId, String neId ) throws AdapterException
     {

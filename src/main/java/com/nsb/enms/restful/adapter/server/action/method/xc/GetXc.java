@@ -1,7 +1,6 @@
 package com.nsb.enms.restful.adapter.server.action.method.xc;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
@@ -12,12 +11,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.JsonUtils;
 import com.nsb.enms.restful.adapter.server.util.ParseUtil;
 
 public class GetXc
@@ -25,9 +22,9 @@ public class GetXc
     private static final Logger log = LogManager.getLogger( GetXc.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.XC_GET_REQ, CommonConstants.XC_GET_REQ );
+            .getConf( ConfigKey.XC_GET_REQ, ConfigKey.DEFAULT_XC_GET_REQ );
 
-    public String getXc( int groupId, int neId ) throws AdapterException
+    public List<XcEntity> getXc( int groupId, int neId ) throws AdapterException
     {
         try
         {
@@ -117,21 +114,18 @@ public class GetXc
 
             if( process.waitFor() != 0 || xcList.size() < 1 )
             {
-                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "failed to get xc!!!" );
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                        "Get xc failed!!!" );
             }
-            return JsonUtils.toJson( xcList );
+            return xcList;
 
         }
-        catch( IOException e )
+        catch( Exception e )
         {
             log.error( e.getMessage(), e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
-        catch( InterruptedException e )
-        {
-            log.error( e.getMessage(), e );
-        }
-
-        return null;
     }
 }

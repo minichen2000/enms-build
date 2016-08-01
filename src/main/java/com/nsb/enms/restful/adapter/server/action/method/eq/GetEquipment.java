@@ -1,7 +1,6 @@
 package com.nsb.enms.restful.adapter.server.action.method.eq;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
@@ -12,12 +11,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.EquipmentEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.JsonUtils;
 import com.nsb.enms.restful.adapter.server.util.ParseUtil;
 
 public class GetEquipment
@@ -26,9 +23,10 @@ public class GetEquipment
             .getLogger( GetEquipment.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.EQ_GET_REQ, CommonConstants.EQ_GET_REQ );
+            .getConf( ConfigKey.EQ_GET_REQ, ConfigKey.DEFAULT_EQ_GET_REQ );
 
-    public String getEquipment( int groupId, int neId ) throws AdapterException
+    public List<EquipmentEntity> getEquipment( int groupId, int neId )
+            throws AdapterException
     {
         try
         {
@@ -135,20 +133,17 @@ public class GetEquipment
 
             if( process.waitFor() != 0 || eqList.size() < 1 )
             {
-                throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "failed to get equipment!!!" );
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                        "Get equipment failed!!!" );
             }
-            return JsonUtils.toJson( eqList );
+            return eqList;
         }
-        catch( IOException e )
+        catch( Exception e )
         {
             log.error( e.getMessage(), e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
-        catch( InterruptedException e )
-        {
-            log.error( e.getMessage(), e );
-        }
-
-        return null;
     }
 }

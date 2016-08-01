@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
@@ -21,23 +20,22 @@ public class CreateNe
 {
     private final static Logger log = LogManager.getLogger( CreateNe.class );
 
-    private static String createNeScenario = ConfLoader.getInstance()
-            .getConf( ConfigKey.NE_CREATE_REQ, CommonConstants.NE_CREATE_REQ );
+    private static String createNeScenario = ConfLoader.getInstance().getConf(
+        ConfigKey.NE_CREATE_REQ, ConfigKey.DEFAULT_NE_CREATE_REQ );
 
     private static String setNeAddressScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.SET_NE_ADDR_REQ,
-                CommonConstants.SET_NE_ADDR_REQ );
+                ConfigKey.DEFAULT_SET_NE_ADDR_REQ );
 
     private static String setNeIsaAddressScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.SET_NE_ISA_ADDR_REQ,
-                CommonConstants.SET_NE_ISA_ADDR_REQ );
+                ConfigKey.DEFAULT_SET_NE_ISA_ADDR_REQ );
 
     private static Pattern pattern = Pattern
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
-    public NeEntity createNe( String neRelease, String neType,
-            String userLabel, String locationName, String neAddress )
-            throws AdapterException
+    public NeEntity createNe( String neRelease, String neType, String userLabel,
+            String locationName, String neAddress ) throws AdapterException
     {
         String groupId = "100";
         String neId = IdGenUtil.getId();

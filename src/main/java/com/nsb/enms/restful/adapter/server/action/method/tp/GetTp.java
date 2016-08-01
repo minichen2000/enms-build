@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.TpEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.conf.CommonConstants;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
@@ -23,7 +22,7 @@ public class GetTp
     private static final Logger log = LogManager.getLogger( GetTp.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.PORT_GET_REQ, CommonConstants.PORT_GET_REQ );
+            .getConf( ConfigKey.PORT_GET_REQ, ConfigKey.DEFAULT_PORT_GET_REQ );
 
     public List<TpEntity> getTp( String groupId, String neId )
             throws AdapterException
