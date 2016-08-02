@@ -26,6 +26,7 @@ public class SyncTpThread extends Thread {
 		boolean isSuccess;
 		try {
 			isSuccess = start.startSuppervision(groupId, neId);
+			System.out.println("isSuccess = " + isSuccess);
 			if (!isSuccess) {
 				return;
 			}
@@ -37,9 +38,11 @@ public class SyncTpThread extends Thread {
 		GetTp getTp = new GetTp();
 		try {
 			List<TpEntity> tpList = getTp.getTp(groupId, neId);
+			System.out.println("tpList = " + tpList.size());
 			List<TP> tps = new ArrayList<TP>();
 			TpsApi tpsApi = new TpsApi();
 			for (TpEntity tp : tpList) {
+				System.out.println("tp = " + tp);
 				TP newTp = new TP();
 				newTp.setUserLabel(tp.getUserLabel());
 				tps.add(newTp);
