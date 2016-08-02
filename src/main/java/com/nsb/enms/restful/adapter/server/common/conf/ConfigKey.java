@@ -53,4 +53,8 @@ public class ConfigKey
             + "StartSupervision.req";
 
     public static final String REFERENCE_CONF_FILES = "REFERENCE_CONF_FILES";
+
+    public static final String Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
+    
+    public static final String DEFAULT_Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
 }
