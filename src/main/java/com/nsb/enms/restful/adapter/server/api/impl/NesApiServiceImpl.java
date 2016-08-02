@@ -1,5 +1,6 @@
 package com.nsb.enms.restful.adapter.server.api.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -47,12 +48,16 @@ public class NesApiServiceImpl extends NesApiService {
 
 		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
 		ne.setAddress(entity.getNetworkAddress());
+		System.out.println(entity.getNetworkAddress());
 		ne.setUserLabel(entity.getUserLabel());
+		System.out.println(entity.getUserLabel());
 		ne.setNeType(entity.getNeType());
+		System.out.println(entity.getNeType());
 		NesApi nesApi = new NesApi();
 		try {
 			nesApi.addNe(ne);
 		} catch (com.nsb.enms.restful.db.client.ApiException e) {
+			e.printStackTrace();
 			return Response.serverError().entity(e).build();
 		}
 
@@ -62,7 +67,7 @@ public class NesApiServiceImpl extends NesApiService {
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 		new SyncTpThread(groupId, neId).start();
 
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, neId)).build();
+		return Response.ok().entity(ne).build();
 	}
 
 	@Override
@@ -79,8 +84,11 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response nesGet(String netype, String version, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		List<NE> nes = new ArrayList<NE>();
+		NE ne = new NE();
+		ne.setAddress("11111");
+		nes.add(ne);
+		return Response.ok().entity(nes).build();
 	}
 
 	@Override
