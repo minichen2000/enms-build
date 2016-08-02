@@ -5,13 +5,13 @@ import java.util.regex.Pattern;
 
 public class ParseUtil
 {
-    private static Pattern pattern1 = Pattern.compile( "=\\s*\\w*\\s*(.+)" );
+    private static Pattern pattern1 = Pattern.compile( "=\\s*\\w*\\s*(\\w+)\\s*" );
 
     private static Pattern pattern2 = Pattern.compile( "=\\s*(\\w+)\\s*" );
 
     private static Pattern pattern3 = Pattern.compile( "=\\s*(\\d+.\\w*)\\s*" );
 
-    private static Pattern pattern4 = Pattern.compile( "=\\s*\\w*_*(\\w+)" );
+    private static Pattern pattern4 = Pattern.compile( "=\\s*\\w*_*(\\w+)\\s*" );
 
     public static String parseAttrWithSingleValue( String line )
     {
@@ -78,7 +78,7 @@ public class ParseUtil
 
     public static void main( String[] args )
     {
-        String string = "ntpEnabled =asn_false";
-        System.out.println( parseBooleanAttr( string ) );
+        String string = "neType=gString ne1662smc ,";
+        System.out.println( parseAttr1( string ) );
     }
 }
