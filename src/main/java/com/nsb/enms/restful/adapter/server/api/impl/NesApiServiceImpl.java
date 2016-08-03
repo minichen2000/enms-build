@@ -22,6 +22,8 @@ import com.nsb.enms.restful.db.client.api.NesApi;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class NesApiServiceImpl extends NesApiService {
+	private NesApi nesApi = new NesApi();
+
 	@Override
 	public Response addNe(NE body, SecurityContext securityContext) throws NotFoundException {
 		CreateNe create = new CreateNe();
@@ -62,7 +64,7 @@ public class NesApiServiceImpl extends NesApiService {
 		System.out.println(entity.getUserLabel());
 		ne.setNeType(entity.getNeType());
 		System.out.println(entity.getNeType());
-		NesApi nesApi = new NesApi();
+
 		try {
 			nesApi.addNe(ne);
 		} catch (com.nsb.enms.restful.db.client.ApiException e) {
@@ -84,7 +86,6 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getNeById(String neid, SecurityContext securityContext) throws NotFoundException {
-		NesApi nesApi = new NesApi();
 		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
 		try {
 			ne = nesApi.getNeById(neid);
@@ -97,7 +98,6 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response nesGet(String netype, String version, SecurityContext securityContext) throws NotFoundException {
-		NesApi nesApi = new NesApi();
 		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
 		try {
 			nes = nesApi.nesGet(netype, version);
