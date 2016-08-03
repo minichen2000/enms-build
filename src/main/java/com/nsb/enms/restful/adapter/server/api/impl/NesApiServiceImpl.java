@@ -17,6 +17,7 @@ import com.nsb.enms.restful.adapter.server.business.SyncTpThread;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.model.NE;
 import com.nsb.enms.restful.adapter.server.model.NEExtraInfo;
+import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.NesApi;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
@@ -65,6 +66,10 @@ public class NesApiServiceImpl extends NesApiService {
 		String moi = entity.getMoi();
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+
+		System.out.println("groupId = " + groupId);
+		System.out.println("neId = " + neId);
+
 		new SyncTpThread(groupId, neId).start();
 
 		return Response.ok().entity(ne).build();
@@ -78,16 +83,27 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getNeById(String neid, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		NesApi nesApi = new NesApi();
+		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
+		try {
+			ne = nesApi.getNeById(neid);
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(ne).build();
 	}
 
 	@Override
 	public Response nesGet(String netype, String version, SecurityContext securityContext) throws NotFoundException {
-		List<NE> nes = new ArrayList<NE>();
-		NE ne = new NE();
-		ne.setAddress("11111");
-		nes.add(ne);
+		NesApi nesApi = new NesApi();
+		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
+		try {
+			nes = nesApi.nesGet(netype, version);
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
 		return Response.ok().entity(nes).build();
 	}
 
