@@ -45,6 +45,7 @@ public class SyncTpThread extends Thread {
 				System.out.println("tp = " + tp);
 				TP newTp = new TP();
 				newTp.setUserLabel(tp.getUserLabel());
+				newTp.setNeId(neId);
 				tps.add(newTp);
 			}
 			tpsApi.addTPs(tps);
