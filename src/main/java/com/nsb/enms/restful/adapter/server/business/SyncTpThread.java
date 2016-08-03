@@ -39,6 +39,7 @@ public class SyncTpThread extends Thread {
 		try {
 			List<TpEntity> tpList = getTp.getTp(groupId, neId);
 			System.out.println("tpList = " + tpList.size());
+			System.out.println("neId = " + neId);
 			List<TP> tps = new ArrayList<TP>();
 			TpsApi tpsApi = new TpsApi();
 			for (TpEntity tp : tpList) {
