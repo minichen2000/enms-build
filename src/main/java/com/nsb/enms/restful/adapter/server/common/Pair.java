@@ -1,37 +1,84 @@
 package com.nsb.enms.restful.adapter.server.common;
-public class Pair {
-    private String name = "";
-    private String value = "";
 
-    public Pair (String name, String value) {
-        setName(name);
-        setValue(value);
+import java.io.Serializable;
+
+public class Pair<K, V> implements Serializable
+{
+    private static final long serialVersionUID = -7003536441367732878L;
+
+    private Object first;
+
+    private Object second;
+
+    public Pair()
+    {
     }
 
-    private void setName(String name) {
-        if (!isValidString(name)) return;
-
-        this.name = name;
+    public Pair( Object obj1, Object obj2 )
+    {
+        first = obj1;
+        second = obj2;
     }
 
-    private void setValue(String value) {
-        if (!isValidString(value)) return;
-
-        this.value = value;
+    public Object getFirst()
+    {
+        return first;
     }
 
-    public String getName() {
-        return this.name;
+    public void setFirst( Object obj1 )
+    {
+        first = obj1;
     }
 
-    public String getValue() {
-        return this.value;
+    public Object getSecond()
+    {
+        return second;
     }
 
-    private boolean isValidString(String arg) {
-        if (arg == null) return false;
-        if (arg.trim().isEmpty()) return false;
+    public void setSecond( Object obj2 )
+    {
+        second = obj2;
+    }
 
+    public int hashCode()
+    {
+        int prime = 31;
+        int result = 1;
+        result = prime * result + (first != null ? first.hashCode() : 0);
+        result = prime * result + (second != null ? second.hashCode() : 0);
+        return result;
+    }
+
+    public boolean equals( Object obj )
+    {
+        if( this == obj )
+            return true;
+        if( obj == null )
+            return false;
+        if( getClass() != obj.getClass() )
+            return false;
+        Pair other = (Pair) obj;
+        if( first == null )
+        {
+            if( other.first != null )
+                return false;
+        }
+        else if( !first.equals( other.first ) )
+            return false;
+        if( second == null )
+        {
+            if( other.second != null )
+                return false;
+        }
+        else if( !second.equals( other.second ) )
+            return false;
         return true;
+    }
+
+    public String toString()
+    {
+        return (new StringBuilder()).append( "Pair-[" )
+                .append( first.toString() ).append( ", " )
+                .append( second.toString() ).append( ']' ).toString();
     }
 }
