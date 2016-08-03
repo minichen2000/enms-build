@@ -2,8 +2,6 @@ package com.nsb.enms.restful.adapter.server.manager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,8 +16,13 @@ public class Q3EmlImMonitor implements Runnable
     private static final Logger log = LogManager
             .getLogger( Q3EmlImMonitor.class );
 
+    private static final int SLEEP_TIME = 60000;
+
     private static String monitorScript = ConfLoader.getInstance().getConf(
         ConfigKey.LIST_GROUP_SCRIPT, ConfigKey.DEFAULT_LIST_GROUP_SCRIPT );
+
+    private static String killProcessScript = ConfLoader.getInstance().getConf(
+        ConfigKey.KILL_PROCESS_SCRIPT, ConfigKey.DEFAULT_KILL_PROCESS_SCRIPT );
 
     private Set<Integer> groupIds;
 
@@ -53,22 +56,33 @@ public class Q3EmlImMonitor implements Runnable
 
                     if( process.waitFor() != 0 )
                     {
-                        // TODO
+                        log.error( "Execute external script " + monitorScript
+                                + "failed!!!" );
                     }
 
                     if( !flag )
                     {
-                        //kill the emlim process
-                        //restart emlim process
-                        //recreateNe
+                        process = new ExecExternalScript()
+                                .run( killProcessScript, groupId + "" );
+                        process.waitFor();
+                        Q3EmlImMgr.getInstance().startEmlIm( groupId );
+                        Q3EmlImMgr.getInstance().reCreateNe( groupId );
                     }
 
-                    Thread.sleep( 10000 );
                 }
                 catch( Exception e )
                 {
                     log.error( e.getMessage(), e );
                 }
+            }
+
+            try
+            {
+                Thread.sleep( SLEEP_TIME );
+            }
+            catch( InterruptedException e )
+            {
+                e.printStackTrace();
             }
         }
     }
