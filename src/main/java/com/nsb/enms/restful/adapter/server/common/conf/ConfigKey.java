@@ -10,7 +10,8 @@ public class ConfigKey
 
     public static final String TSTMGR_SCRIPT = "TSTMGR_SCRIPT";
 
-    public static final String DEFAULT_TSTMGR_SCRIPT = "/opt/nms/EML_1/TSTMGR/script/tstmgr";
+    public static final String DEFAULT_TSTMGR_SCRIPT = DEFAULT_TSTMGR_SCRIPT_DIR
+            + "tstmgr";
 
     public static final String EQ_GET_REQ = "EQ_GET_REQ";
 
@@ -55,6 +56,23 @@ public class ConfigKey
     public static final String REFERENCE_CONF_FILES = "REFERENCE_CONF_FILES";
 
     public static final String Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
-    
-    public static final String DEFAULT_Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
+
+    public static final String DEFAULT_Q3_EMLIM_SCRIPT = "";
+
+    public static final String LIST_GROUP_SCRIPT = "LIST_GROUP_SCRIPT";
+
+    public static final String DEFAULT_LIST_GROUP_SCRIPT = DEFAULT_TSTMGR_SCENARIO_DIR
+            + "ListGroup.req";
+
+    public static final String KILL_PROCESS_SCRIPT = "KILL_PROCESS_SCRIPT";
+
+    public static final String DEFAULT_KILL_PROCESS_SCRIPT = "";
+
+    public static final String NE_DELETE_REQ = "NE_DELETE_REQ";
+
+    public static final String DEFAULT_NE_DELETE_REQ = "";
+
+    public static final String STOP_SUPERVISION_REQ = "STOP_SUPERVISION_REQ";
+
+    public static final String DEFAULT_STOP_SUPERVISION_REQ = "";
 }

@@ -39,6 +39,15 @@ public class CreateNe
     {
         String groupId = "100";
         String neId = IdGenUtil.getId();
+        NeEntity ne = createNe( groupId, neId, neRelease, neType, userLabel,
+            locationName, neAddress );
+        return ne;
+    }
+
+    public NeEntity createNe( String groupId, String neId, String neRelease,
+            String neType, String userLabel, String locationName,
+            String neAddress ) throws AdapterException
+    {
         try
         {
             Process process = new ExecExternalScript().run( createNeScenario,
