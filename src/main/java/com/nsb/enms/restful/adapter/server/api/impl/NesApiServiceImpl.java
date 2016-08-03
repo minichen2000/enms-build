@@ -47,7 +47,15 @@ public class NesApiServiceImpl extends NesApiService {
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "failed to create ne")).build();
 		}
 
+		String moi = entity.getMoi();
+		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+
+		System.out.println("groupId = " + groupId);
+		System.out.println("neId = " + neId);
+
 		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
+		ne.setId(neId);
 		ne.setAddress(entity.getNetworkAddress());
 		System.out.println(entity.getNetworkAddress());
 		ne.setUserLabel(entity.getUserLabel());
@@ -63,13 +71,6 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 
 		// new thread
-		String moi = entity.getMoi();
-		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-
-		System.out.println("groupId = " + groupId);
-		System.out.println("neId = " + neId);
-
 		new SyncTpThread(groupId, neId).start();
 
 		return Response.ok().entity(ne).build();
