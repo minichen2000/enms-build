@@ -4,9 +4,9 @@ public class IdGenUtil
 {
     private static int id = 0;
 
-    public synchronized static String getId()
+    public synchronized static int getId()
     {
         id++;
-        return id + "";
+        return id;
     }
 }

@@ -16,10 +16,9 @@ import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.restful.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.restful.adapter.server.common.Pair;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.NeInfo;
 
 public class Q3EmlImMgr
@@ -33,9 +32,6 @@ public class Q3EmlImMgr
     private static final int MAX_NE_COUNT = 200;
 
     private static Map<Pair<Integer, Integer>, NeInfo> groupNeIdToNe = new HashMap<>();
-
-    private static String q3EmlImScript = ConfLoader.getInstance().getConf(
-        ConfigKey.Q3_EMLIM_SCRIPT, ConfigKey.DEFAULT_Q3_EMLIM_SCRIPT );
 
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
@@ -66,8 +62,8 @@ public class Q3EmlImMgr
     {
         try
         {
-            Process process = new ExecExternalScript().run( q3EmlImScript,
-                groupId + "" );
+            Process process = new ExecExternalScript()
+                    .run( CommonConstants.EMLIM_SCRIPT_TYPE, groupId + "" );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
             String line;
@@ -119,6 +115,24 @@ public class Q3EmlImMgr
                 "There isn't any EMLIM has capacity to manager NE!!!" );
     }
 
+    public void removeGroup( int groupId )
+    {
+        rwLock.writeLock().lock();
+        groupToNeId.remove( new Integer( groupId ) );
+        rwLock.writeLock().unlock();
+    }
+
+    public void addGroupNe( int groupId, int neId )
+    {
+        rwLock.writeLock().lock();
+        if( !groupToNeId.containsKey( groupId ) )
+        {
+            groupToNeId.put( groupId, new ArrayList<Integer>() );
+        }
+        groupToNeId.get( groupId ).add( neId );
+        rwLock.writeLock().unlock();
+    }
+
     public void removeNe( int groupId, int neId )
     {
         rwLock.writeLock().lock();
@@ -165,13 +179,14 @@ public class Q3EmlImMgr
                 NeInfo neInfo = groupNeIdToNe.get( groupNeId );
                 try
                 {
-                    new CreateNe().createNe( groupNeId.getFirst() + "",
-                        groupNeId.getSecond() + "", neInfo.getNeRelease(),
-                        neInfo.getNeType(), neInfo.getUserLabel(),
-                        neInfo.getLocationName(), neInfo.getNeAddress() );
-                    
-                    new StartSuppervision().startSuppervision(
-                        groupNeId.getFirst() + "", groupNeId.getSecond() + "" );
+                    int neId = (int) groupNeId.getSecond();
+                    addGroupNe( groupId, neId );
+                    new CreateNe().createNe( groupId, neId,
+                        neInfo.getNeRelease(), neInfo.getNeType(),
+                        neInfo.getUserLabel(), neInfo.getLocationName(),
+                        neInfo.getNeAddress() );
+
+                    new StartSuppervision().startSuppervision( groupId, neId );
                 }
                 catch( AdapterException e )
                 {

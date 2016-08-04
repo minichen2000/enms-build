@@ -12,6 +12,8 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.manager.Q3EmlImMgr;
+import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 
 public class DeleteNe
 {
@@ -24,12 +26,13 @@ public class DeleteNe
             .getConf( ConfigKey.STOP_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_STOP_SUPERVISION_REQ );
 
-    public void deleteNe( String groupId, String neId ) throws AdapterException
+    public boolean deleteNe( int groupId, int neId ) throws AdapterException
     {
         try
         {
-            Process process = new ExecExternalScript()
-                    .run( stopSupervisionScenario, groupId, neId );
+            Process process = new ExecExternalScript().run(
+                CommonConstants.TSTMGR_SCRIPT_TYPE, stopSupervisionScenario,
+                groupId + "", neId + "" );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -54,14 +57,15 @@ public class DeleteNe
 
             if( flag )
             {
-                process = new ExecExternalScript().run( deleteNeScenario,
-                    groupId, neId );
+                process = new ExecExternalScript().run(
+                    CommonConstants.TSTMGR_SCRIPT_TYPE, deleteNeScenario,
+                    groupId + "", neId + "" );
                 inputStream = process.getInputStream();
                 br = new BufferedReader( new InputStreamReader( inputStream ) );
                 flag = false;
                 while( (line = br.readLine()) != null )
                 {
-                    if( line.contains( "ActionReply received" ) )
+                    if( line.contains( "DeleteReply received" ) )
                     {
                         flag = true;
                     }
@@ -70,10 +74,12 @@ public class DeleteNe
 
                 if( process.waitFor() != 0 || !flag )
                 {
-                    throw new AdapterException(
-                            AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                            "Delete ne failed!!!" );
+                    return false;
                 }
+                return true;
+                // Q3EmlImMgr.getInstance().removeNe( Integer.parseInt( groupId
+                // ),
+                // Integer.parseInt( neId ) );
             }
         }
         catch( Exception e )
@@ -82,5 +88,6 @@ public class DeleteNe
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
+        return false;
     }
 }
