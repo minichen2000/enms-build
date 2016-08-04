@@ -15,6 +15,7 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.ParseUtil;
 
 public class GetTp
@@ -29,8 +30,8 @@ public class GetTp
     {
         try
         {
-            Process process = new ExecExternalScript().run( SCENARIO, groupId,
-                neId );
+            Process process = new ExecExternalScript().run(
+                CommonConstants.TSTMGR_SCRIPT_TYPE, SCENARIO, groupId, neId );
             InputStream inputStream = process.getInputStream();
             List<TpEntity> tpList = new LinkedList<TpEntity>();
 

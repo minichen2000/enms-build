@@ -13,6 +13,7 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.ParseUtil;
 
 public class GetNe
@@ -26,8 +27,8 @@ public class GetNe
     {
         try
         {
-            Process process = new ExecExternalScript().run( SCENARIO, groupId,
-                neId );
+            Process process = new ExecExternalScript().run(
+                CommonConstants.TSTMGR_SCRIPT_TYPE, SCENARIO, groupId, neId );
             InputStream inputStream = process.getInputStream();
             NeEntity neEntity = new NeEntity();
             BufferedReader br = new BufferedReader(
@@ -124,6 +125,18 @@ public class GetNe
             log.error( e.getMessage(), e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+        }
+    }
+    
+    public static void main( String[] args )
+    {
+        try
+        {
+            System.out.println( new GetNe().getNe( "100", "1" ) );
+        }
+        catch( AdapterException e )
+        {
+            e.printStackTrace();
         }
     }
 }

@@ -62,6 +62,7 @@ public class Q3EmlImMonitor implements Runnable
 
                     if( !flag )
                     {
+                        Q3EmlImMgr.getInstance().removeGroup( groupId );
                         process = new ExecExternalScript()
                                 .run( killProcessScript, groupId + "" );
                         process.waitFor();

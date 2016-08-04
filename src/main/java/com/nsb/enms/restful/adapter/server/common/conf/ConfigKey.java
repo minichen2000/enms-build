@@ -70,9 +70,15 @@ public class ConfigKey
 
     public static final String NE_DELETE_REQ = "NE_DELETE_REQ";
 
-    public static final String DEFAULT_NE_DELETE_REQ = "";
+    public static final String DEFAULT_NE_DELETE_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
+            + "RemoveNe.req";
 
     public static final String STOP_SUPERVISION_REQ = "STOP_SUPERVISION_REQ";
 
-    public static final String DEFAULT_STOP_SUPERVISION_REQ = "";
+    public static final String DEFAULT_STOP_SUPERVISION_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
+            + "StopSupervision.req";
+
+    public static final String EMLIM_SCRIPT_DIR = "EMLIM_SCRIPT_DIR";
+
+    public static final String DEFAULT_EMLIM_SCRIPT_DIR = "";
 }

@@ -19,16 +19,36 @@ public class ExecExternalScript
 
     private static String tstmgr = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT, ConfigKey.DEFAULT_TSTMGR_SCRIPT );
+    
+    private static String q3EmlImScript = ConfLoader.getInstance().getConf(
+        ConfigKey.Q3_EMLIM_SCRIPT, ConfigKey.DEFAULT_Q3_EMLIM_SCRIPT );
 
     private static String tstmgrDir = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT_DIR, ConfigKey.DEFAULT_TSTMGR_SCRIPT_DIR );
 
-    private static File fileDir = new File( tstmgrDir );
+    private static String emlImDir = ConfLoader.getInstance().getConf(
+        ConfigKey.EMLIM_SCRIPT_DIR, ConfigKey.DEFAULT_EMLIM_SCRIPT_DIR );
 
-    public Process run( String... params ) throws AdapterException
+    private File fileDir;
+
+    public Process run( String scriptType, String... params ) throws AdapterException
     {
         String[] cmdArray = new String[params.length + 1];
-        cmdArray[0] = tstmgr;
+        System.out.println( "The scriptType is " + scriptType );
+        switch( scriptType )
+        {
+            case "tstmgr":
+                fileDir = new File( tstmgrDir );
+                cmdArray[0] = tstmgr;
+                break;
+            case "emlim":
+                fileDir = new File( emlImDir );
+                cmdArray[0] = q3EmlImScript;
+                break;
+            default:
+                break;
+        }
+        
         System.arraycopy( params, 0, cmdArray, 1, params.length );
         log.debug( "exec:" + Arrays.asList( cmdArray ) );
 

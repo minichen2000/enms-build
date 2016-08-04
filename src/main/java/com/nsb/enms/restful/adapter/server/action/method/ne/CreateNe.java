@@ -14,6 +14,7 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.IdGenUtil;
 
 public class CreateNe
@@ -50,8 +51,9 @@ public class CreateNe
     {
         try
         {
-            Process process = new ExecExternalScript().run( createNeScenario,
-                groupId, neId, neRelease, neType, userLabel, locationName );
+            Process process = new ExecExternalScript().run(
+                CommonConstants.TSTMGR_SCRIPT_TYPE, createNeScenario, groupId,
+                neId, neRelease, neType, userLabel, locationName );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -78,7 +80,8 @@ public class CreateNe
             {
                 scenario = setNeIsaAddressScenario;
             }
-            process = new ExecExternalScript().run( scenario, groupId, neId,
+            process = new ExecExternalScript().run(
+                CommonConstants.TSTMGR_SCRIPT_TYPE, scenario, groupId, neId,
                 neAddress );
             inputStream = process.getInputStream();
             br = new BufferedReader( new InputStreamReader( inputStream ) );

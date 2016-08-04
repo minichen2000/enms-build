@@ -12,6 +12,7 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 
 public class StartSuppervision
 {
@@ -32,8 +33,9 @@ public class StartSuppervision
         {
             try
             {
-                Process process = new ExecExternalScript()
-                        .run( startSupervisionScenario, groupId, neId );
+                Process process = new ExecExternalScript().run(
+                    CommonConstants.TSTMGR_SCRIPT_TYPE,
+                    startSupervisionScenario, groupId, neId );
                 InputStream inputStream = process.getInputStream();
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );
