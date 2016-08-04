@@ -37,6 +37,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 
 	@Override
 	public Response getTPByNEId(String neid, SecurityContext securityContext) throws NotFoundException {
+		System.out.println("getTPByNEId, neId = " + neid);
 		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
 		try {
 			tpList = tpsApi.getTPByNEId(neid);

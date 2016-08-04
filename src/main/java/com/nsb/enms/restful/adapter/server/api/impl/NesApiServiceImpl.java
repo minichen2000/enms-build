@@ -64,6 +64,7 @@ public class NesApiServiceImpl extends NesApiService {
 		System.out.println(entity.getUserLabel());
 		ne.setNeType(entity.getNeType());
 		System.out.println(entity.getNeType());
+		ne.setVersion(body.getVersion());
 
 		try {
 			nesApi.addNe(ne);
