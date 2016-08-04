@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ne.CreateNe;
+import com.nsb.enms.restful.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.restful.adapter.server.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapter.server.api.NesApiService;
 import com.nsb.enms.restful.adapter.server.api.NotFoundException;
@@ -55,18 +56,7 @@ public class NesApiServiceImpl extends NesApiService {
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 
-		System.out.println("groupId = " + groupId);
-		System.out.println("neId = " + neId);
-
-		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
-		ne.setId(neId);
-		ne.setAddress(entity.getNetworkAddress());
-		System.out.println(entity.getNetworkAddress());
-		ne.setUserLabel(entity.getUserLabel());
-		System.out.println(entity.getUserLabel());
-		ne.setNeType(entity.getNeType());
-		System.out.println(entity.getNeType());
-		ne.setVersion(body.getVersion());
+		com.nsb.enms.restful.db.client.model.NE ne = constructNe(entity, groupId, neId);
 
 		try {
 			nesApi.addNe(ne);
@@ -81,9 +71,39 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().entity(ne).build();
 	}
 
+	private com.nsb.enms.restful.db.client.model.NE constructNe(NeEntity entity, String groupId, String neId) {
+		System.out.println("groupId = " + groupId);
+		System.out.println("neId = " + neId);
+		System.out.println(entity.getNetworkAddress());
+		System.out.println(entity.getUserLabel());
+		System.out.println(entity.getNeType());
+
+		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
+		ne.setId(neId);
+		ne.setAid(entity.getMoi());
+		ne.setUserLabel(entity.getUserLabel());
+		ne.setNativeName(entity.getUserLabel());
+		ne.setVersion(entity.getNeRelease());
+		ne.setAddress(entity.getNetworkAddress());
+		ne.setNeType(entity.getNeType());
+		ne.setOperationStatus(entity.getAdministrativeState());
+		ne.setAlignmentStatus("false");
+		List<com.nsb.enms.restful.db.client.model.NEExtraInfo> extInfoList = new ArrayList<com.nsb.enms.restful.db.client.model.NEExtraInfo>();
+		com.nsb.enms.restful.db.client.model.NEExtraInfo mocExtInfo = new com.nsb.enms.restful.db.client.model.NEExtraInfo();
+		mocExtInfo.setKey("moc");
+		mocExtInfo.setValue(entity.getMoc());
+		extInfoList.add(mocExtInfo);
+		com.nsb.enms.restful.db.client.model.NEExtraInfo moiExtInfo = new com.nsb.enms.restful.db.client.model.NEExtraInfo();
+		moiExtInfo.setKey("moi");
+		moiExtInfo.setValue(entity.getMoi());
+		ne.setExtraInfo(extInfoList);
+		return ne;
+	}
+
 	@Override
 	public Response deleteNE(String neid, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
+		DeleteNe deleteNe = new DeleteNe();
+		// deleteNe.deleteNe(groupId, neId);
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
