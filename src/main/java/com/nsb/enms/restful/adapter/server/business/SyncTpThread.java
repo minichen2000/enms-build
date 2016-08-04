@@ -25,6 +25,7 @@ public class SyncTpThread extends Thread {
 		StartSuppervision start = new StartSuppervision();
 		boolean isSuccess;
 		try {
+			System.out.println("before startSuppervision");
 			isSuccess = start.startSuppervision(groupId, neId);
 			System.out.println("isSuccess = " + isSuccess);
 			if (!isSuccess) {

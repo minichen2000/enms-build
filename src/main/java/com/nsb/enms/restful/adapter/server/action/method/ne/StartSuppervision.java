@@ -28,6 +28,8 @@ public class StartSuppervision
     public boolean startSuppervision( int groupId, int neId )
             throws AdapterException
     {
+    	System.out.println("-----------1---------------");
+    	
         int count = 0;
         while( count < 3 )
         {
@@ -40,6 +42,9 @@ public class StartSuppervision
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );
                 String line;
+                
+                System.out.println("-----------2---------------");
+                
                 while( (line = br.readLine()) != null )
                 {
                     if( line.contains( "ActionReply received" ) )
@@ -61,6 +66,9 @@ public class StartSuppervision
 
                 Thread.sleep( 10000 );
 
+                
+                System.out.println("-----------3---------------");
+                
             }
             catch( Exception e )
             {

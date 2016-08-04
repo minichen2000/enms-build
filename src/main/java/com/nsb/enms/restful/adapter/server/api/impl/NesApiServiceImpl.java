@@ -96,6 +96,7 @@ public class NesApiServiceImpl extends NesApiService {
 		com.nsb.enms.restful.db.client.model.NEExtraInfo moiExtInfo = new com.nsb.enms.restful.db.client.model.NEExtraInfo();
 		moiExtInfo.setKey("moi");
 		moiExtInfo.setValue(entity.getMoi());
+		extInfoList.add(moiExtInfo);
 		ne.setExtraInfo(extInfoList);
 		return ne;
 	}
