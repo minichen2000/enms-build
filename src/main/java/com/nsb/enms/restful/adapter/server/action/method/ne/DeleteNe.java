@@ -26,14 +26,13 @@ public class DeleteNe
             .getConf( ConfigKey.STOP_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_STOP_SUPERVISION_REQ );
 
-    public boolean deleteNe( String groupId, String neId )
-            throws AdapterException
+    public boolean deleteNe( int groupId, int neId ) throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
                 CommonConstants.TSTMGR_SCRIPT_TYPE, stopSupervisionScenario,
-                groupId, neId );
+                groupId + "", neId + "" );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -60,7 +59,7 @@ public class DeleteNe
             {
                 process = new ExecExternalScript().run(
                     CommonConstants.TSTMGR_SCRIPT_TYPE, deleteNeScenario,
-                    groupId, neId );
+                    groupId + "", neId + "" );
                 inputStream = process.getInputStream();
                 br = new BufferedReader( new InputStreamReader( inputStream ) );
                 flag = false;

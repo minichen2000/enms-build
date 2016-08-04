@@ -23,12 +23,13 @@ public class GetNe
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.NE_GET_REQ, ConfigKey.DEFAULT_NE_GET_REQ );
 
-    public NeEntity getNe( String groupId, String neId ) throws AdapterException
+    public NeEntity getNe( int groupId, int neId ) throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, SCENARIO, groupId, neId );
+                CommonConstants.TSTMGR_SCRIPT_TYPE, SCENARIO, groupId + "",
+                neId + "" );
             InputStream inputStream = process.getInputStream();
             NeEntity neEntity = new NeEntity();
             BufferedReader br = new BufferedReader(
@@ -125,18 +126,6 @@ public class GetNe
             log.error( e.getMessage(), e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
-        }
-    }
-    
-    public static void main( String[] args )
-    {
-        try
-        {
-            System.out.println( new GetNe().getNe( "100", "1" ) );
-        }
-        catch( AdapterException e )
-        {
-            e.printStackTrace();
         }
     }
 }

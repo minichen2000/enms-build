@@ -25,13 +25,13 @@ public class GetTp
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.PORT_GET_REQ, ConfigKey.DEFAULT_PORT_GET_REQ );
 
-    public List<TpEntity> getTp( String groupId, String neId )
-            throws AdapterException
+    public List<TpEntity> getTp( int groupId, int neId ) throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, SCENARIO, groupId, neId );
+                CommonConstants.TSTMGR_SCRIPT_TYPE, SCENARIO, groupId + "",
+                neId + "" );
             InputStream inputStream = process.getInputStream();
             List<TpEntity> tpList = new LinkedList<TpEntity>();
 

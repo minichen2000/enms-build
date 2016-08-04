@@ -25,7 +25,7 @@ public class StartSuppervision
 
     private boolean flag = false;
 
-    public boolean startSuppervision( String groupId, String neId )
+    public boolean startSuppervision( int groupId, int neId )
             throws AdapterException
     {
         int count = 0;
@@ -35,7 +35,7 @@ public class StartSuppervision
             {
                 Process process = new ExecExternalScript().run(
                     CommonConstants.TSTMGR_SCRIPT_TYPE,
-                    startSupervisionScenario, groupId, neId );
+                    startSupervisionScenario, groupId + "", neId + "" );
                 InputStream inputStream = process.getInputStream();
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );

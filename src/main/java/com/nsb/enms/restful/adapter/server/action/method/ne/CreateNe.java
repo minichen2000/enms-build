@@ -38,22 +38,23 @@ public class CreateNe
     public NeEntity createNe( String neRelease, String neType, String userLabel,
             String locationName, String neAddress ) throws AdapterException
     {
-        String groupId = "100";
-        String neId = IdGenUtil.getId();
+        int groupId = 100;
+        int neId = IdGenUtil.getId();
         NeEntity ne = createNe( groupId, neId, neRelease, neType, userLabel,
             locationName, neAddress );
         return ne;
     }
 
-    public NeEntity createNe( String groupId, String neId, String neRelease,
+    public NeEntity createNe( int groupId, int neId, String neRelease,
             String neType, String userLabel, String locationName,
             String neAddress ) throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, createNeScenario, groupId,
-                neId, neRelease, neType, userLabel, locationName );
+                CommonConstants.TSTMGR_SCRIPT_TYPE, createNeScenario,
+                groupId + "", neId + "", neRelease, neType, userLabel,
+                locationName );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -81,8 +82,8 @@ public class CreateNe
                 scenario = setNeIsaAddressScenario;
             }
             process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, scenario, groupId, neId,
-                neAddress );
+                CommonConstants.TSTMGR_SCRIPT_TYPE, scenario, groupId + "",
+                neId + "", neAddress );
             inputStream = process.getInputStream();
             br = new BufferedReader( new InputStreamReader( inputStream ) );
             flag = false;

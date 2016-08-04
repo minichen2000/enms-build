@@ -181,13 +181,12 @@ public class Q3EmlImMgr
                 {
                     int neId = (int) groupNeId.getSecond();
                     addGroupNe( groupId, neId );
-                    new CreateNe().createNe( groupId + "", neId + "",
+                    new CreateNe().createNe( groupId, neId,
                         neInfo.getNeRelease(), neInfo.getNeType(),
                         neInfo.getUserLabel(), neInfo.getLocationName(),
                         neInfo.getNeAddress() );
 
-                    new StartSuppervision().startSuppervision( groupId + "",
-                        neId + "" );
+                    new StartSuppervision().startSuppervision( groupId, neId );
                 }
                 catch( AdapterException e )
                 {
