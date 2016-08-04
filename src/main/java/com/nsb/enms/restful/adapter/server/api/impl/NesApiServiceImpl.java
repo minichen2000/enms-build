@@ -49,6 +49,8 @@ public class NesApiServiceImpl extends NesApiService {
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "failed to create ne")).build();
 		}
 
+		System.out.println(entity);
+
 		String moi = entity.getMoi();
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
@@ -74,7 +76,7 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 
 		// new thread
-		new SyncTpThread(groupId, neId).start();
+		new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId)).start();
 
 		return Response.ok().entity(ne).build();
 	}

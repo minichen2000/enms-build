@@ -13,9 +13,9 @@ import com.nsb.enms.restful.db.client.model.TP;
 
 public class SyncTpThread extends Thread {
 
-	private String groupId, neId;
+	private int groupId, neId;
 
-	public SyncTpThread(String groupId, String neId) {
+	public SyncTpThread(int groupId, int neId) {
 		this.groupId = groupId;
 		this.neId = neId;
 	}
@@ -45,8 +45,8 @@ public class SyncTpThread extends Thread {
 			for (TpEntity tp : tpList) {
 				System.out.println("tp = " + tp);
 				TP newTp = new TP();
+				newTp.setNeId(String.valueOf(neId));
 				newTp.setUserLabel(tp.getUserLabel());
-				newTp.setNeId(neId);
 				tps.add(newTp);
 			}
 			tpsApi.addTPs(tps);
