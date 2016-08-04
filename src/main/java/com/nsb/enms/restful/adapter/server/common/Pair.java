@@ -2,53 +2,55 @@ package com.nsb.enms.restful.adapter.server.common;
 
 import java.io.Serializable;
 
-public class Pair<K, V> implements Serializable
+public class Pair<T1, T2> implements Serializable
 {
     private static final long serialVersionUID = -7003536441367732878L;
 
-    private Object first;
+    private T1 first;
 
-    private Object second;
+    private T2 second;
 
     public Pair()
     {
     }
 
-    public Pair( Object obj1, Object obj2 )
+    public Pair( T1 obj1, T2 obj2 )
     {
-        first = obj1;
-        second = obj2;
+        this.first = obj1;
+        this.second = obj2;
     }
 
-    public Object getFirst()
+    public T1 getFirst()
     {
         return first;
     }
 
-    public void setFirst( Object obj1 )
+    public void setFirst( T1 obj1 )
     {
-        first = obj1;
+        this.first = obj1;
     }
 
-    public Object getSecond()
+    public T2 getSecond()
     {
         return second;
     }
 
-    public void setSecond( Object obj2 )
+    public void setSecond( T2 obj2 )
     {
-        second = obj2;
+        this.second = obj2;
     }
 
+    @Override
     public int hashCode()
     {
-        int prime = 31;
+        final int prime = 31;
         int result = 1;
-        result = prime * result + (first != null ? first.hashCode() : 0);
-        result = prime * result + (second != null ? second.hashCode() : 0);
+        result = prime * result + ((first == null) ? 0 : first.hashCode());
+        result = prime * result + ((second == null) ? 0 : second.hashCode());
         return result;
     }
 
+    @Override
     public boolean equals( Object obj )
     {
         if( this == obj )
@@ -57,7 +59,8 @@ public class Pair<K, V> implements Serializable
             return false;
         if( getClass() != obj.getClass() )
             return false;
-        Pair other = (Pair) obj;
+        @SuppressWarnings("unchecked")
+        Pair<T1, T2> other = (Pair<T1, T2>) obj;
         if( first == null )
         {
             if( other.first != null )
@@ -75,10 +78,9 @@ public class Pair<K, V> implements Serializable
         return true;
     }
 
+    @Override
     public String toString()
     {
-        return (new StringBuilder()).append( "Pair-[" )
-                .append( first.toString() ).append( ", " )
-                .append( second.toString() ).append( ']' ).toString();
+        return "Pair-[" + first.toString() + ", " + second.toString() + ']';
     }
 }

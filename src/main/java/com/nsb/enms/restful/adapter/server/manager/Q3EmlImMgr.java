@@ -174,12 +174,12 @@ public class Q3EmlImMgr
     {
         for( Pair<Integer, Integer> groupNeId : groupNeIdToNe.keySet() )
         {
-            if( groupNeId.getFirst().equals( new Integer( groupId ) ) )
+            if( groupNeId.getFirst().equals( groupId ) )
             {
                 NeInfo neInfo = groupNeIdToNe.get( groupNeId );
                 try
                 {
-                    int neId = (int) groupNeId.getSecond();
+                    int neId = groupNeId.getSecond();
                     addGroupNe( groupId, neId );
                     new CreateNe().createNe( groupId, neId,
                         neInfo.getNeRelease(), neInfo.getNeType(),
