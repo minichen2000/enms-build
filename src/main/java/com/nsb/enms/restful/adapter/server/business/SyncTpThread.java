@@ -8,16 +8,19 @@ import com.nsb.enms.restful.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.restful.adapter.server.action.method.tp.GetTp;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.db.client.ApiException;
+import com.nsb.enms.restful.db.client.api.NesApi;
 import com.nsb.enms.restful.db.client.api.TpsApi;
 import com.nsb.enms.restful.db.client.model.TP;
 
 public class SyncTpThread extends Thread {
 
 	private int groupId, neId;
+	private String id;
 
-	public SyncTpThread(int groupId, int neId) {
+	public SyncTpThread(int groupId, int neId, String id) {
 		this.groupId = groupId;
 		this.neId = neId;
+		this.id = id;
 	}
 
 	@Override
@@ -47,14 +50,32 @@ public class SyncTpThread extends Thread {
 				System.out.println("tp = " + tp);
 				TP newTp = new TP();
 				newTp.setAid(tp.getMoi());
-				newTp.setNeId(String.valueOf(neId));
+				newTp.setNeId(id);
 				newTp.setUserLabel(tp.getMoi());
 				newTp.setTpType(tp.getMoc());
 				tps.add(newTp);
 			}
 			tpsApi.addTPs(tps);
+
+			// update the value of alignmentStatus for ne to true
+			updateNeAttr(id);
 		} catch (AdapterException e) {
 			e.printStackTrace();
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * update the value of alignmentStatus for ne to true
+	 */
+	private void updateNeAttr(String id) {
+		NesApi nesApi = new NesApi();
+		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
+		ne.setId(id);
+		ne.setAlignmentStatus("true");
+		try {
+			nesApi.updateNE(ne);
 		} catch (ApiException e) {
 			e.printStackTrace();
 		}
