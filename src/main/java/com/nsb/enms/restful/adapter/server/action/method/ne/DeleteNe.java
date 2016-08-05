@@ -71,12 +71,9 @@ public class DeleteNe
             }
             br.close();
 
-            if( process.waitFor() != 0 || !flag )
-            {
-                return false;
-            }
+            process.waitFor();
             // Q3EmlImMgr.getInstance().removeNe( groupId, neId );
-            return true;
+            return flag;
             // }
         }
         catch( Exception e )
