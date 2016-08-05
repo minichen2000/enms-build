@@ -37,11 +37,34 @@ public class DeleteNe
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-            String line;
+            String line;            
+            while( (line = br.readLine()) != null )
+            {
+                // if( line.contains( "ActionReply received" ) )
+                // {
+                // flag = true;
+                // }
+            }
+            br.close();
+            process.waitFor();
+            // if( process.waitFor() != 0 || !flag )
+            // {
+            // throw new AdapterException(
+            // AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+            // "Stop supervision failed!!!" );
+            // }
+            //
+            // if( flag )
+            // {
+            process = new ExecExternalScript().run(
+                CommonConstants.TSTMGR_SCRIPT_TYPE, deleteNeScenario,
+                groupId + "", neId + "" );
+            inputStream = process.getInputStream();
+            br = new BufferedReader( new InputStreamReader( inputStream ) );
             boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-                if( line.contains( "ActionReply received" ) )
+                if( line.contains( "DeleteReply received" ) )
                 {
                     flag = true;
                 }
@@ -50,35 +73,11 @@ public class DeleteNe
 
             if( process.waitFor() != 0 || !flag )
             {
-                throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Stop supervision failed!!!" );
+                return false;
             }
-
-            if( flag )
-            {
-                process = new ExecExternalScript().run(
-                    CommonConstants.TSTMGR_SCRIPT_TYPE, deleteNeScenario,
-                    groupId + "", neId + "" );
-                inputStream = process.getInputStream();
-                br = new BufferedReader( new InputStreamReader( inputStream ) );
-                flag = false;
-                while( (line = br.readLine()) != null )
-                {
-                    if( line.contains( "DeleteReply received" ) )
-                    {
-                        flag = true;
-                    }
-                }
-                br.close();
-
-                if( process.waitFor() != 0 || !flag )
-                {
-                    return false;
-                }
-                // Q3EmlImMgr.getInstance().removeNe( groupId, neId );
-                return true;
-            }
+            // Q3EmlImMgr.getInstance().removeNe( groupId, neId );
+            return true;
+            // }
         }
         catch( Exception e )
         {
@@ -86,6 +85,5 @@ public class DeleteNe
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
-        return false;
     }
 }
