@@ -10,10 +10,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
+import com.nsb.enms.restful.adapter.server.common.Pair;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.restful.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.IdGenUtil;
 
@@ -40,8 +42,15 @@ public class CreateNe
     {
         int groupId = 100;
         int neId = IdGenUtil.getId();
+        // Pair<Integer, Integer> groupNeId =
+        // Q3EmlImMgr.getInstance().getGroupNeId();
+        // int groupId = groupNeId.getFirst();
+        // int neId = groupNeId.getSecond();
         NeEntity ne = createNe( groupId, neId, neRelease, neType, userLabel,
             locationName, neAddress );
+        // Q3EmlImMgr.getInstance().storeNeInfo( groupId, neId, neRelease,
+        // neType,
+        // userLabel, locationName, neAddress );
         return ne;
     }
 
@@ -76,6 +85,7 @@ public class CreateNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Create ne failed!!!" );
             }
+
             String scenario = setNeAddressScenario;
             if( pattern.matcher( neAddress ).find() )
             {
@@ -101,9 +111,7 @@ public class CreateNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Set ne address failed!!!" );
             }
-
             return new GetNe().getNe( groupId, neId );
-
         }
         catch( Exception e )
         {

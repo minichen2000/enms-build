@@ -55,6 +55,10 @@ public class ConfigKey
 
     public static final String REFERENCE_CONF_FILES = "REFERENCE_CONF_FILES";
 
+    public static final String EMLIM_SCRIPT_DIR = "EMLIM_SCRIPT_DIR";
+
+    public static final String DEFAULT_EMLIM_SCRIPT_DIR = "";
+
     public static final String Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
 
     public static final String DEFAULT_Q3_EMLIM_SCRIPT = "";
@@ -77,8 +81,4 @@ public class ConfigKey
 
     public static final String DEFAULT_STOP_SUPERVISION_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
             + "StopSupervision.req";
-
-    public static final String EMLIM_SCRIPT_DIR = "EMLIM_SCRIPT_DIR";
-
-    public static final String DEFAULT_EMLIM_SCRIPT_DIR = "";
 }

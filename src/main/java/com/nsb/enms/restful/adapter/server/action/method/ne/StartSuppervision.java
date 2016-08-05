@@ -19,6 +19,8 @@ public class StartSuppervision
     private static final Logger log = LogManager
             .getLogger( StartSuppervision.class );
 
+    private static final int MAX_COUNT = 3;
+    
     private static String startSupervisionScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.START_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_START_SUPERVISION_REQ );
@@ -28,10 +30,8 @@ public class StartSuppervision
     public boolean startSuppervision( int groupId, int neId )
             throws AdapterException
     {
-    	System.out.println("-----------1---------------");
-    	
         int count = 0;
-        while( count < 3 )
+        while( count < MAX_COUNT )
         {
             try
             {
@@ -42,8 +42,6 @@ public class StartSuppervision
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );
                 String line;
-                
-                System.out.println("-----------2---------------");
                 
                 while( (line = br.readLine()) != null )
                 {
@@ -66,9 +64,6 @@ public class StartSuppervision
 
                 Thread.sleep( 10000 );
 
-                
-                System.out.println("-----------3---------------");
-                
             }
             catch( Exception e )
             {

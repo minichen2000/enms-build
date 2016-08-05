@@ -34,7 +34,6 @@ public class ExecExternalScript
     public Process run( String scriptType, String... params ) throws AdapterException
     {
         String[] cmdArray = new String[params.length + 1];
-        System.out.println( "The scriptType is " + scriptType );
         switch( scriptType )
         {
             case "tstmgr":

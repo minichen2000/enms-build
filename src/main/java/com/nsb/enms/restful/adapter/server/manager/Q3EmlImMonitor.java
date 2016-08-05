@@ -57,7 +57,7 @@ public class Q3EmlImMonitor implements Runnable
                     if( process.waitFor() != 0 )
                     {
                         log.error( "Execute external script " + monitorScript
-                                + "failed!!!" );
+                                + "failed, groupId=" + groupId );
                     }
 
                     if( !flag )

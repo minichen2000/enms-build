@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -25,7 +26,7 @@ public class Q3EmlImMgr
 {
     private static final Logger log = LogManager.getLogger( Q3EmlImMgr.class );
 
-    private static Map<Integer, List<Integer>> groupToNeId = new HashMap<>();
+    private static Map<Integer, List<Integer>> groupToNeId = new LinkedHashMap<>();
 
     private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
 
@@ -52,6 +53,7 @@ public class Q3EmlImMgr
             if( !groupToNeId.containsKey( groupId ) )
             {
                 startEmlIm( groupId );
+                groupId++;
             }
         }
 
@@ -80,7 +82,6 @@ public class Q3EmlImMgr
 
             br.close();
             groupToNeId.put( groupId, new ArrayList<Integer>() );
-            groupId++;
         }
         catch( Exception e )
         {
@@ -93,17 +94,13 @@ public class Q3EmlImMgr
     public synchronized Pair<Integer, Integer> getGroupNeId()
             throws AdapterException
     {
-        int neId = 0;
+        int neId = 1;
         for( int groupId : groupToNeId.keySet() )
         {
             List<Integer> neIds = groupToNeId.get( groupId );
             if( neIds.size() < MAX_NE_COUNT )
             {
-                if( neIds.size() == 0 )
-                {
-                    neId = 1;
-                }
-                else
+                if( !neIds.isEmpty() )
                 {
                     neId = neIds.get( neIds.size() - 1 ) + 1;
                 }
@@ -146,12 +143,6 @@ public class Q3EmlImMgr
             String neAddress )
     {
         rwLock.writeLock().lock();
-        List<Integer> neIds = groupToNeId.get( groupId );
-        if( !neIds.contains( neId ) )
-        {
-            neIds.add( neId );
-        }
-
         Pair<Integer, Integer> key = new Pair<>( groupId, neId );
         NeInfo neInfo = groupNeIdToNe.get( key );
         if( neInfo == null )
