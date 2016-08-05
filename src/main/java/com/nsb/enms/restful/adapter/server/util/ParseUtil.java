@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class ParseUtil
 {
-    private static Pattern pattern = Pattern.compile( "=\\s*(\\w+.*)\\s+" );
+    private static Pattern pattern = Pattern.compile( "=\\s*(\\w+.*?)\\s+" );
 
     private static Pattern pattern1 = Pattern
             .compile( "=\\s*\\w*\\s*(\\w+)\\s*" );
@@ -82,7 +82,7 @@ public class ParseUtil
 
     public static void main( String[] args )
     {
-        String string = "neRelease=2.7B ,";
+        String string = "userLabel=unlock (1) ,";
         System.out.println( parseAttr( string ) );
     }
 }
