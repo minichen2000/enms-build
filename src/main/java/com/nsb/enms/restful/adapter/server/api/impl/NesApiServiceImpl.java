@@ -59,7 +59,7 @@ public class NesApiServiceImpl extends NesApiService {
 		com.nsb.enms.restful.db.client.model.NE ne = constructNe(entity, groupId, neId);
 
 		try {
-			nesApi.addNe(ne);
+			ne = nesApi.addNe(ne);
 		} catch (com.nsb.enms.restful.db.client.ApiException e) {
 			e.printStackTrace();
 			return Response.serverError().entity(e).build();
@@ -79,8 +79,9 @@ public class NesApiServiceImpl extends NesApiService {
 		System.out.println(entity.getNeType());
 
 		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
-		ne.setId(neId);
 		ne.setAid(entity.getMoi());
+		ne.setNeId(neId);
+		ne.setGroupId(groupId);
 		ne.setUserLabel(entity.getUserLabel());
 		ne.setNativeName(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
@@ -122,6 +123,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response nesGet(String netype, String version, SecurityContext securityContext) throws NotFoundException {
+		System.out.println("adapter-------nesGet");
 		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
 		try {
 			nes = nesApi.nesGet(netype, version);
