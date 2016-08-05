@@ -69,6 +69,8 @@ public class NesApiServiceImpl extends NesApiService {
 		// new thread
 		new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), ne.getId()).start();
 
+		System.out.println("adapter----------------addNe----------end");
+		
 		return Response.ok().entity(ne).build();
 	}
 
@@ -81,8 +83,6 @@ public class NesApiServiceImpl extends NesApiService {
 
 		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
 		ne.setAid(entity.getMoi());
-		ne.setNeId(neId);
-		ne.setGroupId(groupId);
 		ne.setUserLabel(entity.getUserLabel());
 		ne.setNativeName(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
