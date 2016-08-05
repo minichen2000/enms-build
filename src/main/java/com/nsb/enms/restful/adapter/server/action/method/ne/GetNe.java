@@ -74,7 +74,7 @@ public class GetNe
                         if( line.startsWith( "neRelease" ) )
                         {
                             neEntity.setNeRelease(
-                                ParseUtil.parseRelease( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 

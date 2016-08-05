@@ -5,18 +5,22 @@ import java.util.regex.Pattern;
 
 public class ParseUtil
 {
-    private static Pattern pattern1 = Pattern.compile( "=\\s*\\w*\\s*(\\w+)\\s*" );
+    private static Pattern pattern = Pattern.compile( "=\\s*(\\w+.*)\\s+" );
 
-    private static Pattern pattern2 = Pattern.compile( "=\\s*(\\w+)\\s*" );
+    private static Pattern pattern1 = Pattern
+            .compile( "=\\s*\\w*\\s*(\\w+)\\s*" );
 
-    private static Pattern pattern3 = Pattern.compile( "=\\s*(\\d+.\\w*)\\s*" );
+    // private static Pattern pattern3 = Pattern.compile( "=\\s*(\\d+.\\w*)\\s*"
+    // );
 
-    private static Pattern pattern4 = Pattern.compile( "=\\s*\\w*_*(\\w+)\\s*" );
+    private static Pattern pattern4 = Pattern
+            .compile( "=\\s*\\w*_*(\\w+)\\s*" );
 
     public static String parseAttrWithSingleValue( String line )
     {
-        return line.substring( line.indexOf( "{" ) + 1,
-            line.lastIndexOf( "}" ) ).trim();
+        return line
+                .substring( line.indexOf( "{" ) + 1, line.lastIndexOf( "}" ) )
+                .trim();
     }
 
     public static String parseAttrWithMultiValue( String line )
@@ -35,7 +39,7 @@ public class ParseUtil
 
     public static String parseAttr( String line )
     {
-        Matcher matcher = pattern2.matcher( line );
+        Matcher matcher = pattern.matcher( line );
         if( matcher.find() )
         {
             return matcher.group( 1 );
@@ -53,15 +57,15 @@ public class ParseUtil
         return "";
     }
 
-    public static String parseRelease( String line )
-    {
-        Matcher matcher = pattern3.matcher( line );
-        if( matcher.find() )
-        {
-            return matcher.group( 1 );
-        }
-        return "";
-    }
+    // public static String parseRelease( String line )
+    // {
+    // Matcher matcher = pattern3.matcher( line );
+    // if( matcher.find() )
+    // {
+    // return matcher.group( 1 );
+    // }
+    // return "";
+    // }
 
     public static boolean parseBooleanAttr( String line )
     {
@@ -78,7 +82,7 @@ public class ParseUtil
 
     public static void main( String[] args )
     {
-        String string = "neType=gString ne1662smc ,";
-        System.out.println( parseAttr1( string ) );
+        String string = "neRelease=2.7B ,";
+        System.out.println( parseAttr( string ) );
     }
 }

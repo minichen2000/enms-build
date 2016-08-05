@@ -76,10 +76,8 @@ public class DeleteNe
                 {
                     return false;
                 }
+                // Q3EmlImMgr.getInstance().removeNe( groupId, neId );
                 return true;
-                // Q3EmlImMgr.getInstance().removeNe( Integer.parseInt( groupId
-                // ),
-                // Integer.parseInt( neId ) );
             }
         }
         catch( Exception e )
