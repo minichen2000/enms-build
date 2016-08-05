@@ -928,14 +928,6 @@
                     "type": "string",
                     "example": 10000
                 },
-                "neId": {
-                    "type": "string",
-                    "example": 10000
-                },
-                "groupId": {
-                    "type": "string",
-                    "example": 10000
-                },
                 "userLabel": {
                     "type": "string",
                     "example": "NE01/01"
