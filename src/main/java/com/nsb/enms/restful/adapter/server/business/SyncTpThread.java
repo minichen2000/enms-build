@@ -50,7 +50,7 @@ public class SyncTpThread extends Thread {
 				System.out.println("tp = " + tp);
 				TP newTp = new TP();
 				newTp.setAid(tp.getMoi());
-				newTp.setNeId(String.valueOf(neId));
+				newTp.setNeId(id);
 				newTp.setUserLabel(tp.getMoi());
 				newTp.setTpType(tp.getMoc());
 				tps.add(newTp);
