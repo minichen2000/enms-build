@@ -66,7 +66,7 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 
 		// new thread
-		new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId)).start();
+		new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), ne.getId()).start();
 
 		return Response.ok().entity(ne).build();
 	}
