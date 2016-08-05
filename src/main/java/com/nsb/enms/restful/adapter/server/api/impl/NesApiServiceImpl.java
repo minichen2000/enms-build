@@ -20,6 +20,7 @@ import com.nsb.enms.restful.adapter.server.model.NE;
 import com.nsb.enms.restful.adapter.server.model.NEExtraInfo;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.NesApi;
+import com.nsb.enms.restful.db.client.api.TpsApi;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class NesApiServiceImpl extends NesApiService {
@@ -104,9 +105,48 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response deleteNE(String neid, SecurityContext securityContext) throws NotFoundException {
+		System.out.println("adapter------deleteNE");
 		DeleteNe deleteNe = new DeleteNe();
-		// deleteNe.deleteNe(groupId, neId);
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		try {
+			com.nsb.enms.restful.db.client.model.NE ne = nesApi.getNeById(neid);
+			System.out.println("ne = " + ne);
+
+			String moi = StringUtils.EMPTY;
+			List<com.nsb.enms.restful.db.client.model.NEExtraInfo> extInfos = ne.getExtraInfo();
+			for (com.nsb.enms.restful.db.client.model.NEExtraInfo extInfo : extInfos) {
+				if ("moi".equalsIgnoreCase(extInfo.getKey())) {
+					moi = extInfo.getValue();
+					break;
+				}
+			}
+
+			if (StringUtils.isEmpty(moi)) {
+				return Response.serverError().build();
+			}
+			String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+			String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+
+			System.out.println("neGroupId = " + groupId);
+			System.out.println("neId = " + neId);
+
+			deleteNe.deleteNe(Integer.valueOf(groupId), Integer.valueOf(neId));
+
+			// delete db record, contains ne and tp
+			nesApi.deleteNE(neid);
+			TpsApi tpsApi = new TpsApi();
+			tpsApi.deleteTpsByNeId(neid);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		} catch (AdapterException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+
+		return Response.ok().build();
 	}
 
 	@Override

@@ -376,6 +376,37 @@
                         "description": "TP not found"
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "tps"
+                ],
+                "summary": "Delete tps by neId",
+                "description": "This can only be done by the logged in user.",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "deleteTpsByNeId",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "neid",
+                        "description": "NEID of TP that needs to be deleted",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "NE not found"
+                    }
+                }
             }
         },
         "/tps/ne/{neid}/layer_rate/{layerrate}": {
