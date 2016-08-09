@@ -63,8 +63,14 @@ public class TpsApiServiceImpl extends TpsApiService {
 	@Override
 	public Response getTPsByLayerrate(String neid, String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		try {
+			tpList = tpsApi.getTPsByLayerrate(neid, layerrate);
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
