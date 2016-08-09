@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "LittleNMS API. \nController RESTful interface.\n",
-        "version": "0.1.1",
+        "description": "ENMS API. \nAdapter RESTful interface.\n",
+        "version": "0.1.3",
         "title": "Adapter API"
     },
     "basePath": "/",
@@ -20,20 +20,6 @@
                 "description": "get NEs from NMS",
                 "produces": [
                     "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "netype",
-                        "in": "query",
-                        "type": "string",
-                        "description": "NE type to query"
-                    },
-                    {
-                        "name": "version",
-                        "in": "query",
-                        "type": "string",
-                        "description": "NE version to query"
-                    }
                 ],
                 "responses": {
                     "200": {
@@ -190,6 +176,143 @@
                 }
             }
         },
+
+        "/nes/type/{netype}": {
+            "get": {
+                "tags": [
+
+                    "nes"
+                ],
+
+
+                "summary": "Query NEs by type",
+                "description": "get NEs from NMS",
+                "produces": [
+                    "application/json"
+                ],
+
+                "operationId": "findNeByType",
+                "parameters": [
+                    {
+
+
+
+
+                        "name": "netype",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "NE type to query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/NE"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "NE not found"
+                    }
+                }
+            }
+        },
+        "/nes/version/{neversion}": {
+            "get": {
+                "tags": [
+                    "nes"
+                ],
+                "summary": "Query NEs by version",
+                "description": "get NEs from NMS",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "findNeByVersion",
+                "parameters": [
+                    {
+                        "name": "neversion",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "NE version to query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/NE"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "NE not found"
+                    }
+                }
+            }
+        },
+        "/nes/type/{netype}/version/{neversion}": {
+            "get": {
+                "tags": [
+                    "nes"
+                ],
+                "summary": "Query NEs by type & version",
+                "description": "get NEs from NMS",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "findNeByTypeVersion",
+                "parameters": [
+                    {
+
+
+
+
+                        "name": "netype",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "NE type to query"
+                    },
+                    {
+                        "name": "neversion",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "NE version to query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/NE"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "NE not found"
+                    }
+                }
+            }
+        },
         "/tps": {
             "get": {
                 "tags": [
@@ -201,20 +324,6 @@
                     "application/json"
                 ],
                 "operationId": "getTPs",
-                "parameters": [
-                    {
-                        "name": "tptype",
-                        "in": "query",
-                        "description": "the TP type to query",
-                        "type": "string"
-                    },
-                    {
-                        "name": "neid",
-                        "in": "query",
-                        "description": "the ID of NE",
-                        "type": "string"
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -328,6 +437,45 @@
                         "description": "successful operation",
                         "schema": {
                             "$ref": "#/definitions/TP"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid tpid supplied"
+                    },
+                    "404": {
+                        "description": "TP not found"
+                    }
+                }
+            }
+        },
+        "/tps/type/{tptype}": {
+            "get": {
+                "tags": [
+                    "tps"
+                ],
+                "summary": "Get ports",
+                "description": "Get the ports with queries",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "getTPsByType",
+                "parameters": [
+                    {
+                        "name": "tptype",
+                        "in": "path",
+                        "required": true,
+                        "description": "the TP type to query",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TP"
+                            }
                         }
                     },
                     "400": {
@@ -509,20 +657,20 @@
                 "produces": [
                     "application/json"
                 ],
-                "parameters": [
-                    {
-                        "name": "userlabel",
-                        "in": "query",
-                        "type": "string",
-                        "description": "userlabel of connection to query"
-                    },
-                    {
-                        "name": "connectiontype",
-                        "in": "query",
-                        "type": "string",
-                        "description": "connection type to query"
-                    }
-                ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -647,27 +795,129 @@
                 }
             }
         },
+        "/connections/userlabel/{userlabel}": {
+            "get": {
+                "tags": [
+                    "connections"
+                ],
+                "summary": "Get connections",
+                "description": "get connections from NMS",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "getConnectionByUserLabel",
+                "parameters": [
+                    {
+                        "name": "userlabel",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "userlabel of connection to query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CONNECTION"
+                        }
+                    },
+                    "404": {
+                        "description": "CONNECTION not found"
+                    }
+                }
+            }
+        },
+        "/connections/type/{connectiontype}": {
+            "get": {
+                "tags": [
+                    "connections"
+                ],
+                "summary": "Get connections",
+                "description": "get connections from NMS",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "getConnectionByType",
+                "parameters": [
+                    {
+                        "name": "connectiontype",
+                        "in": "path",
+                        "type": "string",
+                        "required": true,
+                        "description": "connection type to query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/CONNECTION"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "CONNECTION not found"
+                    }
+                }
+            }
+        },
         "/routes": {
             "get": {
                 "tags": [
                     "routes"
                 ],
                 "summary": "Get routes",
-                "description": "get routes from a - z",
+
+                "description": "get all routes",
                 "produces": [
                     "application/json"
                 ],
+                "operationId": "getAllRoutes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ROUTE"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No route found"
+                    }
+                }
+            }
+        },
+        "/routes/anode/{anodeid}/znode/{znodeid}": {
+            "get": {
+                "tags": [
+                    "routes"
+                ],
+                "summary": "Get routes",
+                "description": "get all routes from a to z",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "getRoutesAtoZ",
                 "parameters": [
                     {
-                        "name": "anode",
-                        "in": "query",
+
+
+                        "name": "anodeid",
+                        "in": "path",
                         "type": "string",
                         "required": true,
                         "description": "the start point of the routes"
                     },
                     {
-                        "name": "znode",
-                        "in": "query",
+
+
+                        "name": "znodeid",
+                        "in": "path",
                         "type": "string",
                         "required": true,
                         "description": "the end point of the routes"
@@ -737,6 +987,117 @@
                     },
                     "404": {
                         "description": "No statistics found."
+                    }
+                }
+            }
+        },
+        "/enms/assignments/nes": {
+            "get": {
+                "tags": [
+                    "system"
+                ],
+                "summary": "NEs on the Adapter",
+                "description": "get the NEs hosted by the Adapter.",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "getAssignedNEs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/NEASSIGNMENT"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No NE assigned to the Adapter"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "system"
+                ],
+                "summary": "NE assignment",
+                "description": "Assign NE to Adapter",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "assignNE",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "the NE to assign to the Adapter",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NE"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "system"
+                ],
+                "summary": "Detach the NE from this Adapter",
+                "description": "Un-allocate NE from Adapter",
+                "produces": [
+                    "application/json"
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "unAssignNE",
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "description": "The NE to be unallocated from the Adapter",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/NE"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "405": {
+                        "description": "Invalid input"
+                    }
+                }
+            }
+        },
+        "/enms/statuses/heartbeats": {
+            "get": {
+                "tags": [
+                    "system"
+                ],
+                "summary": "Heart Beat",
+                "description": "ENMS heart beat, to check the system health status",
+                "produces": [
+                    "application/json"
+                ],
+                "operationId": "checkHeartbeat",
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -949,6 +1310,18 @@
                     "type": "string",
                     "example": "pwd"
                 },
+                "coordinates": {
+                    "type": "object",
+                    "description": "The GPS coordinates of the NE",
+                    "properties": {
+                        "longitude": {
+                            "type": "string"
+                        },
+                        "latitude": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "extraInfo": {
                     "type": "array",
                     "items": {
@@ -1049,10 +1422,10 @@
                 "neType": {
                     "type": "string"
                 },
-                "num": {
-                    "type": "integer",
-                    "description": "the count of the NE type"
-                },
+
+
+
+
                 "protocols": {
                     "type": "array",
                     "description": "the list of supported protocols",
@@ -1066,6 +1439,31 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "NEASSIGNMENT": {
+            "type": "object",
+            "description": "The NE assignment information, used for NE assignment and NE status report",
+            "properties": {
+                "adapterID": {
+                    "type": "string",
+                    "description": "the adapter ID, optional"
+                },
+                "assignTime": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string",
+                    "description": "If the NE currently active on the adapter, active or inactive",
+                    "example": "active|inactive|disconnected"
+                },
+                "ne": {
+                    "$ref": "#/definitions/NE"
+                },
+                "remark": {
+                    "type": "string",
+                    "description": "the extra info"
                 }
             }
         }
