@@ -1,6 +1,7 @@
 package com.nsb.enms.restful.adapter.server.api.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -50,6 +51,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 
 	@Override
 	public Response getTPs(String tptype, String neid, SecurityContext securityContext) throws NotFoundException {
+		Date begin = new Date();
 		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
 		try {
 			tpList = tpsApi.getTPs(tptype, neid);
@@ -57,6 +59,10 @@ public class TpsApiServiceImpl extends TpsApiService {
 			e.printStackTrace();
 			return Response.serverError().entity(e).build();
 		}
+
+		Date end = new Date();
+		System.out.println("adapter cost time = " + (end.getTime() - begin.getTime()));
+
 		return Response.ok().entity(tpList).build();
 	}
 
