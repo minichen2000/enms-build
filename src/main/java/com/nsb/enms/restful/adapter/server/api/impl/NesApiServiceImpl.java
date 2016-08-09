@@ -70,7 +70,7 @@ public class NesApiServiceImpl extends NesApiService {
 		new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), ne.getId()).start();
 
 		System.out.println("adapter----------------addNe----------end");
-		
+
 		return Response.ok().entity(ne).build();
 	}
 
@@ -134,7 +134,7 @@ public class NesApiServiceImpl extends NesApiService {
 			// delete db record, contains ne and tp
 			nesApi.deleteNE(neid);
 			TpsApi tpsApi = new TpsApi();
-			tpsApi.deleteTpsByNeId(neid);
+			tpsApi.deleteTPsByNEId(neid);
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			return Response.serverError().entity(e).build();
@@ -162,11 +162,15 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response nesGet(String netype, String version, SecurityContext securityContext) throws NotFoundException {
-		System.out.println("adapter-------nesGet");
+	public Response updateNE(NE body, SecurityContext securityContext) throws NotFoundException {
+		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+	}
+
+	@Override
+	public Response findNeByType(String netype, SecurityContext securityContext) throws NotFoundException {
 		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
 		try {
-			nes = nesApi.nesGet(netype, version);
+			nes = nesApi.findNeByType(netype);
 		} catch (ApiException e) {
 			e.printStackTrace();
 			return Response.serverError().entity(e).build();
@@ -175,8 +179,40 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response updateNE(NE body, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+	public Response findNeByTypeVersion(String netype, String neversion, SecurityContext securityContext)
+			throws NotFoundException {
+		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
+		try {
+			nes = nesApi.findNeByTypeVersion(netype, neversion);
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(nes).build();
+	}
+
+	@Override
+	public Response findNeByVersion(String neversion, SecurityContext securityContext) throws NotFoundException {
+		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
+		try {
+			nes = nesApi.findNeByVersion(neversion);
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(nes).build();
+	}
+
+	@Override
+	public Response nesGet(SecurityContext securityContext) throws NotFoundException {
+		System.out.println("adapter-------nesGet");
+		List<com.nsb.enms.restful.db.client.model.NE> nes = new ArrayList<com.nsb.enms.restful.db.client.model.NE>();
+		try {
+			nes = nesApi.nesGet();
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(nes).build();
 	}
 }

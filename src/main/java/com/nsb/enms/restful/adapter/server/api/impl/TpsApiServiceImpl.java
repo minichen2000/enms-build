@@ -50,23 +50,6 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response getTPs(String tptype, String neid, SecurityContext securityContext) throws NotFoundException {
-		Date begin = new Date();
-		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
-		try {
-			tpList = tpsApi.getTPs(tptype, neid);
-		} catch (ApiException e) {
-			e.printStackTrace();
-			return Response.serverError().entity(e).build();
-		}
-
-		Date end = new Date();
-		System.out.println("adapter cost time = " + (end.getTime() - begin.getTime()));
-
-		return Response.ok().entity(tpList).build();
-	}
-
-	@Override
 	public Response getTPsByLayerrate(String neid, String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
 		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
@@ -83,5 +66,39 @@ public class TpsApiServiceImpl extends TpsApiService {
 	public Response updateTP(TP body, SecurityContext securityContext) throws NotFoundException {
 		// do some magic!
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+	}
+
+	@Override
+	public Response getTPs(SecurityContext securityContext) throws NotFoundException {
+		Date begin = new Date();
+		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		try {
+			tpList = tpsApi.getTPs();
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+
+		Date end = new Date();
+		System.out.println("adapter.getTPs cost time = " + (end.getTime() - begin.getTime()));
+
+		return Response.ok().entity(tpList).build();
+	}
+
+	@Override
+	public Response getTPsByType(String tptype, SecurityContext securityContext) throws NotFoundException {
+		Date begin = new Date();
+		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		try {
+			tpList = tpsApi.getTPsByType(tptype);
+		} catch (ApiException e) {
+			e.printStackTrace();
+			return Response.serverError().entity(e).build();
+		}
+
+		Date end = new Date();
+		System.out.println("adapter.getTPsByType cost time = " + (end.getTime() - begin.getTime()));
+
+		return Response.ok().entity(tpList).build();
 	}
 }
