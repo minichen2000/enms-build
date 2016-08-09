@@ -521,7 +521,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "operationId": "deleteTpsByNeId",
+                "operationId": "deleteTPsByNEId",
                 "parameters": [
                     {
                         "in": "path",
