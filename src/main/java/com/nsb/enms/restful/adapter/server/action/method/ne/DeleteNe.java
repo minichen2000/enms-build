@@ -8,12 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
+import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.manager.Q3EmlImMgr;
-import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 
 public class DeleteNe
 {
@@ -31,13 +30,13 @@ public class DeleteNe
         try
         {
             Process process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, stopSupervisionScenario,
+                ExternalScriptType.TSTMGR, stopSupervisionScenario,
                 groupId + "", neId + "" );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-            String line;            
+            String line;
             while( (line = br.readLine()) != null )
             {
                 // if( line.contains( "ActionReply received" ) )
@@ -56,9 +55,8 @@ public class DeleteNe
             //
             // if( flag )
             // {
-            process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, deleteNeScenario,
-                groupId + "", neId + "" );
+            process = new ExecExternalScript().run( ExternalScriptType.TSTMGR,
+                deleteNeScenario, groupId + "", neId + "" );
             inputStream = process.getInputStream();
             br = new BufferedReader( new InputStreamReader( inputStream ) );
             boolean flag = false;

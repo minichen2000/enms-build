@@ -7,6 +7,7 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
@@ -31,16 +32,16 @@ public class ExecExternalScript
 
     private File fileDir;
 
-    public Process run( String scriptType, String... params ) throws AdapterException
+    public Process run( ExternalScriptType scriptType, String... params ) throws AdapterException
     {
         String[] cmdArray = new String[params.length + 1];
         switch( scriptType )
         {
-            case "tstmgr":
+            case TSTMGR:
                 fileDir = new File( tstmgrDir );
                 cmdArray[0] = tstmgr;
                 break;
-            case "emlim":
+            case EMLIM:
                 fileDir = new File( emlImDir );
                 cmdArray[0] = q3EmlImScript;
                 break;

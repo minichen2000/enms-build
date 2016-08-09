@@ -16,23 +16,23 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.restful.adapter.server.action.method.ne.StartSuppervision;
+import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.restful.adapter.server.common.Pair;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.NeInfo;
 
 public class Q3EmlImMgr
 {
     private static final Logger log = LogManager.getLogger( Q3EmlImMgr.class );
 
-    private static Map<Integer, List<Integer>> groupToNeId = new LinkedHashMap<>();
+    private static Map<Integer, List<Integer>> groupToNeId = new LinkedHashMap<Integer, List<Integer>>();
 
     private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
 
     private static final int MAX_NE_COUNT = 200;
 
-    private static Map<Pair<Integer, Integer>, NeInfo> groupNeIdToNe = new HashMap<>();
+    private static Map<Pair<Integer, Integer>, NeInfo> groupNeIdToNe = new HashMap<Pair<Integer, Integer>, NeInfo>();
 
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
@@ -65,7 +65,7 @@ public class Q3EmlImMgr
         try
         {
             Process process = new ExecExternalScript()
-                    .run( CommonConstants.EMLIM_SCRIPT_TYPE, groupId + "" );
+                    .run( ExternalScriptType.EMLIM, groupId + "" );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
             String line;
@@ -143,7 +143,8 @@ public class Q3EmlImMgr
             String neAddress )
     {
         rwLock.writeLock().lock();
-        Pair<Integer, Integer> key = new Pair<>( groupId, neId );
+        Pair<Integer, Integer> key = new Pair<Integer, Integer>( groupId,
+                neId );
         NeInfo neInfo = groupNeIdToNe.get( key );
         if( neInfo == null )
         {

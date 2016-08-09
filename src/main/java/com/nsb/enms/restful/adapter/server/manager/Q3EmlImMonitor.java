@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
+import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 
@@ -41,8 +42,9 @@ public class Q3EmlImMonitor implements Runnable
                 try
                 {
                     boolean flag = false;
-                    Process process = new ExecExternalScript()
-                            .run( monitorScript, groupId + "" );
+                    Process process = new ExecExternalScript().run(
+                        ExternalScriptType.TSTMGR, monitorScript,
+                        groupId + "" );
                     BufferedReader br = new BufferedReader(
                             new InputStreamReader( process.getInputStream() ) );
                     String line;
@@ -63,8 +65,9 @@ public class Q3EmlImMonitor implements Runnable
                     if( !flag )
                     {
                         Q3EmlImMgr.getInstance().removeGroup( groupId );
-                        process = new ExecExternalScript()
-                                .run( killProcessScript, groupId + "" );
+                        process = new ExecExternalScript().run(
+                            ExternalScriptType.TSTMGR, killProcessScript,
+                            groupId + "" );
                         process.waitFor();
                         Q3EmlImMgr.getInstance().startEmlIm( groupId );
                         Q3EmlImMgr.getInstance().reCreateNe( groupId );

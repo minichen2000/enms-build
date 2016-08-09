@@ -10,13 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.Pair;
+import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.manager.Q3EmlImMgr;
-import com.nsb.enms.restful.adapter.server.util.CommonConstants;
 import com.nsb.enms.restful.adapter.server.util.IdGenUtil;
 
 public class CreateNe
@@ -61,9 +59,8 @@ public class CreateNe
         try
         {
             Process process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, createNeScenario,
-                groupId + "", neId + "", neRelease, neType, userLabel,
-                locationName );
+                ExternalScriptType.TSTMGR, createNeScenario, groupId + "",
+                neId + "", neRelease, neType, userLabel, locationName );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -91,9 +88,8 @@ public class CreateNe
             {
                 scenario = setNeIsaAddressScenario;
             }
-            process = new ExecExternalScript().run(
-                CommonConstants.TSTMGR_SCRIPT_TYPE, scenario, groupId + "",
-                neId + "", neAddress );
+            process = new ExecExternalScript().run( ExternalScriptType.TSTMGR,
+                scenario, groupId + "", neId + "", neAddress );
             inputStream = process.getInputStream();
             br = new BufferedReader( new InputStreamReader( inputStream ) );
             flag = false;
