@@ -53,6 +53,9 @@ public class SyncTpThread extends Thread {
 				newTp.setNeId(id);
 				newTp.setUserLabel(tp.getMoi());
 				newTp.setTpType(tp.getMoc());
+				
+				// TODO 读取映射文件获取层速率
+				newTp.setLayerRate("5");
 				tps.add(newTp);
 			}
 			tpsApi.addTPs(tps);
