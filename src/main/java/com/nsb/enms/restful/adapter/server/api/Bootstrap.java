@@ -35,18 +35,6 @@ public class Bootstrap extends HttpServlet {
 	}
 
 	private void loadConf(ServletContext context) {
-		/*
-		 * InputStream in =
-		 * context.getResourceAsStream("/WEB-INF/conf/conf.properties");
-		 * Properties prop = new Properties(); try { prop.load(in); } catch
-		 * (IOException e) { e.printStackTrace(); }
-		 * 
-		 * String dbUrl = prop.getProperty("DB_URL"); initDbApiClient(dbUrl);
-		 * 
-		 * String ctrlUrl = prop.getProperty("CTRL_URL");
-		 * initControllerApiClient(ctrlUrl);
-		 */
-
 		String confPath = context.getRealPath("/WEB-INF/conf");
 		try {
 			ConfLoader.getInstance().loadConf(confPath + "/conf.properties");
