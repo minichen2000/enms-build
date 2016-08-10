@@ -2,6 +2,8 @@ package com.nsb.enms.restful.adapter.server.common.conf;
 
 public class ConfigKey
 {
+    public static final String REFERENCE_CONF_FILES = "REFERENCE_CONF_FILES";
+    
     public static final String TSTMGR_SCRIPT_DIR = "TSTMGR_SCRIPT_DIR";
 
     public static final String DEFAULT_TSTMGR_SCRIPT_DIR = "/opt/nms/EML_1/TSTMGR/script/";
@@ -52,8 +54,6 @@ public class ConfigKey
 
     public static final String DEFAULT_START_SUPERVISION_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
             + "StartSupervision.req";
-
-    public static final String REFERENCE_CONF_FILES = "REFERENCE_CONF_FILES";
 
     public static final String EMLIM_SCRIPT_DIR = "EMLIM_SCRIPT_DIR";
 
