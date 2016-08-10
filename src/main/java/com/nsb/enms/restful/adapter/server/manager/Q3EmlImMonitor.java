@@ -22,8 +22,8 @@ public class Q3EmlImMonitor implements Runnable
     private static String monitorScript = ConfLoader.getInstance().getConf(
         ConfigKey.LIST_GROUP_SCRIPT, ConfigKey.DEFAULT_LIST_GROUP_SCRIPT );
 
-    private static String killProcessScript = ConfLoader.getInstance().getConf(
-        ConfigKey.KILL_PROCESS_SCRIPT, ConfigKey.DEFAULT_KILL_PROCESS_SCRIPT );
+    private static String killEmlimScript = ConfLoader.getInstance().getConf(
+        ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );
 
     private Set<Integer> groupIds;
 
@@ -66,7 +66,7 @@ public class Q3EmlImMonitor implements Runnable
                     {
                         Q3EmlImMgr.getInstance().removeGroup( groupId );
                         process = new ExecExternalScript().run(
-                            ExternalScriptType.TSTMGR, killProcessScript,
+                            ExternalScriptType.TSTMGR, killEmlimScript,
                             groupId + "" );
                         process.waitFor();
                         Q3EmlImMgr.getInstance().startEmlIm( groupId );

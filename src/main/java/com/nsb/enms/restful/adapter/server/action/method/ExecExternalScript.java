@@ -18,7 +18,7 @@ public class ExecExternalScript
     private static final Logger log = LogManager
             .getLogger( ExecExternalScript.class );
 
-    private static String tstmgr = ConfLoader.getInstance().getConf(
+    private static String tstmgrScript = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT, ConfigKey.DEFAULT_TSTMGR_SCRIPT );
     
     private static String q3EmlImScript = ConfLoader.getInstance().getConf(
@@ -39,7 +39,7 @@ public class ExecExternalScript
         {
             case TSTMGR:
                 fileDir = new File( tstmgrDir );
-                cmdArray[0] = tstmgr;
+                cmdArray[0] = tstmgrScript;
                 break;
             case EMLIM:
                 fileDir = new File( emlImDir );

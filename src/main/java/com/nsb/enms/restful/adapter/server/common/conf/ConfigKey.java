@@ -68,9 +68,9 @@ public class ConfigKey
     public static final String DEFAULT_LIST_GROUP_SCRIPT = DEFAULT_TSTMGR_SCENARIO_DIR
             + "ListGroup.req";
 
-    public static final String KILL_PROCESS_SCRIPT = "KILL_PROCESS_SCRIPT";
+    public static final String KILL_EMLIM_SCRIPT = "KILL_EMLIM_SCRIPT";
 
-    public static final String DEFAULT_KILL_PROCESS_SCRIPT = "";
+    public static final String DEFAULT_KILL_EMLIM_SCRIPT = "";
 
     public static final String NE_DELETE_REQ = "NE_DELETE_REQ";
 
