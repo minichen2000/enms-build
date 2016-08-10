@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="trace">
+	<appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<ThresholdFilter level="trace" onMatch="ACCEPT"
+				onMismatch="DENY" />
+			<PatternLayout
+				pattern="%n%-5p %d{yy-MM-dd HH:mm:ss} (%c) [%t]%n%m%n" />
+		</Console>		
+		<RollingFile name="RollingFile" fileName="/root/adapter/trace/adp_log"
+			filePattern="root/adapter/trace/$${date:yyyy-MM}/adp-%d{MM-dd-yyyy}-%i.log.gz">
+			<PatternLayout
+				pattern="%n%-5p %d{yy-MM-dd HH:mm:ss} (%c) [%t]%n%m%n" />
+			<SizeBasedTriggeringPolicy size="1 MB" />
+		</RollingFile>
+	</appenders>
+	<loggers>
+		<root level="trace">
+			<appender-ref ref="RollingFile" />
+			<appender-ref ref="Console" />
+		</root>
+	</loggers>
+</configuration>   

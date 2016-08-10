@@ -25,6 +25,7 @@ public class GetNe
 
     public NeEntity getNe( int groupId, int neId ) throws AdapterException
     {
+        log.debug( "------------Start getNe-------------------" );
         try
         {
             Process process = new ExecExternalScript().run(
@@ -118,6 +119,7 @@ public class GetNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Get ne failed!!!" );
             }
+            log.debug( "------------End getNe-------------------" );
             return neEntity;
         }
         catch( Exception e )
