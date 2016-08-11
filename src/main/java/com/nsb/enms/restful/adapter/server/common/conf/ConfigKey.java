@@ -81,4 +81,8 @@ public class ConfigKey
 
     public static final String DEFAULT_STOP_SUPERVISION_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
             + "StopSupervision.req";
+
+    public static final String EMLIM_MONITOR_INTERVAL = "EMLIM_MONITOR_INTERVAL";
+    
+    public static final int DEFAULT_EMLIM_MONITOR_INTERVAL = 10 * 60 * 1000;
 }

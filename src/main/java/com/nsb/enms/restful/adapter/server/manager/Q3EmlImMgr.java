@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -18,6 +19,8 @@ import com.nsb.enms.restful.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.restful.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.restful.adapter.server.common.Pair;
+import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.restful.adapter.server.util.NeInfo;
@@ -57,7 +60,12 @@ public class Q3EmlImMgr
             }
         }
 
-        new Thread( new Q3EmlImMonitor( groupToNeId.keySet() ) ).start();
+        Timer timer = new Timer();
+        long period = ConfLoader.getInstance().getInt(
+            ConfigKey.EMLIM_MONITOR_INTERVAL,
+            ConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL );
+        timer.scheduleAtFixedRate(
+            new Q3EmlImMonitorTask( groupToNeId.keySet() ), period, period );
     }
 
     public void startEmlIm( int groupId ) throws AdapterException
