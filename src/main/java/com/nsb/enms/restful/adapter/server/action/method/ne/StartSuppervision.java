@@ -20,7 +20,9 @@ public class StartSuppervision
             .getLogger( StartSuppervision.class );
 
     private static final int MAX_COUNT = 3;
-    
+
+    private static final long SLEEP_TIME = 10000;
+
     private static String startSupervisionScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.START_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_START_SUPERVISION_REQ );
@@ -36,13 +38,13 @@ public class StartSuppervision
             try
             {
                 Process process = new ExecExternalScript().run(
-                    ExternalScriptType.TSTMGR,
-                    startSupervisionScenario, groupId + "", neId + "" );
+                    ExternalScriptType.TSTMGR, startSupervisionScenario,
+                    groupId + "", neId + "" );
                 InputStream inputStream = process.getInputStream();
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );
                 String line;
-                
+
                 while( (line = br.readLine()) != null )
                 {
                     if( line.contains( "ActionReply received" ) )
@@ -62,7 +64,7 @@ public class StartSuppervision
                 }
                 count++;
 
-                Thread.sleep( 10000 );
+                Thread.sleep( SLEEP_TIME );
 
             }
             catch( Exception e )
