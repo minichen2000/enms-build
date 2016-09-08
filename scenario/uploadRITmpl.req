@@ -1,0 +1,11 @@
+CMIS_REQUEST = m_action
+  OBJECT_CLASS = 0.3.0.2.3.10; // sdhNE class
+  OBJECT_INSTANCE = { <OBJECT_INST> {
+    <FDN> {
+          <RDN> { <AVA> { 0.3.0.2.7.7, __NE_GROUP_ID__} }, // neGroupId (tbr)
+          <RDN> { <AVA> { 0.3.0.2.7.13, __SDH_NE_ID__} } //sdhNEId (tbr)
+    } } };
+  SCOPE = { baseObject };
+  ACTION_TYPE = 0.3.0.2.9.18;  // uploadRI action
+END_REQUEST // good luck
+

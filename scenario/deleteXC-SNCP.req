@@ -1,0 +1,15 @@
+CMIS_REQUEST = m_delete
+  OBJECT_CLASS = 0.0.7.774.127.4.0.3.2; //connectionProtection
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __PARAMS_1__} }, // neGroupId
+        <RDN> { <AVA> { 0.3.0.2.7.13, __PARAMS_2__ } }, // sdhNEId
+        <RDN> { <AVA> { 0.0.13.3100.0.7.22, 1 } }, // fabricId, always 1
+        <RDN> { <AVA> { 0.0.7.774.127.3.0.7.6, 249001 } } //protectionGroupId 
+      }
+    }
+  };
+  SCOPE = { baseObject };
+END_REQUEST
+

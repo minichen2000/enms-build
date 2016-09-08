@@ -12,16 +12,16 @@ public class RegisterManager {
 	private static final Logger log = LogManager.getLogger(RegisterManager.class);
 	private SystemApi systemApi = new SystemApi();
 
-	public void register2Controller() {
+	public boolean register2Controller() {
 		HOST host = constructAdapterHost();
 
 		try {
 			systemApi.registerHost(host);
-		} catch (ApiException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			log.error("register2Controller", e);
-			return;
+			return false;
 		}
+		return true;
 	}
 
 	public void unRegister2Controller() {
@@ -30,7 +30,6 @@ public class RegisterManager {
 		try {
 			systemApi.unRegisterHost(host);
 		} catch (ApiException e) {
-			e.printStackTrace();
 			log.error("unRegister2Controller", e);
 		}
 	}
@@ -38,10 +37,12 @@ public class RegisterManager {
 	private HOST constructAdapterHost() {
 		HOST host = new HOST();
 		host.setType("Adapter");
+		String id = ConfLoader.getInstance().getConf("ADP_ID", "adapter_" + System.currentTimeMillis());
+		host.setId(id);
 		String ip = ConfLoader.getInstance().getConf("ADP_IP", "127.0.0.1");
 		int port = ConfLoader.getInstance().getInt("ADP_PORT", 8080);
-		host.setIpaddress(ip);
-		host.setPort(port);
+		host.setIpAddress(ip + ":" + port);
+		host.setQ3Address(ip);
 		host.setRemark("");
 		return host;
 	}

@@ -1,0 +1,16 @@
+CMIS_REQUEST = m_action
+  MODE = confirmed;
+  OBJECT_CLASS = 0.3.0.2.3.5;
+  OBJECT_INSTANCE = {
+  <OBJECT_INST> {
+        <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, 101 } },
+        <RDN> { <AVA> { 0.3.0.2.7.13, 123 } },
+        <RDN> { <AVA> { 0.3.0.2.7.9, 1 } }
+      }
+  }
+  };
+  SCOPE = {baseObject};
+  ACTION_TYPE = 0.3.0.2.9.8;
+  END_REQUEST
+

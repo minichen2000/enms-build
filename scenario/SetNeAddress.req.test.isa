@@ -1,0 +1,26 @@
+// request for setting the NetworkAddress
+
+CMIS_REQUEST = m_set
+
+  OBJECT_CLASS = 0.3.0.2.3.10;
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, 201  } },
+        <RDN> { <AVA> { 0.3.0.2.7.13,  223 } }
+     }
+    }
+  };
+
+  SCOPE = { baseObject };
+  MODIF_LIST = {
+  ATTR = { replace, 0.3.0.2.7.11,
+                (PresentationAddress) <SEQUENCE> {
+                      (PresentationAddressSetOf) <SEQUENCE_OF> {                
+             		 <OCTETSTRING> "192.168.1.25:161"  // nsap address
+	                      }
+                      }
+            }
+  };
+
+END_REQUEST

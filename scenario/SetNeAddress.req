@@ -1,0 +1,29 @@
+// request for setting the NetworkAddress
+
+CMIS_REQUEST = m_set
+
+  OBJECT_CLASS = 0.3.0.2.3.10;  //networkElement
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __PARAMS_1__ } },   //neGroupId
+        <RDN> { <AVA> { 0.3.0.2.7.13,  __PARAMS_2__ } }  //neId
+     }
+    }
+  };
+
+  SCOPE = { baseObject };
+  MODIF_LIST = {
+  ATTR = { replace, 0.3.0.2.7.11,
+                (PresentationAddress) <SEQUENCE> {
+                      (PresentationAddressSetOf) <SEQUENCE_OF> {                
+             		 <OCTETSTRING> "__PARAMS_3__"  // nsap address 4700058000000000000001000100206000A2051D
+	                      },
+                         <OCTETSTRING> "0002",   //P selector 0002
+                         <OCTETSTRING> "00",	//S selector 00
+                         <OCTETSTRING> "00"	//T selector 00
+                      }
+            }
+  };
+
+END_REQUEST

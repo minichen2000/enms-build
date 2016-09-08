@@ -27,11 +27,10 @@ public class StartSuppervision
             .getConf( ConfigKey.START_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_START_SUPERVISION_REQ );
 
-    private boolean flag = false;
-
-    public boolean startSuppervision( int groupId, int neId )
+    public static boolean startSuppervision( int groupId, int neId )
             throws AdapterException
     {
+        boolean flag = false;
         int count = 0;
         while( count < MAX_COUNT )
         {
@@ -39,7 +38,7 @@ public class StartSuppervision
             {
                 Process process = new ExecExternalScript().run(
                     ExternalScriptType.TSTMGR, startSupervisionScenario,
-                    groupId + "", neId + "" );
+                    String.valueOf( groupId ), String.valueOf( neId ) );
                 InputStream inputStream = process.getInputStream();
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );
@@ -69,7 +68,7 @@ public class StartSuppervision
             }
             catch( Exception e )
             {
-                log.error( e.getMessage(), e );
+                log.error( "startSuppervision", e );
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         e.getMessage() );

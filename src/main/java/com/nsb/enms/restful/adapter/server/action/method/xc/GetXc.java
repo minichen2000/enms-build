@@ -16,21 +16,23 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.ParseUtil;
+import com.nsb.enms.restful.adapter.server.common.util.ParseUtils;
 
 public class GetXc
 {
     private static final Logger log = LogManager.getLogger( GetXc.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.XC_GET_REQ, ConfigKey.DEFAULT_XC_GET_REQ );
+            .getConf( ConfigKey.GET_XC_REQ, ConfigKey.DEFAULT_XC_GET_REQ );
 
-    public List<XcEntity> getXc( int groupId, int neId ) throws AdapterException
+    public static List<XcEntity> getXc( int groupId, int neId )
+            throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                ExternalScriptType.TSTMGR, SCENARIO, groupId + "", neId + "" );
+                ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
+                String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();
             List<XcEntity> xcList = new LinkedList<XcEntity>();
             BufferedReader br = new BufferedReader(
@@ -47,7 +49,7 @@ public class GetXc
                         line = line.trim();
                         if( line.startsWith( "managedObjectClass" ) )
                         {
-                            String moc = ParseUtil
+                            String moc = ParseUtils
                                     .parseAttrWithSingleValue( line );
                             xcEntity.setMoc( moc );
                             continue;
@@ -55,7 +57,7 @@ public class GetXc
 
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtil
+                            String moi = ParseUtils
                                     .parseAttrWithMultiValue( line );
                             xcEntity.setMoi( moi );
                             continue;
@@ -64,42 +66,42 @@ public class GetXc
                         if( line.startsWith( "directionality" ) )
                         {
                             xcEntity.setDirectionality(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "toTermination" ) )
                         {
                             xcEntity.setToTermination(
-                                ParseUtil.parseAttrWithMultiValue( line ) );
+                                ParseUtils.parseAttrWithMultiValue( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "fromTermination" ) )
                         {
                             xcEntity.setFromTermination(
-                                ParseUtil.parseAttrWithMultiValue( line ) );
+                                ParseUtils.parseAttrWithMultiValue( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "signalType" ) )
                         {
                             xcEntity.setSignalType(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "operationalState" ) )
                         {
                             xcEntity.setOperationalState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             xcEntity.setAdministrativeState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
@@ -124,7 +126,7 @@ public class GetXc
         }
         catch( Exception e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "getXc", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }

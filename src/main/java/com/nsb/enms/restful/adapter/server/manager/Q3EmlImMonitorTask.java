@@ -21,20 +21,11 @@ public class Q3EmlImMonitorTask extends TimerTask
     private static String monitorScript = ConfLoader.getInstance().getConf(
         ConfigKey.LIST_GROUP_SCRIPT, ConfigKey.DEFAULT_LIST_GROUP_SCRIPT );
 
-    private static String killEmlimScript = ConfLoader.getInstance().getConf(
-        ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );
-
-    private Set<Integer> groupIds;
-
-    public Q3EmlImMonitorTask( Set<Integer> groupIds )
-    {
-        this.groupIds = groupIds;
-    }
-
     @Override
     public void run()
     {
-        for( int groupId : groupIds )
+        Set<Integer> groupIdList = Q3EmlImMgr.getInstance().getGroupIdList();
+        for( int groupId : groupIdList )
         {
             try
             {
@@ -61,12 +52,7 @@ public class Q3EmlImMonitorTask extends TimerTask
                 if( !flag )
                 {
                     Q3EmlImMgr.getInstance().removeGroup( groupId );
-                    process = new ExecExternalScript().run(
-                        ExternalScriptType.TSTMGR, killEmlimScript,
-                        groupId + "" );
-                    process.waitFor();
-                    Q3EmlImMgr.getInstance().startEmlIm( groupId );
-                    Q3EmlImMgr.getInstance().reCreateNe( groupId );
+                    Q3EmlImMgr.getInstance().killEmlImProcess( groupId );
                 }
 
             }

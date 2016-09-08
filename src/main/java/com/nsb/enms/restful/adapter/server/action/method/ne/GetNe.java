@@ -14,22 +14,24 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.ParseUtil;
+import com.nsb.enms.restful.adapter.server.common.util.ParseUtils;
 
 public class GetNe
 {
     private static final Logger log = LogManager.getLogger( GetNe.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.NE_GET_REQ, ConfigKey.DEFAULT_NE_GET_REQ );
+            .getConf( ConfigKey.GET_NE_REQ, ConfigKey.DEFAULT_GET_NE_REQ );
 
-    public NeEntity getNe( int groupId, int neId ) throws AdapterException
+    public static NeEntity getNe( int groupId, int neId )
+            throws AdapterException
     {
         log.debug( "------------Start getNe-------------------" );
         try
         {
             Process process = new ExecExternalScript().run(
-                ExternalScriptType.TSTMGR, SCENARIO, groupId + "", neId + "" );
+                ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
+                String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();
             NeEntity neEntity = new NeEntity();
             BufferedReader br = new BufferedReader(
@@ -45,7 +47,7 @@ public class GetNe
                         line = line.trim();
                         if( line.startsWith( "managedObjectClass" ) )
                         {
-                            String moc = ParseUtil
+                            String moc = ParseUtils
                                     .parseAttrWithSingleValue( line );
                             neEntity.setMoc( moc );
                             continue;
@@ -53,7 +55,7 @@ public class GetNe
 
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtil
+                            String moi = ParseUtils
                                     .parseAttrWithMultiValue( line );
                             neEntity.setMoi( moi );
                             continue;
@@ -62,45 +64,48 @@ public class GetNe
                         if( line.startsWith( "userLabel" ) )
                         {
                             neEntity.setUserLabel(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
+                            continue;
                         }
 
                         if( line.startsWith( "neType" ) )
                         {
-                            neEntity.setNeType( ParseUtil.parseAttr1( line ) );
+                            neEntity.setNeType( ParseUtils.parseAttr1( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "neRelease" ) )
                         {
                             neEntity.setNeRelease(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "locationName" ) )
                         {
                             neEntity.setLocationName(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "ntpEnabled" ) )
                         {
                             neEntity.setNtpEnabled(
-                                ParseUtil.parseBooleanAttr( line ) );
+                                ParseUtils.parseBooleanAttr( line ) );
+                            continue;
                         }
 
                         if( line.startsWith( "networkAddress" ) )
                         {
                             neEntity.setNetworkAddress(
-                                ParseUtil.parseAttrWithSingleValue( line ) );
+                                ParseUtils.parseAttrWithSingleValue( line ) );
+                            continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             neEntity.setAdministrativeState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
@@ -124,7 +129,7 @@ public class GetNe
         }
         catch( Exception e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "getNe", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }

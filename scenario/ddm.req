@@ -1,0 +1,28 @@
+CMIS_REQUEST = m_action
+  OBJECT_CLASS = 1.3.12.2.1006.54.0.3.3.53; // wdmMeasurementCoordinator
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __NE_GROUP_ID__} }, // neGroupId
+        <RDN> { <AVA> { 0.3.0.2.7.13, __SDH_NE_ID__ } }, // sdhNEId
+        <RDN> { <AVA> { 1.3.12.2.1006.54.0.3.7.66, 1 } } //wdmMeasurementCoordinatorId, always equal to 1
+      }
+    }
+  };
+  SCOPE = { baseObject };
+  ACTION_TYPE = 1.3.12.2.1006.54.0.3.9.6; // getInstMeasValuesList
+  ACTION_INFO = (GetInstMeasValuesListActionInfo) <SET_OF> {
+    (GetInstMeasValuesListActionInfoSeq) <SEQUENCE> {
+      (ObjectClass) <CHOICE> {2, <OBJECT_ID> 0.4.0.304.0.3.16 }, //sdhEquipmentR
+      <OBJECT_INST> {
+        <LDN> {
+          <RDN> { <AVA> { 0.0.13.3100.0.7.20, __RACK_ID__ } }, // equipmentId
+          <RDN> { <AVA> { 0.0.13.3100.0.7.20, __SUB_RACK_ID__ } },// equipmentId
+          <RDN> { <AVA> { 0.0.13.3100.0.7.20, __SLOT_ID__ } }, // equipmentId
+          <RDN> { <AVA> { 0.0.13.3100.0.7.20, __SUB_SLOT_ID__ } } // __SUB_SLOT_ID__
+        }
+      }
+    }
+  };
+END_REQUEST
+

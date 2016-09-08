@@ -11,18 +11,19 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
+import com.nsb.enms.restful.adapter.server.common.Pair;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.IdGenUtil;
+import com.nsb.enms.restful.adapter.server.manager.Q3EmlImMgr;
 
 public class CreateNe
 {
     private final static Logger log = LogManager.getLogger( CreateNe.class );
 
     private static String createNeScenario = ConfLoader.getInstance().getConf(
-        ConfigKey.NE_CREATE_REQ, ConfigKey.DEFAULT_NE_CREATE_REQ );
+        ConfigKey.CREATE_NE_REQ, ConfigKey.DEFAULT_CREATE_NE_REQ );
 
     private static String setNeAddressScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.SET_NE_ADDR_REQ,
@@ -35,32 +36,40 @@ public class CreateNe
     private static Pattern pattern = Pattern
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
-    public NeEntity createNe( String neRelease, String neType, String userLabel,
-            String locationName, String neAddress ) throws AdapterException
+    public static NeEntity createNe( String neRelease, String neType,
+            String userLabel, String locationName, String neAddress )
+            throws AdapterException
     {
-        int groupId = 100;
-        int neId = IdGenUtil.getId();
-        // Pair<Integer, Integer> groupNeId =
-        // Q3EmlImMgr.getInstance().getGroupNeId();
-        // int groupId = groupNeId.getFirst();
-        // int neId = groupNeId.getSecond();
-        NeEntity ne = createNe( groupId, neId, neRelease, neType, userLabel,
-            locationName, neAddress );
-        // Q3EmlImMgr.getInstance().storeNeInfo( groupId, neId, neRelease,
-        // neType,
-        // userLabel, locationName, neAddress );
-        return ne;
+        Pair<Integer, Integer> groupNeId = Q3EmlImMgr.getInstance()
+                .getGroupNeId();
+        int groupId = groupNeId.getFirst();
+        int neId = groupNeId.getSecond();
+        log.debug( "The groupId = " + groupId + ", neId = " + neId );
+        boolean flag = false;
+        flag = createNe( groupId, neId, neRelease, neType, userLabel,
+            locationName );
+        if( flag )
+        {
+            flag = setNeAddress( groupId, neId, neAddress );
+        }
+
+        if( flag )
+        {
+            return GetNe.getNe( groupId, neId );
+        }
+        return null;
     }
 
-    public NeEntity createNe( int groupId, int neId, String neRelease,
-            String neType, String userLabel, String locationName,
-            String neAddress ) throws AdapterException
+    private static boolean createNe( int groupId, int neId, String neRelease,
+            String neType, String userLabel, String locationName )
+            throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                ExternalScriptType.TSTMGR, createNeScenario, groupId + "",
-                neId + "", neRelease, neType, userLabel, locationName );
+                ExternalScriptType.TSTMGR, createNeScenario,
+                String.valueOf( groupId ), String.valueOf( neId ), neRelease,
+                neType, userLabel, locationName );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -82,17 +91,34 @@ public class CreateNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Create ne failed!!!" );
             }
+            return flag;
+        }
+        catch( Exception e )
+        {
+            log.error( "createNe", e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+        }
+    }
 
+    private static boolean setNeAddress( int groupId, int neId,
+            String neAddress ) throws AdapterException
+    {
+        try
+        {
             String scenario = setNeAddressScenario;
             if( pattern.matcher( neAddress ).find() )
             {
                 scenario = setNeIsaAddressScenario;
             }
-            process = new ExecExternalScript().run( ExternalScriptType.TSTMGR,
-                scenario, groupId + "", neId + "", neAddress );
-            inputStream = process.getInputStream();
-            br = new BufferedReader( new InputStreamReader( inputStream ) );
-            flag = false;
+            Process process = new ExecExternalScript().run(
+                ExternalScriptType.TSTMGR, scenario, String.valueOf( groupId ),
+                String.valueOf( neId ), neAddress );
+            InputStream inputStream = process.getInputStream();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader( inputStream ) );
+            boolean flag = false;
+            String line;
             while( (line = br.readLine()) != null )
             {
                 if( line.contains( "SetReply received" ) )
@@ -107,11 +133,11 @@ public class CreateNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Set ne address failed!!!" );
             }
-            return new GetNe().getNe( groupId, neId );
+            return flag;
         }
         catch( Exception e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "setNeAddress", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }

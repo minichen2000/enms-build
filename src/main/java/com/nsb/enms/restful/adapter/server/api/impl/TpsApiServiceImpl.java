@@ -7,6 +7,9 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.nsb.enms.restful.adapter.server.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapter.server.api.NotFoundException;
 import com.nsb.enms.restful.adapter.server.api.TpsApiService;
@@ -16,11 +19,12 @@ import com.nsb.enms.restful.db.client.api.TpsApi;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class TpsApiServiceImpl extends TpsApiService {
+	private final static Logger log = LogManager.getLogger(TpsApiServiceImpl.class);
+
 	private TpsApi tpsApi = new TpsApi();
 
 	@Override
 	public Response addTPs(List<TP> body, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
@@ -30,7 +34,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 		try {
 			tp = tpsApi.getTPById(tpid);
 		} catch (ApiException e) {
-			e.printStackTrace();
+			log.error("getTPById", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(tp).build();
@@ -43,7 +47,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 		try {
 			tpList = tpsApi.getTPByNEId(neid);
 		} catch (ApiException e) {
-			e.printStackTrace();
+			log.error("getTPByNEId", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(tpList).build();
@@ -56,7 +60,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 		try {
 			tpList = tpsApi.getTPsByLayerrate(neid, layerrate);
 		} catch (ApiException e) {
-			e.printStackTrace();
+			log.error("getTPsByLayerrate", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(tpList).build();
@@ -64,7 +68,6 @@ public class TpsApiServiceImpl extends TpsApiService {
 
 	@Override
 	public Response updateTP(TP body, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
@@ -75,12 +78,12 @@ public class TpsApiServiceImpl extends TpsApiService {
 		try {
 			tpList = tpsApi.getTPs();
 		} catch (ApiException e) {
-			e.printStackTrace();
+			log.error("getTPs", e);
 			return Response.serverError().entity(e).build();
 		}
 
 		Date end = new Date();
-		System.out.println("adapter.getTPs cost time = " + (end.getTime() - begin.getTime()));
+		log.debug("adapter.getTPs cost time = " + (end.getTime() - begin.getTime()));
 
 		return Response.ok().entity(tpList).build();
 	}
@@ -92,13 +95,29 @@ public class TpsApiServiceImpl extends TpsApiService {
 		try {
 			tpList = tpsApi.getTPsByType(tptype);
 		} catch (ApiException e) {
-			e.printStackTrace();
+			log.error("getTPsByType", e);
 			return Response.serverError().entity(e).build();
 		}
 
 		Date end = new Date();
-		System.out.println("adapter.getTPsByType cost time = " + (end.getTime() - begin.getTime()));
+		log.debug("adapter.getTPsByType cost time = " + (end.getTime() - begin.getTime()));
 
 		return Response.ok().entity(tpList).build();
+	}
+
+	@Override
+	public Response getCTPsByTP(String neid, String ptpid, SecurityContext securityContext) throws NotFoundException {
+		try {
+			tpsApi.getCTPsByTP(neid, ptpid);
+		} catch (ApiException e) {
+			log.error("getCTPsByTP", e);
+			return Response.serverError().entity(e).build();
+		}
+		return null;
+	}
+
+	@Override
+	public Response getChildrenTPs(String tpid, SecurityContext securityContext) throws NotFoundException {
+		return null;
 	}
 }

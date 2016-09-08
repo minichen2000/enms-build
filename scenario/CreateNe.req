@@ -1,0 +1,24 @@
+CMIS_REQUEST = m_create
+
+  OBJECT_CLASS = 0.3.0.2.3.10;
+
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __PARAMS_1__ } }  //neGroupId, emlimID
+      }
+    }
+  };
+
+  REF_CHOICE = 1;
+
+  ATTR_LIST = {
+    ATTR = {0.3.0.2.7.8 ,  (NeRelease) <GRAPHICSTRING> "__PARAMS_3__" },
+    ATTR = {0.3.0.2.7.10 , (NeType) <CHOICE> {0, <GRAPHICSTRING> "__PARAMS_4__" }},
+    ATTR = {0.0.13.3100.0.7.50 , (UserLabel) <GRAPHICSTRING> "__PARAMS_5__"},
+    ATTR = {0.0.13.3100.0.7.27 , (LocationName) <GRAPHICSTRING> "__PARAMS_6__"},
+    ATTR = {1.3.12.2.1006.63.0.5.7.0, (AccessControlDomain) <GRAPHICSTRING> "unknown" },
+    ATTR = {0.3.0.2.7.13, (NameType) <CHOICE> {0, <INTEGER> __PARAMS_2__ }}   //neId
+  };
+
+END_REQUEST

@@ -1,0 +1,11 @@
+CMIS_REQUEST = m_get
+  OBJECT_CLASS = 0.3.0.2.3.4 ;      
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __PARAMS_1__ } } // neGroupId
+     }
+    }
+  };
+  SCOPE = { baseObject };
+END_REQUEST

@@ -1,0 +1,21 @@
+CMIS_REQUEST = m_action
+  OBJECT_CLASS = 0.0.7.774.127.2.0.3.4 ; //modifiableTug3Bidirectional
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, 100 } }, // neGroupId
+        <RDN> { <AVA> { 0.3.0.2.7.13, 1 } }, // sdhNEId
+        <RDN> { <AVA> { 0.0.7.774.0.7.42, 11060101 } }, // vc4TTPId
+        <RDN> { <AVA> { 0.0.7.774.0.7.34, 1 } } //tug3Id
+      }
+    }
+  };
+  SCOPE = { baseObject } ;
+  ACTION_TYPE = 0.0.7.774.127.2.0.9.4 ; // defineTug3Structure 
+  ACTION_INFO = (TUG3StructureInfo) <CHOICE> {1,
+          (ConnectionInfo)  <ALIAS> {
+              <ENUM> 3
+          }
+  } ;
+END_REQUEST
+

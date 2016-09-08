@@ -16,7 +16,7 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.ParseUtil;
+import com.nsb.enms.restful.adapter.server.common.util.ParseUtils;
 
 public class GetEquipment
 {
@@ -24,15 +24,16 @@ public class GetEquipment
             .getLogger( GetEquipment.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.EQ_GET_REQ, ConfigKey.DEFAULT_EQ_GET_REQ );
+            .getConf( ConfigKey.GET_EQ_REQ, ConfigKey.DEFAULT_GET_EQ_REQ );
 
-    public List<EquipmentEntity> getEquipment( int groupId, int neId )
+    public static List<EquipmentEntity> getEquipment( int groupId, int neId )
             throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                ExternalScriptType.TSTMGR, SCENARIO, groupId + "", neId + "" );
+                ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
+                String.valueOf( neId ) );
 
             InputStream inputStream = process.getInputStream();
             List<EquipmentEntity> eqList = new LinkedList<EquipmentEntity>();
@@ -52,7 +53,7 @@ public class GetEquipment
                         line = line.trim();
                         if( line.indexOf( "managedObjectClass" ) >= 0 )
                         {
-                            String moc = ParseUtil
+                            String moc = ParseUtils
                                     .parseAttrWithSingleValue( line );
                             equipmentEntity.setMoc( moc );
                             continue;
@@ -60,7 +61,7 @@ public class GetEquipment
 
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtil
+                            String moi = ParseUtils
                                     .parseAttrWithMultiValue( line );
                             equipmentEntity.setMoi( moi );
                             continue;
@@ -69,56 +70,56 @@ public class GetEquipment
                         if( line.startsWith( "equipmentActual" ) )
                         {
                             equipmentEntity.setEquipmentActual(
-                                ParseUtil.parseAttr1( line ) );
+                                ParseUtils.parseAttr1( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "equipmentExpected" ) )
                         {
                             equipmentEntity.setEquipmentExpected(
-                                ParseUtil.parseAttr1( line ) );
+                                ParseUtils.parseAttr1( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "version" ) )
                         {
                             equipmentEntity
-                                    .setVersion( ParseUtil.parseAttr( line ) );
+                                    .setVersion( ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "availabilityStatus" ) )
                         {
                             equipmentEntity.setAvailabilityStatus(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "alarmStatus" ) )
                         {
                             equipmentEntity.setAlarmStatus(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "locationName" ) )
                         {
                             equipmentEntity.setLocationName(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "operationalState" ) )
                         {
                             equipmentEntity.setOperationalState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             equipmentEntity.setAdministrativeState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
@@ -142,7 +143,7 @@ public class GetEquipment
         }
         catch( Exception e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "getEquipment", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }

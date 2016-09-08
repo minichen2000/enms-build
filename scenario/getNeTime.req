@@ -1,0 +1,16 @@
+CMIS_REQUEST = m_get
+
+  OBJECT_CLASS = 0.3.0.2.3.10;
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __NE_GROUP_ID__  } },
+        <RDN> { <AVA> { 0.3.0.2.7.13,  __SDH_NE_ID__ } }
+     }
+    }
+  };
+
+  SCOPE = { baseObject };
+  ID_LIST = {0.0.13.3100.0.7.21};
+
+END_REQUEST

@@ -19,6 +19,10 @@
 		<swagger-core-version>1.5.9</swagger-core-version>
 		<logback-version>1.1.7</logback-version>
 		<swagger-codegen-cli-version>2.2.0</swagger-codegen-cli-version>
+        <swagger-model-path>./swagger_models</swagger-model-path>
+        <swagger-adp-svr-path>gen/swagger-adapter-server</swagger-adp-svr-path>
+        <swagger-ctl-client-path>gen/swagger-controller-client</swagger-ctl-client-path>
+		<swagger-db-client-path>gen/swagger-db-client</swagger-db-client-path>
 	</properties>
 
 	<dependencies>
@@ -47,7 +51,7 @@
 			<version>4.12</version>
 		</dependency>
 
-		
+
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
@@ -137,9 +141,49 @@
 			<artifactId>log4j-web</artifactId>
 			<version>2.6.2</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>7.0.29</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-coyote</artifactId>
+			<version>7.0.29</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.eclipse.jetty.websocket</groupId>
+    		<artifactId>websocket-api</artifactId>
+    		<version>${jettyVersion}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.eclipse.jetty.websocket</groupId>
+    		<artifactId>websocket-client</artifactId>
+    		<version>${jettyVersion}</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.eclipse.jetty.websocket</groupId>
+    		<artifactId>websocket-server</artifactId>
+    		<version>${jettyVersion}</version>    		    		
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.eclipse.jetty.websocket</groupId>
+    		<artifactId>websocket-servlet</artifactId>
+    		<version>${jettyVersion}</version>
+		</dependency>
 	</dependencies>
-
-
+	
 	<build>
 		<plugins>
 
@@ -215,7 +259,7 @@
 						<configuration>
 							<filesets>
 								<fileset>
-									<directory>gen/restful-api-lib-adp-server/src/main</directory>
+									<directory>${swagger-adp-svr-path}/src/main</directory>
 								</fileset>
 							</filesets>
 						</configuration>
@@ -264,6 +308,30 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Try to copy the swagger ignore file to generated source folder -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${swagger-adp-svr-path}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${swagger-model-path}/ignore_settings</directory>									
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
 			<plugin>
 				<artifactId>exec-maven-plugin</artifactId>
 				<groupId>org.codehaus.mojo</groupId>
@@ -284,13 +352,13 @@
 								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
 								<argument>generate</argument>
 								<argument>-i</argument>
-								<argument>./restful_models/adapter.json</argument>
+								<argument>${swagger-model-path}/adapter.yaml</argument>
 								<argument>-l</argument>
 								<argument>jaxrs</argument>
 								<argument>-o</argument>
-								<argument>gen/restful-api-lib-adp-server</argument>
+								<argument>${swagger-adp-svr-path}</argument>
 								<argument>-c</argument>
-								<argument>./swagger_cfgs/adapter_server_config.json</argument>
+								<argument>${swagger-model-path}/config/adapter_server_config.json</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -310,13 +378,13 @@
 								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
 								<argument>generate</argument>
 								<argument>-i</argument>
-								<argument>./restful_models/controller.json</argument>
+								<argument>${swagger-model-path}/controller.yaml</argument>
 								<argument>-l</argument>
 								<argument>java</argument>
 								<argument>-o</argument>
-								<argument>gen/restful-api-lib-controller-client</argument>
+								<argument>${swagger-ctl-client-path}</argument>
 								<argument>-c</argument>
-								<argument>./swagger_cfgs/controller_client_config.json</argument>
+								<argument>${swagger-model-path}/config/controller_client_config.json</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -336,13 +404,13 @@
 								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
 								<argument>generate</argument>
 								<argument>-i</argument>
-								<argument>./restful_models/db.json</argument>
+								<argument>${swagger-model-path}/db.yaml</argument>
 								<argument>-l</argument>
 								<argument>java</argument>
 								<argument>-o</argument>
-								<argument>gen/restful-api-lib-db-client</argument>
+								<argument>${swagger-db-client-path}</argument>
 								<argument>-c</argument>
-								<argument>./swagger_cfgs/db_client_config.json</argument>
+								<argument>${swagger-model-path}/config/db_client_config.json</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -365,7 +433,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>gen/restful-api-lib-adp-server/src/gen/java</source>
+								<source>${swagger-adp-svr-path}/src/gen/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -380,7 +448,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>gen/restful-api-lib-db-client/src/main/java</source>
+								<source>${swagger-db-client-path}/src/main/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -394,7 +462,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>gen/restful-api-lib-controller-client/src/main/java</source>
+								<source>${swagger-ctl-client-path}/src/main/java</source>
 							</sources>
 						</configuration>
 					</execution>

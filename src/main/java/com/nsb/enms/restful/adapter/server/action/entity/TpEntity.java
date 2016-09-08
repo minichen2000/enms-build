@@ -1,5 +1,7 @@
 package com.nsb.enms.restful.adapter.server.action.entity;
 
+import java.util.List;
+
 public class TpEntity
 {
     private String moc;
@@ -14,7 +16,7 @@ public class TpEntity
 
     private String administrativeState;
 
-    private String supportedByObjectList;
+    private List<String> supportedByObjectList;
 
     private String operationalState;
 
@@ -78,12 +80,12 @@ public class TpEntity
         this.administrativeState = administrativeState;
     }
 
-    public String getSupportedByObjectList()
+    public List<String> getSupportedByObjectList()
     {
         return supportedByObjectList;
     }
 
-    public void setSupportedByObjectList( String supportedByObjectList )
+    public void setSupportedByObjectList( List<String> supportedByObjectList )
     {
         this.supportedByObjectList = supportedByObjectList;
     }

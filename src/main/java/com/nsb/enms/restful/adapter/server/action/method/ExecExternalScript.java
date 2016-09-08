@@ -29,6 +29,9 @@ public class ExecExternalScript
 
     private static String emlImDir = ConfLoader.getInstance().getConf(
         ConfigKey.EMLIM_SCRIPT_DIR, ConfigKey.DEFAULT_EMLIM_SCRIPT_DIR );
+    
+    private static String killEmlImScript = ConfLoader.getInstance().getConf(
+        ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );
 
     private File fileDir;
 
@@ -45,6 +48,11 @@ public class ExecExternalScript
                 fileDir = new File( emlImDir );
                 cmdArray[0] = q3EmlImScript;
                 break;
+            case KILL_EMLIM:
+                //to fill correct dir later
+                fileDir = new File( "XXX" );
+                cmdArray[0] = killEmlImScript;
+                break;
             default:
                 break;
         }
@@ -58,7 +66,7 @@ public class ExecExternalScript
         }
         catch( IOException e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "execExternalScript", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }

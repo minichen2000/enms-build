@@ -1,0 +1,45 @@
+CMIS_REQUEST = m_action
+  OBJECT_CLASS = 0.0.7.774.127.4.0.3.4; //sncpFabric 
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __PARAMS_1__} }, // neGroupId
+        <RDN> { <AVA> { 0.3.0.2.7.13, __PARAMS_2__ } }, // sdhNEId
+        <RDN> { <AVA> { 0.0.13.3100.0.7.22, 1 } } // fabricId, always 1
+      }
+    }
+  };
+  SCOPE = { baseObject };
+  ACTION_TYPE = 0.0.13.3100.0.9.4; // connect 
+  ACTION_INFO = (ConnectInformation) <SEQUENCE_OF> {
+    (ConnectInformationSeq) <SEQUENCE> {
+      (ConnectInformationSeqChoice) <CHOICE> {2,  
+        (ConnectionTypeBi)  <CHOICE> {2,  
+          (PtoTPPool)  <SEQUENCE> {
+            (ExplicitTP)  <CHOICE> {1, 
+                   <OBJECT_INST> {
+                      <LDN> {
+                        <RDN> { <AVA> { 0.0.7.774.127.3.0.7.4, __PARAMS_3__} }, // protectedTTPId
+                        <RDN> { <AVA> { 0.0.7.774.0.7.3, __PARAMS_4__} }, // augId 
+                        <RDN> { <AVA> { 0.0.7.774.0.7.2, __PARAMS_5__} } // au4CTPId
+                      }
+                   }                                    
+            }, //fromTp
+            
+               <OBJECT_INST> {
+                    <LDN> {
+                      <RDN> { <AVA> { 0.0.13.3100.0.7.22, 1 } }, // fabricId 
+                      <RDN> { <AVA> { 0.0.13.3100.0.7.44, 1 } } // tpPoolId 
+                    }
+                 }
+            } //toTpPool 
+          
+        }
+      },
+      (AdministrativeState) <ALIAS> {
+                              <ENUM> 2 
+                          }
+    }
+  };
+END_REQUEST
+

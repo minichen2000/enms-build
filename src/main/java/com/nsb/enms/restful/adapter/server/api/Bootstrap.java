@@ -1,5 +1,7 @@
 package com.nsb.enms.restful.adapter.server.api;
 
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -12,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.restful.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.restful.adapter.server.notification.NotificationClient;
+import com.nsb.enms.restful.adapter.server.notification.NotificationServer;
 import com.nsb.enms.restful.db.client.ApiClient;
 import com.nsb.enms.restful.db.client.Configuration;
 
@@ -30,8 +34,8 @@ public class Bootstrap extends HttpServlet
     @Override
     public void init( ServletConfig config ) throws ServletException
     {
-        Info info = new Info().title( "Swagger Server" )
-                .description( "ENMS API.  Adapter RESTful interface. " )
+        Info info = new Info().title( "ENMS Adapter Server" )
+                .description( "ENMS Adapter RESTful interface. " )
                 .termsOfService( "" ).contact( new Contact().email( "" ) )
                 .license( new License().name( "" ).url( "" ) );
 
@@ -65,6 +69,14 @@ public class Bootstrap extends HttpServlet
         String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
         log.debug( "The ctrlUrl is " + ctrlUrl );
         initControllerApiClient( ctrlUrl );
+
+        /*String q3WSServerUri = ConfLoader.getInstance()
+                .getConf( "Q3_WS_SERVER_URI", "" );
+        new Thread( new WSClientThread( q3WSServerUri ) ).start();
+
+        int adapterWSServerPort = ConfLoader.getInstance()
+                .getInt( "ADP_WS_SERVER_PORT", 7778 );
+        new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/
     }
 
     private void initControllerApiClient( String ctrlUrl )
@@ -83,6 +95,53 @@ public class Bootstrap extends HttpServlet
 
     private void register2Controller()
     {
-        new RegisterManager().register2Controller();
+        long period = Long.valueOf(
+            ConfLoader.getInstance().getConf( "REG_PERIOD", "60000" ) );
+        final RegisterManager register = new RegisterManager();
+        final Timer timer = new Timer();
+        timer.scheduleAtFixedRate( new TimerTask()
+        {
+            public void run()
+            {
+                log.debug( "start to register to Controller" );
+                boolean isOk = register.register2Controller();
+                log.debug( "the result of registering to Controller is :{}",
+                    isOk );
+                if( isOk )
+                {
+                    timer.cancel();
+                }
+            }
+        }, 0, period );
+    }
+
+    private class WSClientThread extends Thread
+    {
+        private String uri;
+
+        public WSClientThread( String uri )
+        {
+            this.uri = uri;
+        }
+
+        public void run()
+        {
+            new NotificationClient( uri ).start();
+        }
+    }
+
+    private class WSServerThread extends Thread
+    {
+        private int port;
+
+        public WSServerThread( int port )
+        {
+            this.port = port;
+        }
+
+        public void run()
+        {
+            new NotificationServer( port ).start();
+        }
     }
 }

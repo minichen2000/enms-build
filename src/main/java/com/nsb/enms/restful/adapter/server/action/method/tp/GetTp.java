@@ -16,21 +16,22 @@ import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.util.ParseUtil;
+import com.nsb.enms.restful.adapter.server.common.util.ParseUtils;
 
 public class GetTp
 {
     private static final Logger log = LogManager.getLogger( GetTp.class );
 
     private static final String SCENARIO = ConfLoader.getInstance()
-            .getConf( ConfigKey.PORT_GET_REQ, ConfigKey.DEFAULT_PORT_GET_REQ );
+            .getConf( ConfigKey.GET_PORT_REQ, ConfigKey.DEFAULT_GET_PORT_REQ );
 
-    public List<TpEntity> getTp( int groupId, int neId ) throws AdapterException
+    public static List<TpEntity> getTp( int groupId, int neId ) throws AdapterException
     {
         try
         {
             Process process = new ExecExternalScript().run(
-                ExternalScriptType.TSTMGR, SCENARIO, groupId + "", neId + "" );
+                ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
+                String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();
             List<TpEntity> tpList = new LinkedList<TpEntity>();
 
@@ -47,57 +48,58 @@ public class GetTp
                         line = line.trim();
                         if( line.startsWith( "managedObjectClass" ) )
                         {
-                            String moc = ParseUtil
+                            String moc = ParseUtils
                                     .parseAttrWithSingleValue( line );
                             portEntity.setMoc( moc );
                             continue;
                         }
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtil
+                            String moi = ParseUtils
                                     .parseAttrWithMultiValue( line );
                             portEntity.setMoi( moi );
+                            continue;
                         }
 
                         if( line.startsWith( "userLabel" ) )
                         {
                             portEntity.setUserLabel(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "stmLevel" ) )
                         {
                             portEntity.setStmLevel( Integer
-                                    .parseInt( ParseUtil.parseAttr( line ) ) );
+                                    .parseInt( ParseUtils.parseAttr( line ) ) );
                             continue;
                         }
 
                         if( line.startsWith( "alarmStatus" ) )
                         {
                             portEntity.setAlarmStatus(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             portEntity.setAdministrativeState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "supportedByObjectList" ) )
                         {
                             portEntity.setSupportedByObjectList(
-                                ParseUtil.parseAttrWithMultiValue( line ) );
+                                ParseUtils.parseList( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "operationalState" ) )
                         {
                             portEntity.setOperationalState(
-                                ParseUtil.parseAttr( line ) );
+                                ParseUtils.parseAttr( line ) );
                             continue;
                         }
 
@@ -121,7 +123,7 @@ public class GetTp
         }
         catch( Exception e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "getTp", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
