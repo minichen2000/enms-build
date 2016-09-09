@@ -169,7 +169,7 @@ public class Q3EmlImMgr {
 					try {
 						DeleteNe.deleteNe(groupId, neId);
 					} catch (AdapterException e) {
-						e.printStackTrace();
+						log.error("deleteAllNes", e);
 					}
 				}
 			}
@@ -185,7 +185,7 @@ public class Q3EmlImMgr {
 					try {
 						DeleteNe.deleteNe(groupId, neId);
 					} catch (AdapterException e) {
-						e.printStackTrace();
+						log.error("destory", e);
 					}
 				}
 			}
@@ -201,7 +201,7 @@ public class Q3EmlImMgr {
 						"Kill emlim process with groupId " + groupId + " failed!!!");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("killEmlImProcess", e);
 			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
 		}
 	}
