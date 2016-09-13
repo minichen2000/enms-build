@@ -21,9 +21,11 @@ import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.model.Addresses;
 import com.nsb.enms.restful.adapter.server.model.NE;
 import com.nsb.enms.restful.adapter.server.model.NEExtraInfo;
+import com.nsb.enms.restful.controller.client.api.EquipmentsApi;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.NesApi;
 import com.nsb.enms.restful.db.client.api.TpsApi;
+import com.nsb.enms.restful.db.client.api.XcsApi;
 import com.nsb.enms.restful.db.client.model.Q3Address;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
@@ -148,8 +150,12 @@ public class NesApiServiceImpl extends NesApiService {
 
 			// delete db record, contains ne and tp
 			nesApi.deleteNE(neid);
+			XcsApi xcsApi = new XcsApi();
+			xcsApi.deleteXcsByNeId(neId);
 			TpsApi tpsApi = new TpsApi();
 			tpsApi.deleteTpsbyNeId(neId);
+			EquipmentsApi equipmentsApi = new EquipmentsApi();
+			equipmentsApi.deleteEquipmentsByNeId(neId);
 		} catch (Exception e) {
 			log.error("deleteNE", e);
 			return Response.serverError().entity(e).build();
