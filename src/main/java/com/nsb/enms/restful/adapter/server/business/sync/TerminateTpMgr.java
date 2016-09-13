@@ -15,6 +15,7 @@ import com.nsb.enms.restful.adapter.server.action.method.tp.TerminateTug3ToTu12;
 import com.nsb.enms.restful.adapter.server.action.method.xc.CreateXc;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.util.GenerateUserLabelUtils;
+import com.nsb.enms.restful.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.TpsApi;
 import com.nsb.enms.restful.db.client.api.XcsApi;
@@ -130,12 +131,12 @@ public class TerminateTpMgr {
 				ctp.setAid(moi);
 				String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtils.generateTpUserLabel( tp );
 				ctp.setUserLabel(tu12CtpUserLabel);
-				ctp.setNativeName(moi);
+				ctp.setNativeName(tu12CtpUserLabel);
 				ctp.setTpType(tp.getMoc());
 				ctp.setParentTpId(au4CtpId);
 
 				// TODO 读取映射文件获取层速率
-				ctp.setLayerRate("8");
+				ctp.setLayerRate( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
 				tps.add(ctp);
 			}
 			tps = tpsApi.addTPs(tps);
@@ -159,12 +160,13 @@ public class TerminateTpMgr {
 					TP ttp = new TP();
 					ttp.setNeId(neDbId);
 					ttp.setAid(moi);
-					ttp.setUserLabel(GenerateUserLabelUtils.generateTpUserLabel( tp ));
-					ttp.setNativeName(moi);
+					String userLabel = GenerateUserLabelUtils.generateTpUserLabel( tp );
+					ttp.setUserLabel(userLabel);
+					ttp.setNativeName(userLabel);
 					ttp.setTpType(tp.getMoc());
 
 					// TODO 读取映射文件获取层速率
-					ttp.setLayerRate("6");
+					ttp.setLayerRate(String.valueOf( LayerRateConst.LR_STS3c_and_AU4_VC4 ));
 					tps.add(ttp);
 					break;
 				}

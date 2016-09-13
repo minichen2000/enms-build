@@ -12,6 +12,7 @@ import com.nsb.enms.restful.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.restful.adapter.server.action.method.tp.GetTp;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.util.GenerateUserLabelUtils;
+import com.nsb.enms.restful.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.NesApi;
 import com.nsb.enms.restful.db.client.api.TpsApi;
@@ -66,12 +67,14 @@ public class SyncTpThread extends Thread {
 				newTp.setNeId(id);
 				String moi = tp.getMoi();
 				newTp.setAid(moi);
-				newTp.setUserLabel(GenerateUserLabelUtils.generateTpUserLabel( tp ));
-				newTp.setNativeName(moi);
+				String userLabel = GenerateUserLabelUtils.generateTpUserLabel( tp );
+				newTp.setUserLabel(userLabel);
+				newTp.setNativeName(userLabel);
 				newTp.setTpType(tp.getMoc());
 
 				// TODO 读取映射文件获取层速率
-				newTp.setLayerRate("5");
+				int layerRate = getLayerRate(tp);
+				newTp.setLayerRate( String.valueOf( layerRate ) );
 				tps.add(newTp);
 
 				tps = tpsApi.addTPs(tps);
@@ -108,13 +111,14 @@ public class SyncTpThread extends Thread {
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
 			newCtp.setAid(ctpMoi);
-			newCtp.setUserLabel(GenerateUserLabelUtils.generateTpUserLabel( ctp ));
-			newCtp.setNativeName(ctpMoi);
+			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
+			newCtp.setUserLabel(userLabel);
+			newCtp.setNativeName(userLabel);
 			newCtp.setTpType(ctp.getMoc());
 			newCtp.setParentTpId(ptpDbId);
 
 			// TODO 读取映射文件获取层速率
-			newCtp.setLayerRate("5");
+			newCtp.setLayerRate(String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4));
 			tps.add(newCtp);
 		}
 
@@ -138,13 +142,14 @@ public class SyncTpThread extends Thread {
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
 			newCtp.setAid(ctpMoi);
-			newCtp.setUserLabel(GenerateUserLabelUtils.generateTpUserLabel( ctp ));
-			newCtp.setNativeName(ctpMoi);
+			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
+			newCtp.setUserLabel(userLabel);
+			newCtp.setNativeName(userLabel);
 			newCtp.setTpType(ctp.getMoc());
 			newCtp.setParentTpId(ptpDbId);
 
 			// TODO 读取映射文件获取层速率
-			newCtp.setLayerRate("5");
+			newCtp.setLayerRate( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
 			tps.add(newCtp);
 		}
 
@@ -168,5 +173,33 @@ public class SyncTpThread extends Thread {
 		} catch (ApiException e) {
 			log.error("updateNeAttr", e);
 		}
+	}
+	
+	private int getLayerRate(TpEntity tp)
+	{
+	    String moc = tp.getMoc();
+	    if (moc.contains( "OpticalSPITTP" ))
+        {
+            int stmLevel = tp.getStmLevel();
+            switch( stmLevel )
+            {
+                case 1:
+                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM1;
+                case 4:
+                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM4;
+                case 16:
+                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM16;
+                case 64:
+                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM64;
+                case 256:
+                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM256;
+                default:
+                    return LayerRateConst.LR_UNDEFINE;
+            }
+        } else if (moc.contains( "pPITTP" ))
+        {
+            return LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_E1_2M;
+        }
+	    return LayerRateConst.LR_UNDEFINE;
 	}
 }
