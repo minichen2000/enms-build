@@ -27,5 +27,7 @@ public class LayerRateConst
     
     public static final int LR_PHYSICAL_ELECTRICAL_DSR_E3_34M = 7;
     
+    public static final int LR_PHYSICAL_ELECTRICAL_DSR_E4_140M = 8;
+    
     
 }

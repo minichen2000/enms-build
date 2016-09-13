@@ -10,6 +10,7 @@ import com.nsb.enms.restful.adapter.server.action.entity.TpEntity;
 import com.nsb.enms.restful.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.restful.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.restful.adapter.server.action.method.tp.GetTp;
+import com.nsb.enms.restful.adapter.server.common.Pair;
 import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.restful.adapter.server.common.util.LayerRateConst;
@@ -130,12 +131,12 @@ public class SyncTpThread extends Thread {
 	}
 
 	private void syncPdhCtp(String moi, String ptpId, String ptpDbId) throws AdapterException {
-		List<TpEntity> ctpList = GetCtp.getPdhCtp(groupId, neId, ptpId);
+		Pair<Integer, List<TpEntity>> pair = GetCtp.getPdhCtp(groupId, neId, ptpId);
+		List<TpEntity> ctpList = pair.getSecond();
 		if (null == ctpList || ctpList.isEmpty()) {
 			log.error("ctpList is null or empty");
 			return;
 		}
-
 		List<TP> tps = new ArrayList<TP>();
 		for (TpEntity ctp : ctpList) {
 			TP newCtp = new TP();
@@ -152,9 +153,14 @@ public class SyncTpThread extends Thread {
 			newCtp.setLayerRate( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
 			tps.add(newCtp);
 		}
-
+		
+		TP pdhPTP = new TP();
+		pdhPTP.setId( ptpDbId );
+		int layerRate = pair.getFirst();
+		pdhPTP.setLayerRate( String.valueOf( layerRate ) );
 		try {
 			tpsApi.addTPs(tps);
+			tpsApi.updateTP( pdhPTP );
 		} catch (ApiException e) {
 			log.error("syncCtp", e);
 		}
