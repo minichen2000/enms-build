@@ -1,10 +1,5 @@
 package com.nsb.enms.restful.adapterserver.api.impl;
 
-import java.util.List;
-import java.io.InputStream;
-
-
-import com.nsb.enms.adapter.server.api.*;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.EquipmentsApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;

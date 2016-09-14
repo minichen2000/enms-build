@@ -24,8 +24,8 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.db.client.ApiException;
-import com.nsb.enms.restful.db.client.api.NesApi;
+import com.nsb.enms.restful.dbclient.ApiException;
+import com.nsb.enms.restful.dbclient.api.DbNesApi;
 
 public class Q3EmlImMgr {
 	private static final Logger log = LogManager.getLogger(Q3EmlImMgr.class);
@@ -42,7 +42,7 @@ public class Q3EmlImMgr {
 
 	private List<Integer> diedEmlImGroupIdList = new ArrayList<Integer>();
 
-	private NesApi nesApi = new NesApi();
+	private DbNesApi nesApi = new DbNesApi();
 
 	private Q3EmlImMgr() {
 

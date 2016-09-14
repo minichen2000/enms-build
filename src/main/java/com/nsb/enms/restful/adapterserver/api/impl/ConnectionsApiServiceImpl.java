@@ -69,7 +69,7 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	public Response getConnections(SecurityContext securityContext) throws NotFoundException {
 		List<Connection> connections = new ArrayList<Connection>();
 		try {
-			connections = dbConnectionApi.connectionsGet();
+			connections = dbConnectionApi.getConnections();
 		} catch (ApiException e) {
 			log.error("connectionsGet", e);
 			return Response.serverError().entity(e).build();
