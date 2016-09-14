@@ -15,7 +15,7 @@ public class GenerateUserLabelUtils
         if( "labelledOpticalSPITTPBidirectional".equals( moc )
                 || "pPITTPBidirectionalR1".equals( moc ) )
         {
-            userLabel = generatePTPUserLabel( tpId, entity, "port" );
+            userLabel = generateTpUserLabel( tpId, entity, "port" );
             return userLabel;
         }
 
@@ -41,20 +41,26 @@ public class GenerateUserLabelUtils
 
         if( "vc12PathTraceTTPBidirectional".equals( moc ) )
         {
-            userLabel = generatePTPUserLabel( tpId, entity, "vc12" );
+            userLabel = generateTpUserLabel( tpId, entity, "vc12" );
+            return userLabel;
+        }
+        
+        if ("vc3TTPBidirectionalR1".equals( moc ))
+        {
+            userLabel = generateTpUserLabel( tpId, entity, "vc3" );
             return userLabel;
         }
 
         if( "modifiableVC4TTPBidirectionalR1".equals( moc ) )
         {
-            userLabel = generatePTPUserLabel( tpId, entity, "vc4" );
+            userLabel = generateTpUserLabel( tpId, entity, "vc4" );
             return userLabel;
         }
 
         return "";
     }
 
-    private static String generatePTPUserLabel( String tpId, TpEntity entity,
+    private static String generateTpUserLabel( String tpId, TpEntity entity,
             String type )
     {
         String id = tpId.split( "=" )[1];

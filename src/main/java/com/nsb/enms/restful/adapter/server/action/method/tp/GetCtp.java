@@ -183,7 +183,7 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get msCtp failed!!!" );
             }
             return msTTPId;
         }
@@ -253,7 +253,7 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get unProtectedCtp failed!!!" );
             }
             return protectedTTPId;
         }
@@ -350,7 +350,7 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get au4Ctp failed!!!" );
             }
             return tpList;
         }
@@ -367,7 +367,7 @@ public class GetCtp
     {
         log.debug( "tpId = " + tpId );
 
-        Pair<String, String> pair = getEnCtp( groupId, neId, tpId );
+        Pair<String, String> pair = getEPdhCtp( groupId, neId, tpId );
         String moc = pair.getFirst();
         String ttpId = pair.getSecond();
         log.debug( "ttpId = " + ttpId );
@@ -396,7 +396,7 @@ public class GetCtp
         return pair2;
     }
 
-    private static Pair<String, String> getEnCtp( int groupId, int neId,
+    private static Pair<String, String> getEPdhCtp( int groupId, int neId,
             String tpId ) throws AdapterException
     {
         try
@@ -467,13 +467,13 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get ePdhCtp failed!!!" );
             }
             return pair;
         }
         catch( Exception e )
         {
-            log.error( "getRsCtp", e );
+            log.error( "getEpdhCtp", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
@@ -561,7 +561,7 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get vc12Ttp failed!!!" );
             }
             return tpList;
         }
@@ -579,7 +579,7 @@ public class GetCtp
         List<TpEntity> tpList = new LinkedList<TpEntity>();
         try
         {
-            String objectClass = "0.0.7.774.127.7.0.3.10";
+            String objectClass = "0.0.7.774.0.3.101";
             String vc3TTPId = "0.0.7.774.0.7.41";
             String paramKey = vc3TTPId;
             String paramValue = tpId;
@@ -654,7 +654,7 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get vc3Ttp failed!!!" );
             }
             return tpList;
         }
@@ -750,7 +750,7 @@ public class GetCtp
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get rsCtp failed!!!" );
+                        "Get tu12Ctp failed!!!" );
             }
             return tpList;
         }
