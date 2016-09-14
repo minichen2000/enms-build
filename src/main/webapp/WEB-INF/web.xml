@@ -54,7 +54,7 @@
 	</servlet-mapping>
 	<filter>
 		<filter-name>ApiOriginFilter</filter-name>
-		<filter-class>com.nsb.enms.restful.adapterserver.api.filter.AccessControlFilter</filter-class>
+		<filter-class>com.nsb.enms.adapter.server.filter.AccessControlFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>ApiOriginFilter</filter-name>
