@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.api.impl;
+package com.nsb.enms.restful.adapterserver.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;

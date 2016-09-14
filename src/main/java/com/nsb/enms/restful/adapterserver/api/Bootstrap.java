@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.api;
+package com.nsb.enms.restful.adapterserver.api;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,6 +16,9 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationServer;
+
+import io.swagger.jaxrs.config.SwaggerContextService;
+import io.swagger.models.*;
 
 public class Bootstrap extends HttpServlet
 {
@@ -73,16 +76,16 @@ public class Bootstrap extends HttpServlet
 
     private void initControllerApiClient( String ctrlUrl )
     {
-        com.nsb.enms.restful.controller.client.Configuration
+        com.nsb.enms.restful.controllerclient.Configuration
                 .setDefaultApiClient(
-                    new com.nsb.enms.restful.controller.client.ApiClient()
+                    new com.nsb.enms.restful.controllerclient.ApiClient()
                             .setBasePath( ctrlUrl ) );
     }
 
     private void initDbApiClient( String dbUrl )
     {
-        Configuration
-                .setDefaultApiClient( new ApiClient().setBasePath( dbUrl ) );
+        com.nsb.enms.restful.dbclient.Configuration
+                .setDefaultApiClient( new com.nsb.enms.restful.dbclient.ApiClient().setBasePath( dbUrl ) );
     }
 
     private void register2Controller()

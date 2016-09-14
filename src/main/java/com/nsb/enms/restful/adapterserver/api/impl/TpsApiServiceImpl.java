@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.api.impl;
+package com.nsb.enms.restful.adapterserver.api.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,29 +10,29 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.api.ApiResponseMessage;
-import com.nsb.enms.adapter.server.api.NotFoundException;
-import com.nsb.enms.adapter.server.api.TpsApiService;
-import com.nsb.enms.adapter.server.model.TP;
-import com.nsb.enms.restful.db.client.ApiException;
-import com.nsb.enms.restful.db.client.api.TpsApi;
+import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
+import com.nsb.enms.restful.adapterserver.api.NotFoundException;
+import com.nsb.enms.restful.adapterserver.api.TpsApiService;
+import com.nsb.enms.restful.model.Tp;
+import com.nsb.enms.restful.dbclient.ApiException;
+import com.nsb.enms.restful.dbclient.api.DbTpsApi;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class TpsApiServiceImpl extends TpsApiService {
 	private final static Logger log = LogManager.getLogger(TpsApiServiceImpl.class);
 
-	private TpsApi tpsApi = new TpsApi();
+	private DbTpsApi tpsApi = new DbTpsApi();
 
 	@Override
-	public Response addTPs(List<TP> body, SecurityContext securityContext) throws NotFoundException {
+	public Response addTps(List<Tp> body, SecurityContext securityContext) throws NotFoundException {
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
 	@Override
-	public Response getTPById(String tpid, SecurityContext securityContext) throws NotFoundException {
-		com.nsb.enms.restful.db.client.model.TP tp = new com.nsb.enms.restful.db.client.model.TP();
+	public Response getTpById(String tpid, SecurityContext securityContext) throws NotFoundException {
+		Tp tp = new Tp();
 		try {
-			tp = tpsApi.getTPById(tpid);
+			tp = tpsApi.getTpById(tpid);
 		} catch (ApiException e) {
 			log.error("getTPById", e);
 			return Response.serverError().entity(e).build();
@@ -41,11 +41,11 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response getTPByNEId(String neid, SecurityContext securityContext) throws NotFoundException {
+	public Response getTpsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
 		System.out.println("getTPByNEId, neId = " + neid);
-		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTPByNEId(neid);
+			tpList = tpsApi.getTpsByNeId(neid);
 		} catch (ApiException e) {
 			log.error("getTPByNEId", e);
 			return Response.serverError().entity(e).build();
@@ -54,11 +54,11 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response getTPsByLayerrate(String neid, String layerrate, SecurityContext securityContext)
+	public Response getTpsByLayerRate(String neid, String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
-		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTPsByLayerrate(neid, layerrate);
+			tpList = tpsApi.getTpsByLayerRate(neid, layerrate);
 		} catch (ApiException e) {
 			log.error("getTPsByLayerrate", e);
 			return Response.serverError().entity(e).build();
@@ -67,16 +67,16 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response updateTP(TP body, SecurityContext securityContext) throws NotFoundException {
+	public Response updateTp(Tp body, SecurityContext securityContext) throws NotFoundException {
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
 	@Override
-	public Response getTPs(SecurityContext securityContext) throws NotFoundException {
+	public Response getTps(SecurityContext securityContext) throws NotFoundException {
 		Date begin = new Date();
-		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTPs();
+			tpList = tpsApi.getTps();
 		} catch (ApiException e) {
 			log.error("getTPs", e);
 			return Response.serverError().entity(e).build();
@@ -89,11 +89,11 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response getTPsByType(String tptype, SecurityContext securityContext) throws NotFoundException {
+	public Response getTpsByType(String tptype, SecurityContext securityContext) throws NotFoundException {
 		Date begin = new Date();
-		List<com.nsb.enms.restful.db.client.model.TP> tpList = new ArrayList<com.nsb.enms.restful.db.client.model.TP>();
+		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTPsByType(tptype);
+			tpList = tpsApi.getTpsByType(tptype);
 		} catch (ApiException e) {
 			log.error("getTPsByType", e);
 			return Response.serverError().entity(e).build();
@@ -106,9 +106,9 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response getCTPsByTP(String neid, String ptpid, SecurityContext securityContext) throws NotFoundException {
+	public Response getCtpsByTpId(String neid, String ptpid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			tpsApi.getCTPsByTP(neid, ptpid);
+			tpsApi.getCtpsByTpId(neid, ptpid);
 		} catch (ApiException e) {
 			log.error("getCTPsByTP", e);
 			return Response.serverError().entity(e).build();
@@ -117,7 +117,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 	}
 
 	@Override
-	public Response getChildrenTPs(String tpid, SecurityContext securityContext) throws NotFoundException {
+	public Response getChildrenTps(String tpid, SecurityContext securityContext) throws NotFoundException {
 		return null;
 	}
+
 }

@@ -45,7 +45,7 @@
 	</servlet>
 	<servlet>
 		<servlet-name>Bootstrap</servlet-name>
-		<servlet-class>com.nsb.enms.adapter.server.api.Bootstrap</servlet-class>
+		<servlet-class>com.nsb.enms.restful.adapterserver.api.Bootstrap</servlet-class>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -54,7 +54,7 @@
 	</servlet-mapping>
 	<filter>
 		<filter-name>ApiOriginFilter</filter-name>
-		<filter-class>com.nsb.enms.adapter.server.api.filter.AccessControlFilter</filter-class>
+		<filter-class>com.nsb.enms.restful.adapterserver.api.filter.AccessControlFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>ApiOriginFilter</filter-name>

@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.api.impl;
+package com.nsb.enms.restful.adapterserver.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,22 +13,22 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
-import com.nsb.enms.adapter.server.api.NotFoundException;
-import com.nsb.enms.adapter.server.api.XcsApiService;
-import com.nsb.enms.adapter.server.model.XC;
-import com.nsb.enms.restful.db.client.ApiException;
-import com.nsb.enms.restful.db.client.api.TpsApi;
-import com.nsb.enms.restful.db.client.api.XcsApi;
-import com.nsb.enms.restful.db.client.model.TP;
+import com.nsb.enms.restful.adapterserver.api.NotFoundException;
+import com.nsb.enms.restful.adapterserver.api.XcsApiService;
+import com.nsb.enms.restful.dbclient.ApiException;
+import com.nsb.enms.restful.dbclient.api.DbTpsApi;
+import com.nsb.enms.restful.dbclient.api.DbXcsApi;
+import com.nsb.enms.restful.model.Tp;
+import com.nsb.enms.restful.model.Xc;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
 public class XcsApiServiceImpl extends XcsApiService {
 	private final static Logger log = LogManager.getLogger(XcsApiServiceImpl.class);
-	private XcsApi xcsApi = new XcsApi();
-	private TpsApi tpsApi = new TpsApi();
+	private DbXcsApi xcsApi = new DbXcsApi();
+	private DbTpsApi tpsApi = new DbTpsApi();
 
 	@Override
-	public Response createXC(XC body, SecurityContext securityContext) throws NotFoundException {
+	public Response createXc(Xc body, SecurityContext securityContext) throws NotFoundException {
 		List<String> atps = body.getAtps();
 		if (null == atps || atps.isEmpty()) {
 			log.error("atps is null or empty");
@@ -58,7 +58,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 			tpBean.setVc12TtpId(atpBean.getVc12TtpId());
 		}
 
-		com.nsb.enms.restful.db.client.model.XC xc = new com.nsb.enms.restful.db.client.model.XC();
+		Xc xc = new Xc();
 		try {
 			XcEntity xcEntity = CreateXc.createXcVc12(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 					tpBean.getTug3Id(), tpBean.getTug2Id(), tpBean.getTu12CtpId(), tpBean.getVc12TtpId());
@@ -71,10 +71,10 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return Response.ok().entity(xc).build();
 	}
 
-	private com.nsb.enms.restful.db.client.model.XC insertXc2Db(XcEntity xcEntity, String neDbId, String atpDbId,
+	private Xc insertXc2Db(XcEntity xcEntity, String neDbId, String atpDbId,
 			String ztpDbId) throws ApiException {
-		XcsApi xcsApi = new XcsApi();
-		com.nsb.enms.restful.db.client.model.XC xc = new com.nsb.enms.restful.db.client.model.XC();
+		DbXcsApi xcsApi = new DbXcsApi();
+		Xc xc = new Xc();
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
@@ -90,7 +90,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		ztps.add(ztpDbId);
 		xc.setZtps(ztps);
 
-		xc = xcsApi.createXC(xc);
+		xc = xcsApi.createXc(xc);
 		return xc;
 	}
 
@@ -104,7 +104,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String vc12TtpId = StringUtils.EMPTY;
 		XcParamBean bean = new XcParamBean();
 		try {
-			TP tp = tpsApi.getTPById(tpId);
+			Tp tp = tpsApi.getTpById(tpId);
 			String tpType = tp.getTpType();
 			String moi = tp.getAid();
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
@@ -136,9 +136,9 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	@Override
-	public Response deleteXC(String xcid, SecurityContext securityContext) throws NotFoundException {
+	public Response deleteXc(String xcid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			xcsApi.deleteXC(xcid);
+			xcsApi.deleteXc(xcid);
 		} catch (ApiException e) {
 			log.error("deleteXC", e);
 		}
@@ -146,10 +146,10 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	@Override
-	public Response findXCs(String tpid, SecurityContext securityContext) throws NotFoundException {
-		List<com.nsb.enms.restful.db.client.model.XC> xcList = new ArrayList<com.nsb.enms.restful.db.client.model.XC>();
+	public Response findXcs(String tpid, SecurityContext securityContext) throws NotFoundException {
+		List<Xc> xcList = new ArrayList<Xc>();
 		try {
-			xcList = xcsApi.findXCs(tpid);
+			xcList = xcsApi.findXcsByTpId(tpid);
 		} catch (ApiException e) {
 			log.error("findXCs", e);
 		}
@@ -157,13 +157,25 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	@Override
-	public Response getXCById(String xcid, SecurityContext securityContext) throws NotFoundException {
-		com.nsb.enms.restful.db.client.model.XC xc = new com.nsb.enms.restful.db.client.model.XC();
+	public Response getXcById(String xcid, SecurityContext securityContext) throws NotFoundException {
+		Xc xc = new Xc();
 		try {
-			xc = xcsApi.getXCById(xcid);
+			xc = xcsApi.getXcById(xcid);
 		} catch (ApiException e) {
 			log.error("getXCById", e);
 		}
 		return Response.ok().entity(xc).build();
+	}
+
+	@Override
+	public Response deleteXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response getXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

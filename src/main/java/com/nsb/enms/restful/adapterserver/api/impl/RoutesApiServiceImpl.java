@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.api.impl;
+package com.nsb.enms.restful.adapterserver.api.impl;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
