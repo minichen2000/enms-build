@@ -103,9 +103,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 		ne.setNeType(entity.getNeType());
 		ne.setOperationState("disable");
-		ne.setAdminState( entity.getAdministrativeState() );
-		//ne.setAlignmentStatus("false");
-		//List<NeExtraInfo> extInfoList = new ArrayList<NeExtraInfo>();
+		ne.setAdminState( entity.getAdministrativeState() );		
 		NeExtraInfo neExtraInfo = new NeExtraInfo();
 		neExtraInfo.setMoi( entity.getMoc() );
 		ne.setExtraInfo( neExtraInfo );

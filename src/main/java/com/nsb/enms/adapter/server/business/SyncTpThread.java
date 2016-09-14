@@ -14,14 +14,15 @@ import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
-import com.nsb.enms.restful.db.client.ApiException;
-import com.nsb.enms.restful.db.client.api.NesApi;
-import com.nsb.enms.restful.db.client.api.TpsApi;
-import com.nsb.enms.restful.db.client.model.TP;
+import com.nsb.enms.restful.dbclient.ApiException;
+import com.nsb.enms.restful.dbclient.api.DbNesApi;
+import com.nsb.enms.restful.dbclient.api.DbTpsApi;
+import com.nsb.enms.restful.model.Ne;
+import com.nsb.enms.restful.model.Tp;
 
 public class SyncTpThread extends Thread {
 	private final static Logger log = LogManager.getLogger(SyncTpThread.class);
-	private TpsApi tpsApi = new TpsApi();
+	private DbTpsApi tpsApi = new DbTpsApi();
 	private int groupId, neId;
 	private String id;
 
@@ -62,9 +63,9 @@ public class SyncTpThread extends Thread {
 			log.debug("tpList = " + tpList.size() + ", neId = " + neId);
 
 			for (TpEntity tp : tpList) {
-				List<TP> tps = new ArrayList<TP>();
+				List<Tp> tps = new ArrayList<Tp>();
 				log.debug("tp = " + tp);
-				TP newTp = new TP();
+				Tp newTp = new Tp();
 				newTp.setNeId(id);
 				String moi = tp.getMoi();
 				newTp.setAid(moi);
@@ -78,7 +79,7 @@ public class SyncTpThread extends Thread {
 				newTp.setLayerRate( String.valueOf( layerRate ) );
 				tps.add(newTp);
 
-				tps = tpsApi.addTPs(tps);
+				tps = tpsApi.addTps(tps);
 				String tpId = moi.split("/")[2];
 				log.debug("tpId = " + tpId);
 				String ptpId = tpId.split("=")[1];
@@ -106,9 +107,9 @@ public class SyncTpThread extends Thread {
 			return;
 		}
 
-		List<TP> tps = new ArrayList<TP>();
+		List<Tp> tps = new ArrayList<Tp>();
 		for (TpEntity ctp : ctpList) {
-			TP newCtp = new TP();
+		    Tp newCtp = new Tp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
 			newCtp.setAid(ctpMoi);
@@ -124,7 +125,7 @@ public class SyncTpThread extends Thread {
 		}
 
 		try {
-			tpsApi.addTPs(tps);
+			tpsApi.addTps(tps);
 		} catch (ApiException e) {
 			log.error("syncCtp", e);
 		}
@@ -137,9 +138,9 @@ public class SyncTpThread extends Thread {
 			log.error("ctpList is null or empty");
 			return;
 		}
-		List<TP> tps = new ArrayList<TP>();
+		List<Tp> tps = new ArrayList<Tp>();
 		for (TpEntity ctp : ctpList) {
-			TP newCtp = new TP();
+		    Tp newCtp = new Tp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
 			newCtp.setAid(ctpMoi);
@@ -154,13 +155,13 @@ public class SyncTpThread extends Thread {
 			tps.add(newCtp);
 		}
 		
-		TP pdhPTP = new TP();
+		Tp pdhPTP = new Tp();
 		pdhPTP.setId( ptpDbId );
 		int layerRate = pair.getFirst();
 		pdhPTP.setLayerRate( String.valueOf( layerRate ) );
 		try {
-			tpsApi.addTPs(tps);
-			tpsApi.updateTP( pdhPTP );
+			tpsApi.addTps(tps);
+			tpsApi.updateTp( pdhPTP );
 		} catch (ApiException e) {
 			log.error("syncCtp", e);
 		}
@@ -170,12 +171,13 @@ public class SyncTpThread extends Thread {
 	 * update the value of alignmentStatus for ne to true
 	 */
 	private void updateNeAttr(String id) {
-		NesApi nesApi = new NesApi();
-		com.nsb.enms.restful.db.client.model.NE ne = new com.nsb.enms.restful.db.client.model.NE();
+		DbNesApi nesApi = new DbNesApi();
+		Ne ne = new Ne();
 		ne.setId(id);
-		ne.setAlignmentStatus("true");
+		ne.adminState( "UP" );
+		ne.setOperationState("enable");
 		try {
-			nesApi.updateNE(ne);
+			nesApi.updateNe(ne);
 		} catch (ApiException e) {
 			log.error("updateNeAttr", e);
 		}

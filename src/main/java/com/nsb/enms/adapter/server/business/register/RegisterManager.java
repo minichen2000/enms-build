@@ -4,16 +4,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.controller.client.ApiException;
-import com.nsb.enms.restful.controller.client.api.SystemApi;
-import com.nsb.enms.restful.controller.client.model.HOST;
+import com.nsb.enms.restful.controllerclient.ApiException;
+import com.nsb.enms.restful.controllerclient.api.CtlSystemApi;
+import com.nsb.enms.restful.model.Host;
 
 public class RegisterManager {
 	private static final Logger log = LogManager.getLogger(RegisterManager.class);
-	private SystemApi systemApi = new SystemApi();
+	private CtlSystemApi systemApi = new CtlSystemApi();
 
 	public boolean register2Controller() {
-		HOST host = constructAdapterHost();
+	Host host = constructAdapterHost();
 
 		try {
 			systemApi.registerHost(host);
@@ -25,7 +25,7 @@ public class RegisterManager {
 	}
 
 	public void unRegister2Controller() {
-		HOST host = constructAdapterHost();
+		Host host = constructAdapterHost();
 
 		try {
 			systemApi.unRegisterHost(host);
@@ -34,8 +34,8 @@ public class RegisterManager {
 		}
 	}
 
-	private HOST constructAdapterHost() {
-		HOST host = new HOST();
+	private Host constructAdapterHost() {
+		Host host = new Host();
 		host.setType("Adapter");
 		String id = ConfLoader.getInstance().getConf("ADP_ID", "adapter_" + System.currentTimeMillis());
 		host.setId(id);

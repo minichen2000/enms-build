@@ -6,12 +6,12 @@ import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.controller.client.ApiException;
-import com.nsb.enms.restful.controller.client.api.SystemApi;
+import com.nsb.enms.restful.controllerclient.ApiException;
+import com.nsb.enms.restful.controllerclient.api.CtlSystemApi;
 
 public class HeartBeatManager {
 	private static final Logger log = LogManager.getLogger(HeartBeatManager.class);
-	private SystemApi systemApi = new SystemApi();
+	private CtlSystemApi systemApi = new CtlSystemApi();
 
 	public void checkHeartbeat() {
 		Timer timer = new Timer();
