@@ -10,20 +10,21 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.api.ConnectionsApiService;
-import com.nsb.enms.adapter.server.api.NotFoundException;
-import com.nsb.enms.adapter.server.model.CONNECTION;
-import com.nsb.enms.restful.db.client.ApiException;
-import com.nsb.enms.restful.db.client.api.ConnectionsApi;
+import com.nsb.enms.restful.adapterserver.api.ConnectionsApiService;
+import com.nsb.enms.restful.adapterserver.api.NotFoundException;
+import com.nsb.enms.restful.dbclient.ApiException;
+import com.nsb.enms.restful.dbclient.api.DbConnectionsApi;
+import com.nsb.enms.restful.model.Connection;
+
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	private static final Logger log = LogManager.getLogger(ConnectionsApiServiceImpl.class);
-	private ConnectionsApi connectionApi = new ConnectionsApi();
+	private DbConnectionsApi dbConnectionApi = new DbConnectionsApi();
 
 	@Override
-	public Response addConnection(CONNECTION body, SecurityContext securityContext) throws NotFoundException {
-		com.nsb.enms.restful.db.client.model.CONNECTION connection = new com.nsb.enms.restful.db.client.model.CONNECTION();
+	public Response addConnection(Connection body, SecurityContext securityContext) throws NotFoundException {
+		Connection connection = new Connection();
 		try {
 			BeanUtils.copyProperties(connection, body);
 		} catch (Exception e) {
@@ -32,7 +33,7 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 		}
 
 		try {
-			connection = connectionApi.addConnection(connection);
+			connection = dbConnectionApi.addConnection(connection);
 		} catch (ApiException e) {
 			log.error("addConnection", e);
 		}
@@ -40,10 +41,10 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	}
 
 	@Override
-	public Response getConnectionByID(String connectionid, SecurityContext securityContext) throws NotFoundException {
-		com.nsb.enms.restful.db.client.model.CONNECTION connection = new com.nsb.enms.restful.db.client.model.CONNECTION();
+	public Response getConnectionById(String connectionid, SecurityContext securityContext) throws NotFoundException {
+		Connection connection = new Connection();
 		try {
-			connection = connectionApi.getConnectionByID(connectionid);
+			connection = dbConnectionApi.getConnectionById(connectionid);
 		} catch (ApiException e) {
 			log.error("getConnectionByID", e);
 			return Response.serverError().entity(e).build();
@@ -52,11 +53,11 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	}
 
 	@Override
-	public Response getConnectionsByLayerrate(String layerrate, SecurityContext securityContext)
+	public Response getConnectionsByLayerRate(String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
-		List<com.nsb.enms.restful.db.client.model.CONNECTION> connections = new ArrayList<com.nsb.enms.restful.db.client.model.CONNECTION>();
+		List<Connection> connections = new ArrayList<Connection>();
 		try {
-			connections = connectionApi.getConnectionsByLayerrate(layerrate);
+			connections = dbConnectionApi.getConnectionsByLayerRate(layerrate);
 		} catch (ApiException e) {
 			log.error("getConnectionsByLayerrate", e);
 			return Response.serverError().entity(e).build();
@@ -65,10 +66,10 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	}
 
 	@Override
-	public Response connectionsGet(SecurityContext securityContext) throws NotFoundException {
-		List<com.nsb.enms.restful.db.client.model.CONNECTION> connections = new ArrayList<com.nsb.enms.restful.db.client.model.CONNECTION>();
+	public Response getConnections(SecurityContext securityContext) throws NotFoundException {
+		List<Connection> connections = new ArrayList<Connection>();
 		try {
-			connections = connectionApi.connectionsGet();
+			connections = dbConnectionApi.connectionsGet();
 		} catch (ApiException e) {
 			log.error("connectionsGet", e);
 			return Response.serverError().entity(e).build();
@@ -77,11 +78,11 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	}
 
 	@Override
-	public Response getConnectionByType(String connectiontype, SecurityContext securityContext)
+	public Response getConnectionsByType(String connectiontype, SecurityContext securityContext)
 			throws NotFoundException {
-		List<com.nsb.enms.restful.db.client.model.CONNECTION> connections = new ArrayList<com.nsb.enms.restful.db.client.model.CONNECTION>();
+		List<Connection> connections = new ArrayList<Connection>();
 		try {
-			connections = connectionApi.getConnectionByType(connectiontype);
+			connections = dbConnectionApi.getConnectionsByType(connectiontype);
 		} catch (ApiException e) {
 			log.error("getConnectionByType", e);
 			return Response.serverError().entity(e).build();
@@ -92,9 +93,9 @@ public class ConnectionsApiServiceImpl extends ConnectionsApiService {
 	@Override
 	public Response getConnectionByUserLabel(String userlabel, SecurityContext securityContext)
 			throws NotFoundException {
-		com.nsb.enms.restful.db.client.model.CONNECTION connection = new com.nsb.enms.restful.db.client.model.CONNECTION();
+		Connection connection = new Connection();
 		try {
-			connection = connectionApi.getConnectionByUserLabel(userlabel);
+			connection = dbConnectionApi.getConnectionByUserLabel(userlabel);
 		} catch (ApiException e) {
 			log.error("getConnectionByUserLabel", e);
 			return Response.serverError().entity(e).build();
