@@ -16,14 +16,6 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationServer;
-import com.nsb.enms.restful.db.client.ApiClient;
-import com.nsb.enms.restful.db.client.Configuration;
-
-import io.swagger.jaxrs.config.SwaggerContextService;
-import io.swagger.models.Contact;
-import io.swagger.models.Info;
-import io.swagger.models.License;
-import io.swagger.models.Swagger;
 
 public class Bootstrap extends HttpServlet
 {

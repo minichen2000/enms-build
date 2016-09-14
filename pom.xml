@@ -17,6 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jackson.version>2.7.5</jackson.version>
 		<logback-version>1.1.7</logback-version>
+        <swagger-core-version>1.5.9</swagger-core-version>
 	</properties>
 
 	<dependencies>
@@ -45,7 +46,12 @@
 			<version>4.12</version>
 		</dependency>
 
-
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jersey2-jaxrs</artifactId>
+            <scope>compile</scope>
+            <version>${swagger-core-version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
