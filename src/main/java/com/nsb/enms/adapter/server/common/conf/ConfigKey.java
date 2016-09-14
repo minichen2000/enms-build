@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.common.conf;
+package com.nsb.enms.adapter.server.common.conf;
 
 public class ConfigKey {
 	public static final String REFERENCE_CONF_FILES = "REFERENCE_CONF_FILES";

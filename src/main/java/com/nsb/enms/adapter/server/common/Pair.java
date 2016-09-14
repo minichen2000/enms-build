@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.common;
+package com.nsb.enms.adapter.server.common;
 
 import java.io.Serializable;
 

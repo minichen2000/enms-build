@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification;
+package com.nsb.enms.adapter.server.notification;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;

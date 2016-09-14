@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api.impl;
+package com.nsb.enms.adapter.server.api.impl;
 
 import java.util.List;
 
@@ -9,14 +9,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.action.method.ne.StartSuppervision;
-import com.nsb.enms.restful.adapter.server.api.ApiResponseMessage;
-import com.nsb.enms.restful.adapter.server.api.EnmsApiService;
-import com.nsb.enms.restful.adapter.server.api.NotFoundException;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.model.NE;
-import com.nsb.enms.restful.adapter.server.model.NEASSIGNMENT;
-import com.nsb.enms.restful.adapter.server.model.NEExtraInfo;
+import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
+import com.nsb.enms.adapter.server.api.ApiResponseMessage;
+import com.nsb.enms.adapter.server.api.EnmsApiService;
+import com.nsb.enms.adapter.server.api.NotFoundException;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.model.NE;
+import com.nsb.enms.adapter.server.model.NEASSIGNMENT;
+import com.nsb.enms.adapter.server.model.NEExtraInfo;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-09T15:45:26.159+08:00")
 public class EnmsApiServiceImpl extends EnmsApiService {

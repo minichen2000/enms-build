@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification.entity;
+package com.nsb.enms.adapter.server.notification.entity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,9 +9,9 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
 
 public class Moc
 {

@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.action.method.tp;
+package com.nsb.enms.adapter.server.action.method.tp;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -9,14 +9,14 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.action.entity.TpEntity;
-import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.action.entity.TpEntity;
+import com.nsb.enms.adapter.server.action.method.ExecExternalScript;
+import com.nsb.enms.adapter.server.common.ExternalScriptType;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.adapter.server.common.util.ParseUtils;
 
 public class GetTtp {
 	private static final Logger log = LogManager.getLogger(GetTtp.class);

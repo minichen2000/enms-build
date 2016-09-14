@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api;
+package com.nsb.enms.adapter.server.api;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.business.register.RegisterManager;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.notification.NotificationClient;
-import com.nsb.enms.restful.adapter.server.notification.NotificationServer;
+import com.nsb.enms.adapter.server.business.register.RegisterManager;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.notification.NotificationClient;
+import com.nsb.enms.adapter.server.notification.NotificationServer;
 import com.nsb.enms.restful.db.client.ApiClient;
 import com.nsb.enms.restful.db.client.Configuration;
 

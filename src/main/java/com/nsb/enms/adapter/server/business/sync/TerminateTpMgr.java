@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.business.sync;
+package com.nsb.enms.adapter.server.business.sync;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,15 +7,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.action.entity.TpEntity;
-import com.nsb.enms.restful.adapter.server.action.entity.XcEntity;
-import com.nsb.enms.restful.adapter.server.action.method.tp.GetCtp;
-import com.nsb.enms.restful.adapter.server.action.method.tp.GetTtp;
-import com.nsb.enms.restful.adapter.server.action.method.tp.TerminateTug3ToTu12;
-import com.nsb.enms.restful.adapter.server.action.method.xc.CreateXc;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.common.util.GenerateUserLabelUtils;
-import com.nsb.enms.restful.adapter.server.common.util.LayerRateConst;
+import com.nsb.enms.adapter.server.action.entity.TpEntity;
+import com.nsb.enms.adapter.server.action.entity.XcEntity;
+import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
+import com.nsb.enms.adapter.server.action.method.tp.GetTtp;
+import com.nsb.enms.adapter.server.action.method.tp.TerminateTug3ToTu12;
+import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
+import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.TpsApi;
 import com.nsb.enms.restful.db.client.api.XcsApi;

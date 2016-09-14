@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.common.exception;
+package com.nsb.enms.adapter.server.common.exception;
 
 public class AdapterException extends Exception
 {

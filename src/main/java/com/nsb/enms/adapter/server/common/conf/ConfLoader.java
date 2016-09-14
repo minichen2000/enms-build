@@ -1,12 +1,12 @@
-package com.nsb.enms.restful.adapter.server.common.conf;
+package com.nsb.enms.adapter.server.common.conf;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 
 public class ConfLoader
 {

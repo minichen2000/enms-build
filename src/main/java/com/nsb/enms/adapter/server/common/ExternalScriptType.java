@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.common;
+package com.nsb.enms.adapter.server.common;
 
 public enum ExternalScriptType {
     TSTMGR, EMLIM, KILL_EMLIM

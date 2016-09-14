@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification;
+package com.nsb.enms.adapter.server.notification;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,11 +14,11 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.common.util.JsonUtils;
-import com.nsb.enms.restful.adapter.server.notification.entity.Message;
-import com.nsb.enms.restful.adapter.server.notification.entity.NotificationEntity;
-import com.nsb.enms.restful.adapter.server.notification.util.NotificationQueue;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.util.JsonUtils;
+import com.nsb.enms.adapter.server.notification.entity.Message;
+import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.adapter.server.notification.util.NotificationQueue;
 
 @WebSocket
 public class NotificationServerHandler extends WebSocketHandler

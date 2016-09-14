@@ -1,7 +1,7 @@
-package com.nsb.enms.restful.adapter.server.notification.entity;
+package com.nsb.enms.adapter.server.notification.entity;
 
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 
 public class Moi
 {

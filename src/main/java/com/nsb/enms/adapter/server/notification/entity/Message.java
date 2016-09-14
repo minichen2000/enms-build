@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification.entity;
+package com.nsb.enms.adapter.server.notification.entity;
 
 public class Message
 {

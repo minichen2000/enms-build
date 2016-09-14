@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification.util;
+package com.nsb.enms.adapter.server.notification.util;
 
 import java.util.concurrent.LinkedBlockingQueue;
 

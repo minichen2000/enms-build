@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.business.heartbeat;
+package com.nsb.enms.adapter.server.business.heartbeat;
 
 import java.util.Timer;
 import java.util.TimerTask;

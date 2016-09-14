@@ -1,8 +1,8 @@
-package com.nsb.enms.restful.adapter.server.common.util;
+package com.nsb.enms.adapter.server.common.util;
 
 import java.util.List;
 
-import com.nsb.enms.restful.adapter.server.action.entity.TpEntity;
+import com.nsb.enms.adapter.server.action.entity.TpEntity;
 
 public class GenerateUserLabelUtils
 {

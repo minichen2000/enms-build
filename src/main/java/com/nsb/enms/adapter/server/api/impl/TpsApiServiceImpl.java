@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api.impl;
+package com.nsb.enms.adapter.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,10 +10,10 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.api.ApiResponseMessage;
-import com.nsb.enms.restful.adapter.server.api.NotFoundException;
-import com.nsb.enms.restful.adapter.server.api.TpsApiService;
-import com.nsb.enms.restful.adapter.server.model.TP;
+import com.nsb.enms.adapter.server.api.ApiResponseMessage;
+import com.nsb.enms.adapter.server.api.NotFoundException;
+import com.nsb.enms.adapter.server.api.TpsApiService;
+import com.nsb.enms.adapter.server.model.TP;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.TpsApi;
 

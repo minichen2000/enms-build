@@ -1,16 +1,12 @@
-package com.nsb.enms.restful.adapter.server.api.impl;
-
-import com.nsb.enms.restful.adapter.server.api.*;
-import com.nsb.enms.restful.adapter.server.model.*;
-
-import com.nsb.enms.restful.adapter.server.model.EQUIPMENT;
+package com.nsb.enms.adapter.server.api.impl;
 
 import java.util.List;
-import com.nsb.enms.restful.adapter.server.api.NotFoundException;
-
 import java.io.InputStream;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+
+import com.nsb.enms.adapter.server.api.*;
+import com.nsb.enms.adapter.server.model.*;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;

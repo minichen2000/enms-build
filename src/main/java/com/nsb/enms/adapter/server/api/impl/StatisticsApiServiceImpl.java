@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api.impl;
+package com.nsb.enms.adapter.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,8 +6,8 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import com.nsb.enms.restful.adapter.server.api.NotFoundException;
-import com.nsb.enms.restful.adapter.server.api.StatisticsApiService;
+import com.nsb.enms.adapter.server.api.NotFoundException;
+import com.nsb.enms.adapter.server.api.StatisticsApiService;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.StatisticsApi;
 import com.nsb.enms.restful.db.client.model.NESTATISTICS;

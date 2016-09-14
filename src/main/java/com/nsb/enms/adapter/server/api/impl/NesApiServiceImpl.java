@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api.impl;
+package com.nsb.enms.adapter.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +10,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.action.entity.NeEntity;
-import com.nsb.enms.restful.adapter.server.action.method.ne.CreateNe;
-import com.nsb.enms.restful.adapter.server.action.method.ne.DeleteNe;
-import com.nsb.enms.restful.adapter.server.api.ApiResponseMessage;
-import com.nsb.enms.restful.adapter.server.api.NesApiService;
-import com.nsb.enms.restful.adapter.server.api.NotFoundException;
-import com.nsb.enms.restful.adapter.server.business.SyncTpThread;
-import com.nsb.enms.restful.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.restful.adapter.server.model.Addresses;
-import com.nsb.enms.restful.adapter.server.model.NE;
-import com.nsb.enms.restful.adapter.server.model.NEExtraInfo;
+import com.nsb.enms.adapter.server.action.entity.NeEntity;
+import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
+import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
+import com.nsb.enms.adapter.server.api.ApiResponseMessage;
+import com.nsb.enms.adapter.server.api.NesApiService;
+import com.nsb.enms.adapter.server.api.NotFoundException;
+import com.nsb.enms.adapter.server.business.SyncTpThread;
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.model.Addresses;
+import com.nsb.enms.adapter.server.model.NE;
+import com.nsb.enms.adapter.server.model.NEExtraInfo;
 import com.nsb.enms.restful.controller.client.api.EquipmentsApi;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.NesApi;

@@ -1,9 +1,9 @@
-package com.nsb.enms.restful.adapter.server.business.register;
+package com.nsb.enms.adapter.server.business.register;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.controller.client.ApiException;
 import com.nsb.enms.restful.controller.client.api.SystemApi;
 import com.nsb.enms.restful.controller.client.model.HOST;

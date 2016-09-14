@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.manager;
+package com.nsb.enms.adapter.server.manager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -8,10 +8,10 @@ import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.action.method.ExecExternalScript;
-import com.nsb.enms.restful.adapter.server.common.ExternalScriptType;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.restful.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.action.method.ExecExternalScript;
+import com.nsb.enms.adapter.server.common.ExternalScriptType;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 
 public class Q3EmlImMonitorTask extends TimerTask
 {

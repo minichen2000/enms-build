@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification;
+package com.nsb.enms.adapter.server.notification;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
-import com.nsb.enms.restful.adapter.server.notification.util.NotificationParseUtil;
-import com.nsb.enms.restful.adapter.server.notification.util.NotificationQueue;
+import com.nsb.enms.adapter.server.notification.util.NotificationParseUtil;
+import com.nsb.enms.adapter.server.notification.util.NotificationQueue;
 
 public class NotificationClientHandler extends WebSocketAdapter
 {

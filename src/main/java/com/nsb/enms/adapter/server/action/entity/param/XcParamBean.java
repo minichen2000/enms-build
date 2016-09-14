@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.action.entity.param;
+package com.nsb.enms.adapter.server.action.entity.param;
 
 import org.apache.commons.lang3.StringUtils;
 

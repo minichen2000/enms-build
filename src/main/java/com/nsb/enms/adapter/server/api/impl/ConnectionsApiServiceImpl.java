@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api.impl;
+package com.nsb.enms.adapter.server.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,9 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.api.ConnectionsApiService;
-import com.nsb.enms.restful.adapter.server.api.NotFoundException;
-import com.nsb.enms.restful.adapter.server.model.CONNECTION;
+import com.nsb.enms.adapter.server.api.ConnectionsApiService;
+import com.nsb.enms.adapter.server.api.NotFoundException;
+import com.nsb.enms.adapter.server.model.CONNECTION;
 import com.nsb.enms.restful.db.client.ApiException;
 import com.nsb.enms.restful.db.client.api.ConnectionsApi;
 

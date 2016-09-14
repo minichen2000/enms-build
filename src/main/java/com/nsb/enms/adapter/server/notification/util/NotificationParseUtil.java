@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification.util;
+package com.nsb.enms.adapter.server.notification.util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.restful.adapter.server.common.util.JsonUtils;
-import com.nsb.enms.restful.adapter.server.notification.entity.DefinitionEntity;
-import com.nsb.enms.restful.adapter.server.notification.entity.EventType;
-import com.nsb.enms.restful.adapter.server.notification.entity.Moc;
-import com.nsb.enms.restful.adapter.server.notification.entity.Moi;
-import com.nsb.enms.restful.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.adapter.server.common.util.JsonUtils;
+import com.nsb.enms.adapter.server.notification.entity.DefinitionEntity;
+import com.nsb.enms.adapter.server.notification.entity.EventType;
+import com.nsb.enms.adapter.server.notification.entity.Moc;
+import com.nsb.enms.adapter.server.notification.entity.Moi;
+import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 
 public class NotificationParseUtil
 {

@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.api.filter;
+package com.nsb.enms.adapter.server.api.filter;
 
 import java.io.IOException;
 

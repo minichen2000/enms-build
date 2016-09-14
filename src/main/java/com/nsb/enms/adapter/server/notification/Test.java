@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.notification;
+package com.nsb.enms.adapter.server.notification;
 
 public class Test
 {

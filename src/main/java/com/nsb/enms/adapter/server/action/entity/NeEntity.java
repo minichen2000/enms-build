@@ -1,4 +1,4 @@
-package com.nsb.enms.restful.adapter.server.action.entity;
+package com.nsb.enms.adapter.server.action.entity;
 
 public class NeEntity
 {
