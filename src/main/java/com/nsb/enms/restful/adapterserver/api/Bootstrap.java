@@ -11,9 +11,11 @@ import javax.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.business.heartbeat.HeartBeatManager;
 import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationServer;
 
@@ -42,6 +44,17 @@ public class Bootstrap extends HttpServlet
                 .updateSwagger( swagger );
 
         register2Controller();
+
+        String q3WSServerUri = ConfLoader.getInstance()
+                .getConf( "Q3_WS_SERVER_URI", "" );
+        new Thread( new WSClientThread( q3WSServerUri ) ).start();
+
+        int adapterWSServerPort = ConfLoader.getInstance()
+                .getInt( "ADP_WS_SERVER_PORT", 7778 );
+        new Thread( new WSServerThread( adapterWSServerPort ) ).start();
+
+        HeartBeatManager heartBeatManager = new HeartBeatManager();
+        heartBeatManager.checkHeartbeat();
     }
 
     private void loadConf( ServletContext context )
@@ -64,16 +77,6 @@ public class Bootstrap extends HttpServlet
         String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
         log.debug( "The ctrlUrl is " + ctrlUrl );
         initControllerApiClient( ctrlUrl );
-
-        /*
-         * String q3WSServerUri = ConfLoader.getInstance() .getConf(
-         * "Q3_WS_SERVER_URI", "" ); new Thread( new WSClientThread(
-         * q3WSServerUri ) ).start();
-         * 
-         * int adapterWSServerPort = ConfLoader.getInstance() .getInt(
-         * "ADP_WS_SERVER_PORT", 7778 ); new Thread( new WSServerThread(
-         * adapterWSServerPort ) ).start();
-         */
     }
 
     private void initControllerApiClient( String ctrlUrl )
@@ -140,4 +143,18 @@ public class Bootstrap extends HttpServlet
             new NotificationServer( port ).start();
         }
     }
+
+    @Override
+    public void destroy()
+    {
+        try
+        {
+            Q3EmlImMgr.getInstance().destory();
+        }
+        catch( AdapterException e )
+        {
+            log.error( "destroy", e );
+        }
+    }
+
 }

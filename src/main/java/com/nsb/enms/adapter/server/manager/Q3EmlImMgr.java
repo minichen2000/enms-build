@@ -72,11 +72,15 @@ public class Q3EmlImMgr
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
             String line;
+            boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-
+                if( line.endsWith( "is running" ) )
+                {
+                    flag = true;
+                }
             }
-            if( process.waitFor() != 0 )
+            if( process.waitFor() != 0 || !flag )
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
@@ -193,7 +197,18 @@ public class Q3EmlImMgr
         {
             Process process = new ExecExternalScript()
                     .run( ExternalScriptType.KILL_EMLIM, groupId + "" );
-            if( process.waitFor() != 0 )
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader( process.getInputStream() ) );
+            String line;
+            boolean flag = false;
+            while( (line = br.readLine()) != null )
+            {
+                if( line.contains( "emlim_" + groupId ) )
+                {
+                    flag = true;
+                }
+            }
+            if( process.waitFor() != 0 || !flag )
             {
                 throw new AdapterException(
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,

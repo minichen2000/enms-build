@@ -22,13 +22,13 @@ public class ExecExternalScript
         ConfigKey.TSTMGR_SCRIPT, ConfigKey.DEFAULT_TSTMGR_SCRIPT );
     
     private static String q3EmlImScript = ConfLoader.getInstance().getConf(
-        ConfigKey.Q3_EMLIM_SCRIPT, ConfigKey.DEFAULT_Q3_EMLIM_SCRIPT );
+        ConfigKey.START_Q3_EMLIM_SCRIPT, ConfigKey.DEFAULT_START_Q3_EMLIM_SCRIPT );
 
     private static String tstmgrDir = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT_DIR, ConfigKey.DEFAULT_TSTMGR_SCRIPT_DIR );
 
     private static String emlImDir = ConfLoader.getInstance().getConf(
-        ConfigKey.EMLIM_SCRIPT_DIR, ConfigKey.DEFAULT_EMLIM_SCRIPT_DIR );
+        ConfigKey.Q3_EMLIM_SCRIPT_DIR, ConfigKey.DEFAULT_Q3_EMLIM_SCRIPT_DIR );
     
     private static String killEmlImScript = ConfLoader.getInstance().getConf(
         ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );
@@ -49,8 +49,7 @@ public class ExecExternalScript
                 cmdArray[0] = q3EmlImScript;
                 break;
             case KILL_EMLIM:
-                //to fill correct dir later
-                fileDir = new File( "XXX" );
+                fileDir = new File( tstmgrDir );
                 cmdArray[0] = killEmlImScript;
                 break;
             default:

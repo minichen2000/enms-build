@@ -36,11 +36,11 @@ public class HeartBeatManager
             try
             {
                 systemApi.checkHeartbeat();
+                log.debug("controller is in service");
             }
             catch( ApiException e )
-            {
-                e.printStackTrace();
-                log.error( "unRegister2Controller", e );
+            {               
+                log.error( "controller is out of service" );
             }
         }
     }
