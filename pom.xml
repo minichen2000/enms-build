@@ -184,6 +184,20 @@
             <artifactId>swagger-codegen-cli</artifactId>
             <version>${swagger-codegen-cli-version}</version>
         </dependency>
+        
+        <dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
+		<!-- Gson: Java to Json conversion -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.7</version>
+			<scope>compile</scope>
+		</dependency>
 		
 	</dependencies>
 	
