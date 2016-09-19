@@ -2,12 +2,9 @@ package com.nsb.enms.adapter.server.manager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -27,182 +24,188 @@ import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.restful.dbclient.ApiException;
 import com.nsb.enms.restful.dbclient.api.DbNesApi;
 
-public class Q3EmlImMgr {
-	private static final Logger log = LogManager.getLogger(Q3EmlImMgr.class);
+public class Q3EmlImMgr
+{
+    private static final Logger log = LogManager.getLogger( Q3EmlImMgr.class );
 
-	private static Map<Integer, List<Integer>> groupToNeId = new LinkedHashMap<Integer, List<Integer>>();
+    List<Integer> neIdList = new LinkedList<Integer>();
 
-	private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
+    private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
 
-	private static final int MAX_NE_COUNT = 200;
+    private static final int MAX_NE_COUNT = 200;
 
-	private static final int EMLIM_COUNT = 4;
+    private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
-	private ReadWriteLock rwLock = new ReentrantReadWriteLock();
+    private int groupId;
 
-	private List<Integer> diedEmlImGroupIdList = new ArrayList<Integer>();
+    private DbNesApi nesApi = new DbNesApi();
 
-	private DbNesApi nesApi = new DbNesApi();
+    private Q3EmlImMgr()
+    {
 
-	private Q3EmlImMgr() {
+    }
 
-	}
+    public static Q3EmlImMgr getInstance()
+    {
+        return Q3EmlImMgr.q3EmlImMgr;
+    }
 
-	public static Q3EmlImMgr getInstance() {
-		return Q3EmlImMgr.q3EmlImMgr;
-	}
+    public void init( int groupId ) throws AdapterException
+    {
+        this.groupId = groupId;
+        startEmlIm( groupId );
 
-	public void init(int groupId) throws AdapterException {
-		for (int i = 0; i < EMLIM_COUNT; i++) {
-			if (!groupToNeId.containsKey(groupId)) {
-				startEmlIm(groupId);
-				groupId++;
-			}
-		}
+        Timer timer = new Timer();
+        long period = ConfLoader.getInstance().getInt(
+            ConfigKey.EMLIM_MONITOR_INTERVAL,
+            ConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL );
+        timer.scheduleAtFixedRate( new Q3EmlImMonitorTask( groupId ), period,
+            period );
+    }
 
-		Timer timer = new Timer();
-		long period = ConfLoader.getInstance().getInt(ConfigKey.EMLIM_MONITOR_INTERVAL,
-				ConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL);
-		timer.scheduleAtFixedRate(new Q3EmlImMonitorTask(), period, period);
-	}
+    public void startEmlIm( int groupId ) throws AdapterException
+    {
+        try
+        {
+            Process process = new ExecExternalScript()
+                    .run( ExternalScriptType.EMLIM, groupId + "" );
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader( process.getInputStream() ) );
+            String line;
+            while( (line = br.readLine()) != null )
+            {
 
-	public void startEmlIm(int groupId) throws AdapterException {
-		try {
-			Process process = new ExecExternalScript().run(ExternalScriptType.EMLIM, groupId + "");
-			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			String line;
-			while ((line = br.readLine()) != null) {
+            }
+            if( process.waitFor() != 0 )
+            {
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                        "Start emlim failed!!!" );
+            }
 
-			}
-			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Start emlim failed!!!");
-			}
+            br.close();
+        }
+        catch( Exception e )
+        {
+            log.error( "startEmlIm", e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+        }
+    }
 
-			br.close();
-			groupToNeId.put(groupId, new ArrayList<Integer>());
-		} catch (Exception e) {
-			log.error(e.getMessage(), e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
-		}
-	}
+    public synchronized Pair<Integer, Integer> getGroupNeId()
+            throws AdapterException
+    {
+        int neId = 1;
 
-	public Set<Integer> getGroupIdList() {
-		return groupToNeId.keySet();
-	}
+        if( neIdList.size() < MAX_NE_COUNT )
+        {
+            if( !neIdList.isEmpty() )
+            {
+                Collections.sort( neIdList );
+                neId = neIdList.get( neIdList.size() - 1 ) + 1;
+            }
+            else
+            {
+                neId = getMaxNeIdFromDb() + 1;
+            }
+            updateMaxNeId2Db( neId );
+            neIdList.add( neId );
+            return new Pair<Integer, Integer>( groupId, neId );
+        }
 
-	public synchronized Pair<Integer, Integer> getGroupNeId() throws AdapterException {
-		int neId = 1;
+        throw new AdapterException( AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                "The emlim doesn't has capacity to manager NE!!!" );
+    }
 
-		// remove later
-		if (groupToNeId.keySet().size() == 0) {
-			groupToNeId.put(100, new ArrayList<Integer>());
-		}
-		for (int groupId : groupToNeId.keySet()) {
-			List<Integer> neIds = groupToNeId.get(groupId);
-			if (neIds.size() < MAX_NE_COUNT) {
-				if (!neIds.isEmpty()) {
-					Collections.sort(neIds);
-					neId = neIds.get(neIds.size() - 1) + 1;
-				} else {
-					neId = getMaxNeIdFromDb() + 1;
-				}
-				updateMaxNeId2Db(neId);
-				neIds.add(neId);
-				return new Pair<Integer, Integer>(groupId, neId);
-			}
-		}
+    private void updateMaxNeId2Db( int neId )
+    {
+        try
+        {
+            nesApi.updateMaxNeId( String.valueOf( neId ) );
+        }
+        catch( ApiException e )
+        {
+            log.error( "updateMaxNeId2Db", e );
+        }
+    }
 
-		if (groupToNeId.keySet().size() < EMLIM_COUNT) {
-			for (int groupId : diedEmlImGroupIdList) {
-				if (!groupToNeId.keySet().contains(groupId)) {
-					startEmlIm(groupId);
-					diedEmlImGroupIdList.remove(groupId);
-					List<Integer> neIds = groupToNeId.get(groupId);
-					neIds.add(neId);
-					return new Pair<Integer, Integer>(groupId, neId);
-				}
-			}
-		}
-		throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-				"There isn't any EMLIM has capacity to manager NE!!!");
-	}
+    private int getMaxNeIdFromDb()
+    {
+        String maxNeId = StringUtils.EMPTY;
+        try
+        {
+            maxNeId = nesApi.getMaxNeId();
+        }
+        catch( ApiException e )
+        {
+            log.error( "getMaxNeIdFromDb", e );
+        }
+        if( StringUtils.isEmpty( maxNeId ) )
+        {
+            return 1;
+        }
+        return Integer.valueOf( maxNeId );
+    }
 
-	private void updateMaxNeId2Db(int neId) {
-		try {
-			nesApi.updateMaxNeId(String.valueOf(neId));
-		} catch (ApiException e) {
-			log.error("updateMaxNeId2Db", e);
-		}
-	}
+    public void clearNeList()
+    {
+        rwLock.writeLock().lock();
+        neIdList.clear();
+        rwLock.writeLock().unlock();
+    }
 
-	private int getMaxNeIdFromDb() {
-		String maxNeId = StringUtils.EMPTY;
-		try {
-			maxNeId = nesApi.getMaxNeId();
-		} catch (ApiException e) {
-			log.error("getMaxNeIdFromDb", e);
-		}
-		if (StringUtils.isEmpty(maxNeId)) {
-			return 1;
-		}
-		return Integer.valueOf(maxNeId);
-	}
+    public void removeNe( int neId )
+    {
+        rwLock.writeLock().lock();
+        neIdList.remove( new Integer( neId ) );
+        rwLock.writeLock().unlock();
+    }
 
-	public void removeGroup(int groupId) {
-		rwLock.writeLock().lock();
-		groupToNeId.remove(new Integer(groupId));
-		diedEmlImGroupIdList.add(groupId);
-		rwLock.writeLock().unlock();
-	}
+    public void deleteAllNes()
+    {
+        if( neIdList != null )
+        {
+            for( int neId : neIdList )
+            {
+                try
+                {
+                    DeleteNe.deleteNe( groupId, neId );
+                }
+                catch( AdapterException e )
+                {
+                    log.error( "deleteAllNes", e );
+                }
+            }
+        }
 
-	public void removeNe(int groupId, int neId) {
-		rwLock.writeLock().lock();
-		groupToNeId.get(groupId).remove(neId);
-		rwLock.writeLock().unlock();
-	}
+    }
 
-	public void deleteAllNes() {
-		for (int groupId : groupToNeId.keySet()) {
-			List<Integer> neIdList = groupToNeId.get(new Integer(groupId));
-			if (neIdList != null) {
-				for (int neId : neIdList) {
-					try {
-						DeleteNe.deleteNe(groupId, neId);
-					} catch (AdapterException e) {
-						log.error("deleteAllNes", e);
-					}
-				}
-			}
-			removeGroup(groupId);
-		}
-	}
+    public void destory() throws AdapterException
+    {
+        deleteAllNes();
+        killEmlImProcess();
+    }
 
-	public void destory() throws AdapterException {
-		for (int groupId : groupToNeId.keySet()) {
-			List<Integer> neIdList = groupToNeId.get(new Integer(groupId));
-			if (neIdList != null) {
-				for (int neId : neIdList) {
-					try {
-						DeleteNe.deleteNe(groupId, neId);
-					} catch (AdapterException e) {
-						log.error("destory", e);
-					}
-				}
-			}
-			killEmlImProcess(groupId);
-		}
-	}
-
-	public void killEmlImProcess(int groupId) throws AdapterException {
-		try {
-			Process process = new ExecExternalScript().run(ExternalScriptType.KILL_EMLIM, groupId + "");
-			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-						"Kill emlim process with groupId " + groupId + " failed!!!");
-			}
-		} catch (Exception e) {
-			log.error("killEmlImProcess", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
-		}
-	}
+    public void killEmlImProcess() throws AdapterException
+    {
+        try
+        {
+            Process process = new ExecExternalScript()
+                    .run( ExternalScriptType.KILL_EMLIM, groupId + "" );
+            if( process.waitFor() != 0 )
+            {
+                throw new AdapterException(
+                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                        "Kill emlim process with groupId " + groupId
+                                + " failed!!!" );
+            }
+        }
+        catch( Exception e )
+        {
+            log.error( "killEmlImProcess", e );
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+        }
+    }
 }

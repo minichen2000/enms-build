@@ -65,33 +65,34 @@ public class Bootstrap extends HttpServlet
         log.debug( "The ctrlUrl is " + ctrlUrl );
         initControllerApiClient( ctrlUrl );
 
-        /*String q3WSServerUri = ConfLoader.getInstance()
-                .getConf( "Q3_WS_SERVER_URI", "" );
-        new Thread( new WSClientThread( q3WSServerUri ) ).start();
-
-        int adapterWSServerPort = ConfLoader.getInstance()
-                .getInt( "ADP_WS_SERVER_PORT", 7778 );
-        new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/
+        /*
+         * String q3WSServerUri = ConfLoader.getInstance() .getConf(
+         * "Q3_WS_SERVER_URI", "" ); new Thread( new WSClientThread(
+         * q3WSServerUri ) ).start();
+         * 
+         * int adapterWSServerPort = ConfLoader.getInstance() .getInt(
+         * "ADP_WS_SERVER_PORT", 7778 ); new Thread( new WSServerThread(
+         * adapterWSServerPort ) ).start();
+         */
     }
 
     private void initControllerApiClient( String ctrlUrl )
     {
-        com.nsb.enms.restful.controllerclient.Configuration
-                .setDefaultApiClient(
-                    new com.nsb.enms.restful.controllerclient.ApiClient()
-                            .setBasePath( ctrlUrl ) );
+        com.nsb.enms.restful.controllerclient.Configuration.setDefaultApiClient(
+            new com.nsb.enms.restful.controllerclient.ApiClient()
+                    .setBasePath( ctrlUrl ) );
     }
 
     private void initDbApiClient( String dbUrl )
     {
-        com.nsb.enms.restful.dbclient.Configuration
-                .setDefaultApiClient( new com.nsb.enms.restful.dbclient.ApiClient().setBasePath( dbUrl ) );
+        com.nsb.enms.restful.dbclient.Configuration.setDefaultApiClient(
+            new com.nsb.enms.restful.dbclient.ApiClient()
+                    .setBasePath( dbUrl ) );
     }
 
     private void register2Controller()
     {
-        long period = Long.valueOf(
-            ConfLoader.getInstance().getConf( "REG_PERIOD", "60000" ) );
+        long period = ConfLoader.getInstance().getInt( "REG_PERIOD", 60000 );
         final RegisterManager register = new RegisterManager();
         final Timer timer = new Timer();
         timer.scheduleAtFixedRate( new TimerTask()
