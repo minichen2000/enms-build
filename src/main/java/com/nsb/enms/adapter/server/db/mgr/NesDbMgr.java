@@ -53,15 +53,15 @@ public class NesDbMgr {
 		return Response.ok().build();
 	}
 
-	public Response getNeById(String neid) throws Exception {
+	public Ne getNeById(String neid) throws Exception {
 		List<Document> docList = dbc.find(new BasicDBObject("_id", new ObjectId(neid))).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne, query by neId = " + neid);
-			return Response.ok().entity(new Ne()).build();
+			return new Ne();
 		}
 		Document doc = docList.get(0);
 		Ne ne = constructNe(doc);
-		return Response.ok().entity(ne).build();
+		return ne;
 	}
 
 	private Ne constructNe(Document doc) {
@@ -94,12 +94,12 @@ public class NesDbMgr {
 		return Response.ok().build();
 	}
 
-	public Response findNesByType(String netype) throws Exception {
+	public List<Ne> findNesByType(String netype) throws Exception {
 		Date begin = new Date();
 		List<Document> docList = dbc.find(eq("neType", netype)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne");
-			return Response.ok().entity(new ArrayList<Ne>()).build();
+			return new ArrayList<Ne>();
 		}
 		List<Ne> neList = new ArrayList<Ne>();
 		for (Document doc : docList) {
@@ -109,16 +109,16 @@ public class NesDbMgr {
 		}
 		Date end = new Date();
 		log.debug("findNeByType, cost time = " + (end.getTime() - begin.getTime()));
-		return Response.ok().entity(neList).build();
+		return neList;
 	}
 
-	public Response findNeByTypeVersion(String netype, String neversion) throws Exception {
+	public List<Ne> findNeByTypeVersion(String netype, String neversion) throws Exception {
 		Date begin = new Date();
 		List<Document> docList = dbc.find(and(eq("neType", netype), eq("version", neversion)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne");
-			return Response.ok().entity(new ArrayList<Ne>()).build();
+			return new ArrayList<Ne>();
 		}
 		List<Ne> neList = new ArrayList<Ne>();
 		for (Document doc : docList) {
@@ -128,15 +128,15 @@ public class NesDbMgr {
 		}
 		Date end = new Date();
 		log.debug("findNeByTypeVersion, cost time = " + (end.getTime() - begin.getTime()));
-		return Response.ok().entity(neList).build();
+		return neList;
 	}
 
-	public Response findNesByVersion(String neversion) throws Exception {
+	public List<Ne> findNesByVersion(String neversion) throws Exception {
 		Date begin = new Date();
 		List<Document> docList = dbc.find(eq("version", neversion)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne");
-			return Response.ok().entity(new ArrayList<Ne>()).build();
+			return new ArrayList<Ne>();
 		}
 		List<Ne> neList = new ArrayList<Ne>();
 		for (Document doc : docList) {
@@ -146,15 +146,15 @@ public class NesDbMgr {
 		}
 		Date end = new Date();
 		log.debug("findNeByVersion, cost time = " + (end.getTime() - begin.getTime()));
-		return Response.ok().entity(neList).build();
+		return neList;
 	}
 
-	public Response getNes(SecurityContext securityContext) throws Exception {
+	public List<Ne> getNes() throws Exception {
 		Date begin = new Date();
 		List<Document> docList = dbc.find().into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne");
-			return Response.ok().entity(new ArrayList<Ne>()).build();
+			return new ArrayList<Ne>();
 		}
 		List<Ne> neList = new ArrayList<Ne>();
 		for (Document doc : docList) {
@@ -165,7 +165,7 @@ public class NesDbMgr {
 		Date end = new Date();
 		log.debug("nesGet, cost time = " + (end.getTime() - begin.getTime()));
 
-		return Response.ok().entity(neList).build();
+		return neList;
 	}
 
 	public Response getMaxNeId(SecurityContext securityContext) throws Exception {

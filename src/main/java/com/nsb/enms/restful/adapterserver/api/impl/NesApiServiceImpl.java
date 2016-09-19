@@ -15,15 +15,13 @@ import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.db.mgr.EquipmentsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
-import com.nsb.enms.restful.dbclient.ApiException;
-import com.nsb.enms.restful.dbclient.api.DbEquipmentsApi;
-import com.nsb.enms.restful.dbclient.api.DbNesApi;
-import com.nsb.enms.restful.dbclient.api.DbTpsApi;
-import com.nsb.enms.restful.dbclient.api.DbXcsApi;
 import com.nsb.enms.restful.model.adapter.Addresses;
 import com.nsb.enms.restful.model.adapter.Ne;
 import com.nsb.enms.restful.model.adapter.NeExtraInfo;
@@ -32,7 +30,6 @@ import com.nsb.enms.restful.model.adapter.Q3Address;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
-	 private DbNesApi dbNesApi = new DbNesApi();
 	private NesDbMgr nesDbMgr = new NesDbMgr();
 
 	@Override
@@ -115,7 +112,7 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter------deleteNE");
 		// DeleteNe deleteNe = new DeleteNe();
 		try {
-			Ne ne = dbNesApi.getNeById(neid);
+			Ne ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
 
 			String moi = StringUtils.EMPTY;
@@ -140,13 +137,16 @@ public class NesApiServiceImpl extends NesApiService {
 			DeleteNe.deleteNe(Integer.valueOf(groupId), Integer.valueOf(neId));
 
 			// delete db record, contains ne and tp
-			dbNesApi.deleteNe(neid);
-			DbXcsApi dbXcsApi = new DbXcsApi();
-			dbXcsApi.deleteXcsByNeId(neId);
-			DbTpsApi dbTpsApi = new DbTpsApi();
-			dbTpsApi.deleteTpsbyNeId(neId);
-			DbEquipmentsApi dbEquipmentsApi = new DbEquipmentsApi();
-			dbEquipmentsApi.deleteEquipmentsByNeId(neId);
+			nesDbMgr.deleteNe(neid);
+
+			XcsDbMgr xcsDbMgr = new XcsDbMgr();
+			xcsDbMgr.deleteXcsByNeId(neId);
+
+			TpsDbMgr tpsDbMgr = new TpsDbMgr();
+			tpsDbMgr.deleteTpsbyNeId(neId);
+
+			EquipmentsDbMgr equipmentsDbMgr = new EquipmentsDbMgr();
+			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
 		} catch (Exception e) {
 			log.error("deleteNE", e);
 			return Response.serverError().entity(e).build();
@@ -159,9 +159,9 @@ public class NesApiServiceImpl extends NesApiService {
 	public Response getNeById(String neid, SecurityContext securityContext) throws NotFoundException {
 		Ne ne = new Ne();
 		try {
-			ne = dbNesApi.getNeById(neid);
-		} catch (ApiException e) {
-			e.printStackTrace();
+			ne = nesDbMgr.getNeById(neid);
+		} catch (Exception e) {
+			log.error("getNeById", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(ne).build();
@@ -176,9 +176,9 @@ public class NesApiServiceImpl extends NesApiService {
 	public Response findNesByType(String netype, SecurityContext securityContext) throws NotFoundException {
 		List<Ne> nes = new ArrayList<Ne>();
 		try {
-			nes = dbNesApi.findNesByType(netype);
-		} catch (ApiException e) {
-			e.printStackTrace();
+			nes = nesDbMgr.findNesByType(netype);
+		} catch (Exception e) {
+			log.error("getNeById", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(nes).build();
@@ -189,9 +189,9 @@ public class NesApiServiceImpl extends NesApiService {
 			throws NotFoundException {
 		List<Ne> nes = new ArrayList<Ne>();
 		try {
-			nes = dbNesApi.findNeByTypeVersion(netype, neversion);
-		} catch (ApiException e) {
-			e.printStackTrace();
+			nes = nesDbMgr.findNeByTypeVersion(netype, neversion);
+		} catch (Exception e) {
+			log.error("findNeByTypeVersion", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(nes).build();
@@ -201,9 +201,9 @@ public class NesApiServiceImpl extends NesApiService {
 	public Response findNesByVersion(String neversion, SecurityContext securityContext) throws NotFoundException {
 		List<Ne> nes = new ArrayList<Ne>();
 		try {
-			nes = dbNesApi.findNesByVersion(neversion);
-		} catch (ApiException e) {
-			e.printStackTrace();
+			nes = nesDbMgr.findNesByVersion(neversion);
+		} catch (Exception e) {
+			log.error("findNesByVersion", e);
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(nes).build();
@@ -214,8 +214,8 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter-------nesGet");
 		List<Ne> nes = new ArrayList<Ne>();
 		try {
-			nes = dbNesApi.getNes();
-		} catch (ApiException e) {
+			nes = nesDbMgr.getNes();
+		} catch (Exception e) {
 			log.error("nesGet", e);
 			return Response.serverError().entity(e).build();
 		}
