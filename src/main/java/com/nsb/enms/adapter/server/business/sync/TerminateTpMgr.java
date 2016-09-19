@@ -16,15 +16,14 @@ import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
-import com.nsb.enms.restful.dbclient.ApiException;
-import com.nsb.enms.restful.dbclient.api.DbTpsApi;
-import com.nsb.enms.restful.dbclient.api.DbXcsApi;
-import com.nsb.enms.restful.model.Tp;
-import com.nsb.enms.restful.model.Xc;
+import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
+import com.nsb.enms.restful.model.adapter.Tp;
+import com.nsb.enms.restful.model.adapter.Xc;
 
 public class TerminateTpMgr {
 	private final static Logger log = LogManager.getLogger(TerminateTpMgr.class);
-	private DbTpsApi tpsApi = new DbTpsApi();
+	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
 	private String groupId, neId;
 	private String au4CtpId;
 	private String neDbId;
@@ -53,7 +52,7 @@ public class TerminateTpMgr {
 
 	private String createXcVc4() {
 		try {
-			Tp tp = tpsApi.getTpById(au4CtpId);
+			Tp tp = tpsDbMgr.getTpById(au4CtpId);
 			String moi = tp.getAid();
 			groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 			neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
@@ -87,8 +86,8 @@ public class TerminateTpMgr {
 		}
 	}
 
-	private void insertXc2Db(XcEntity xcEntity, String vc4TtpDbId) throws ApiException {
-		DbXcsApi xcsApi = new DbXcsApi();
+	private void insertXc2Db(XcEntity xcEntity, String vc4TtpDbId) throws Exception {
+		XcsDbMgr xcsDbMgr = new XcsDbMgr();
 		Xc xc = new Xc();
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
@@ -105,7 +104,7 @@ public class TerminateTpMgr {
 		ztps.add(vc4TtpDbId);
 		xc.setZtps(ztps);
 
-		xcsApi.createXc(xc);
+		xcsDbMgr.createXc(xc);
 	}
 
 	private void terminateTp(String vc4TTPId) {
@@ -121,7 +120,7 @@ public class TerminateTpMgr {
 		try {
 			List<TpEntity> tpList = GetCtp.getTu12Ctp(groupId, neId, vc4TtpId);
 			log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
-			Tp au4Ctp = tpsApi.getTpById( au4CtpId );
+			Tp au4Ctp = tpsDbMgr.getTpById(au4CtpId);
 			String au4CtpUserLabel = au4Ctp.getUserLabel();
 			for (TpEntity tp : tpList) {
 				log.debug("syncCtp tp = " + tp);
@@ -129,17 +128,17 @@ public class TerminateTpMgr {
 				ctp.setNeId(neDbId);
 				String moi = tp.getMoi();
 				ctp.setAid(moi);
-				String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtils.generateTpUserLabel( tp );
+				String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtils.generateTpUserLabel(tp);
 				ctp.setUserLabel(tu12CtpUserLabel);
 				ctp.setNativeName(tu12CtpUserLabel);
 				ctp.setTpType(tp.getMoc());
 				ctp.setParentTpId(au4CtpId);
 
 				// TODO 读取映射文件获取层速率
-				ctp.setLayerRate( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
+				ctp.setLayerRate(String.valueOf(LayerRateConst.LR_VT2_and_TU12_VC12));
 				tps.add(ctp);
 			}
-			tps = tpsApi.addTps(tps);
+			tps = tpsDbMgr.addTps(tps);
 
 		} catch (Exception e) {
 			log.error("syncCtp", e);
@@ -160,18 +159,18 @@ public class TerminateTpMgr {
 					Tp ttp = new Tp();
 					ttp.setNeId(neDbId);
 					ttp.setAid(moi);
-					String userLabel = GenerateUserLabelUtils.generateTpUserLabel( tp );
+					String userLabel = GenerateUserLabelUtils.generateTpUserLabel(tp);
 					ttp.setUserLabel(userLabel);
 					ttp.setNativeName(userLabel);
 					ttp.setTpType(tp.getMoc());
 
 					// TODO 读取映射文件获取层速率
-					ttp.setLayerRate(String.valueOf( LayerRateConst.LR_STS3c_and_AU4_VC4 ));
+					ttp.setLayerRate(String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4));
 					tps.add(ttp);
 					break;
 				}
 			}
-			tps = tpsApi.addTps(tps);
+			tps = tpsDbMgr.addTps(tps);
 
 		} catch (Exception e) {
 			log.error("syncTtp", e);

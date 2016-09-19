@@ -12,9 +12,9 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.EnmsApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
-import com.nsb.enms.restful.model.Ne;
-import com.nsb.enms.restful.model.NeAssignment;
-import com.nsb.enms.restful.model.NeExtraInfo;
+import com.nsb.enms.restful.model.adapter.Ne;
+import com.nsb.enms.restful.model.adapter.NeAssignment;
+import com.nsb.enms.restful.model.adapter.NeExtraInfo;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-09T15:45:26.159+08:00")
 public class EnmsApiServiceImpl extends EnmsApiService {
