@@ -10,18 +10,17 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.TpsApiService;
-import com.nsb.enms.restful.model.Tp;
-import com.nsb.enms.restful.dbclient.ApiException;
-import com.nsb.enms.restful.dbclient.api.DbTpsApi;
+import com.nsb.enms.restful.model.adapter.Tp;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class TpsApiServiceImpl extends TpsApiService {
 	private final static Logger log = LogManager.getLogger(TpsApiServiceImpl.class);
 
-	private DbTpsApi tpsApi = new DbTpsApi();
+	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
 
 	@Override
 	public Response addTps(List<Tp> body, SecurityContext securityContext) throws NotFoundException {
@@ -32,8 +31,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 	public Response getTpById(String tpid, SecurityContext securityContext) throws NotFoundException {
 		Tp tp = new Tp();
 		try {
-			tp = tpsApi.getTpById(tpid);
-		} catch (ApiException e) {
+			tp = tpsDbMgr.getTpById(tpid);
+		} catch (Exception e) {
 			log.error("getTPById", e);
 			return Response.serverError().entity(e).build();
 		}
@@ -45,8 +44,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 		System.out.println("getTPByNEId, neId = " + neid);
 		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTpsByNeId(neid);
-		} catch (ApiException e) {
+			tpList = tpsDbMgr.getTpsByNeId(neid);
+		} catch (Exception e) {
 			log.error("getTPByNEId", e);
 			return Response.serverError().entity(e).build();
 		}
@@ -58,8 +57,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 			throws NotFoundException {
 		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTpsByLayerRate(neid, layerrate);
-		} catch (ApiException e) {
+			tpList = tpsDbMgr.getTpsByLayerRate(neid, layerrate);
+		} catch (Exception e) {
 			log.error("getTPsByLayerrate", e);
 			return Response.serverError().entity(e).build();
 		}
@@ -76,8 +75,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 		Date begin = new Date();
 		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTps();
-		} catch (ApiException e) {
+			tpList = tpsDbMgr.getTps();
+		} catch (Exception e) {
 			log.error("getTPs", e);
 			return Response.serverError().entity(e).build();
 		}
@@ -93,8 +92,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 		Date begin = new Date();
 		List<Tp> tpList = new ArrayList<Tp>();
 		try {
-			tpList = tpsApi.getTpsByType(tptype);
-		} catch (ApiException e) {
+			tpList = tpsDbMgr.getTpsByType(tptype);
+		} catch (Exception e) {
 			log.error("getTPsByType", e);
 			return Response.serverError().entity(e).build();
 		}
@@ -108,8 +107,8 @@ public class TpsApiServiceImpl extends TpsApiService {
 	@Override
 	public Response getCtpsByTpId(String neid, String ptpid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			tpsApi.getCtpsByTpId(neid, ptpid);
-		} catch (ApiException e) {
+			tpsDbMgr.getCtpsByTpId(neid, ptpid);
+		} catch (Exception e) {
 			log.error("getCTPsByTP", e);
 			return Response.serverError().entity(e).build();
 		}

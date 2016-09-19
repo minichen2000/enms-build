@@ -7,7 +7,6 @@ import static com.mongodb.client.model.Filters.or;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,24 +30,23 @@ public class XcsDbMgr {
 	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(DBConst.DB_NAME_XC, BasicDBObject.class);
 	private Gson gson = new Gson();
 
-	public Response createXc(Xc body) throws Exception {
+	public Xc createXc(Xc body) throws Exception {
 		String json = gson.toJson(body);
 		BasicDBObject dbObject = (BasicDBObject) JSON.parse(json);
 		dbc1.insertOne(dbObject);
 		body.setId(dbObject.getObjectId("_id").toString());
-		return Response.ok().entity(body).build();
+		return body;
 	}
 
-	public Response deleteXc(String xcid) throws Exception {
+	public void deleteXc(String xcid) throws Exception {
 		dbc.deleteOne(new BasicDBObject("_id", new ObjectId(xcid)));
-		return Response.ok().build();
 	}
 
-	public Response findXcsByTpId(String tpid) throws Exception {
+	public List<Xc> findXcsByTpId(String tpid) throws Exception {
 		List<Document> docList = dbc.find(or(in("atps", tpid), in("ztps", tpid))).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by tpid = {}", tpid);
-			return Response.ok().entity(new ArrayList<Xc>()).build();
+			return new ArrayList<Xc>();
 		}
 
 		log.debug(docList.size());
@@ -61,16 +59,16 @@ public class XcsDbMgr {
 			Xc tp = constructXC(doc);
 			xcList.add(tp);
 		}
-		return Response.ok().entity(xcList).build();
+		return xcList;
 	}
 
-	public Response getXcById(String xcid) throws Exception {
+	public Xc getXcById(String xcid) throws Exception {
 		BasicDBObject query = new BasicDBObject("_id", new ObjectId(xcid));
 		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by id = {}", xcid);
-			return Response.ok().entity(new Xc()).build();
+			return new Xc();
 		}
 
 		log.debug(docList.size());
@@ -80,7 +78,7 @@ public class XcsDbMgr {
 
 		Document doc = docList.get(0);
 		Xc xc = constructXC(doc);
-		return Response.ok().entity(xc).build();
+		return xc;
 	}
 
 	private Xc constructXC(Document doc) {
@@ -93,12 +91,12 @@ public class XcsDbMgr {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public Response getXcsByNeId(String neId, SecurityContext arg1) throws Exception {
+	public List<Xc> getXcsByNeId(String neId, SecurityContext arg1) throws Exception {
 		System.out.println("getXcsByNeId, neId = " + neId);
 		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by neid = " + neId);
-			return Response.ok().entity(new ArrayList<Xc>()).build();
+			return new ArrayList<Xc>();
 		}
 
 		log.debug(docList.size());
@@ -111,6 +109,6 @@ public class XcsDbMgr {
 			Xc xc = constructXC(doc);
 			xcList.add(xc);
 		}
-		return Response.ok().entity(xcList).build();
+		return xcList;
 	}
 }

@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +33,7 @@ public class TpsDbMgr {
 	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(DBConst.DB_NAME_TP, BasicDBObject.class);
 	private Gson gson = new Gson();
 
-	public Response addTps(List<Tp> body) throws Exception {
+	public List<Tp> addTps(List<Tp> body) throws Exception {
 		// String tps = gson.toJson(body);
 
 		// @SuppressWarnings("unchecked")
@@ -50,16 +47,16 @@ public class TpsDbMgr {
 			tp.setId(dbObject.getObjectId("_id").toString());
 		}
 
-		return Response.ok().entity(body).build();
+		return body;
 	}
 
-	public Response getTpById(String tpid) throws Exception {
+	public Tp getTpById(String tpid) throws Exception {
 		BasicDBObject query = new BasicDBObject("_id", new ObjectId(tpid));
 		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by tpid = " + tpid);
-			return Response.ok().entity(new Tp()).build();
+			return new Tp();
 		}
 
 		log.debug(docList.size());
@@ -69,7 +66,7 @@ public class TpsDbMgr {
 
 		Document doc = docList.get(0);
 		Tp tp = constructTp(doc);
-		return Response.ok().entity(tp).build();
+		return tp;
 	}
 
 	private Tp constructTp(Document doc) {
@@ -78,12 +75,12 @@ public class TpsDbMgr {
 		return tp;
 	}
 
-	public Response getTpsByNeId(String neid) throws Exception {
-		System.out.println("getTPByNEId, neId = " + neid);
+	public List<Tp> getTpsByNeId(String neid) throws Exception {
+		log.debug("getTPByNEId, neId = " + neid);
 		List<Document> docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by neid = " + neid);
-			return Response.ok().entity(new ArrayList<Tp>()).build();
+			return new ArrayList<Tp>();
 		}
 
 		log.debug(docList.size());
@@ -96,10 +93,10 @@ public class TpsDbMgr {
 			Tp tp = constructTp(doc);
 			tpList.add(tp);
 		}
-		return Response.ok().entity(tpList).build();
+		return tpList;
 	}
 
-	public Response getTpsByLayerRate(String neid, String layerrate) throws Exception {
+	public List<Tp> getTpsByLayerRate(String neid, String layerrate) throws Exception {
 		List<Document> docList = null;
 		if (StringUtils.isEmpty(neid) && StringUtils.isEmpty(layerrate)) {
 			docList = dbc.find().into(new ArrayList<Document>());
@@ -113,7 +110,7 @@ public class TpsDbMgr {
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by neid = " + neid + ", layerRate = " + layerrate);
-			return Response.ok().entity(new ArrayList<Tp>()).build();
+			return new ArrayList<Tp>();
 		}
 
 		log.debug(docList.size());
@@ -126,11 +123,11 @@ public class TpsDbMgr {
 			Tp tp = constructTp(doc);
 			tpList.add(tp);
 		}
-		return Response.ok().entity(tpList).build();
+		return tpList;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public Response updateTp(Tp body) throws Exception {
+	public boolean updateTp(Tp body) throws Exception {
 		for (Field f : body.getClass().getDeclaredFields()) {
 			f.setAccessible(true);
 			try {
@@ -148,19 +145,20 @@ public class TpsDbMgr {
 
 			} catch (Exception e) {
 				log.error("updateTp", e);
+				return false;
 			}
 		}
-		return Response.ok().build();
+		return true;
 	}
 
-	public Response getTps(SecurityContext securityContext) throws Exception {
+	public List<Tp> getTps() throws Exception {
 		Date begin = new Date();
 
 		List<Document> docList = dbc.find().into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp");
-			return Response.ok().entity(new ArrayList<Tp>()).build();
+			return new ArrayList<Tp>();
 		}
 
 		log.debug(docList.size());
@@ -177,10 +175,10 @@ public class TpsDbMgr {
 		Date end = new Date();
 		log.debug("getTPs, cost time = " + (end.getTime() - begin.getTime()));
 
-		return Response.ok().entity(tpList).build();
+		return tpList;
 	}
 
-	public Response getTpsByType(String tptype) throws Exception {
+	public List<Tp> getTpsByType(String tptype) throws Exception {
 		Date begin = new Date();
 		log.debug("getTPs, tptype = " + tptype);
 
@@ -193,7 +191,7 @@ public class TpsDbMgr {
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by tptype = " + tptype);
-			return Response.ok().entity(new ArrayList<Tp>()).build();
+			return new ArrayList<Tp>();
 		}
 
 		log.debug(docList.size());
@@ -210,14 +208,14 @@ public class TpsDbMgr {
 		Date end = new Date();
 		log.debug("getTPsByType cost time = " + (end.getTime() - begin.getTime()));
 
-		return Response.ok().entity(tpList).build();
+		return tpList;
 	}
 
 	public void deleteTpsbyNeId(String neid) throws Exception {
 		dbc.deleteMany(new Document("neId", neid));
 	}
 
-	public Response getCtpsByTpId(String neid, String ptpid) throws Exception {
+	public List<Tp> getCtpsByTpId(String neid, String ptpid) throws Exception {
 		Date begin = new Date();
 		log.debug("getCTPsByTP, neid = {}, ptpid = {}", neid, ptpid);
 
@@ -227,7 +225,7 @@ public class TpsDbMgr {
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ctp, query by neid = {} and ptpid = {}", neid, ptpid);
-			return Response.ok().entity(new ArrayList<Tp>()).build();
+			return new ArrayList<Tp>();
 		}
 
 		log.debug(docList.size());
@@ -244,10 +242,10 @@ public class TpsDbMgr {
 		Date end = new Date();
 		log.debug("getCTPsByTP cost time = " + (end.getTime() - begin.getTime()));
 
-		return Response.ok().entity(tpList).build();
+		return tpList;
 	}
 
-	public Response getChildrenTps(String tpid) throws Exception {
+	public List<Tp> getChildrenTps(String tpid) throws Exception {
 		Date begin = new Date();
 		log.debug("getCTPsByTP, tpid = {}", tpid);
 
@@ -256,7 +254,7 @@ public class TpsDbMgr {
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find children tps, query by tpid = {}", tpid);
-			return Response.ok().entity(new ArrayList<Tp>()).build();
+			return new ArrayList<Tp>();
 		}
 
 		log.debug(docList.size());
@@ -273,6 +271,6 @@ public class TpsDbMgr {
 		Date end = new Date();
 		log.debug("getChildrenTPs cost time = " + (end.getTime() - begin.getTime()));
 
-		return Response.ok().entity(tpList).build();
+		return tpList;
 	}
 }

@@ -13,19 +13,18 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
+import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.XcsApiService;
-import com.nsb.enms.restful.dbclient.ApiException;
-import com.nsb.enms.restful.dbclient.api.DbTpsApi;
-import com.nsb.enms.restful.dbclient.api.DbXcsApi;
-import com.nsb.enms.restful.model.Tp;
-import com.nsb.enms.restful.model.Xc;
+import com.nsb.enms.restful.model.adapter.Tp;
+import com.nsb.enms.restful.model.adapter.Xc;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
 public class XcsApiServiceImpl extends XcsApiService {
 	private final static Logger log = LogManager.getLogger(XcsApiServiceImpl.class);
-	private DbXcsApi xcsApi = new DbXcsApi();
-	private DbTpsApi tpsApi = new DbTpsApi();
+	private XcsDbMgr xcsDbMgr = new XcsDbMgr();
+	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
 
 	@Override
 	public Response createXc(Xc body, SecurityContext securityContext) throws NotFoundException {
@@ -71,9 +70,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return Response.ok().entity(xc).build();
 	}
 
-	private Xc insertXc2Db(XcEntity xcEntity, String neDbId, String atpDbId,
-			String ztpDbId) throws ApiException {
-		DbXcsApi xcsApi = new DbXcsApi();
+	private Xc insertXc2Db(XcEntity xcEntity, String neDbId, String atpDbId, String ztpDbId) throws Exception {
 		Xc xc = new Xc();
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
@@ -90,7 +87,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		ztps.add(ztpDbId);
 		xc.setZtps(ztps);
 
-		xc = xcsApi.createXc(xc);
+		xc = xcsDbMgr.createXc(xc);
 		return xc;
 	}
 
@@ -104,7 +101,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String vc12TtpId = StringUtils.EMPTY;
 		XcParamBean bean = new XcParamBean();
 		try {
-			Tp tp = tpsApi.getTpById(tpId);
+			Tp tp = tpsDbMgr.getTpById(tpId);
 			String tpType = tp.getTpType();
 			String moi = tp.getAid();
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
@@ -128,7 +125,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 			}
 			bean.setGroupId(groupId);
 			bean.setNeId(neId);
-		} catch (ApiException e) {
+		} catch (Exception e) {
 			log.error("getTPById", e);
 			return null;
 		}
@@ -138,8 +135,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 	@Override
 	public Response deleteXc(String xcid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			xcsApi.deleteXc(xcid);
-		} catch (ApiException e) {
+			xcsDbMgr.deleteXc(xcid);
+		} catch (Exception e) {
 			log.error("deleteXC", e);
 		}
 		return Response.ok().build();
@@ -149,8 +146,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 	public Response findXcs(String tpid, SecurityContext securityContext) throws NotFoundException {
 		List<Xc> xcList = new ArrayList<Xc>();
 		try {
-			xcList = xcsApi.findXcsByTpId(tpid);
-		} catch (ApiException e) {
+			xcList = xcsDbMgr.findXcsByTpId(tpid);
+		} catch (Exception e) {
 			log.error("findXCs", e);
 		}
 		return Response.ok().entity(xcList).build();
@@ -160,8 +157,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 	public Response getXcById(String xcid, SecurityContext securityContext) throws NotFoundException {
 		Xc xc = new Xc();
 		try {
-			xc = xcsApi.getXcById(xcid);
-		} catch (ApiException e) {
+			xc = xcsDbMgr.getXcById(xcid);
+		} catch (Exception e) {
 			log.error("getXCById", e);
 		}
 		return Response.ok().entity(xc).build();
@@ -169,13 +166,11 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	@Override
 	public Response deleteXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Response getXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
