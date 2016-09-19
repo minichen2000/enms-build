@@ -14,7 +14,7 @@ import com.nsb.enms.restful.adapterserver.api.ConnectionsApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.dbclient.ApiException;
 import com.nsb.enms.restful.dbclient.api.DbConnectionsApi;
-import com.nsb.enms.restful.model.Connection;
+import com.nsb.enms.restful.model.adapter.Connection;
 
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")

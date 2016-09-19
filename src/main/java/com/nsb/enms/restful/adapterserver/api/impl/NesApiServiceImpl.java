@@ -15,6 +15,7 @@ import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
@@ -23,20 +24,19 @@ import com.nsb.enms.restful.dbclient.api.DbEquipmentsApi;
 import com.nsb.enms.restful.dbclient.api.DbNesApi;
 import com.nsb.enms.restful.dbclient.api.DbTpsApi;
 import com.nsb.enms.restful.dbclient.api.DbXcsApi;
-import com.nsb.enms.restful.model.Addresses;
-import com.nsb.enms.restful.model.Ne;
-import com.nsb.enms.restful.model.NeExtraInfo;
-import com.nsb.enms.restful.model.Q3Address;
-
+import com.nsb.enms.restful.model.adapter.Addresses;
+import com.nsb.enms.restful.model.adapter.Ne;
+import com.nsb.enms.restful.model.adapter.NeExtraInfo;
+import com.nsb.enms.restful.model.adapter.Q3Address;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
-	private DbNesApi dbNesApi = new DbNesApi();
+	 private DbNesApi dbNesApi = new DbNesApi();
+	private NesDbMgr nesDbMgr = new NesDbMgr();
 
 	@Override
 	public Response addNe(Ne body, SecurityContext securityContext) throws NotFoundException {
-		// CreateNe create = new CreateNe();
 		String location = "";
 		NeExtraInfo extInfo = body.getExtraInfo();
 		location = extInfo.getLocationName();
@@ -52,7 +52,7 @@ public class NesApiServiceImpl extends NesApiService {
 			entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location,
 					address.getQ3Address().getAddress());
 		} catch (AdapterException e) {
-			e.printStackTrace();
+			log.error("create ne occur error", e);
 			return Response.serverError().entity(e).build();
 		}
 
@@ -61,7 +61,7 @@ public class NesApiServiceImpl extends NesApiService {
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "failed to create ne")).build();
 		}
 
-		System.out.println(entity);
+		log.debug(entity);
 
 		String moi = entity.getMoi();
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
@@ -70,8 +70,8 @@ public class NesApiServiceImpl extends NesApiService {
 		Ne ne = constructNe(entity, groupId, neId);
 
 		try {
-			ne = dbNesApi.addNe(ne);
-		} catch (ApiException e) {
+			ne = nesDbMgr.addNe(ne);
+		} catch (Exception e) {
 			log.error("addNe", e);
 			return Response.serverError().entity(e).build();
 		}
@@ -90,7 +90,7 @@ public class NesApiServiceImpl extends NesApiService {
 		Ne ne = new Ne();
 		ne.setAid(entity.getMoi());
 		ne.setUserLabel(entity.getUserLabel());
-		//ne.setNativeName(entity.getUserLabel());
+		// ne.setNativeName(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
 
 		Addresses address = new Addresses();
@@ -103,10 +103,10 @@ public class NesApiServiceImpl extends NesApiService {
 
 		ne.setNeType(entity.getNeType());
 		ne.setOperationState("disable");
-		ne.setAdminState( entity.getAdministrativeState() );		
+		ne.setAdminState(entity.getAdministrativeState());
 		NeExtraInfo neExtraInfo = new NeExtraInfo();
-		neExtraInfo.setMoi( entity.getMoc() );
-		ne.setExtraInfo( neExtraInfo );
+		neExtraInfo.setMoi(entity.getMoc());
+		ne.setExtraInfo(neExtraInfo);
 		return ne;
 	}
 
@@ -119,13 +119,13 @@ public class NesApiServiceImpl extends NesApiService {
 			log.debug("ne = " + ne);
 
 			String moi = StringUtils.EMPTY;
-			/*List<com.nsb.enms.restful.db.client.model.NEExtraInfo> extInfos = ne.getExtraInfo();
-			for (com.nsb.enms.restful.db.client.model.NEExtraInfo extInfo : extInfos) {
-				if ("moi".equalsIgnoreCase(extInfo.getKey())) {
-					moi = extInfo.getValue();
-					break;
-				}
-			}*/
+			/*
+			 * List<com.nsb.enms.restful.db.client.model.NEExtraInfo> extInfos =
+			 * ne.getExtraInfo(); for
+			 * (com.nsb.enms.restful.db.client.model.NEExtraInfo extInfo :
+			 * extInfos) { if ("moi".equalsIgnoreCase(extInfo.getKey())) { moi =
+			 * extInfo.getValue(); break; } }
+			 */
 			NeExtraInfo extraInfo = ne.getExtraInfo();
 			moi = extraInfo.getMoi();
 
