@@ -1,0 +1,8 @@
+{
+  "groupId":"com.nsb.enms",
+  "artifactId":"restful-api-lib-controller-server",
+  "artifactVersion":"1.1.0",
+  "library":"jersey2",
+  "apiPackage": "com.nsb.enms.restful.controllerserver.api",
+  "modelPackage": "com.nsb.enms.restful.model.controller"
+}
