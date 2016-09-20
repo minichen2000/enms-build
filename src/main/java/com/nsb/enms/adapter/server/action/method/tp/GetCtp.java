@@ -74,7 +74,7 @@ public class GetCtp
             String rsCTPId = "0.0.7.774.0.7.22";
             String filterParam = rsCTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -142,7 +142,7 @@ public class GetCtp
             String msCTPId = "0.0.7.774.0.7.13";
             String filterParam = msCTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -210,7 +210,7 @@ public class GetCtp
             String unprotectedCTPId = "0.0.7.774.127.3.0.7.16";
             String filterParam = unprotectedCTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -283,7 +283,7 @@ public class GetCtp
             String au4CTPId = "0.0.7.774.0.7.2";
             String filterParam = au4CTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -411,7 +411,7 @@ public class GetCtp
             String ePDHCTPId = "0.4.0.371.0.7.2";
             String filterParam = ePDHCTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -494,7 +494,7 @@ public class GetCtp
 
             String filterParam = vc12TTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -587,7 +587,7 @@ public class GetCtp
 
             String filterParam = vc3TTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass,
                 String.valueOf( groupId ), String.valueOf( neId ), paramKey,
                 paramValue, scope, filterParam );
@@ -684,7 +684,7 @@ public class GetCtp
             String tu12CTPId = "0.0.7.774.0.7.30";
             String filterParam = tu12CTPId;
 
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
                 paramKey, paramValue, scope, filterParam );
             InputStream inputStream = process.getInputStream();

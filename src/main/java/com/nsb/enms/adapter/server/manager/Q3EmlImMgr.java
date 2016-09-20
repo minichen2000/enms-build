@@ -64,7 +64,7 @@ public class Q3EmlImMgr
     {
         try
         {
-            Process process = new ExecExternalScript()
+            Process process = ExecExternalScript
                     .run( ExternalScriptType.EMLIM, groupId + "" );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
@@ -178,7 +178,7 @@ public class Q3EmlImMgr
     {
         try
         {
-            Process process = new ExecExternalScript()
+            Process process = ExecExternalScript
                     .run( ExternalScriptType.KILL_EMLIM, groupId + "" );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );

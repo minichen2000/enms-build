@@ -33,7 +33,7 @@ public class Q3EmlImMonitorTask extends TimerTask
         try
         {
             boolean flag = false;
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, monitorScript, groupId + "" );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );

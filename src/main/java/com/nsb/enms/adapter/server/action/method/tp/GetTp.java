@@ -29,7 +29,7 @@ public class GetTp
     {
         try
         {
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
                 String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();

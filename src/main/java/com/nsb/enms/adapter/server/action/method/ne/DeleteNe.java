@@ -40,7 +40,7 @@ public class DeleteNe
     {
         try
         {
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, stopSupervisionScenario,
                 String.valueOf( groupId ), String.valueOf( neId ) );
 
@@ -68,7 +68,7 @@ public class DeleteNe
     {
         try
         {
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, deleteNeScenario,
                 String.valueOf( groupId ), String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();

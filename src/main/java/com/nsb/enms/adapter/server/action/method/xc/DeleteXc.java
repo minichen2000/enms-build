@@ -26,7 +26,7 @@ public class DeleteXc
     {
         try
         {
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, groupId, neId,
                 corssConnectionId );
             InputStream inputStream = process.getInputStream();

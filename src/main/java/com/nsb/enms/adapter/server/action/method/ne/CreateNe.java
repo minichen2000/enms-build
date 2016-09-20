@@ -66,7 +66,7 @@ public class CreateNe
     {
         try
         {
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, createNeScenario,
                 String.valueOf( groupId ), String.valueOf( neId ), neRelease,
                 neType, userLabel, locationName );
@@ -111,7 +111,7 @@ public class CreateNe
             {
                 scenario = setNeIsaAddressScenario;
             }
-            Process process = new ExecExternalScript().run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, scenario, String.valueOf( groupId ),
                 String.valueOf( neId ), neAddress );
             InputStream inputStream = process.getInputStream();

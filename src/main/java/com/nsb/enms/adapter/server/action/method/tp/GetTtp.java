@@ -32,7 +32,7 @@ public class GetTtp {
 			String vc4TTPId = "0.0.7.774.0.7.42";
 			String filterParam = vc4TTPId;
 
-			Process process = new ExecExternalScript().run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId, scope,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId, scope,
 					filterParam);
 			InputStream inputStream = process.getInputStream();
 

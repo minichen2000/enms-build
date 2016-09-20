@@ -29,7 +29,7 @@ public class CreateXc {
 	public static XcEntity createXcVc4(String groupId, String neId, String pTTPId, String augId, String au4CTPId)
 			throws AdapterException {
 		try {
-			Process process = new ExecExternalScript().run(ExternalScriptType.TSTMGR, SCENARIO_VC4, groupId, neId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC4, groupId, neId,
 					pTTPId, augId, au4CTPId);
 			InputStream inputStream = process.getInputStream();
 			XcEntity xcEntity = new XcEntity();
@@ -97,7 +97,7 @@ public class CreateXc {
 	public static XcEntity createXcVc12(String groupId, String neId, String vc4TtpId, String tug3Id, String tug2Id,
 			String tu12CtpId, String vc12TtpId) throws AdapterException {
 		try {
-			Process process = new ExecExternalScript().run(ExternalScriptType.TSTMGR, SCENARIO_VC12, groupId, neId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC12, groupId, neId,
 					vc4TtpId, tug3Id, tug2Id, tu12CtpId, vc12TtpId);
 			InputStream inputStream = process.getInputStream();
 			XcEntity xcEntity = new XcEntity();

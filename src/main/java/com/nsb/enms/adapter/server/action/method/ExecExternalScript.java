@@ -33,9 +33,9 @@ public class ExecExternalScript
     private static String killEmlImScript = ConfLoader.getInstance().getConf(
         ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );
 
-    private File fileDir;
+    private static File fileDir;
 
-    public Process run( ExternalScriptType scriptType, String... params ) throws AdapterException
+    public static Process run( ExternalScriptType scriptType, String... params ) throws AdapterException
     {
         String[] cmdArray = new String[params.length + 1];
         switch( scriptType )

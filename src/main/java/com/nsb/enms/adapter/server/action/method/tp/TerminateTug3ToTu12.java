@@ -35,7 +35,7 @@ public class TerminateTug3ToTu12 {
 		boolean isOk = false;
 
 		try {
-			Process process = new ExecExternalScript().run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId, vc4TTPId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId, vc4TTPId,
 					tug3Id);
 			InputStream inputStream = process.getInputStream();
 
