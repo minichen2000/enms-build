@@ -393,7 +393,6 @@
                             <executable>java</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-								<argument>-DhideGenerationTimestamp=true</argument>
                                 <argument>-jar</argument>
                                 <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
                                 <argument>generate</argument>
@@ -420,7 +419,6 @@
                             <executable>java</executable>
                             <workingDirectory>${basedir}</workingDirectory>
                             <arguments>
-								<argument>-DhideGenerationTimestamp=true</argument>
                                 <argument>-jar</argument>
                                 <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
                                 <argument>generate</argument>

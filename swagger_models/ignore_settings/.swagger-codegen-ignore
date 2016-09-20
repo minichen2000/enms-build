@@ -23,5 +23,5 @@
 #!docs/README.md
 **/*server/**StringUtil.java
 #**/main/**/Configuration.java
-**/main/**/model/**
+#**/main/**/model/**
 
