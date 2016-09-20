@@ -12,17 +12,21 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 
-public class Q3EmlImMonitorTask extends TimerTask
+public class Q3EmlImListener extends TimerTask
 {
     private static final Logger log = LogManager
-            .getLogger( Q3EmlImMonitorTask.class );
+            .getLogger( Q3EmlImListener.class );
 
     private static String monitorScript = ConfLoader.getInstance().getConf(
         ConfigKey.LIST_GROUP_SCRIPT, ConfigKey.DEFAULT_LIST_GROUP_SCRIPT );
+
+    private static int count = 0;
     
+    private static final int MAX_COUNT = 2;
+
     private int groupId;
-    
-    public Q3EmlImMonitorTask(int groupId)
+
+    public Q3EmlImListener( int groupId )
     {
         this.groupId = groupId;
     }
@@ -30,11 +34,16 @@ public class Q3EmlImMonitorTask extends TimerTask
     @Override
     public void run()
     {
+        monitorEmlIm();
+    }
+
+    public void monitorEmlIm()
+    {
         try
         {
             boolean flag = false;
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, monitorScript, groupId + "" );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                monitorScript, groupId + "" );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
             String line;
@@ -52,16 +61,21 @@ public class Q3EmlImMonitorTask extends TimerTask
                         + "failed, groupId=" + groupId );
             }
 
-            if( !flag )
+            if( !flag && count == MAX_COUNT )
             {
+                count = 0;
                 Q3EmlImMgr.getInstance().clearNeList();
                 Q3EmlImMgr.getInstance().killEmlImProcess();
             }
-
+            else if( !flag && count < MAX_COUNT )
+            {
+                count++;
+                monitorEmlIm();
+            }
         }
         catch( Exception e )
         {
-            log.error( e.getMessage(), e );
+            log.error( "Q3EmlImListener", e );
         }
     }
 }

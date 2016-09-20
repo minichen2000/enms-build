@@ -56,7 +56,7 @@ public class Q3EmlImMgr
         long period = ConfLoader.getInstance().getInt(
             ConfigKey.EMLIM_MONITOR_INTERVAL,
             ConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL );
-        timer.scheduleAtFixedRate( new Q3EmlImMonitorTask( groupId ), period,
+        timer.scheduleAtFixedRate( new Q3EmlImListener( groupId ), period,
             period );
     }
 
