@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.restful.controllerclient.ApiException;
 import com.nsb.enms.restful.controllerclient.api.CtlSystemApi;
-import com.nsb.enms.restful.model.Host;
+import com.nsb.enms.restful.model.controller.Host;
 
 public class RegisterManager {
 	private static final Logger log = LogManager.getLogger(RegisterManager.class);

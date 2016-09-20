@@ -14,15 +14,14 @@ import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
-import com.nsb.enms.restful.dbclient.ApiException;
-import com.nsb.enms.restful.dbclient.api.DbNesApi;
-import com.nsb.enms.restful.dbclient.api.DbTpsApi;
-import com.nsb.enms.restful.model.Ne;
-import com.nsb.enms.restful.model.Tp;
+import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
+import com.nsb.enms.restful.model.adapter.Ne;
+import com.nsb.enms.restful.model.adapter.Tp;
 
 public class SyncTpThread extends Thread {
 	private final static Logger log = LogManager.getLogger(SyncTpThread.class);
-	private DbTpsApi tpsApi = new DbTpsApi();
+	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
 	private int groupId, neId;
 	private String id;
 
@@ -79,7 +78,7 @@ public class SyncTpThread extends Thread {
 				newTp.setLayerRate( String.valueOf( layerRate ) );
 				tps.add(newTp);
 
-				tps = tpsApi.addTps(tps);
+				tps = tpsDbMgr.addTps(tps);
 				String tpId = moi.split("/")[2];
 				log.debug("tpId = " + tpId);
 				String ptpId = tpId.split("=")[1];
@@ -125,8 +124,8 @@ public class SyncTpThread extends Thread {
 		}
 
 		try {
-			tpsApi.addTps(tps);
-		} catch (ApiException e) {
+		    tpsDbMgr.addTps(tps);
+		} catch (Exception e) {
 			log.error("syncCtp", e);
 		}
 	}
@@ -160,9 +159,9 @@ public class SyncTpThread extends Thread {
 		int layerRate = pair.getFirst();
 		pdhPTP.setLayerRate( String.valueOf( layerRate ) );
 		try {
-			tpsApi.addTps(tps);
-			tpsApi.updateTp( pdhPTP );
-		} catch (ApiException e) {
+			tpsDbMgr.addTps(tps);
+			tpsDbMgr.updateTp( pdhPTP );
+		} catch (Exception e) {
 			log.error("syncCtp", e);
 		}
 	}
@@ -171,14 +170,14 @@ public class SyncTpThread extends Thread {
 	 * update the value of alignmentStatus for ne to true
 	 */
 	private void updateNeAttr(String id) {
-		DbNesApi nesApi = new DbNesApi();
+		NesDbMgr nesDbMgr = new NesDbMgr();
 		Ne ne = new Ne();
 		ne.setId(id);
 		ne.adminState( "UP" );
 		ne.setOperationState("enable");
 		try {
-			nesApi.updateNe(ne);
-		} catch (ApiException e) {
+			nesDbMgr.updateNe(ne);
+		} catch (Exception e) {
 			log.error("updateNeAttr", e);
 		}
 	}
