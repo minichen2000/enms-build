@@ -206,7 +206,7 @@ public class SyncTpThread extends Thread {
             }
         } else if (moc.contains( "pPITTP" ))
         {
-            return LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_E1_2M;
+            return LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_2M;
         }
 	    return LayerRateConst.LR_UNDEFINE;
 	}

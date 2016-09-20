@@ -381,7 +381,7 @@ public class GetCtp
         if( moc.startsWith( "e1" ) )
         {
             tpList = getVc12Ttp( groupId, neId, ttpId );
-            pair2.setFirst( LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_E1_2M );
+            pair2.setFirst( LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_2M );
             pair2.setSecond( tpList );
             return pair2;
         }
@@ -389,7 +389,7 @@ public class GetCtp
         if (moc.startsWith( "e3" ))
         {
             tpList = getVc3Ttp(groupId, neId, ttpId);
-            pair2.setFirst( LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_E3_34M );
+            pair2.setFirst( LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_34M );
             pair2.setSecond( tpList );
             return pair2;
         }
