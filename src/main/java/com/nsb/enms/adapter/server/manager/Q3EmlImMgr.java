@@ -21,8 +21,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.restful.dbclient.ApiException;
-import com.nsb.enms.restful.dbclient.api.DbNesApi;
+import com.nsb.enms.adapter.server.db.mongodb.mgr.MaxNeIdMgr;
 
 public class Q3EmlImMgr
 {
@@ -37,8 +36,6 @@ public class Q3EmlImMgr
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     private int groupId;
-
-    private DbNesApi nesApi = new DbNesApi();
 
     private Q3EmlImMgr()
     {
@@ -124,27 +121,13 @@ public class Q3EmlImMgr
 
     private void updateMaxNeId2Db( int neId )
     {
-        try
-        {
-            nesApi.updateMaxNeId( String.valueOf( neId ) );
-        }
-        catch( ApiException e )
-        {
-            log.error( "updateMaxNeId2Db", e );
-        }
+        MaxNeIdMgr.updateId( String.valueOf( neId ) );
     }
 
     private int getMaxNeIdFromDb()
     {
         String maxNeId = StringUtils.EMPTY;
-        try
-        {
-            maxNeId = nesApi.getMaxNeId();
-        }
-        catch( ApiException e )
-        {
-            log.error( "getMaxNeIdFromDb", e );
-        }
+        maxNeId = MaxNeIdMgr.getId();
         if( StringUtils.isEmpty( maxNeId ) )
         {
             return 1;
