@@ -21,8 +21,9 @@ public class Q3EmlImListener extends TimerTask
         ConfigKey.LIST_GROUP_SCRIPT, ConfigKey.DEFAULT_LIST_GROUP_SCRIPT );
 
     private static int count = 0;
-    
-    private static final int MAX_COUNT = 2;
+
+    private static final int MAX_COUNT = ConfLoader.getInstance()
+            .getInt( "MAX_EMLIM_MONITOR_NUM", 5 );
 
     private int groupId;
 
@@ -64,8 +65,9 @@ public class Q3EmlImListener extends TimerTask
             if( !flag && count == MAX_COUNT )
             {
                 count = 0;
-                Q3EmlImMgr.getInstance().clearNeList();
-                Q3EmlImMgr.getInstance().killEmlImProcess();
+                // todo
+                // 更改网元状态
+                System.exit( 1 );
             }
             else if( !flag && count < MAX_COUNT )
             {

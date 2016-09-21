@@ -15,7 +15,6 @@ import com.nsb.enms.adapter.server.business.heartbeat.HeartBeatManager;
 import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationServer;
 
@@ -45,13 +44,13 @@ public class Bootstrap extends HttpServlet
 
         register2Controller();
 
-        String q3WSServerUri = ConfLoader.getInstance()
+        /*String q3WSServerUri = ConfLoader.getInstance()
                 .getConf( "Q3_WS_SERVER_URI", "" );
         new Thread( new WSClientThread( q3WSServerUri ) ).start();
 
         int adapterWSServerPort = ConfLoader.getInstance()
                 .getInt( "ADP_WS_SERVER_PORT", 7778 );
-        new Thread( new WSServerThread( adapterWSServerPort ) ).start();
+        new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/
 
         HeartBeatManager heartBeatManager = new HeartBeatManager();
         heartBeatManager.checkHeartbeat();
@@ -70,9 +69,9 @@ public class Bootstrap extends HttpServlet
             e.printStackTrace();
         }
 
-        String dbUrl = ConfLoader.getInstance().getConf( "DB_URL", "" );
+        /*String dbUrl = ConfLoader.getInstance().getConf( "DB_URL", "" );
         log.debug( "The dbUrl is " + dbUrl );
-        initDbApiClient( dbUrl );
+        initDbApiClient( dbUrl );*/
 
         String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
         log.debug( "The ctrlUrl is " + ctrlUrl );
@@ -86,12 +85,12 @@ public class Bootstrap extends HttpServlet
                     .setBasePath( ctrlUrl ) );
     }
 
-    private void initDbApiClient( String dbUrl )
+    /*private void initDbApiClient( String dbUrl )
     {
         com.nsb.enms.restful.dbclient.Configuration.setDefaultApiClient(
             new com.nsb.enms.restful.dbclient.ApiClient()
                     .setBasePath( dbUrl ) );
-    }
+    }*/
 
     private void register2Controller()
     {
@@ -143,18 +142,4 @@ public class Bootstrap extends HttpServlet
             new NotificationServer( port ).start();
         }
     }
-
-    @Override
-    public void destroy()
-    {
-        try
-        {
-            Q3EmlImMgr.getInstance().destory();
-        }
-        catch( AdapterException e )
-        {
-            log.error( "destroy", e );
-        }
-    }
-
 }
