@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +22,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
-import com.nsb.enms.adapter.server.db.mongodb.mgr.MaxNeIdMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.MongoDBMgr;
 import com.nsb.enms.restful.model.adapter.Ne;
 
@@ -167,8 +165,26 @@ public class NesDbMgr {
 
 		return neList;
 	}
+	
+	public List<Integer> getNeIdsByGroupId(String groupId) throws Exception
+	{
+	    List<Document> docList = dbc.find(eq( "groupId", groupId )).into(new ArrayList<Document>());
+        if (null == docList || docList.isEmpty()) {
+            log.error("can not find ne");
+            return new ArrayList<Integer>();
+        }
+        List<Integer> neIdList = new ArrayList<Integer>();
+        for (Document doc : docList) {
+            Ne ne = constructNe(doc);
+            String moi = ne.getAid();
+            int neId = Integer.parseInt( moi.split( "/" )[1].split( "=" )[1] );
+            neIdList.add(neId);
+            System.out.println(ne);
+        }
+        return neIdList;
+	}
 
-	public Response getMaxNeId(SecurityContext securityContext) throws Exception {
+/*	public Response getMaxNeId(SecurityContext securityContext) throws Exception {
 		String maxNeId = MaxNeIdMgr.getId();
 		return Response.ok().entity(maxNeId).build();
 	}
@@ -176,5 +192,5 @@ public class NesDbMgr {
 	public Response updateMaxNeId(String body) throws Exception {
 		MaxNeIdMgr.updateId(body);
 		return Response.ok().build();
-	}
+	}*/
 }

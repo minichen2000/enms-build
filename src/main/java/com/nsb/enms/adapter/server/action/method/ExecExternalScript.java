@@ -21,17 +21,17 @@ public class ExecExternalScript
     private static String tstmgrScript = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT, ConfigKey.DEFAULT_TSTMGR_SCRIPT );
     
-    private static String q3EmlImScript = ConfLoader.getInstance().getConf(
-        ConfigKey.START_Q3_EMLIM_SCRIPT, ConfigKey.DEFAULT_START_Q3_EMLIM_SCRIPT );
+   /* private static String q3EmlImScript = ConfLoader.getInstance().getConf(
+        ConfigKey.START_Q3_EMLIM_SCRIPT, ConfigKey.DEFAULT_START_Q3_EMLIM_SCRIPT );*/
 
     private static String tstmgrDir = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT_DIR, ConfigKey.DEFAULT_TSTMGR_SCRIPT_DIR );
 
-    private static String emlImDir = ConfLoader.getInstance().getConf(
+    /*private static String emlImDir = ConfLoader.getInstance().getConf(
         ConfigKey.Q3_EMLIM_SCRIPT_DIR, ConfigKey.DEFAULT_Q3_EMLIM_SCRIPT_DIR );
     
     private static String killEmlImScript = ConfLoader.getInstance().getConf(
-        ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );
+        ConfigKey.KILL_EMLIM_SCRIPT, ConfigKey.DEFAULT_KILL_EMLIM_SCRIPT );*/
 
     private static File fileDir;
 
@@ -44,14 +44,14 @@ public class ExecExternalScript
                 fileDir = new File( tstmgrDir );
                 cmdArray[0] = tstmgrScript;
                 break;
-            case EMLIM:
+            /*case EMLIM:
                 fileDir = new File( emlImDir );
                 cmdArray[0] = q3EmlImScript;
                 break;
             case KILL_EMLIM:
                 fileDir = new File( tstmgrDir );
                 cmdArray[0] = killEmlImScript;
-                break;
+                break;*/
             default:
                 break;
         }

@@ -61,6 +61,7 @@ public class HeartBeatManager
             catch( ApiException e )
             {
                 log.error( "controller is out of service" );
+                //不做什么操作，只是不断尝试注册，记下相关日志。
                 if( count < MAX_COUNT )
                 {
                     count++;

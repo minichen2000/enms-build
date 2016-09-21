@@ -62,21 +62,21 @@ public class ConfigKey {
 
 	public static final String DEFAULT_START_SUPERVISION_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "StartSupervision.req";
 
-	public static final String Q3_EMLIM_SCRIPT_DIR = "EMLIM_SCRIPT_DIR";
+	//public static final String Q3_EMLIM_SCRIPT_DIR = "EMLIM_SCRIPT_DIR";
 
-	public static final String DEFAULT_Q3_EMLIM_SCRIPT_DIR = "/opt/nms/EML_1/eml/adm/script/";
+	//public static final String DEFAULT_Q3_EMLIM_SCRIPT_DIR = "/opt/nms/EML_1/eml/adm/script/";
 
-	public static final String START_Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
+	//public static final String START_Q3_EMLIM_SCRIPT = "Q3_EMLIM_SCRIPT";
 
-	public static final String DEFAULT_START_Q3_EMLIM_SCRIPT = DEFAULT_Q3_EMLIM_SCRIPT_DIR + "run";
+	//public static final String DEFAULT_START_Q3_EMLIM_SCRIPT = DEFAULT_Q3_EMLIM_SCRIPT_DIR + "run";
 
 	public static final String LIST_GROUP_SCRIPT = "LIST_GROUP_SCRIPT";
 
 	public static final String DEFAULT_LIST_GROUP_SCRIPT = DEFAULT_TSTMGR_SCENARIO_DIR + "ListGroup.req";
 
-	public static final String KILL_EMLIM_SCRIPT = "KILL_EMLIM_SCRIPT";
+	//public static final String KILL_EMLIM_SCRIPT = "KILL_EMLIM_SCRIPT";
 
-	public static final String DEFAULT_KILL_EMLIM_SCRIPT = DEFAULT_TSTMGR_SCENARIO_DIR + "killEmlIm.sh";
+	//public static final String DEFAULT_KILL_EMLIM_SCRIPT = DEFAULT_TSTMGR_SCENARIO_DIR + "killEmlIm.sh";
 
 	public static final String DELETE_NE_REQ = "DELETE_NE_REQ";
 
@@ -108,4 +108,8 @@ public class ConfigKey {
 	public static final String DEFAULT_GET_T_PORT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncTTP.req";
 
 	public static final String GET_T_PORT_REQ = "GET_T_PORT_REQ";
+
+    public static final String EMLIM_CONNECT_INTERVAL = "EMLIM_CONNECT_INTERVAL";
+    
+    public static final int DEFAULT_EMLIM_CONNECT_INTERVAL = 10 * 1000;
 }
