@@ -38,7 +38,7 @@ public class Q3EmlImListener extends TimerTask
         monitorEmlIm();
     }
 
-    public void monitorEmlIm()
+    private void monitorEmlIm()
     {
         try
         {

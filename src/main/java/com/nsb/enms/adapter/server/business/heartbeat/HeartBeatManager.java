@@ -44,7 +44,7 @@ public class HeartBeatManager
             checkHeartBeat();
         }
 
-        public void checkHeartBeat()
+        private void checkHeartBeat()
         {
             try
             {
