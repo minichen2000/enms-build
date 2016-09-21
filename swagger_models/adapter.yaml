@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     ENMS Adapter RESTful interface.
-  version: 0.2.8
+  version: 0.3.0
   title: Adapter API
 basePath: /
 schemes:
@@ -24,7 +24,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Ne'
+              $ref: '#/definitions/AdpNe'
     post:
       tags:
         - adpNes
@@ -41,15 +41,15 @@ paths:
           description: NE object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/Ne'
+            $ref: '#/definitions/AdpNe'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Ne'
+            $ref: '#/definitions/AdpNe'
         '405':
           description: Invalid input
-    put:
+    patch:
       tags:
         - adpNes
       summary: Update NE
@@ -65,7 +65,7 @@ paths:
           description: NE object that needs to be updated
           required: false
           schema:
-            $ref: '#/definitions/Ne'
+            $ref: '#/definitions/AdpNe'
       responses:
         '200':
           description: OK
@@ -94,7 +94,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Ne'
+            $ref: '#/definitions/AdpNe'
         '400':
           description: Invalid ID supplied
         '404':
@@ -120,134 +120,10 @@ paths:
           description: Invalid ID supplied
         '404':
           description: NE not found
-  '/nes/type/{netype}':
-    get:
-      tags:
-        - adpNes
-      summary: Query NEs by type
-      description: get NEs from NMS
-      produces:
-        - application/json
-      operationId: findNesByType
-      parameters:
-        - name: netype
-          in: path
-          type: string
-          required: true
-          description: NE type to query
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Ne'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: NE not found
-  '/nes/version/{neversion}':
-    get:
-      tags:
-        - adpNes
-      summary: Query NEs by version
-      description: get NEs from NMS
-      produces:
-        - application/json
-      operationId: findNesByVersion
-      parameters:
-        - name: neversion
-          in: path
-          type: string
-          required: true
-          description: NE version to query
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Ne'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: NE not found
-  '/nes/type/{netype}/version/{neversion}':
-    get:
-      tags:
-        - adpNes
-      summary: Query NEs by type & version
-      description: get NEs from NMS
-      produces:
-        - application/json
-      operationId: findNeByTypeVersion
-      parameters:
-        - name: netype
-          in: path
-          type: string
-          required: true
-          description: NE type to query
-        - name: neversion
-          in: path
-          type: string
-          required: true
-          description: NE version to query
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Ne'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: NE not found
+
+
   /tps:
-    get:
-      tags:
-        - adpTps
-      summary: Get ports
-      description: Get the ports with queries
-      produces:
-        - application/json
-      operationId: getTps
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Tp'
-    post:
-      tags:
-        - adpTps
-      summary: Add TPs
-      description: Store new TPs to Database
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      operationId: addTps
-      parameters:
-        - name: body
-          in: body
-          description: TP objects that needs to be added
-          required: true
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Tp'
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Tp'
-        '405':
-          description: Invalid input
-    put:
+    patch:
       tags:
         - adpTps
       summary: Update TP
@@ -263,7 +139,7 @@ paths:
           description: TP object that needs to be updated
           required: false
           schema:
-            $ref: '#/definitions/Tp'
+            $ref: '#/definitions/AdpTp'
       responses:
         '200':
           description: OK
@@ -273,6 +149,7 @@ paths:
           description: TP not found
         '405':
           description: Validation exception
+          
   '/tps/{tpid}':
     get:
       tags:
@@ -292,11 +169,12 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Tp'
+            $ref: '#/definitions/AdpTp'
         '400':
           description: Invalid tpid supplied
         '404':
           description: TP not found
+          
   '/tps/{tpid}/children':
     get:
       tags:
@@ -318,37 +196,11 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Tp'
+              $ref: '#/definitions/AdpTp'
         '400':
           description: Invalid tpid supplied
         '404':
           description: Children TP not found
-  '/tps/type/{tptype}':
-    get:
-      tags:
-        - adpTps
-      summary: Get ports
-      description: Get the ports with queries
-      produces:
-        - application/json
-      operationId: getTpsByType
-      parameters:
-        - name: tptype
-          in: path
-          required: true
-          description: the TP type to query
-          type: string
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Tp'
-        '400':
-          description: Invalid tpid supplied
-        '404':
-          description: TP not found
   '/tps/ne/{neid}':
     get:
       tags:
@@ -370,40 +222,40 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Tp'
+              $ref: '#/definitions/AdpTp'
         '400':
           description: Invalid NE ID supplied
         '404':
           description: TP not found
-  '/tps/ne/{neid}/tp/{tpid}':
+  '/tps/ne/{neid}/type/{tptype}':
     get:
       tags:
         - adpTps
-      summary: Find CTPs by NE & PTP
-      description: Returns CTPs as per the PTPID
+      summary: Get ports
+      description: Get the ports with queries
       produces:
         - application/json
-      operationId: getCtpsByTpId
+      operationId: getTpsByType
       parameters:
-        - in: path
-          name: neid
-          description: NEID of TP that needs to be fetched
+        - name: neid
+          in: path
           required: true
+          description: the neid to query
           type: string
-        - in: path
-          name: tpid
-          description: TP Id
+        - name: tptype
+          in: path
           required: true
+          description: the TP type to query
           type: string
       responses:
         '200':
-          description: successful operation
+          description: OK
           schema:
             type: array
             items:
-              $ref: '#/definitions/Tp'
+              $ref: '#/definitions/AdpTp'
         '400':
-          description: Invalid Layer Rate supplied
+          description: Invalid tpid supplied
         '404':
           description: TP not found
   '/tps/ne/{neid}/layer_rate/{layerrate}':
@@ -432,11 +284,12 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Tp'
+              $ref: '#/definitions/AdpTp'
         '400':
           description: Invalid Layer Rate supplied
         '404':
           description: TP not found
+          
   '/equipments/{eqid}':
     get:
       tags:
@@ -456,7 +309,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Equipment'
+            $ref: '#/definitions/AdpEquipment'
         '400':
           description: Invalid Equipment ID supplied
         '404':
@@ -482,196 +335,12 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Equipment'
+              $ref: '#/definitions/AdpEquipment'
         '400':
           description: Invalid NE ID supplied
         '404':
           description: Equipment not found
-  /connections:
-    get:
-      tags:
-        - adpConnections
-      summary: Get connections
-      description: get connections from NMS
-      produces:
-        - application/json
-      operationId: getConnections
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Connection'
-    post:
-      tags:
-        - adpConnections
-      summary: Add Connection
-      description: Add a new Connection to NMS System
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      operationId: addConnection
-      parameters:
-        - name: body
-          in: body
-          description: Connection object that needs to be added
-          required: true
-          schema:
-            $ref: '#/definitions/Connection'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Connection'
-        '405':
-          description: Invalid input
-  '/connections/{connectionid}':
-    get:
-      tags:
-        - adpConnections
-      summary: Get Connection
-      description: Returns Connections as per the connectionid
-      produces:
-        - application/json
-      operationId: getConnectionById
-      parameters:
-        - in: path
-          name: connectionid
-          description: Connection that need to be fetched
-          required: true
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: '#/definitions/Connection'
-        '400':
-          description: Invalid connection ID supplied
-        '404':
-          description: CONNECTION not found
           
-  '/connections/layer_rate/{layerrate}':
-    get:
-      tags:
-        - adpConnections
-      summary: Get Connections
-      description: Returns Connections as per the layer rate
-      produces:
-        - application/json
-      operationId: getConnectionsByLayerRate
-      parameters:
-        - in: path
-          name: layerrate
-          description: Connection layerrate that need to be fetched
-          required: true
-          type: string
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Connection'
-        '400':
-          description: Invalid connection ID supplied
-        '404':
-          description: CONNECTION not found
-  '/connections/userlabel/{userlabel}':
-    get:
-      tags:
-        - adpConnections
-      summary: Get connections
-      description: get connections from NMS
-      produces:
-        - application/json
-      operationId: getConnectionByUserLabel
-      parameters:
-        - name: userlabel
-          in: path
-          type: string
-          required: true
-          description: userlabel of connection to query
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Connection'
-        '404':
-          description: CONNECTION not found
-  '/connections/type/{connectiontype}':
-    get:
-      tags:
-        - adpConnections
-      summary: Get connections
-      description: get connections from NMS
-      produces:
-        - application/json
-      operationId: getConnectionsByType
-      parameters:
-        - name: connectiontype
-          in: path
-          type: string
-          required: true
-          description: connection type to query
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Connection'
-        '404':
-          description: CONNECTION not found
-  /routes:
-    get:
-      tags:
-        - adpRoutes
-      summary: Get routes
-      description: get all routes
-      produces:
-        - application/json
-      operationId: getAllRoutes
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Route'
-        '404':
-          description: No route found
-  '/routes/anode/{anodeid}/znode/{znodeid}':
-    get:
-      tags:
-        - adpRoutes
-      summary: Get routes
-      description: get all routes from a to z
-      produces:
-        - application/json
-      operationId: getRoutesAtoZ
-      parameters:
-        - name: anodeid
-          in: path
-          type: string
-          required: true
-          description: the start point of the routes
-        - name: znodeid
-          in: path
-          type: string
-          required: true
-          description: the end point of the routes
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Route'
-        '404':
-          description: No route found
-
   /xcs:
     post:
       tags:
@@ -689,12 +358,12 @@ paths:
           description: XC object that needs to be created
           required: true
           schema:
-            $ref: '#/definitions/Xc'
+            $ref: '#/definitions/AdpXc'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Xc'
+            $ref: '#/definitions/AdpXc'
         '405':
           description: Invalid input
   /xcs/{xcid}:
@@ -716,7 +385,7 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/Xc'
+            $ref: '#/definitions/AdpXc'
         '400':
           description: Invalid ID supplied
         '404':
@@ -763,7 +432,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Xc'
+              $ref: '#/definitions/AdpXc'
         '400':
           description: Invalid ID supplied
         '404':
@@ -811,7 +480,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Xc'
+              $ref: '#/definitions/AdpXc'
         '400':
           description: Invalid ID supplied
         '404':
@@ -838,7 +507,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/Tp'
+              $ref: '#/definitions/AdpTp'
         304:
           description: CTP terminate failed.
         '400':
@@ -846,105 +515,7 @@ paths:
         '404':
           description: CTP not found
 
-  /statistics/supported_ne_types:
-    get:
-      tags:
-        - adpStatistics
-      summary: NE statistics
-      description: Get supported NE types
-      produces:
-        - application/json
-      operationId: getSupportedNeTypes
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/NeStatistics'
-        '404':
-          description: No statistics found.
-  /statistics/nes:
-    get:
-      tags:
-        - adpStatistics
-      summary: NE number
-      description: Get NE numbers as per NE Type
-      produces:
-        - application/json
-      operationId: getNeNumbersPerType
-      responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/NeStatistics'
-        '404':
-          description: No statistics found.
-          
-  /enms/assignments:
-    get:
-      tags:
-        - adpSystem
-      summary: NEs on the Adapter
-      description: get the NEs hosted by the Adapter.
-      produces:
-        - application/json
-      operationId: getNeAssignment
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/NeAssignment'
-        '404':
-          description: No NE assigned to the Adapter
-    post:
-      tags:
-        - adpSystem
-      summary: NE assignment
-      description: Assign NE to Adapter
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      operationId: assignNes
-      parameters:
-        - name: body
-          in: body
-          description: the NEs to assign to the Adapter
-          required: true
-          schema:
-            $ref: '#/definitions/NeAssignment'
-      responses:
-        '200':
-          description: OK
-        '405':
-          description: Invalid input
-    delete:
-      tags:
-        - adpSystem
-      summary: Detach the NE from this Adapter
-      description: Un-allocate NE from Adapter
-      produces:
-        - application/json
-      consumes:
-        - application/json
-      operationId: unAssignNe
-      parameters:
-        - name: body
-          in: body
-          description: The NE to be unallocated from the Adapter
-          required: true
-          schema:
-            $ref: '#/definitions/Ne'
-      responses:
-        '200':
-          description: OK
-        '405':
-          description: Invalid input
-          
-  /enms/statuses/heartbeats:
+  /enms/statuses/ping:
     get:
       tags:
         - adpSystem
@@ -952,158 +523,27 @@ paths:
       description: ENMS heart beat, to check the system health status
       produces:
         - application/json
-      operationId: checkHeartbeat
+      operationId: ping
       responses:
         '200':
           description: OK
 
           
 definitions:
-  RefTp:
-    type: object
-    description: TP Reference, just store partial TP information.
-    properties:
-      id:
-        type: string
-        example: 10000
-      neId:
-        type: string
-        example: NE001
-        
-  Tp:
-    type: object
-    properties:
-      id:
-        type: string
-        example: NE001
-      aid:
-        type: string
-        example: 10000
-      neId:
-        type: string
-        example: 10000
-      parentTpId:
-        description: The parent TP id for CTP case.
-        type: string
-      userLabel:
-        type: string
-        example: NE001/Port1
-      nativeName:
-        type: string
-      layerRate:
-        type: string
-        example: SDH155M
-      tpType:
-        type: string
-        example: etc/sdh/wdm/stm16etc.
-      usedByConnection:
-        type: string
-        default: "free"
-        description: |
-          Connection id that using the TP
-          'free' - TP not used; 
-          'xc' - TP occupied by XC, but this XC not belongs to connection
-          >0 - real connection ID
-      reservedBy:
-        type: string
-        description: |
-          Before creating XC for CTP, reserve it first in DB by Controller, to avoid
-          contention from other tasks. Use taskid or other info.
-          When deleting an XC, need to clear this attribute.
-      tpgMembers:
-        type: array
-        items:
-          type: string
-      comment:
-        type: string
 
-  Connection:
+  AdpNe:
     type: object
+    description: the NE model for Adapter
+#    required:
+#      - userLabel
+#      - neType
     properties:
       id:
         type: string
-        example: c12345
-      userLabel:
+        description: NE id, will be uuid later
+      keyOnNe:
         type: string
-      nativeName:
-        type: string
-      layerRate:
-        type: string
-        example: STM16
-      atps:
-        type: array
-        description: the list of TP IDs
-        items:
-#          type: string
-          $ref: '#/definitions/RefTp'
-      ztps:
-        type: array
-        description: the list of TP IDs
-        items:
-#          type: string
-          $ref: '#/definitions/RefTp'
-      connectionType:
-        type: string
-        example: P2P/Tree/Lan/Ring/group
-        description: 'the type of the connection, ''group'' means it the connection group'
-      groupMembers:
-        type: array
-        description: the list of Connection IDs
-        items:
-          type: string
-#          $ref: '#/definitions/CONNECTION'
-      serverConnections:
-        type: array
-        description: the list of Server connection IDs
-        items:
-          type: string
-#          $ref: '#/definitions/CONNECTION'
-      xcs:
-        type: array
-        description: the list of XC IDs
-        items:
-          type: string
-#          $ref: '#/definitions/XC'
-      direction:
-        type: string
-        example: bidirectional/unidirectional
-      definitionTime:
-        type: string
-        example: '2016-07-11T12:01:02.000Z'
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: integer
-        format: int32
-        description: User Status
-  Ne:
-    type: object
-    required:
-      - userLabel
-      - neType
-    properties:
-      id:
-        type: string
-        example: 12345
-      aid:
-        type: string
-        example: 10000
+        description: for Q3 NE it's moi , after setting it's read only
 #      adapterType:
 #        type: string
 #        description: 'needed adapter type, include ALUQ3, pureSNMP,TL1, CLI etc.'
@@ -1121,7 +561,6 @@ definitions:
  #       example: SDH|MSTP|PTN|OTN|IP|…
       version:
         type: string
-        example: 6
 #      address:
 #        type: string
 #        example: 4.700058e+23
@@ -1147,20 +586,77 @@ definitions:
 #      password:
 #        type: string
 #        example: pwd
-      coordinates:
-        $ref: "#/definitions/Coordinates"
-      extraInfo:
-        type: object
-        properties:
-           locationName:
-             type: string
-           moi:
-             type: string
+#      coordinates:
+#        $ref: "#/definitions/Coordinates"
+      locationName:
+        type: string
+#      extraInfo:
+#        type: object
+#        properties:
+#           tmp:
+#             type: string
 
-  Equipment:
+  AdpTp:
     type: object
-    required:
-      - neId
+    description: the TP model for Adapter
+    properties:
+      id:
+        type: string
+        description: neId + keyOnNE, will use uuid later
+      keyOnNe:
+        type: string
+        description: th TP's key on NE, for Q3 NE include moi value without NE part
+      neId:
+        type: string
+        description: Ne's ID
+      parentTpId:
+        description: The parent TP id for CTP case.
+        type: string
+      userLabel:
+        type: string
+        example: NE001/Port1
+      nativeName:
+        type: string
+      layerRates:
+        type: array
+        description: the layerRates, the first one is key layerRate
+        items:
+          type: string
+      tpType:
+        type: string
+        example: ptp, ctp, ftp
+      adminState:
+        type: string
+        description: locked, unlocked
+      operationalState:
+        type: string
+        description: enabled, disabled
+#      usedByConnection:
+#        type: string
+#        default: "free"
+#        description: |
+#          Connection id that using the TP
+#          'free' - TP not used; 
+#          'xc' - TP occupied by XC, but this XC not belongs to connection
+#          >0 - real connection ID
+#      reservedBy:
+#        type: string
+#        description: |
+#          Before creating XC for CTP, reserve it first in DB by Controller, to avoid
+#          contention from other tasks. Use taskid or other info.
+#          When deleting an XC, need to clear this attribute.
+      tpgMembers:
+        type: array
+        items:
+          type: string
+#      comment:
+#        type: string
+
+  AdpEquipment:
+    type: object
+    description: the Equipment model for Adapter
+#    required:
+#      - neId
     properties:
       id:
         type: string
@@ -1176,8 +672,9 @@ definitions:
       addresses:
         $ref: "#/definitions/Addresses"
         
-  Xc:
+  AdpXc:
     type: object
+    description: the XC model for Adapter
     properties:
       id:
         type: string
@@ -1201,68 +698,16 @@ definitions:
         items:
           type: string
 #          $ref: '#/definitions/TP'
-      usedByConnection:
-        type: string
-        description: |
-          Connection id that using the TP
-          -1 - XC not used, isolated XC, need to be cleaned by NMS 
-          0 - not valid, don't use this value
-          >0 - real connection ID
+#      usedByConnection:
+#        type: string
+#        description: |
+#          Connection id that using the TPdadd
+#          -1 - XC not used, isolated XC, need to be cleaned by NMS 
+#          0 - not valid, don't use this value
+#          >0 - real connection ID
       implStatus:
         type: string
-  Route:
-    type: object
-    properties:
-      sequence:
-        type: integer
-      xcs:
-        type: array
-        items:
-          $ref: '#/definitions/Xc'
-  Host:
-    type: object
-    description: 'The host in ENMS, inludes Controller, Adapter, DB etc.'
-    properties:
-      id:
-        type: string
-        description: 'the ID of the host, can be autogenerated.'
-      type:
-        type: string
-        description: 'the type of the host, Adapter, Datacenter, Controller etc.'
-        example: adapter
-      ipAddress:
-        type: string
-        description: 'the IP Address of the host, IP:port'
-#      port:
-#        type: integer
-      q3Address:
-        type: string
-        description: The Q3 Address for Adapter, blank if not applicable.
-      remark:
-        type: string
-        description: extra info
-        
-  NeAssignment:
-    type: object
-    description: The NE assignment information, used for NE assignment and NE status report
-    properties:
-      adapter:
-        $ref: "#/definitions/Host"
-        description: the adapter
-      assignTime:
-        type: string
-      status:
-        type: string
-        description: 'If the NE currently active on the adapter, active or inactive'
-        example: active|inactive|disconnected
-      neList:
-        type: array
-        items:
-          $ref: '#/definitions/Ne'
-      remark:
-        type: string
-        description: the extra info
-  
+
   Addresses:
     type: object
     description: 'The Addresses of NE, Equipment'
@@ -1294,143 +739,114 @@ definitions:
       osSpare:
         type: string
 
-  Message:
-    type: object
-    properties:
-      sender:
-        type: string
-        description: 'the info of sender, for example: adapter-1 '
-      messageType:
-        type: string
-        description: notification or alarm
-      sendTime:
-        type: string
-      notification:
-        $ref: '#/definitions/Notification'
-      alarm:
-        $ref: '#/definitions/Alarm'    
+#  Message:
+#    type: object
+#    properties:
+#      sender:
+#        type: string
+#        description: 'the info of sender, for example: adapter-1 '
+#      messageType:
+#        type: string
+#        description: notification or alarm
+#      sendTime:
+#        type: string
+#      notification:
+#        $ref: '#/definitions/Notification'
+#      alarm:
+#        $ref: '#/definitions/Alarm'    
+#
+#  Notification:
+#    type: object
+#    properties:
+#      type:
+#        type: string
+#        description: the overall notification type, add,delete or update
+#      objectType:
+#        type: string
+#        description: 'the object type of the notification: NE, Board, TP, Connection'
+#      objectID:
+#        type: string
+#        description: the ID of the target Object.
+#      details:
+#        type: array
+#        items:
+#          $ref: '#/definitions/NotificationDetail'
+#          
+#  NotificationDetail:
+#    type: object
+#    properties:
+#      type:
+#        type: string
+#        description: 'the change type of the detail field: add, delete or update'
+#      key:
+#        type: string
+#      value:
+#        type: string
+#      oldValue:
+#        type: string
+#          
+#  Alarm:
+#    type: object
+#    properties:
+#      alarmCode:
+#        type: string
+#      alarmType:
+#        type: string
+#      severity:
+#        type: string
+#        description: severity of alarm, MAJOR, MINOR,CRITICAL,INFO,WARNING
+#      occureTime:
+#        type: string
+#      clearTime:
+#        type: string
+#      probableCause:
+#        type: string
+#      objectType:
+#        type: string
+#        description: the object type of the alarm
+#      moc:
+#        type: string
+#        description: the management object class
+#      alarmObject:
+#        type: string
+#      ackStatus:
+#        type: string
+#        description: acknowledgement status, true or false
+#      resvStatus:
+#        type: string
+#        description: reservation status
+#      description:
+#        type: string
 
-  Notification:
-    type: object
-    properties:
-      type:
-        type: string
-        description: the overall notification type, add,delete or update
-      objectType:
-        type: string
-        description: 'the object type of the notification: NE, Board, TP, Connection'
-      objectID:
-        type: string
-        description: the ID of the target Object.
-      details:
-        type: array
-        items:
-          $ref: '#/definitions/NotificationDetail'
-          
-  NotificationDetail:
-    type: object
-    properties:
-      type:
-        type: string
-        description: 'the change type of the detail field: add, delete or update'
-      key:
-        type: string
-      value:
-        type: string
-      oldValue:
-        type: string
-          
-  Alarm:
-    type: object
-    properties:
-      alarmCode:
-        type: string
-      alarmType:
-        type: string
-      severity:
-        type: string
-        description: severity of alarm, MAJOR, MINOR,CRITICAL,INFO,WARNING
-      occureTime:
-        type: string
-      clearTime:
-        type: string
-      probableCause:
-        type: string
-      objectType:
-        type: string
-        description: the object type of the alarm
-      moc:
-        type: string
-        description: the management object class
-      alarmObject:
-        type: string
-      ackStatus:
-        type: string
-        description: acknowledgement status, true or false
-      resvStatus:
-        type: string
-        description: reservation status
-      description:
-        type: string
-
-  Coordinates:
-    type: object
-    description: The coordinates of the NE
-    properties:
-      geo:
-        type: object
-        properties:
-          longitude:
-            type: string
-          latitude:
-            type: string
-      coordinate:
-        type: object
-        properties:
-          x:
-            type: string
-          y:
-            type: string              
+#  Coordinates:
+#    type: object
+#    description: The coordinates of the NE
+#    properties:
+#      geo:
+#        type: object
+#        properties:
+#          longitude:
+#            type: string
+#          latitude:
+#            type: string
+#      coordinate:
+#        type: object
+#        properties:
+#          x:
+#            type: string
+#          y:
+#            type: string              
     
-  SupportedNe:
-    type: object
-    properties:
-      neType:
-        type: string
-      versions:
-        type: array
-        items:
-          type: string
-      protocols:
-        type: array
-        items:
-          type: string
-
-  NeStatistics:
-    type: object
-    properties:
-      sum:
-        type: integer
-      nes:
-        type: array
-        items:
-          $ref: "#/definitions/NeStatisticsDetail"
-          
-  NeStatisticsDetail:
-    type: object
-    properties:
-      neType:
-        type: string
-      sum:
-        type: integer
-        description: the count of the NE type
-      versions:
-        type: array
-        description: the list of available NE versions
-        items:
-          type: string
-      versionSum:
-        type: array
-        items:
-          type: integer
-          
+#  SupportedNe:
+#    type: object
+#    properties:
+#      neType:
+#        type: string
+#      versions:
+#        type: array
+#        items:
+#          type: string
+#      protocols:
+#        type: array
+#        items:
+#          type: string

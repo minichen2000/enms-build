@@ -408,9 +408,37 @@
                         </configuration>
                     </execution>
 
-					<!-- Generate DB Client Restful API source code -->
+					<!-- Generate notification server Restful API source code -->
 					<execution>
-                        <id>gen-db-client-lib-source</id>
+						<id>gen-notification-server-lib-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-DhideGenerationTimestamp=true</argument>
+								<argument>-jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>generate</argument>
+								<argument>-i</argument>
+								<argument>${swagger-model-path}/notification.yaml</argument>
+								<argument>-l</argument>
+								<argument>jaxrs</argument>
+								<argument>-o</argument>
+								<argument>${swagger-api-path}</argument>
+								<argument>-c</argument>
+								<argument>${swagger-model-path}/config/notification_server_config.json</argument>
+							</arguments>
+						</configuration>
+					</execution>
+
+
+					<!-- Generate notification Client Restful API source code -->
+					<execution>
+                        <id>gen-notification-client-lib-source</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>exec</goal>
@@ -423,13 +451,13 @@
                                 <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
                                 <argument>generate</argument>
                                 <argument>-i</argument>
-                                <argument>${swagger-model-path}/db.yaml</argument>
+                                <argument>${swagger-model-path}/notification.yaml</argument>
                                 <argument>-l</argument>
                                 <argument>java</argument>
                                 <argument>-o</argument>
                                 <argument>${swagger-api-path}</argument>
                                 <argument>-c</argument>
-                                <argument>${swagger-model-path}/config/db_client_config.json</argument>
+                                <argument>${swagger-model-path}/config/notification_client_config.json</argument>
                             </arguments>
                         </configuration>
                     </execution>

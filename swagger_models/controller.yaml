@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     ENMS Controller RESTful interface.
-  version: 0.2.8
+  version: 0.3.0
   title: Controller API
 basePath: /
 schemes:
@@ -813,7 +813,7 @@ paths:
           description: OK
         '405':
           description: Invalid input
-  /enms/statuses/heartbeats:
+  /enms/statuses/ping:
     get:
       tags:
         - ctlSystem
@@ -828,6 +828,70 @@ paths:
 
           
 definitions:
+  Ne:
+    type: object
+    required:
+      - userLabel
+      - neType
+    properties:
+      id:
+        type: string
+        description: NE id, will be uuid later
+      keyOnNe:
+        type: string
+        description: for Q3 NE it's moi , after setting it's read only
+#      adapterType:
+#        type: string
+#        description: 'needed adapter type, include ALUQ3, pureSNMP,TL1, CLI etc.'
+      userLabel:
+        type: string
+        example: NE01/01
+ #     nativeName:
+ #       type: string
+      neType:
+        type: string
+        example: 1662mc
+ #     techDomain:
+ #       type: string
+ #       description: the domain of NE technologies
+ #       example: SDH|MSTP|PTN|OTN|IP|…
+      version:
+        type: string
+#      address:
+#        type: string
+#        example: 4.700058e+23
+#      addressType:
+#        type: string
+#        example: Q3|IPv4Telnet|IPv4SNMPv2|IPv4SNMPv3…
+      addresses:
+        $ref: "#/definitions/Addresses"
+      adminState:
+        type: string
+      operationState:
+        type: string
+        example: enabled/disabled
+#      communicationStatus:
+#        type: string
+#        example: reachable/unreachable
+#      alignmentStatus:
+#        type: string
+#        example: aligned/misaligned
+#      loginName:
+#        type: string
+#        example: admin
+#      password:
+#        type: string
+#        example: pwd
+      locationName:
+        type: string
+      coordinates:
+        $ref: "#/definitions/Coordinates"
+#      extraInfo:
+#        type: object
+#        properties:
+#           moi:
+#             type: string
+
   RefTp:
     type: object
     description: TP Reference, just store partial TP information.
@@ -845,12 +909,12 @@ definitions:
       id:
         type: string
         example: NE001
-      aid:
+      keyOnNe:
         type: string
-        example: 10000
+        description: th TP's key on NE, for Q3 NE include moi value without NE part
       neId:
         type: string
-        example: 10000
+        description: Ne's ID
       parentTpId:
         description: The parent TP id for CTP case.
         type: string
@@ -859,9 +923,11 @@ definitions:
         example: NE001/Port1
       nativeName:
         type: string
-      layerRate:
-        type: string
-        example: SDH155M
+      layerRates:
+        type: array
+        description: the layerRates, the first one is key layerRate
+        items:
+          type: string
       tpType:
         type: string
         example: etc/sdh/wdm/stm16etc.
@@ -886,6 +952,25 @@ definitions:
       comment:
         type: string
 
+  Equipment:
+    type: object
+#    required:
+#      - neId
+    properties:
+      id:
+        type: string
+      aid:
+        type: string
+        example: NE001/Board1
+      neId:
+        type: string
+      userLabel:
+        type: string
+      nativeName:
+        type: string
+      addresses:
+        $ref: "#/definitions/Addresses"
+        
   Connection:
     type: object
     properties:
@@ -939,112 +1024,7 @@ definitions:
       definitionTime:
         type: string
         example: '2016-07-11T12:01:02.000Z'
-  User:
-    type: object
-    properties:
-      id:
-        type: integer
-        format: int64
-      username:
-        type: string
-      firstName:
-        type: string
-      lastName:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      phone:
-        type: string
-      userStatus:
-        type: integer
-        format: int32
-        description: User Status
-  Ne:
-    type: object
-    required:
-      - userLabel
-      - neType
-    properties:
-      id:
-        type: string
-        example: 12345
-      aid:
-        type: string
-        example: 10000
-#      adapterType:
-#        type: string
-#        description: 'needed adapter type, include ALUQ3, pureSNMP,TL1, CLI etc.'
-      userLabel:
-        type: string
-        example: NE01/01
- #     nativeName:
- #       type: string
-      neType:
-        type: string
-        example: 1662mc
- #     techDomain:
- #       type: string
- #       description: the domain of NE technologies
- #       example: SDH|MSTP|PTN|OTN|IP|…
-      version:
-        type: string
-        example: 6
-#      address:
-#        type: string
-#        example: 4.700058e+23
-#      addressType:
-#        type: string
-#        example: Q3|IPv4Telnet|IPv4SNMPv2|IPv4SNMPv3…
-      addresses:
-        $ref: "#/definitions/Addresses"
-      adminState:
-        type: string
-      operationState:
-        type: string
-        example: enabled/disabled
-#      communicationStatus:
-#        type: string
-#        example: reachable/unreachable
-#      alignmentStatus:
-#        type: string
-#        example: aligned/misaligned
-#      loginName:
-#        type: string
-#        example: admin
-#      password:
-#        type: string
-#        example: pwd
-      coordinates:
-        $ref: "#/definitions/Coordinates"
-      extraInfo:
-        type: object
-        properties:
-           locationName:
-             type: string
-           moi:
-             type: string
 
-  Equipment:
-    type: object
-    required:
-      - neId
-    properties:
-      id:
-        type: string
-      aid:
-        type: string
-        example: NE001/Board1
-      neId:
-        type: string
-      userLabel:
-        type: string
-      nativeName:
-        type: string
-      addresses:
-        $ref: "#/definitions/Addresses"
-        
   Xc:
     type: object
     properties:
@@ -1079,6 +1059,7 @@ definitions:
           >0 - real connection ID
       implStatus:
         type: string
+        
   Route:
     type: object
     properties:
@@ -1117,7 +1098,6 @@ definitions:
     properties:
       adapter:
         $ref: "#/definitions/Host"
-        description: the adapter
       assignTime:
         type: string
       status:
@@ -1163,84 +1143,84 @@ definitions:
       osSpare:
         type: string
 
-  Message:
-    type: object
-    properties:
-      sender:
-        type: string
-        description: 'the info of sender, for example: adapter-1 '
-      messageType:
-        type: string
-        description: notification or alarm
-      sendTime:
-        type: string
-      notification:
-        $ref: '#/definitions/Notification'
-      alarm:
-        $ref: '#/definitions/Alarm'    
-
-  Notification:
-    type: object
-    properties:
-      type:
-        type: string
-        description: the overall notification type, add,delete or update
-      objectType:
-        type: string
-        description: 'the object type of the notification: NE, Board, TP, Connection'
-      objectID:
-        type: string
-        description: the ID of the target Object.
-      details:
-        type: array
-        items:
-          $ref: '#/definitions/NotificationDetail'
-          
-  NotificationDetail:
-    type: object
-    properties:
-      type:
-        type: string
-        description: 'the change type of the detail field: add, delete or update'
-      key:
-        type: string
-      value:
-        type: string
-      oldValue:
-        type: string
-          
-  Alarm:
-    type: object
-    properties:
-      alarmCode:
-        type: string
-      alarmType:
-        type: string
-      severity:
-        type: string
-        description: severity of alarm, MAJOR, MINOR,CRITICAL,INFO,WARNING
-      occureTime:
-        type: string
-      clearTime:
-        type: string
-      probableCause:
-        type: string
-      objectType:
-        type: string
-        description: the object type of the alarm
-      moc:
-        type: string
-        description: the management object class
-      alarmObject:
-        type: string
-      ackStatus:
-        type: string
-        description: acknowledgement status, true or false
-      resvStatus:
-        type: string
-        description: reservation status
-      description:
-        type: string
+#  Message:
+#    type: object
+#    properties:
+#      sender:
+#        type: string
+#        description: 'the info of sender, for example: adapter-1 '
+#      messageType:
+#        type: string
+#        description: notification or alarm
+#      sendTime:
+#        type: string
+#      notification:
+#        $ref: '#/definitions/Notification'
+#      alarm:
+#        $ref: '#/definitions/Alarm'    
+#
+#  Notification:
+#    type: object
+#    properties:
+#      type:
+#        type: string
+#        description: the overall notification type, add,delete or update
+#      objectType:
+#        type: string
+#        description: 'the object type of the notification: NE, Board, TP, Connection'
+#      objectID:
+#        type: string
+#        description: the ID of the target Object.
+#      details:
+#        type: array
+#        items:
+#          $ref: '#/definitions/NotificationDetail'
+#          
+#  NotificationDetail:
+#    type: object
+#    properties:
+#      type:
+#        type: string
+#        description: 'the change type of the detail field: add, delete or update'
+#      key:
+#        type: string
+#      value:
+#        type: string
+#      oldValue:
+#        type: string
+#          
+#  Alarm:
+#    type: object
+#    properties:
+#      alarmCode:
+#        type: string
+#      alarmType:
+#        type: string
+#      severity:
+#        type: string
+#        description: severity of alarm, MAJOR, MINOR,CRITICAL,INFO,WARNING
+#      occureTime:
+#        type: string
+#      clearTime:
+#        type: string
+#      probableCause:
+#        type: string
+#      objectType:
+#        type: string
+#        description: the object type of the alarm
+#      moc:
+#        type: string
+#        description: the management object class
+#      alarmObject:
+#        type: string
+#      ackStatus:
+#        type: string
+#        description: acknowledgement status, true or false
+#      resvStatus:
+#        type: string
+#        description: reservation status
+#      description:
+#        type: string
 
   Coordinates:
     type: object

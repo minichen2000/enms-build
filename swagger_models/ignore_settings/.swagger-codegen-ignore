@@ -25,4 +25,6 @@
 #**/main/**/Configuration.java
 #**/main/**/model/**
 **/main/**/*server/api/**
+**/main/**/model/common/**
+
 
