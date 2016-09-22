@@ -1,8 +1,5 @@
 package com.nsb.enms.restful.adapterserver.api;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -12,9 +9,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.business.heartbeat.HeartBeatManager;
-import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.util.Register2ControllerUtils;
+import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationServer;
 
@@ -54,6 +52,17 @@ public class Bootstrap extends HttpServlet
 
         HeartBeatManager heartBeatManager = new HeartBeatManager();
         heartBeatManager.checkHeartbeat();
+        
+        try
+        {
+            //The real groupId should be set
+            Q3EmlImMgr.getInstance().init( 100 );
+        }
+        catch( AdapterException e )
+        {
+            log.error( "initQ3EmlImMgr", e );
+            throw new ServletException( e.getMessage() );
+        }
     }
 
     private void loadConf( ServletContext context )
@@ -95,22 +104,7 @@ public class Bootstrap extends HttpServlet
     private void register2Controller()
     {
         long period = ConfLoader.getInstance().getInt( "REG_PERIOD", 60000 );
-        final RegisterManager register = new RegisterManager();
-        final Timer timer = new Timer();
-        timer.scheduleAtFixedRate( new TimerTask()
-        {
-            public void run()
-            {
-                log.debug( "start to register to Controller" );
-                boolean isOk = register.register2Controller();
-                log.debug( "the result of registering to Controller is :{}",
-                    isOk );
-                if( isOk )
-                {
-                    timer.cancel();
-                }
-            }
-        }, 0, period );
+        Register2ControllerUtils.register( period );
     }
 
     private class WSClientThread extends Thread
