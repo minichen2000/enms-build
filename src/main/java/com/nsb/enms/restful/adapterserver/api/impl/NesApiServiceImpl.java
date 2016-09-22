@@ -24,7 +24,7 @@ import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.Addresses;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.NeExtraInfo;
+//import com.nsb.enms.restful.model.adapter.NeExtraInfo;
 import com.nsb.enms.restful.model.adapter.Q3Address;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
@@ -34,14 +34,14 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
-		String location = "";
-		NeExtraInfo extInfo = body.getExtraInfo();
+		String location = body.getLocationName();
+		/*NeExtraInfo extInfo = body.getExtraInfo();
 		location = extInfo.getLocationName();
 
 		log.debug("location = ", location);
 		if (StringUtils.isEmpty(location)) {
 			location = "CD";
-		}
+		}*/
 
 		NeEntity entity = null;
 		try {
@@ -85,7 +85,7 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("groupId = " + groupId + ", neId = " + neId);
 
 		AdpNe ne = new AdpNe();
-		ne.setAid(entity.getMoi());
+		ne.setKeyOnNe(entity.getMoi());
 		ne.setUserLabel(entity.getUserLabel());
 		// ne.setNativeName(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
@@ -101,9 +101,9 @@ public class NesApiServiceImpl extends NesApiService {
 		ne.setNeType(entity.getNeType());
 		ne.setOperationState("disable");
 		ne.setAdminState(entity.getAdministrativeState());
-		NeExtraInfo neExtraInfo = new NeExtraInfo();
+		/*NeExtraInfo neExtraInfo = new NeExtraInfo();
 		neExtraInfo.setMoi(entity.getMoc());
-		ne.setExtraInfo(neExtraInfo);
+		ne.setExtraInfo(neExtraInfo);*/
 		return ne;
 	}
 
@@ -123,8 +123,8 @@ public class NesApiServiceImpl extends NesApiService {
 			 * extInfos) { if ("moi".equalsIgnoreCase(extInfo.getKey())) { moi =
 			 * extInfo.getValue(); break; } }
 			 */
-			NeExtraInfo extraInfo = ne.getExtraInfo();
-			moi = extraInfo.getMoi();
+			//NeExtraInfo extraInfo = ne.getExtraInfo();
+			moi = ne.getKeyOnNe();
 
 			if (StringUtils.isEmpty(moi)) {
 				return Response.serverError().build();

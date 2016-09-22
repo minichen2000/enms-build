@@ -75,7 +75,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
-		xc.setUsedByConnection("0");
+		//xc.setUsedByConnection("0");
 		// TODO 修改该值
 		xc.setLayerrate("5");
 

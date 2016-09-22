@@ -176,7 +176,7 @@ public class NesDbMgr {
         List<Integer> neIdList = new ArrayList<Integer>();
         for (Document doc : docList) {
             AdpNe ne = constructNe(doc);
-            String moi = ne.getAid();
+            String moi = ne.getKeyOnNe();
             int neId = Integer.parseInt( moi.split( "/" )[1].split( "=" )[1] );
             neIdList.add(neId);
             System.out.println(ne);
