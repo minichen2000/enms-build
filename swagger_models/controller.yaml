@@ -821,7 +821,7 @@ paths:
       description: ENMS heart beat, to check the system health status
       produces:
         - application/json
-      operationId: checkHeartbeat
+      operationId: ping
       responses:
         '200':
           description: OK
