@@ -11,7 +11,9 @@ import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.adapter.server.action.method.tp.GetTp;
 import com.nsb.enms.adapter.server.common.Pair;
+import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
@@ -67,15 +69,21 @@ public class SyncTpThread extends Thread {
 				AdpTp newTp = new AdpTp();
 				newTp.setNeId(id);
 				String moi = tp.getMoi();
-				newTp.setAid(moi);
+				String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, tp.getMoc(), moi );
+				newTp.setId( id + ":" + keyOnNe );
+				newTp.setKeyOnNe( keyOnNe );
+				newTp.setAdminState( tp.getAdministrativeState() );
+				newTp.setOperationalState( tp.getOperationalState() );
 				String userLabel = GenerateUserLabelUtils.generateTpUserLabel( tp );
 				newTp.setUserLabel(userLabel);
 				newTp.setNativeName(userLabel);
-				newTp.setTpType(tp.getMoc());
+				newTp.setTpType("PTP");
 
 				// TODO 读取映射文件获取层速率
 				int layerRate = getLayerRate(tp);
-				newTp.setLayerRate( String.valueOf( layerRate ) );
+				List<String> layerRates = new ArrayList<String>();
+                layerRates.add( String.valueOf( layerRate ) );
+                newTp.setLayerRates(layerRates);
 				tps.add(newTp);
 
 				tps = tpsDbMgr.addTps(tps);
@@ -111,15 +119,21 @@ public class SyncTpThread extends Thread {
 		    AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
-			newCtp.setAid(ctpMoi);
+			String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, ctp.getMoc(), ctpMoi );
+			newCtp.setId( id + ":" + keyOnNe );
+			newCtp.setKeyOnNe( keyOnNe );
+			newCtp.setAdminState( ctp.getAdministrativeState() );
+			newCtp.setOperationalState( ctp.getOperationalState() );
 			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
 			newCtp.setUserLabel(userLabel);
 			newCtp.setNativeName(userLabel);
-			newCtp.setTpType(ctp.getMoc());
+			newCtp.setTpType("CTP");
 			newCtp.setParentTpId(ptpDbId);
 
 			// TODO 读取映射文件获取层速率
-			newCtp.setLayerRate(String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4));
+			List<String> layerRates = new ArrayList<String>();
+            layerRates.add( String.valueOf( LayerRateConst.LR_STS3c_and_AU4_VC4 ) );
+            newCtp.setLayerRates(layerRates);
 			tps.add(newCtp);
 		}
 
@@ -142,7 +156,11 @@ public class SyncTpThread extends Thread {
 		    AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
-			newCtp.setAid(ctpMoi);
+			String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, ctp.getMoc(), ctpMoi );
+			newCtp.setId( id + ":" + keyOnNe );
+			newCtp.setKeyOnNe( keyOnNe );
+			newCtp.setAdminState( ctp.getAdministrativeState() );
+			newCtp.setOperationalState( ctp.getOperationalState() );
 			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
 			newCtp.setUserLabel(userLabel);
 			newCtp.setNativeName(userLabel);
@@ -150,14 +168,18 @@ public class SyncTpThread extends Thread {
 			newCtp.setParentTpId(ptpDbId);
 
 			// TODO 读取映射文件获取层速率
-			newCtp.setLayerRate( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
+			List<String> layerRates = new ArrayList<String>();
+            layerRates.add( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
+            newCtp.setLayerRates(layerRates);
 			tps.add(newCtp);
 		}
 		
 		AdpTp pdhPTP = new AdpTp();
 		pdhPTP.setId( ptpDbId );
 		int layerRate = pair.getFirst();
-		pdhPTP.setLayerRate( String.valueOf( layerRate ) );
+		List<String> layerRates = new ArrayList<String>();
+        layerRates.add( String.valueOf( layerRate ) );
+        pdhPTP.setLayerRates(layerRates);
 		try {
 			tpsDbMgr.addTps(tps);
 			tpsDbMgr.updateTp( pdhPTP );
@@ -173,7 +195,7 @@ public class SyncTpThread extends Thread {
 		NesDbMgr nesDbMgr = new NesDbMgr();
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.adminState( "UP" );
+		ne.adminState( "up" );
 		ne.setOperationState("enable");
 		try {
 			nesDbMgr.updateNe(ne);

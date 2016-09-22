@@ -92,7 +92,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 		Date begin = new Date();
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getTpsByType(tptype);
+			tpList = tpsDbMgr.getTpsByType(neid, tptype);
 		} catch (Exception e) {
 			log.error("getTPsByType", e);
 			return Response.serverError().entity(e).build();
@@ -117,7 +117,14 @@ public class TpsApiServiceImpl extends TpsApiService {
 
 	@Override
 	public Response getChildrenTps(String tpid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+	    List<AdpTp> tpList = new ArrayList<AdpTp>();
+        try {
+            tpList = tpsDbMgr.getChildrenTps(tpid);
+        } catch (Exception e) {
+            log.error("getChildrenTps", e);
+            return Response.serverError().entity(e).build();
+        }
+        return Response.ok().entity(tpList).build();
 	}
 
 }

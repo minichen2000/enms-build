@@ -71,7 +71,7 @@ public class TpsDbMgr {
 
 	private AdpTp constructTp(Document doc) {
 	    AdpTp tp = gson.fromJson(doc.toJson(), AdpTp.class);
-		tp.setId(doc.getObjectId("_id").toString());
+		//tp.setId(doc.getObjectId("_id").toString());
 		return tp;
 	}
 
@@ -138,7 +138,7 @@ public class TpsDbMgr {
 				} else {
 					Object obj = f.get(body);
 					if (null != obj && !(obj.toString().equalsIgnoreCase("id"))) {
-						dbc.updateOne(new BasicDBObject("_id", new ObjectId(body.getId())),
+						dbc.updateOne(new BasicDBObject("id", body.getId()),
 								set(f.getName(), f.get(body).toString()));
 					}
 				}
@@ -178,8 +178,8 @@ public class TpsDbMgr {
 		return tpList;
 	}
 
-	public List<AdpTp> getTpsByType(String tptype) throws Exception {
-		Date begin = new Date();
+	public List<AdpTp> getTpsByType(String neid, String tptype) throws Exception {
+		/*Date begin = new Date();
 		log.debug("getTPs, tptype = " + tptype);
 
 		List<Document> docList = null;
@@ -208,7 +208,35 @@ public class TpsDbMgr {
 		Date end = new Date();
 		log.debug("getTPsByType cost time = " + (end.getTime() - begin.getTime()));
 
-		return tpList;
+		return tpList;*/
+	    
+	    List<Document> docList = null;
+        /*if (StringUtils.isEmpty(neid) && StringUtils.isEmpty(tptype)) {
+            docList = dbc.find().into(new ArrayList<Document>());
+        } else if (StringUtils.isEmpty(tptype)) {
+            docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
+        } else if (StringUtils.isEmpty(neid)) {
+            docList = dbc.find(eq("tpType", tptype)).into(new ArrayList<Document>());
+        } else {*/
+        docList = dbc.find(and(eq("neId", neid), eq("tpType", tptype))).into(new ArrayList<Document>());
+        //}
+
+        if (null == docList || docList.isEmpty()) {
+            log.error("can not find tp, query by neid = " + neid + ", tptype = " + tptype);
+            return new ArrayList<AdpTp>();
+        }
+
+        log.debug(docList.size());
+        for (Document doc : docList) {
+            log.debug(doc.toJson());
+        }
+
+        List<AdpTp> tpList = new ArrayList<AdpTp>();
+        for (Document doc : docList) {
+            AdpTp tp = constructTp(doc);
+            tpList.add(tp);
+        }
+        return tpList;
 	}
 
 	public void deleteTpsbyNeId(String neid) throws Exception {

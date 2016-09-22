@@ -43,7 +43,7 @@ public class HeartBeatManager
         {
             try
             {
-                systemApi.checkHeartbeat();
+                systemApi.ping();
                 log.debug( "controller is in service" );
             }
             catch( ApiException e )

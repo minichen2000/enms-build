@@ -40,19 +40,16 @@ public class NesDbMgr {
 		BasicDBObject dbObject = (BasicDBObject) JSON.parse(ne);
 		dbc1.insertOne(dbObject);
 
-		String id = dbObject.getObjectId("_id").toString();
-		body.setId(id);
-
 		return body;
 	}
 
 	public Response deleteNe(String neid) throws Exception {
-		dbc.deleteOne(new BasicDBObject("_id", new ObjectId(neid)));
+		dbc.deleteOne(new BasicDBObject("id", neid));
 		return Response.ok().build();
 	}
 
 	public AdpNe getNeById(String neid) throws Exception {
-		List<Document> docList = dbc.find(new BasicDBObject("_id", new ObjectId(neid))).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(eq( "id", neid )).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne, query by neId = " + neid);
 			return new AdpNe();
@@ -64,7 +61,7 @@ public class NesDbMgr {
 
 	private AdpNe constructNe(Document doc) {
 	    AdpNe ne = gson.fromJson(doc.toJson(), AdpNe.class);
-		ne.setId(doc.getObjectId("_id").toString());
+		//ne.setId(doc.getObjectId("_id").toString());
 		return ne;
 	}
 
@@ -80,7 +77,7 @@ public class NesDbMgr {
 				} else {
 					Object obj = f.get(body);
 					if (null != obj && !(obj.toString().equalsIgnoreCase("id"))) {
-						dbc.updateOne(new BasicDBObject("_id", new ObjectId(body.getId())),
+						dbc.updateOne(new BasicDBObject("id", body.getId()),
 								set(f.getName(), f.get(body).toString()));
 					}
 				}

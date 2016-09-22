@@ -13,11 +13,15 @@ import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.adapter.server.action.method.tp.GetTtp;
 import com.nsb.enms.adapter.server.action.method.tp.TerminateTug3ToTu12;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
+import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
+import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
@@ -53,12 +57,15 @@ public class TerminateTpMgr {
 	private String createXcVc4() {
 		try {
 		    AdpTp tp = tpsDbMgr.getTpById(au4CtpId);
-			String moi = tp.getAid();
-			groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-			neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-			String pTTPId = moi.split("/")[2].replaceAll("protectedTTPId=", StringUtils.EMPTY);
-			String augId = moi.split("/")[3].replaceAll("augId=", StringUtils.EMPTY);
-			String au4CTPId = moi.split("/")[4].replaceAll("au4CTPId=", StringUtils.EMPTY);
+		    neDbId = tp.getNeId();
+		    AdpNe ne = new NesDbMgr().getNeById( neDbId );
+		    String neMoi = GenerateKeyOnNeUtils.getNeMoi( ne.getKeyOnNe() );
+			String moi = tp.getKeyOnNe().split( ":" )[1];
+			groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+			neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+			String pTTPId = moi.split("/")[0].replaceAll("protectedTTPId=", StringUtils.EMPTY);
+			String augId = moi.split("/")[1].replaceAll("augId=", StringUtils.EMPTY);
+			String au4CTPId = moi.split("/")[2].replaceAll("au4CTPId=", StringUtils.EMPTY);
 
 			log.debug("before createXcVc4");
 			XcEntity xcEntity = CreateXc.createXcVc4(groupId, neId, pTTPId, augId, au4CTPId);
@@ -92,7 +99,6 @@ public class TerminateTpMgr {
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
-		xc.setUsedByConnection("0");
 		// TODO 修改该值
 		xc.setLayerrate("7");
 
@@ -127,15 +133,21 @@ public class TerminateTpMgr {
 				AdpTp ctp = new AdpTp();
 				ctp.setNeId(neDbId);
 				String moi = tp.getMoi();
-				ctp.setAid(moi);
+				String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, tp.getMoc(), moi );
+				ctp.setId( neDbId + ":" + keyOnNe );
+				ctp.keyOnNe( keyOnNe );
+				ctp.setAdminState( tp.getAdministrativeState() );
+				ctp.setOperationalState( tp.getOperationalState() );
 				String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtils.generateTpUserLabel(tp);
 				ctp.setUserLabel(tu12CtpUserLabel);
 				ctp.setNativeName(tu12CtpUserLabel);
-				ctp.setTpType(tp.getMoc());
+				ctp.setTpType("CTP");
 				ctp.setParentTpId(au4CtpId);
 
 				// TODO 读取映射文件获取层速率
-				ctp.setLayerRate(String.valueOf(LayerRateConst.LR_VT2_and_TU12_VC12));
+				List<String> layerRates = new ArrayList<String>();
+				layerRates.add( String.valueOf(LayerRateConst.LR_VT2_and_TU12_VC12) );
+				ctp.setLayerRates(layerRates);
 				tps.add(ctp);
 			}
 			tps = tpsDbMgr.addTps(tps);
@@ -158,14 +170,20 @@ public class TerminateTpMgr {
 				if (moi.endsWith(vc4TtpId)) {
 				    AdpTp ttp = new AdpTp();
 					ttp.setNeId(neDbId);
-					ttp.setAid(moi);
+					String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, tp.getMoc(), moi );
+					ttp.setId( neDbId + ":" + keyOnNe );
+					ttp.setKeyOnNe( keyOnNe );
+					ttp.setAdminState( tp.getAdministrativeState() );
+					ttp.setOperationalState( tp.getOperationalState() );
 					String userLabel = GenerateUserLabelUtils.generateTpUserLabel(tp);
 					ttp.setUserLabel(userLabel);
 					ttp.setNativeName(userLabel);
-					ttp.setTpType(tp.getMoc());
+					ttp.setTpType("CTP");
 
 					// TODO 读取映射文件获取层速率
-					ttp.setLayerRate(String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4));
+					List<String> layerRates = new ArrayList<String>();
+	                layerRates.add( String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4) );
+	                ttp.setLayerRates(layerRates);
 					tps.add(ttp);
 					break;
 				}

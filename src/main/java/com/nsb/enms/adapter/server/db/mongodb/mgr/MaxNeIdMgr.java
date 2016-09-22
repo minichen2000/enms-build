@@ -1,6 +1,7 @@
 package com.nsb.enms.adapter.server.db.mongodb.mgr;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.set;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -56,8 +57,8 @@ public class MaxNeIdMgr
                 log.error( "doc is null, can not update id" );
                 return;
             }
-            dbc.findOneAndUpdate( new BasicDBObject( "groupId", groupId ),
-                new BasicDBObject( "maxNeId", maxNeId ) );
+            dbc.updateOne( new BasicDBObject( "groupId", groupId ),
+                set( "maxNeId", maxNeId ) );
         }
         finally
         {

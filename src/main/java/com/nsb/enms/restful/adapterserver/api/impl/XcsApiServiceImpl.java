@@ -13,10 +13,13 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
+import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
+import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.XcsApiService;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
@@ -103,11 +106,14 @@ public class XcsApiServiceImpl extends XcsApiService {
 		try {
 			AdpTp tp = tpsDbMgr.getTpById(tpId);
 			String tpType = tp.getTpType();
-			String moi = tp.getAid();
+			String neid = tp.getNeId();
+			AdpNe ne = new NesDbMgr().getNeById( neid );
+			String neMoi = GenerateKeyOnNeUtils.getNeMoi( ne.getKeyOnNe() );
+			String moi = tp.getKeyOnNe().split( ":" )[1];
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
 				bean.setSdhTp(true);
-				groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-				neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+				groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+				neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 				vc4TtpId = moi.split("/")[2].replaceAll("vc4TTPId=", StringUtils.EMPTY);
 				bean.setVc4TtpId(vc4TtpId);
 				tug3Id = moi.split("/")[3].replaceAll("tug3Id=", StringUtils.EMPTY);
@@ -118,8 +124,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 				bean.setTu12CtpId(tu12CtpId);
 			} else if ("vc12PathTraceTTPBidirectional".equalsIgnoreCase(tpType)) {
 				bean.setSdhTp(false);
-				groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-				neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+				groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+				neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 				vc12TtpId = moi.split("/")[2].replaceAll("vc12TTPId=", StringUtils.EMPTY);
 				bean.setVc12TtpId(vc12TtpId);
 			}
