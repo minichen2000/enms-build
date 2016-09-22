@@ -77,7 +77,7 @@ public class SyncTpThread extends Thread {
 				String userLabel = GenerateUserLabelUtils.generateTpUserLabel( tp );
 				newTp.setUserLabel(userLabel);
 				newTp.setNativeName(userLabel);
-				newTp.setTpType("PTP");
+				newTp.setTpType(tp.getMoc());
 
 				// TODO 读取映射文件获取层速率
 				int layerRate = getLayerRate(tp);
@@ -127,7 +127,7 @@ public class SyncTpThread extends Thread {
 			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
 			newCtp.setUserLabel(userLabel);
 			newCtp.setNativeName(userLabel);
-			newCtp.setTpType("CTP");
+			newCtp.setTpType(ctp.getMoc());
 			newCtp.setParentTpId(ptpDbId);
 
 			// TODO 读取映射文件获取层速率

@@ -141,7 +141,7 @@ public class TerminateTpMgr {
 				String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtils.generateTpUserLabel(tp);
 				ctp.setUserLabel(tu12CtpUserLabel);
 				ctp.setNativeName(tu12CtpUserLabel);
-				ctp.setTpType("CTP");
+				ctp.setTpType(tp.getMoc());
 				ctp.setParentTpId(au4CtpId);
 
 				// TODO 读取映射文件获取层速率
@@ -178,7 +178,7 @@ public class TerminateTpMgr {
 					String userLabel = GenerateUserLabelUtils.generateTpUserLabel(tp);
 					ttp.setUserLabel(userLabel);
 					ttp.setNativeName(userLabel);
-					ttp.setTpType("CTP");
+					ttp.setTpType(tp.getMoc());
 
 					// TODO 读取映射文件获取层速率
 					List<String> layerRates = new ArrayList<String>();

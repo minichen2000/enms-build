@@ -108,8 +108,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 			String tpType = tp.getTpType();
 			String neid = tp.getNeId();
 			AdpNe ne = new NesDbMgr().getNeById( neid );
-			String neMoi = GenerateKeyOnNeUtils.getNeMoi( ne.getKeyOnNe() );
-			String moi = tp.getKeyOnNe().split( ":" )[1];
+			String neMoi = GenerateKeyOnNeUtils.getMoi( ne.getKeyOnNe() );
+			String moi = GenerateKeyOnNeUtils.getMoi( tp.getKeyOnNe() );
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
 				bean.setSdhTp(true);
 				groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
