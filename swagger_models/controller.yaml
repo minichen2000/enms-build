@@ -775,8 +775,8 @@ paths:
     get:
       tags:
         - ctlSystem
-      summary: the host nodes in ENMS
-      description: 'get the nodes in ENMS, including all Adapters, Controllers, DatacentBs.'
+      summary: get supported NEs
+      description: 'get the supported NEs in ENMS.'
       produces:
         - application/json
       operationId: getSupportedNes
