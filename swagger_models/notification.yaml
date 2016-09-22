@@ -40,7 +40,7 @@ paths:
             items:
               $ref: '#/definitions/Alarm'
               
-  '/enms/alarms/level/{severity}':
+  '/enms/alarms/severity/{severity}':
     get:
       tags:
         - msgSystem
@@ -100,37 +100,34 @@ definitions:
         description: 'the info of sender, for example: adapter-1 '
       messageType:
         type: string
-        description: notification or alarm
-      sendTime:
-        type: string
-      notification:
-        $ref: '#/definitions/Notification'
+        description: alarm, avc(attribute value change), oc(object creation), od(object deletion)
       alarm:
         $ref: '#/definitions/Alarm'    
+      avcs:
+        type: array
+        items:
+          $ref: '#/definitions/AvcBody'
+      ocDetail:
+        $ref: '#/definitions/OcBody'
+      odDetail:
+        $ref: '#/definitions/OdBody'
 
-  Notification:
+  AvcBody:    
     type: object
+    description: Attribute value change details
     properties:
-      type:
+      eventTime:
         type: string
-        description: the overall notification type, add,delete or update
+        description: the time of the event
       objectType:
         type: string
         description: 'the object type of the notification: NE, Board, TP, Connection'
       objectID:
         type: string
         description: the ID of the target Object.
-      avcDetails:
-        type: array
-        items:
-          $ref: '#/definitions/AvcDetail'
-          
-  AvcDetail:    
-    type: object
-    description: Attribute value change details
-    properties:
       key:
         type: string
+        description: the keyof changed field
       valueType:
         type: string
         description: "the attribute's type: int, string, boolean etc. "
@@ -139,6 +136,34 @@ definitions:
       oldValue:
         type: string
           
+  OcBody:    
+    type: object
+    description: Object Creation notification
+    properties:
+      eventTime:
+        type: string
+        description: the time of the event
+      objectType:
+        type: string
+        description: 'the object type of the notification: NE, Board, TP, Connection'
+      objectID:
+        type: string
+        description: the ID of the target Object.
+
+  OdBody:    
+    type: object
+    description: Object deletion notification
+    properties:
+      eventTime:
+        type: string
+        description: the time of the event
+      objectType:
+        type: string
+        description: 'the object type of the notification: NE, Board, TP, Connection'
+      objectID:
+        type: string
+        description: the ID of the target Object.
+
   Alarm:
     type: object
     properties:
@@ -148,9 +173,13 @@ definitions:
         type: string
       severity:
         type: string
-        description: severity of alarm, MAJOR, MINOR,CRITICAL,INFO,WARNING
+        description: severity of alarm, MAJOR, MINOR,CRITICAL,INFO,WARNING,CLEARED
+      eventTime:
+        type: string
+        description: the time of the event on host, such as Adapter host's time
       occureTime:
         type: string
+        description: the time of the alarm on NE
       clearTime:
         type: string
       probableCause:
@@ -158,17 +187,18 @@ definitions:
       objectType:
         type: string
         description: the object type of the alarm
-      moc:
+      objectId:
         type: string
-        description: the management object class
-      alarmObject:
-        type: string
+        description: the object id
       ackStatus:
         type: string
         description: acknowledgement status, true or false
-      resvStatus:
+      ackTime:
         type: string
-        description: reservation status
+        description: acknowledgement time
+#      resvStatus:
+#        type: string
+#        description: reservation status
       description:
         type: string
 
