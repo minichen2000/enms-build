@@ -20,7 +20,7 @@ public class GenerateKeyOnNeUtils
         
     }
     
-    public static String getNeMoi(String keyOnNe)
+    public static String getMoi(String keyOnNe)
     {
         return keyOnNe.split( ":" )[1];
     }

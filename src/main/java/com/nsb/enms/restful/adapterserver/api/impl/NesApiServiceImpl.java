@@ -113,6 +113,7 @@ public class NesApiServiceImpl extends NesApiService
         ne.setNeType( entity.getNeType() );
         ne.setOperationState( "disable" );
         ne.setAdminState( entity.getAdministrativeState() );
+        ne.setLocationName( entity.getLocationName() );
         return ne;
     }
 
@@ -127,7 +128,7 @@ public class NesApiServiceImpl extends NesApiService
             log.debug( "ne = " + ne );
 
             String moi = StringUtils.EMPTY;
-            moi = GenerateKeyOnNeUtils.getNeMoi( ne.getKeyOnNe() );
+            moi = GenerateKeyOnNeUtils.getMoi( ne.getKeyOnNe() );
 
             if( StringUtils.isEmpty( moi ) )
             {

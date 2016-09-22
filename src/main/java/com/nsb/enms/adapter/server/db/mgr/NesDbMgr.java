@@ -14,7 +14,6 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
@@ -89,7 +88,7 @@ public class NesDbMgr {
 		return Response.ok().build();
 	}
 
-	public List<AdpNe> findNesByType(String netype) throws Exception {
+	/*public List<AdpNe> findNesByType(String netype) throws Exception {
 		Date begin = new Date();
 		List<Document> docList = dbc.find(eq("neType", netype)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
@@ -142,7 +141,7 @@ public class NesDbMgr {
 		Date end = new Date();
 		log.debug("findNeByVersion, cost time = " + (end.getTime() - begin.getTime()));
 		return neList;
-	}
+	}*/
 
 	public List<AdpNe> getNes() throws Exception {
 		Date begin = new Date();

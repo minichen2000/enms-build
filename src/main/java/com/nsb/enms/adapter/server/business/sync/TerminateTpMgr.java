@@ -59,8 +59,8 @@ public class TerminateTpMgr {
 		    AdpTp tp = tpsDbMgr.getTpById(au4CtpId);
 		    neDbId = tp.getNeId();
 		    AdpNe ne = new NesDbMgr().getNeById( neDbId );
-		    String neMoi = GenerateKeyOnNeUtils.getNeMoi( ne.getKeyOnNe() );
-			String moi = tp.getKeyOnNe().split( ":" )[1];
+		    String neMoi = GenerateKeyOnNeUtils.getMoi( ne.getKeyOnNe() );
+			String moi = GenerateKeyOnNeUtils.getMoi(tp.getKeyOnNe());
 			groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 			neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 			String pTTPId = moi.split("/")[0].replaceAll("protectedTTPId=", StringUtils.EMPTY);
