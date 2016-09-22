@@ -18,8 +18,8 @@ import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
-import com.nsb.enms.restful.model.adapter.Tp;
-import com.nsb.enms.restful.model.adapter.Xc;
+import com.nsb.enms.restful.model.adapter.AdpTp;
+import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class TerminateTpMgr {
 	private final static Logger log = LogManager.getLogger(TerminateTpMgr.class);
@@ -32,18 +32,18 @@ public class TerminateTpMgr {
 		this.au4CtpId = au4CtpId;
 	}
 
-	public List<Tp> run() {
+	public List<AdpTp> run() {
 		// TODO 创建交叉前，应先检查交叉是否已经存在
 		String vc4TTPId = createXcVc4();
 		log.debug("vc4TTPId = {}", vc4TTPId);
 		if (StringUtils.isEmpty(vc4TTPId)) {
 			log.error("vc4TTPId is null or empty");
-			return new ArrayList<Tp>();
+			return new ArrayList<AdpTp>();
 		}
 
 		terminateTp(vc4TTPId);
 
-		List<Tp> tpList = syncCtp(vc4TTPId);
+		List<AdpTp> tpList = syncCtp(vc4TTPId);
 
 		log.debug("terminate tp end");
 
@@ -52,7 +52,7 @@ public class TerminateTpMgr {
 
 	private String createXcVc4() {
 		try {
-			Tp tp = tpsDbMgr.getTpById(au4CtpId);
+		    AdpTp tp = tpsDbMgr.getTpById(au4CtpId);
 			String moi = tp.getAid();
 			groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 			neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
@@ -69,11 +69,11 @@ public class TerminateTpMgr {
 			neDbId = tp.getNeId();
 
 			String vc4TtpDbId = StringUtils.EMPTY;
-			List<Tp> ttps = syncTtp(vc4TTPId);
+			List<AdpTp> ttps = syncTtp(vc4TTPId);
 			if (null == ttps || ttps.isEmpty()) {
 				log.error("ttps is null or empty");
 			} else {
-				Tp ttp = ttps.get(0);
+			    AdpTp ttp = ttps.get(0);
 				vc4TtpDbId = ttp.getId();
 			}
 
@@ -88,7 +88,7 @@ public class TerminateTpMgr {
 
 	private void insertXc2Db(XcEntity xcEntity, String vc4TtpDbId) throws Exception {
 		XcsDbMgr xcsDbMgr = new XcsDbMgr();
-		Xc xc = new Xc();
+		AdpXc xc = new AdpXc();
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
@@ -115,16 +115,16 @@ public class TerminateTpMgr {
 		}
 	}
 
-	private List<Tp> syncCtp(String vc4TtpId) {
-		List<Tp> tps = new ArrayList<Tp>();
+	private List<AdpTp> syncCtp(String vc4TtpId) {
+		List<AdpTp> tps = new ArrayList<AdpTp>();
 		try {
 			List<TpEntity> tpList = GetCtp.getTu12Ctp(groupId, neId, vc4TtpId);
 			log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
-			Tp au4Ctp = tpsDbMgr.getTpById(au4CtpId);
+			AdpTp au4Ctp = tpsDbMgr.getTpById(au4CtpId);
 			String au4CtpUserLabel = au4Ctp.getUserLabel();
 			for (TpEntity tp : tpList) {
 				log.debug("syncCtp tp = " + tp);
-				Tp ctp = new Tp();
+				AdpTp ctp = new AdpTp();
 				ctp.setNeId(neDbId);
 				String moi = tp.getMoi();
 				ctp.setAid(moi);
@@ -146,8 +146,8 @@ public class TerminateTpMgr {
 		return tps;
 	}
 
-	private List<Tp> syncTtp(String vc4TtpId) {
-		List<Tp> tps = new ArrayList<Tp>();
+	private List<AdpTp> syncTtp(String vc4TtpId) {
+		List<AdpTp> tps = new ArrayList<AdpTp>();
 		try {
 			List<TpEntity> tpList = GetTtp.getVc4Ttp(groupId, neId);
 			log.debug("syncTtp tpList = {}, groupId = {}, neId = {}", tpList.size(), groupId, neId);
@@ -156,7 +156,7 @@ public class TerminateTpMgr {
 				log.debug("syncTtp tp = " + tp);
 				String moi = tp.getMoi();
 				if (moi.endsWith(vc4TtpId)) {
-					Tp ttp = new Tp();
+				    AdpTp ttp = new AdpTp();
 					ttp.setNeId(neDbId);
 					ttp.setAid(moi);
 					String userLabel = GenerateUserLabelUtils.generateTpUserLabel(tp);

@@ -23,7 +23,7 @@ import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.Addresses;
-import com.nsb.enms.restful.model.adapter.Ne;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.NeExtraInfo;
 import com.nsb.enms.restful.model.adapter.Q3Address;
 
@@ -33,7 +33,7 @@ public class NesApiServiceImpl extends NesApiService {
 	private NesDbMgr nesDbMgr = new NesDbMgr();
 
 	@Override
-	public Response addNe(Ne body, SecurityContext securityContext) throws NotFoundException {
+	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
 		String location = "";
 		NeExtraInfo extInfo = body.getExtraInfo();
 		location = extInfo.getLocationName();
@@ -64,7 +64,7 @@ public class NesApiServiceImpl extends NesApiService {
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 
-		Ne ne = constructNe(entity, groupId, neId);
+		AdpNe ne = constructNe(entity, groupId, neId);
 
 		try {
 			ne = nesDbMgr.addNe(ne);
@@ -81,10 +81,10 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().entity(ne).build();
 	}
 
-	private Ne constructNe(NeEntity entity, String groupId, String neId) {
+	private AdpNe constructNe(NeEntity entity, String groupId, String neId) {
 		log.debug("groupId = " + groupId + ", neId = " + neId);
 
-		Ne ne = new Ne();
+		AdpNe ne = new AdpNe();
 		ne.setAid(entity.getMoi());
 		ne.setUserLabel(entity.getUserLabel());
 		// ne.setNativeName(entity.getUserLabel());
@@ -112,7 +112,7 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter------deleteNE");
 		// DeleteNe deleteNe = new DeleteNe();
 		try {
-			Ne ne = nesDbMgr.getNeById(neid);
+		    AdpNe ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
 
 			String moi = StringUtils.EMPTY;
@@ -157,7 +157,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getNeById(String neid, SecurityContext securityContext) throws NotFoundException {
-		Ne ne = new Ne();
+	    AdpNe ne = new AdpNe();
 		try {
 			ne = nesDbMgr.getNeById(neid);
 		} catch (Exception e) {
@@ -168,13 +168,13 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response updateNe(Ne body, SecurityContext securityContext) throws NotFoundException {
+	public Response updateNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
-	@Override
+	/*@Override
 	public Response findNesByType(String netype, SecurityContext securityContext) throws NotFoundException {
-		List<Ne> nes = new ArrayList<Ne>();
+		List<AdpNe> nes = new ArrayList<AdpNe>();
 		try {
 			nes = nesDbMgr.findNesByType(netype);
 		} catch (Exception e) {
@@ -187,7 +187,7 @@ public class NesApiServiceImpl extends NesApiService {
 	@Override
 	public Response findNeByTypeVersion(String netype, String neversion, SecurityContext securityContext)
 			throws NotFoundException {
-		List<Ne> nes = new ArrayList<Ne>();
+		List<AdpNe> nes = new ArrayList<AdpNe>();
 		try {
 			nes = nesDbMgr.findNeByTypeVersion(netype, neversion);
 		} catch (Exception e) {
@@ -199,7 +199,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response findNesByVersion(String neversion, SecurityContext securityContext) throws NotFoundException {
-		List<Ne> nes = new ArrayList<Ne>();
+		List<AdpNe> nes = new ArrayList<AdpNe>();
 		try {
 			nes = nesDbMgr.findNesByVersion(neversion);
 		} catch (Exception e) {
@@ -207,12 +207,12 @@ public class NesApiServiceImpl extends NesApiService {
 			return Response.serverError().entity(e).build();
 		}
 		return Response.ok().entity(nes).build();
-	}
+	}*/
 
 	@Override
 	public Response getNes(SecurityContext securityContext) throws NotFoundException {
 		log.debug("adapter-------nesGet");
-		List<Ne> nes = new ArrayList<Ne>();
+		List<AdpNe> nes = new ArrayList<AdpNe>();
 		try {
 			nes = nesDbMgr.getNes();
 		} catch (Exception e) {

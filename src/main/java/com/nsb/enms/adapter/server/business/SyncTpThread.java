@@ -16,8 +16,8 @@ import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
-import com.nsb.enms.restful.model.adapter.Ne;
-import com.nsb.enms.restful.model.adapter.Tp;
+import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class SyncTpThread extends Thread {
 	private final static Logger log = LogManager.getLogger(SyncTpThread.class);
@@ -62,9 +62,9 @@ public class SyncTpThread extends Thread {
 			log.debug("tpList = " + tpList.size() + ", neId = " + neId);
 
 			for (TpEntity tp : tpList) {
-				List<Tp> tps = new ArrayList<Tp>();
+				List<AdpTp> tps = new ArrayList<AdpTp>();
 				log.debug("tp = " + tp);
-				Tp newTp = new Tp();
+				AdpTp newTp = new AdpTp();
 				newTp.setNeId(id);
 				String moi = tp.getMoi();
 				newTp.setAid(moi);
@@ -106,9 +106,9 @@ public class SyncTpThread extends Thread {
 			return;
 		}
 
-		List<Tp> tps = new ArrayList<Tp>();
+		List<AdpTp> tps = new ArrayList<AdpTp>();
 		for (TpEntity ctp : ctpList) {
-		    Tp newCtp = new Tp();
+		    AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
 			newCtp.setAid(ctpMoi);
@@ -137,9 +137,9 @@ public class SyncTpThread extends Thread {
 			log.error("ctpList is null or empty");
 			return;
 		}
-		List<Tp> tps = new ArrayList<Tp>();
+		List<AdpTp> tps = new ArrayList<AdpTp>();
 		for (TpEntity ctp : ctpList) {
-		    Tp newCtp = new Tp();
+		    AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
 			newCtp.setAid(ctpMoi);
@@ -154,7 +154,7 @@ public class SyncTpThread extends Thread {
 			tps.add(newCtp);
 		}
 		
-		Tp pdhPTP = new Tp();
+		AdpTp pdhPTP = new AdpTp();
 		pdhPTP.setId( ptpDbId );
 		int layerRate = pair.getFirst();
 		pdhPTP.setLayerRate( String.valueOf( layerRate ) );
@@ -171,7 +171,7 @@ public class SyncTpThread extends Thread {
 	 */
 	private void updateNeAttr(String id) {
 		NesDbMgr nesDbMgr = new NesDbMgr();
-		Ne ne = new Ne();
+		AdpNe ne = new AdpNe();
 		ne.setId(id);
 		ne.adminState( "UP" );
 		ne.setOperationState("enable");

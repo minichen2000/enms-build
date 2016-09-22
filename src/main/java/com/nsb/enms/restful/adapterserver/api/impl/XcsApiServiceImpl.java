@@ -17,8 +17,8 @@ import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.XcsApiService;
-import com.nsb.enms.restful.model.adapter.Tp;
-import com.nsb.enms.restful.model.adapter.Xc;
+import com.nsb.enms.restful.model.adapter.AdpTp;
+import com.nsb.enms.restful.model.adapter.AdpXc;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
 public class XcsApiServiceImpl extends XcsApiService {
@@ -27,7 +27,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
 
 	@Override
-	public Response createXc(Xc body, SecurityContext securityContext) throws NotFoundException {
+	public Response createXc(AdpXc body, SecurityContext securityContext) throws NotFoundException {
 		List<String> atps = body.getAtps();
 		if (null == atps || atps.isEmpty()) {
 			log.error("atps is null or empty");
@@ -57,7 +57,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 			tpBean.setVc12TtpId(atpBean.getVc12TtpId());
 		}
 
-		Xc xc = new Xc();
+		AdpXc xc = new AdpXc();
 		try {
 			XcEntity xcEntity = CreateXc.createXcVc12(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 					tpBean.getTug3Id(), tpBean.getTug2Id(), tpBean.getTu12CtpId(), tpBean.getVc12TtpId());
@@ -70,8 +70,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return Response.ok().entity(xc).build();
 	}
 
-	private Xc insertXc2Db(XcEntity xcEntity, String neDbId, String atpDbId, String ztpDbId) throws Exception {
-		Xc xc = new Xc();
+	private AdpXc insertXc2Db(XcEntity xcEntity, String neDbId, String atpDbId, String ztpDbId) throws Exception {
+	    AdpXc xc = new AdpXc();
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
@@ -101,7 +101,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String vc12TtpId = StringUtils.EMPTY;
 		XcParamBean bean = new XcParamBean();
 		try {
-			Tp tp = tpsDbMgr.getTpById(tpId);
+			AdpTp tp = tpsDbMgr.getTpById(tpId);
 			String tpType = tp.getTpType();
 			String moi = tp.getAid();
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
@@ -144,7 +144,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	@Override
 	public Response findXcs(String tpid, SecurityContext securityContext) throws NotFoundException {
-		List<Xc> xcList = new ArrayList<Xc>();
+		List<AdpXc> xcList = new ArrayList<AdpXc>();
 		try {
 			xcList = xcsDbMgr.findXcsByTpId(tpid);
 		} catch (Exception e) {
@@ -155,7 +155,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	@Override
 	public Response getXcById(String xcid, SecurityContext securityContext) throws NotFoundException {
-		Xc xc = new Xc();
+	    AdpXc xc = new AdpXc();
 		try {
 			xc = xcsDbMgr.getXcById(xcid);
 		} catch (Exception e) {

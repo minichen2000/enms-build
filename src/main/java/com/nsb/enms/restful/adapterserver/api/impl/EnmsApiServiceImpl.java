@@ -12,20 +12,18 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.EnmsApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
-import com.nsb.enms.restful.model.adapter.Ne;
-import com.nsb.enms.restful.model.adapter.NeAssignment;
-import com.nsb.enms.restful.model.adapter.NeExtraInfo;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-09T15:45:26.159+08:00")
 public class EnmsApiServiceImpl extends EnmsApiService {
 	private static final Logger log = LogManager.getLogger(EnmsApiServiceImpl.class);
 
 	@Override
-	public Response checkHeartbeat(SecurityContext securityContext) throws NotFoundException {
+	public Response ping(SecurityContext securityContext) throws NotFoundException {
 		return Response.ok().entity("ok").build();
 	}
 
-	@Override
+	/*@Override
 	public Response unAssignNe(Ne body, SecurityContext securityContext) throws NotFoundException {
 		// do some magic!
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
@@ -60,5 +58,5 @@ public class EnmsApiServiceImpl extends EnmsApiService {
 	@Override
 	public Response getNeAssignment(SecurityContext securityContext) throws NotFoundException {
 		return null;
-	}
+	}*/
 }

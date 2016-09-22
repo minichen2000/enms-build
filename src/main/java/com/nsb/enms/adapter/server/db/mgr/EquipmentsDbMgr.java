@@ -16,7 +16,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.MongoDBMgr;
-import com.nsb.enms.restful.model.adapter.Equipment;
+import com.nsb.enms.restful.model.adapter.AdpEquipment;
 
 public class EquipmentsDbMgr {
 	private final static Logger log = LogManager.getLogger(EquipmentsDbMgr.class);
@@ -28,13 +28,13 @@ public class EquipmentsDbMgr {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public Equipment getEquipmentById(String neId) throws Exception {
+	public AdpEquipment getEquipmentById(String neId) throws Exception {
 		BasicDBObject query = new BasicDBObject("_id", new ObjectId(neId));
 		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find equipment, query by id = {}", neId);
-			return new Equipment();
+			return new AdpEquipment();
 		}
 
 		log.debug(docList.size());
@@ -43,16 +43,16 @@ public class EquipmentsDbMgr {
 		}
 
 		Document doc = docList.get(0);
-		Equipment equipment = constructEquipment(doc);
+		AdpEquipment equipment = constructEquipment(doc);
 		return equipment;
 	}
 
-	public List<Equipment> getEquipmentsByNeId(String neId) throws Exception {
+	public List<AdpEquipment> getEquipmentsByNeId(String neId) throws Exception {
 		System.out.println("getEquipmentsByNeId, neId = " + neId);
 		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find equipment, query by neid = " + neId);
-			return new ArrayList<Equipment>();
+			return new ArrayList<AdpEquipment>();
 		}
 
 		log.debug(docList.size());
@@ -60,16 +60,16 @@ public class EquipmentsDbMgr {
 			log.debug(doc.toJson());
 		}
 
-		List<Equipment> equipmentList = new ArrayList<Equipment>();
+		List<AdpEquipment> equipmentList = new ArrayList<AdpEquipment>();
 		for (Document doc : docList) {
-			Equipment equipment = constructEquipment(doc);
+		    AdpEquipment equipment = constructEquipment(doc);
 			equipmentList.add(equipment);
 		}
 		return equipmentList;
 	}
 
-	private Equipment constructEquipment(Document doc) {
-		Equipment equipment = gson.fromJson(doc.toJson(), Equipment.class);
+	private AdpEquipment constructEquipment(Document doc) {
+	    AdpEquipment equipment = gson.fromJson(doc.toJson(), AdpEquipment.class);
 		equipment.setId(doc.getObjectId("_id").toString());
 		return equipment;
 	}
