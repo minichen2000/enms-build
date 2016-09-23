@@ -19,6 +19,10 @@ import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class SyncTpThread extends Thread {
@@ -195,8 +199,11 @@ public class SyncTpThread extends Thread {
 		NesDbMgr nesDbMgr = new NesDbMgr();
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.adminState( "up" );
-		ne.setOperationState("enable");
+		ne.setAdminState( true );
+		ne.setOperationalState( OperationalStateEnum.IDLE );
+		ne.setCommunicationState( CommunicationStateEnum.REACHABLE );
+		ne.setSynchState( SynchStateEnum.SYNCHRONIZED );
+		ne.setSupervisionState( SupervisionStateEnum.SUPERVISIED );
 		try {
 			nesDbMgr.updateNe(ne);
 		} catch (Exception e) {

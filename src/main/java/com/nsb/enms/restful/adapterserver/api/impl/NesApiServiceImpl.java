@@ -24,9 +24,13 @@ import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
-import com.nsb.enms.restful.model.adapter.Addresses;
+import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.Q3Address;
+import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class NesApiServiceImpl extends NesApiService
@@ -45,7 +49,7 @@ public class NesApiServiceImpl extends NesApiService
         String id = "";
         try
         {
-            Addresses address = body.getAddresses();
+            AdpAddresses address = body.getAddresses();
             id = address.getQ3Address().getAddress();
             entity = CreateNe.createNe( body.getVersion(), body.getNeType(),
                 body.getUserLabel(), location, id );
@@ -102,8 +106,8 @@ public class NesApiServiceImpl extends NesApiService
         ne.setUserLabel( entity.getUserLabel() );
         ne.setVersion( entity.getNeRelease() );
 
-        Addresses address = new Addresses();
-        Q3Address q3Address = new Q3Address();
+        AdpAddresses address = new AdpAddresses();
+        AdpQ3Address q3Address = new AdpQ3Address();
         q3Address.setAddress( entity.getNetworkAddress() );
         address.setQ3Address( q3Address );
         address.setTl1Address( new ArrayList<String>() );
@@ -111,8 +115,11 @@ public class NesApiServiceImpl extends NesApiService
         ne.setAddresses( address );
 
         ne.setNeType( entity.getNeType() );
-        ne.setOperationState( "disable" );
-        ne.setAdminState( entity.getAdministrativeState() );
+        ne.setOperationalState( OperationalStateEnum.IDLE );
+        ne.setAdminState( false );
+        ne.setCommunicationState( CommunicationStateEnum.UNREACHABLE );
+        ne.setSynchState( SynchStateEnum.UNSYNCHRONIZED );
+        ne.setSupervisionState( SupervisionStateEnum.UNSUPERVISED );        
         ne.setLocationName( entity.getLocationName() );
         return ne;
     }
