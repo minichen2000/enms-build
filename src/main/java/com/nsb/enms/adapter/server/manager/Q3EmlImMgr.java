@@ -3,7 +3,6 @@ package com.nsb.enms.adapter.server.manager;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -53,38 +52,20 @@ public class Q3EmlImMgr
         }
         catch( Exception e )
         {
+            log.error( "getNeIdsByGroupId", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
         }
 
-        // adapter被启动后，需要不断地连接emlim进程，仅此而已
-        final Timer timer = new Timer();
+        // adapter被启动后，需要不断地连接emlim进程，仅此而已(每隔3秒连一次，十次失败，退出)
+        CheckQ3EmlImApp.check( groupId );
+
+        Timer timer = new Timer();
         long period = ConfLoader.getInstance().getInt(
-            ConfigKey.EMLIM_CONNECT_INTERVAL,
-            ConfigKey.DEFAULT_EMLIM_CONNECT_INTERVAL );
-        timer.scheduleAtFixedRate( new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                log.debug( "start to connect to emlim_" + groupId );
-                boolean isOk = CheckQ3EmlImApp.checkQ3EmlIm( groupId );
-                log.debug( "the result of connect to emlim_" + groupId + " is "
-                        + isOk );
-                if( isOk )
-                {
-                    timer.cancel();
-                }
-
-            }
-        }, 0, period );
-
-        Timer timer1 = new Timer();
-        long period1 = ConfLoader.getInstance().getInt(
             ConfigKey.EMLIM_MONITOR_INTERVAL,
             ConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL );
-        timer1.scheduleAtFixedRate( new Q3EmlImListener( groupId ), period1,
-            period1 );
+        timer.scheduleAtFixedRate( new Q3EmlImListener( groupId ), period,
+            period );
     }
 
     public synchronized Pair<Integer, Integer> getGroupNeId()

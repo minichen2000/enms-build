@@ -2,6 +2,8 @@ package com.nsb.enms.adapter.server.manager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +20,42 @@ public class CheckQ3EmlImApp
 
     private static String monitorScript = ConfLoader.getInstance().getConf(
         ConfigKey.LIST_GROUP_SCRIPT, ConfigKey.DEFAULT_LIST_GROUP_SCRIPT );
+
+    private static final int MAX_COUNT = ConfLoader.getInstance()
+            .getInt( "MAX_EMLIM_MONITOR_NUM", 10 );
+
+    private static final int PERIOD = 3000;
+
+    private static int count = 0;
+
+    public static void check( final int groupId )
+    {
+        final Timer timer = new Timer();
+        timer.schedule( new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                boolean isOk = checkQ3EmlIm( groupId );
+                if( isOk )
+                {
+                    count = 0;
+                    timer.cancel();
+                    return;
+                }
+                count++;
+                if( count == MAX_COUNT )
+                {
+                    // todo
+                    // adapter把所有网元communicationState置为unreachable，并发通知,记日志，后退出。
+                    log.error(
+                        "The emlim with groupId=" + groupId + " died!!!" );
+                    System.exit( 1 );
+                }
+
+            }
+        }, 0, PERIOD );
+    }
 
     public static boolean checkQ3EmlIm( int groupId )
     {

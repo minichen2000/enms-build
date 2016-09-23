@@ -108,8 +108,4 @@ public class ConfigKey {
 	public static final String DEFAULT_GET_T_PORT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncTTP.req";
 
 	public static final String GET_T_PORT_REQ = "GET_T_PORT_REQ";
-
-    public static final String EMLIM_CONNECT_INTERVAL = "EMLIM_CONNECT_INTERVAL";
-    
-    public static final int DEFAULT_EMLIM_CONNECT_INTERVAL = 10 * 1000;
 }
