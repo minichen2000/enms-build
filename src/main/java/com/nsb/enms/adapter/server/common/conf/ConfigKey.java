@@ -90,9 +90,9 @@ public class ConfigKey {
 
 	public static final int DEFAULT_EMLIM_MONITOR_INTERVAL = 300 * 1000;
 	
-	public static final String ADP_HEARTBEAT_INTERVAL = "ADP_HEARTBEAT_INTERVAL";
+	public static final String ADP_PING_INTERVAL = "ADP_HEARTBEAT_INTERVAL";
 	
-	public static final int DEFAULT_ADP_HEARTBEAT_INTERVAL = 300 * 1000;
+	public static final int DEFAULT_ADP_PING_INTERVAL = 60 * 1000;
 
 	public static final String GET_MANAGER_ADDRESS_REQ = "GET_MANAGER_ADDRESS_REQ";
 

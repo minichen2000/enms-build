@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.business.heartbeat.HeartBeatManager;
+import com.nsb.enms.adapter.server.business.heartbeat.PingApp;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.Register2ControllerUtils;
@@ -50,8 +50,8 @@ public class Bootstrap extends HttpServlet
                 .getInt( "ADP_WS_SERVER_PORT", 7778 );
         new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/
 
-        HeartBeatManager heartBeatManager = new HeartBeatManager();
-        heartBeatManager.checkHeartbeat();
+        PingApp pingApp = new PingApp();
+        pingApp.checkPing();
         
         try
         {
