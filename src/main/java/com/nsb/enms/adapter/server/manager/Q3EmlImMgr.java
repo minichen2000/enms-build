@@ -16,8 +16,8 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
-import com.nsb.enms.adapter.server.db.mongodb.mgr.MaxNeIdMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 
 public class Q3EmlImMgr
 {
@@ -46,7 +46,7 @@ public class Q3EmlImMgr
     public void init( final int groupId ) throws AdapterException
     {
         this.groupId = groupId;
-        NesDbMgr nesDbMgr = new NesDbMgr();
+        AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
         try
         {
             neIdList = nesDbMgr.getNeIdsByGroupId( String.valueOf( groupId ) );
@@ -104,14 +104,14 @@ public class Q3EmlImMgr
 
     private void updateMaxNeId2Db( int neId )
     {
-        MaxNeIdMgr.updateNeIdByGroupId( String.valueOf( groupId ),
+        AdpMaxNeIdMgr.updateNeIdByGroupId( String.valueOf( groupId ),
             String.valueOf( neId ) );
     }
 
     private int getMaxNeIdFromDb()
     {
         String maxNeId = StringUtils.EMPTY;
-        maxNeId = MaxNeIdMgr.getNeIdByGroupId( String.valueOf( groupId ) );
+        maxNeId = AdpMaxNeIdMgr.getNeIdByGroupId( String.valueOf( groupId ) );
         if( StringUtils.isEmpty( maxNeId ) )
         {
             return 1;
