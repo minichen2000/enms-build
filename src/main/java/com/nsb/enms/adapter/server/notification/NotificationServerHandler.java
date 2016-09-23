@@ -14,11 +14,11 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
-import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.util.JsonUtils;
-import com.nsb.enms.adapter.server.notification.entity.Message;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.adapter.server.notification.util.NotificationConverter;
 import com.nsb.enms.adapter.server.notification.util.NotificationQueue;
+import com.nsb.enms.restful.model.common.Message;
 
 @WebSocket
 public class NotificationServerHandler extends WebSocketHandler
@@ -89,15 +89,7 @@ public class NotificationServerHandler extends WebSocketHandler
 
     private String constructEvent( String event )
     {
-        Message message = new Message();
-        message.setMessageType( "Notification" );
-        String sender = ConfLoader.getInstance().getConf( "ADP_ID",
-            "adapter_" + System.currentTimeMillis() );
-        message.setSender( sender );
-        message.setSendTime( new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" )
-                .format( new Date() ) );
-        message.setNotificationEntity(
-            JsonUtils.json2Entity( event, NotificationEntity.class ) );
+        Message message = NotificationConverter.convert( JsonUtils.json2Entity( event, NotificationEntity.class ) );
         return JsonUtils.entity2Json( message );
     }
 

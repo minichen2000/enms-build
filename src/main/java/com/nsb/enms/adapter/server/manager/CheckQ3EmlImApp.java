@@ -39,6 +39,7 @@ public class CheckQ3EmlImApp
                 boolean isOk = checkQ3EmlIm( groupId );
                 if( isOk )
                 {
+                    log.debug( "Connect to emlim_" + groupId + " success!!!" );
                     count = 0;
                     timer.cancel();
                     return;
@@ -52,7 +53,7 @@ public class CheckQ3EmlImApp
                         "The emlim with groupId=" + groupId + " died!!!" );
                     System.exit( 1 );
                 }
-
+                log.debug( "Connect to emlim_" + groupId + " failed!!!" );
             }
         }, 0, PERIOD );
     }
