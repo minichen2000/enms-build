@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.business.heartbeat;
+package com.nsb.enms.adapter.server.business.ping;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,6 +20,8 @@ public class PingApp
     private CtlSystemApi systemApi = new CtlSystemApi();
     
     private static final int PERIOD = 10 * 1000;
+    
+    private static boolean flag = false;
 
     public void checkPing()
     {
@@ -39,13 +41,18 @@ public class PingApp
             try
             {
                 systemApi.ping();
+                if (flag)
+                {
+                    Register2ControllerUtils.register( PERIOD );
+                    flag = false;
+                }
                 log.debug( "controller is in service" );
             }
             catch( ApiException e )
             {
                 log.error( "controller is out of service" );
                 //不做什么操作，只是不断尝试注册，记下相关日志。
-               Register2ControllerUtils.register( PERIOD );             
+                flag = true;
             }
         }      
     }
