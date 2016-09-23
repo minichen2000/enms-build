@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     ENMS Controller RESTful interface.
-  version: 0.3.0
+  version: 0.3.1
   title: Controller API
 basePath: /
 schemes:
@@ -869,7 +869,13 @@ definitions:
         type: string
       operationState:
         type: string
-        example: enabled/disabled
+        default: synchState
+        enum:
+        - supervisionState
+        - communicationState
+        - synchState
+        - maintenanceState
+        - operationalState
 #      communicationStatus:
 #        type: string
 #        example: reachable/unreachable

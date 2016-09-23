@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     ENMS Adapter RESTful interface.
-  version: 0.3.0
+  version: 0.3.1
   title: Adapter API
 basePath: /
 schemes:
@@ -530,7 +530,20 @@ paths:
 
           
 definitions:
-
+  Cat:
+    description: A representation of a cat
+    type: object
+    properties:
+      operationState:
+        type: string
+#        default: operationalState
+        enum:
+        - SupervisionState
+        - communicationState
+        - synchState
+        - maintenanceState
+        - operationalState
+      
   AdpNe:
     type: object
     description: the NE model for Adapter
@@ -573,7 +586,13 @@ definitions:
         type: string
       operationState:
         type: string
-        example: enabled/disabled
+        default: synchState
+        enum:
+        - supervisionState
+        - communicationState
+        - synchState
+        - maintenanceState
+        - operationalState
 #      communicationStatus:
 #        type: string
 #        example: reachable/unreachable
