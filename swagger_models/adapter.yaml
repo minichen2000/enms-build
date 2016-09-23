@@ -530,19 +530,6 @@ paths:
 
           
 definitions:
-  Cat:
-    description: A representation of a cat
-    type: object
-    properties:
-      operationState:
-        type: string
-#        default: operationalState
-        enum:
-        - SupervisionState
-        - communicationState
-        - synchState
-        - maintenanceState
-        - operationalState
       
   AdpNe:
     type: object
