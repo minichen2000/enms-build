@@ -27,7 +27,7 @@ public class Q3EmlImMgr
 
     private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
 
-    private static final int MAX_NE_COUNT = 200;
+    private static final int MAX_NE_OF_ONE_EMLIM = ConfLoader.getInstance().getInt( "MAX_NE_OF_ONE_EMLIM", 200 );
 
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
@@ -90,7 +90,7 @@ public class Q3EmlImMgr
     public synchronized Pair<Integer, Integer> getGroupNeId()
             throws AdapterException
     {
-        if( neIdList.size() < MAX_NE_COUNT )
+        if( neIdList.size() < MAX_NE_OF_ONE_EMLIM )
         {
             int neId = getMaxNeIdFromDb() + 1;
             updateMaxNeId2Db( neId );
