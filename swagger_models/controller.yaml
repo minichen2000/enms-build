@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     ENMS Controller RESTful interface.
-  version: 0.3.1
+  version: 0.3.2
   title: Controller API
 basePath: /
 schemes:
@@ -866,19 +866,38 @@ definitions:
       addresses:
         $ref: "#/definitions/Addresses"
       adminState:
+        type: boolean
+        default: false
+      supervisionState:
         type: string
-      operationState:
-        type: string
-        default: synchState
+        default: unsupervised
         enum:
-        - supervisionState
-        - communicationState
+        - supervisied
+        - unsupervised
+      communicationState:
+        type: string
+        default: unreachable
+        enum:
+        - reachable
+        - unreachable
+      synchState:
+        type: string
+        default: unsynchronized
+        enum:
+        - synchronized
+        - unsynchronized
+      maintenanceState:
+        type: boolean
+        default: false
+      operationalState:
+        type: string
+        default: idle
+        enum:
+        - idle
+        - supervising
         - synchState
-        - maintenanceState
-        - operationalState
-#      communicationStatus:
-#        type: string
-#        example: reachable/unreachable
+        - connecting
+        - synchronizing
 #      alignmentStatus:
 #        type: string
 #        example: aligned/misaligned

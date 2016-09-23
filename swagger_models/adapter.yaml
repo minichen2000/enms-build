@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   description: |
     ENMS Adapter RESTful interface.
-  version: 0.3.1
+  version: 0.3.2
   title: Adapter API
 basePath: /
 schemes:
@@ -568,21 +568,40 @@ definitions:
 #        type: string
 #        example: Q3|IPv4Telnet|IPv4SNMPv2|IPv4SNMPv3…
       addresses:
-        $ref: "#/definitions/Addresses"
+        $ref: "#/definitions/AdpAddresses"
       adminState:
+        type: boolean
+        default: false
+      supervisionState:
         type: string
-      operationState:
-        type: string
-        default: synchState
+        default: unsupervised
         enum:
-        - supervisionState
-        - communicationState
+        - supervisied
+        - unsupervised
+      communicationState:
+        type: string
+        default: unreachable
+        enum:
+        - reachable
+        - unreachable
+      synchState:
+        type: string
+        default: unsynchronized
+        enum:
+        - synchronized
+        - unsynchronized
+      maintenanceState:
+        type: boolean
+        default: false
+      operationalState:
+        type: string
+        default: idle
+        enum:
+        - idle
+        - supervising
         - synchState
-        - maintenanceState
-        - operationalState
-#      communicationStatus:
-#        type: string
-#        example: reachable/unreachable
+        - connecting
+        - synchronizing
 #      alignmentStatus:
 #        type: string
 #        example: aligned/misaligned
@@ -676,7 +695,7 @@ definitions:
       nativeName:
         type: string
       addresses:
-        $ref: "#/definitions/Addresses"
+        $ref: "#/definitions/AdpAddresses"
         
   AdpXc:
     type: object
@@ -714,19 +733,19 @@ definitions:
       implStatus:
         type: string
 
-  Addresses:
+  AdpAddresses:
     type: object
     description: 'The Addresses of NE, Equipment'
     properties:
       q3Address:
-        $ref: '#/definitions/Q3Address'
+        $ref: '#/definitions/AdpQ3Address'
       tl1Address:
         type: array
         items:
           type: string
       snmpAddress:
-        $ref: '#/definitions/SnmpAddress'
-  SnmpAddress:
+        $ref: '#/definitions/AdpSnmpAddress'
+  AdpSnmpAddress:
     type: object
     properties:
       snmpAgent:
@@ -735,7 +754,7 @@ definitions:
         type: array
         items:
           type: string
-  Q3Address:
+  AdpQ3Address:
     type: object
     properties:
       address:
