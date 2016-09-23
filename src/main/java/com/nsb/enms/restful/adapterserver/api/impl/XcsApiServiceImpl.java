@@ -14,9 +14,9 @@ import com.nsb.enms.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
-import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.XcsApiService;
 import com.nsb.enms.restful.model.adapter.AdpNe;
@@ -26,8 +26,8 @@ import com.nsb.enms.restful.model.adapter.AdpXc;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
 public class XcsApiServiceImpl extends XcsApiService {
 	private final static Logger log = LogManager.getLogger(XcsApiServiceImpl.class);
-	private XcsDbMgr xcsDbMgr = new XcsDbMgr();
-	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
+	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
+	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
 	@Override
 	public Response createXc(AdpXc body, SecurityContext securityContext) throws NotFoundException {
@@ -107,7 +107,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 			AdpTp tp = tpsDbMgr.getTpById(tpId);
 			String tpType = tp.getTpType();
 			String neid = tp.getNeId();
-			AdpNe ne = new NesDbMgr().getNeById( neid );
+			AdpNe ne = new AdpNesDbMgr().getNeById( neid );
 			String neMoi = GenerateKeyOnNeUtils.getMoi( ne.getKeyOnNe() );
 			String moi = GenerateKeyOnNeUtils.getMoi( tp.getKeyOnNe() );
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {

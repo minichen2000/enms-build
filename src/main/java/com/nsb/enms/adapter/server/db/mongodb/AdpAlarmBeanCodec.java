@@ -6,12 +6,12 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 
-import com.nsb.enms.adapter.server.db.mongodb.bean.CommonBean;
+import com.nsb.enms.adapter.server.db.mongodb.bean.AdpCommonBean;
 
-public class AlarmBeanCodec implements Codec<CommonBean>
+public class AdpAlarmBeanCodec implements Codec<AdpCommonBean>
 {
     @Override
-    public void encode( BsonWriter writer, CommonBean bean,
+    public void encode( BsonWriter writer, AdpCommonBean bean,
             EncoderContext arg2 )
     {
         writer.writeStartDocument();
@@ -42,15 +42,15 @@ public class AlarmBeanCodec implements Codec<CommonBean>
     }
 
     @Override
-    public Class<CommonBean> getEncoderClass()
+    public Class<AdpCommonBean> getEncoderClass()
     {
-        return CommonBean.class;
+        return AdpCommonBean.class;
     }
 
     @Override
-    public CommonBean decode( BsonReader reader, DecoderContext arg1 )
+    public AdpCommonBean decode( BsonReader reader, DecoderContext arg1 )
     {
-        CommonBean bean = new CommonBean();
+        AdpCommonBean bean = new AdpCommonBean();
         reader.readStartDocument();
         // bean.setAlarmSeq( reader.readInt64( "alarmSeq" ) );
         // bean.setAlarmTitle( reader.readString( "alarmTitle" ) );

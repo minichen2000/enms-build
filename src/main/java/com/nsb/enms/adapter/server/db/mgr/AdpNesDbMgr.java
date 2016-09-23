@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.db.mgr;
 
-import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 
@@ -20,15 +19,15 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
-import com.nsb.enms.adapter.server.db.mongodb.mgr.MongoDBMgr;
+import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
+import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
-public class NesDbMgr {
-	private final static Logger log = LogManager.getLogger(NesDbMgr.class);
-	private MongoDatabase db = MongoDBMgr.getInstance().getDatabase();
-	private MongoCollection<Document> dbc = db.getCollection(DBConst.DB_NAME_NE);
-	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(DBConst.DB_NAME_NE, BasicDBObject.class);
+public class AdpNesDbMgr {
+	private final static Logger log = LogManager.getLogger(AdpNesDbMgr.class);
+	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
+	private MongoCollection<Document> dbc = db.getCollection(AdpDBConst.DB_NAME_NE);
+	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(AdpDBConst.DB_NAME_NE, BasicDBObject.class);
 	private Gson gson = new Gson();
 
 	public AdpNe addNe(AdpNe body) throws Exception {

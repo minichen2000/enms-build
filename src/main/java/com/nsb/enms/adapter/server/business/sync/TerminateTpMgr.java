@@ -18,16 +18,16 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
-import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.XcsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class TerminateTpMgr {
 	private final static Logger log = LogManager.getLogger(TerminateTpMgr.class);
-	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
+	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private String groupId, neId;
 	private String au4CtpId;
 	private String neDbId;
@@ -58,7 +58,7 @@ public class TerminateTpMgr {
 		try {
 		    AdpTp tp = tpsDbMgr.getTpById(au4CtpId);
 		    neDbId = tp.getNeId();
-		    AdpNe ne = new NesDbMgr().getNeById( neDbId );
+		    AdpNe ne = new AdpNesDbMgr().getNeById( neDbId );
 		    String neMoi = GenerateKeyOnNeUtils.getMoi( ne.getKeyOnNe() );
 			String moi = GenerateKeyOnNeUtils.getMoi(tp.getKeyOnNe());
 			groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
@@ -94,7 +94,7 @@ public class TerminateTpMgr {
 	}
 
 	private void insertXc2Db(XcEntity xcEntity, String vc4TtpDbId) throws Exception {
-		XcsDbMgr xcsDbMgr = new XcsDbMgr();
+		AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 		AdpXc xc = new AdpXc();
 		xc.setAid(xcEntity.getMoi());
 		xc.setImplStatus("");

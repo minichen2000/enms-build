@@ -14,14 +14,14 @@ import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
-import com.nsb.enms.adapter.server.db.mongodb.mgr.MongoDBMgr;
+import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
+import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.restful.model.adapter.AdpEquipment;
 
-public class EquipmentsDbMgr {
-	private final static Logger log = LogManager.getLogger(EquipmentsDbMgr.class);
-	private MongoDatabase db = MongoDBMgr.getInstance().getDatabase();
-	private MongoCollection<Document> dbc = db.getCollection(DBConst.DB_NAME_EQUIPMENT);
+public class AdpEqusDbMgr {
+	private final static Logger log = LogManager.getLogger(AdpEqusDbMgr.class);
+	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
+	private MongoCollection<Document> dbc = db.getCollection(AdpDBConst.DB_NAME_EQUIPMENT);
 	private Gson gson = new Gson();
 
 	public void deleteEquipmentsByNeId(String neId) throws Exception {

@@ -19,15 +19,15 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
-import com.nsb.enms.adapter.server.db.mongodb.mgr.MongoDBMgr;
+import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
+import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
-public class XcsDbMgr {
-	private final static Logger log = LogManager.getLogger(XcsDbMgr.class);
-	private MongoDatabase db = MongoDBMgr.getInstance().getDatabase();
-	private MongoCollection<Document> dbc = db.getCollection(DBConst.DB_NAME_XC);
-	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(DBConst.DB_NAME_XC, BasicDBObject.class);
+public class AdpXcsDbMgr {
+	private final static Logger log = LogManager.getLogger(AdpXcsDbMgr.class);
+	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
+	private MongoCollection<Document> dbc = db.getCollection(AdpDBConst.DB_NAME_XC);
+	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(AdpDBConst.DB_NAME_XC, BasicDBObject.class);
 	private Gson gson = new Gson();
 
 	public AdpXc createXc(AdpXc body) throws Exception {

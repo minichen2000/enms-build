@@ -22,15 +22,15 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
-import com.nsb.enms.adapter.server.db.mongodb.mgr.MongoDBMgr;
+import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
+import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class TpsDbMgr {
-	private final static Logger log = LogManager.getLogger(TpsDbMgr.class);
-	private MongoDatabase db = MongoDBMgr.getInstance().getDatabase();
-	private MongoCollection<Document> dbc = db.getCollection(DBConst.DB_NAME_TP);
-	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(DBConst.DB_NAME_TP, BasicDBObject.class);
+public class AdpTpsDbMgr {
+	private final static Logger log = LogManager.getLogger(AdpTpsDbMgr.class);
+	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
+	private MongoCollection<Document> dbc = db.getCollection(AdpDBConst.DB_NAME_TP);
+	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(AdpDBConst.DB_NAME_TP, BasicDBObject.class);
 	private Gson gson = new Gson();
 
 	public List<AdpTp> addTps(List<AdpTp> body) throws Exception {

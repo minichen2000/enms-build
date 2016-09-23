@@ -13,16 +13,16 @@ import org.bson.Document;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.nsb.enms.adapter.server.db.mongodb.constant.DBConst;
+import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 
-public class MaxNeIdMgr
+public class AdpMaxNeIdMgr
 {
-    private final static Logger log = LogManager.getLogger( MaxNeIdMgr.class );
+    private final static Logger log = LogManager.getLogger( AdpMaxNeIdMgr.class );
 
-    private static MongoDatabase db = MongoDBMgr.getInstance().getDatabase();
+    private static MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
 
     private static MongoCollection<Document> dbc = db
-            .getCollection( DBConst.DB_NAME_MAXNEID );
+            .getCollection( AdpDBConst.DB_NAME_MAXNEID );
 
     private static ReentrantLock lock = new ReentrantLock();
 

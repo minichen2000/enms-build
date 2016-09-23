@@ -1,6 +1,6 @@
 package com.nsb.enms.adapter.server.db.mongodb.constant;
 
-public class DBConst {
+public class AdpDBConst {
 	public final static String DB_NAME_NE = "Adp_Ne";
 
 	public final static String DB_NAME_EQUIPMENT = "Adp_Equipment";

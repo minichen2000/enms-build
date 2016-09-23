@@ -10,7 +10,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.TpsApiService;
@@ -20,7 +20,7 @@ import com.nsb.enms.restful.model.adapter.AdpTp;
 public class TpsApiServiceImpl extends TpsApiService {
 	private final static Logger log = LogManager.getLogger(TpsApiServiceImpl.class);
 
-	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
+	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
 /*	@Override
 	public Response addTps(List<AdpTp> body, SecurityContext securityContext) throws NotFoundException {

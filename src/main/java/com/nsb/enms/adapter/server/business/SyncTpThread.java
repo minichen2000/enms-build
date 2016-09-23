@@ -16,8 +16,8 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
-import com.nsb.enms.adapter.server.db.mgr.NesDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.TpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
@@ -27,7 +27,7 @@ import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class SyncTpThread extends Thread {
 	private final static Logger log = LogManager.getLogger(SyncTpThread.class);
-	private TpsDbMgr tpsDbMgr = new TpsDbMgr();
+	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private int groupId, neId;
 	private String id;
 
@@ -196,7 +196,7 @@ public class SyncTpThread extends Thread {
 	 * update the value of alignmentStatus for ne to true
 	 */
 	private void updateNeAttr(String id) {
-		NesDbMgr nesDbMgr = new NesDbMgr();
+		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
 		ne.setAdminState( true );

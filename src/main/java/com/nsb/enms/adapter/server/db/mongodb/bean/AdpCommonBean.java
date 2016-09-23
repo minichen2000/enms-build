@@ -1,6 +1,6 @@
 package com.nsb.enms.adapter.server.db.mongodb.bean;
 
-public class CommonBean {
+public class AdpCommonBean {
 	private String aId;
 
 	private String userLable;

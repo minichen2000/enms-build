@@ -25,14 +25,14 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-import com.nsb.enms.adapter.server.db.mongodb.AlarmBeanCodec;
-import com.nsb.enms.adapter.server.db.mongodb.bean.CommonBean;
+import com.nsb.enms.adapter.server.db.mongodb.AdpAlarmBeanCodec;
+import com.nsb.enms.adapter.server.db.mongodb.bean.AdpCommonBean;
 
-public class MongoDBMgr
+public class AdpMongoDBMgr
 {
-    private static final Logger log = Logger.getLogger( MongoDBMgr.class );
+    private static final Logger log = Logger.getLogger( AdpMongoDBMgr.class );
 
-    private final static MongoDBMgr mgr = new MongoDBMgr();
+    private final static AdpMongoDBMgr mgr = new AdpMongoDBMgr();
 
     private MongoClient mongoClient = null;
 
@@ -40,9 +40,9 @@ public class MongoDBMgr
 
     private MongoCollection<Document> dbc = null;
 
-    private MongoCollection<CommonBean> customDbc = null;
+    private MongoCollection<AdpCommonBean> customDbc = null;
 
-    private MongoDBMgr()
+    private AdpMongoDBMgr()
     {
         mongoClient = new MongoClient( "localhost", 27017 );
         database = mongoClient.getDatabase( "eNMS" );
@@ -51,9 +51,9 @@ public class MongoDBMgr
     public void getCustomDbc( String dbName )
     {
         CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
-            CodecRegistries.fromCodecs( new AlarmBeanCodec() ),
+            CodecRegistries.fromCodecs( new AdpAlarmBeanCodec() ),
             MongoClient.getDefaultCodecRegistry() );
-        customDbc = database.getCollection( dbName, CommonBean.class )
+        customDbc = database.getCollection( dbName, AdpCommonBean.class )
                 .withCodecRegistry( codecRegistry );
     }
 
@@ -62,7 +62,7 @@ public class MongoDBMgr
         dbc = database.getCollection( dbName );
     }
 
-    public static MongoDBMgr getInstance()
+    public static AdpMongoDBMgr getInstance()
     {
         return mgr;
     }
@@ -88,7 +88,7 @@ public class MongoDBMgr
      * 
      * @param bean
      */
-    public synchronized void insert( CommonBean bean )
+    public synchronized void insert( AdpCommonBean bean )
     {
         Document doc = new Document( "aId", bean.getaId() ).append( "userLable",
             bean.getUserLable() );
@@ -112,7 +112,7 @@ public class MongoDBMgr
      * 
      * @param bean
      */
-    public synchronized void customInsert( CommonBean bean )
+    public synchronized void customInsert( AdpCommonBean bean )
     {
         customDbc.insertOne( bean );
     }
