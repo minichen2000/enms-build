@@ -9,15 +9,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.business.ping.PingApp;
+import com.nsb.enms.adapter.server.business.register.Register2ControllerUtils;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.util.Register2ControllerUtils;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
-import com.nsb.enms.adapter.server.notification.NotificationClient;
-import com.nsb.enms.adapter.server.notification.NotificationServer;
 
 import io.swagger.jaxrs.config.SwaggerContextService;
-import io.swagger.models.*;
+import io.swagger.models.Contact;
+import io.swagger.models.Info;
+import io.swagger.models.License;
+import io.swagger.models.Swagger;
 
 public class Bootstrap extends HttpServlet
 {
@@ -107,7 +108,7 @@ public class Bootstrap extends HttpServlet
         Register2ControllerUtils.register( period );
     }
 
-    private class WSClientThread extends Thread
+    /*private class WSClientThread extends Thread
     {
         private String uri;
 
@@ -135,5 +136,5 @@ public class Bootstrap extends HttpServlet
         {
             new NotificationServer( port ).start();
         }
-    }
+    }*/
 }

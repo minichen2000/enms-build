@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.util;
+package com.nsb.enms.adapter.server.business.register;
 
 import java.util.Timer;
 import java.util.TimerTask;
