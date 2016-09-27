@@ -615,11 +615,11 @@ definitions:
 #        $ref: "#/definitions/Coordinates"
       locationName:
         type: string
-#      extraInfo:
-#        type: object
-#        properties:
-#           tmp:
-#             type: string
+      extraInfo:
+        type: object
+        properties:
+           neUsmParameter:
+             type: string
 
   AdpTp:
     type: object

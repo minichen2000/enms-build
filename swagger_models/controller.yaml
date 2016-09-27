@@ -911,11 +911,11 @@ definitions:
         type: string
       coordinates:
         $ref: "#/definitions/Coordinates"
-#      extraInfo:
-#        type: object
-#        properties:
-#           moi:
-#             type: string
+      extraInfo:
+        type: object
+        properties:
+           neUsmParameter:
+             type: string
 
   RefTp:
     type: object
