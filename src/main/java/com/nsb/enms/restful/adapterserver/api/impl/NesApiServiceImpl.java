@@ -15,6 +15,7 @@ import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.TYPES;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
@@ -30,6 +31,7 @@ import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNeExtraInfo;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
@@ -37,6 +39,8 @@ public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+	
+	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf( "NAMESERVERFILE_URL", "" );
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
@@ -102,6 +106,17 @@ public class NesApiServiceImpl extends NesApiService {
 		ne.setSynchState(SynchStateEnum.UNSYNCHRONIZED);
 		ne.setSupervisionState(SupervisionStateEnum.UNSUPERVISED);
 		ne.setLocationName(entity.getLocationName());
+		String[] groupNeId = entity.getMoi().split( "/" );
+		StringBuilder neUsmParameter = new StringBuilder();
+		neUsmParameter.append( "NE_TYPE=" ).append( entity.getNeType() )
+		.append( "&NE_RELEASE=" ).append( entity.getNeRelease() )
+		.append( "&GROUP_ID=" ).append( groupNeId[0].split( "=" )[1] )
+		.append( "&NE_ID=" ).append( groupNeId[1].split( "=" )[1] )
+		.append( "&NAMESERVERFILE_URL=" )
+		.append( NAMESERVERFILE_URL );
+		AdpNeExtraInfo neExtraInfo = new AdpNeExtraInfo();
+		neExtraInfo.setNeUsmParameter( neUsmParameter.toString() );
+		ne.setExtraInfo( neExtraInfo );
 		return ne;
 	}
 
