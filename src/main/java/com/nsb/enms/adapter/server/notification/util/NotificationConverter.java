@@ -53,7 +53,6 @@ public class NotificationConverter
             default:
                 break;
         }
-        message.setMessageType( "Notification" );
         String sender = ConfLoader.getInstance().getConf( "ADP_ID",
             "adapter_" + System.currentTimeMillis() );
         message.setSender( sender );
