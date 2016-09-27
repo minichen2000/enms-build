@@ -46,8 +46,10 @@ public class NotificationConverter
                 avc.setOldValue( entity.getDefinition().getOldAttributeValue() );
                 avc.setValue( entity.getDefinition().getNewAttributeValue() );
                 avc.setValueType( "String" );
+                avcs.add( avc );
                 message.setAvcs( avcs );
                 message.setMessageType( "avc" );
+                break;
             default:
                 break;
         }
