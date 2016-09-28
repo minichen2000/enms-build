@@ -34,9 +34,7 @@ public class NotificationServerHandler extends WebSocketHandler
     public void onConnect( Session session )
     {
         log.debug( "Got connection : " + session.getRemoteAddress() );
-        System.out.println( "Got connection : " + session.getRemoteAddress() );
         clients.add( session );
-        System.out.println( "clients size:" + clients.size() );
         flag = true;
         sendEvent();
     }
@@ -45,10 +43,7 @@ public class NotificationServerHandler extends WebSocketHandler
     public void onClose( Session session, int statusCode, String reason )
     {
         log.debug( "WebSocket client closed. statusCode:" + statusCode
-                + ", reason:" + reason );
-        System.out.println(
-            "WebSocket client closed. session:" + session.getRemoteAddress()
-                    + ", statusCode:" + statusCode + ", reason:" + reason );
+                + ", reason:" + reason );        
         clients.remove( session );
         session = null;
         if( clients.isEmpty() )
@@ -81,8 +76,7 @@ public class NotificationServerHandler extends WebSocketHandler
             }
             catch( Exception e )
             {
-                log.error( e );
-                e.printStackTrace();
+                log.error( "sendEvent", e );
             }
         }
     }

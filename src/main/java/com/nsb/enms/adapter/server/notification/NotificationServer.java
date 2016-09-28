@@ -1,10 +1,15 @@
 package com.nsb.enms.adapter.server.notification;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 
 public class NotificationServer
 {
+    private static final Logger log = LogManager
+            .getLogger( NotificationServer.class );
+
     private int port;
 
     public NotificationServer( int port )
@@ -27,13 +32,17 @@ public class NotificationServer
         }
         catch( Exception e )
         {
-
-            e.printStackTrace();
+            log.error( "StartWebSocketServer", e );
+        } finally
+        {
+            try
+            {
+                server.stop();
+            }
+            catch( Exception e )
+            {
+                log.error( "StopWebSocketServer", e );
+            }
         }
-    }
-
-    public static void main( String args[] )
-    {
-        new NotificationServer( 7778 ).start();
     }
 }

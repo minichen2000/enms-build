@@ -33,9 +33,9 @@ public class NotificationClient
             log.debug( "Connecting to ", serverUri );
             socket.awaitClose( Integer.MAX_VALUE, TimeUnit.DAYS );
         }
-        catch( Throwable t )
+        catch( Exception e )
         {
-            t.printStackTrace();
+            log.error( "StartWebSocektClient", e);
         }
         finally
         {
@@ -45,14 +45,8 @@ public class NotificationClient
             }
             catch( Exception e )
             {
-                e.printStackTrace();
+                log.error( "StopWebSocketClient", e );
             }
         }                
-    }
-
-    public static void main( String args[] )
-    {
-        String destUri = "ws://135.251.96.42:9999";
-        new NotificationClient( destUri ).start();
     }
 }
