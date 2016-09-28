@@ -21,6 +21,16 @@
 			<artifactId>enms-lib</artifactId>
 			<version>0.2.6-SNAPSHOT</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>statemachine</artifactId>			
+		</dependency>
+		
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>common.util</artifactId>			
+		</dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>

@@ -13,6 +13,8 @@ import com.nsb.enms.restful.model.common.OdBody;
 
 public class NotificationConverter
 {
+    private static String sender = ConfLoader.getInstance().getConf( "ADP_ID", "" );
+    
     public static Message convert(NotificationEntity entity)
     {
         Message message = new Message();
@@ -53,9 +55,12 @@ public class NotificationConverter
             default:
                 break;
         }
-        String sender = ConfLoader.getInstance().getConf( "ADP_ID",
-            "adapter_" + System.currentTimeMillis() );
         message.setSender( sender );
         return message;
+    }
+    
+    public static String getSender()
+    {
+        return sender;
     }
 }
