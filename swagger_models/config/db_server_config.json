@@ -1,8 +1,0 @@
-{
-  "groupId":"com.nsb.enms",
-  "artifactId":"restful-api-lib-db-server",
-  "artifactVersion":"1.1.0",
-  "library":"jersey2",
-  "apiPackage": "com.nsb.enms.restful.dbserver.api",
-  "modelPackage": "com.nsb.enms.restful.model.db"
-}
