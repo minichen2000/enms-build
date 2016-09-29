@@ -6,10 +6,10 @@ import java.util.List;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
-import com.nsb.enms.restful.model.common.AvcBody;
-import com.nsb.enms.restful.model.common.Message;
-import com.nsb.enms.restful.model.common.OcBody;
-import com.nsb.enms.restful.model.common.OdBody;
+import com.nsb.enms.restful.model.notif.AvcBody;
+import com.nsb.enms.restful.model.notif.Message;
+import com.nsb.enms.restful.model.notif.OcBody;
+import com.nsb.enms.restful.model.notif.OdBody;
 
 public class NotificationConverter
 {

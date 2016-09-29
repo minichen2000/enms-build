@@ -18,7 +18,7 @@ import com.nsb.enms.adapter.server.common.util.JsonUtils;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.adapter.server.notification.util.NotificationConverter;
 import com.nsb.enms.adapter.server.notification.util.NotificationQueue;
-import com.nsb.enms.restful.model.common.Message;
+import com.nsb.enms.restful.model.notif.Message;
 
 @WebSocket
 public class NotificationServerHandler extends WebSocketHandler

@@ -7,13 +7,13 @@ import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.EnmsEnv;
 import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.common.EnmsEnv;
-import com.nsb.enms.common.utils.Env;
+import com.nsb.enms.adapter.server.common.util.Env;
 
 public class ExecExternalScript
 {
@@ -121,23 +121,23 @@ public class ExecExternalScript
             {
                 cmdArray[2] = cmd.replace( "syncCTP", "getUnProtectedCtp" );
             }
-            else if(objectClass.equals( "0.0.7.774.127.3.0.3.2" ))
+            else if( objectClass.equals( "0.0.7.774.127.3.0.3.2" ) )
             {
                 cmdArray[2] = cmd.replace( "syncCTP", "getAu4Ctp" );
             }
-            else if(objectClass.equals( "1.3.12.2.1006.54.0.0.3.210" )) 
+            else if( objectClass.equals( "1.3.12.2.1006.54.0.0.3.210" ) )
             {
                 cmdArray[2] = cmd.replace( "syncCTP", "getEPdhCtp" );
             }
-            else if(objectClass.equals( "0.0.7.774.127.7.0.3.10" )) 
+            else if( objectClass.equals( "0.0.7.774.127.7.0.3.10" ) )
             {
                 cmdArray[2] = cmd.replace( "syncCTP", "getVc12Ttp" );
             }
-            else if(objectClass.equals( "0.0.7.774.0.3.101" )) 
+            else if( objectClass.equals( "0.0.7.774.0.3.101" ) )
             {
                 cmdArray[2] = cmd.replace( "syncCTP", "getVc3Ttp" );
             }
-            else if(objectClass.equals( "0.0.7.774.127.2.0.3.25" )) 
+            else if( objectClass.equals( "0.0.7.774.127.2.0.3.25" ) )
             {
                 cmdArray[2] = cmd.replace( "syncCTP", "getTu12Ctp" );
             }

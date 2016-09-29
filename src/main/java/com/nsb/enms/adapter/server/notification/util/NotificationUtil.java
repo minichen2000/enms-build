@@ -3,10 +3,10 @@ package com.nsb.enms.adapter.server.notification.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nsb.enms.restful.model.common.AvcBody;
-import com.nsb.enms.restful.model.common.Message;
-import com.nsb.enms.restful.model.common.OcBody;
-import com.nsb.enms.restful.model.common.OdBody;
+import com.nsb.enms.restful.model.notif.AvcBody;
+import com.nsb.enms.restful.model.notif.Message;
+import com.nsb.enms.restful.model.notif.OcBody;
+import com.nsb.enms.restful.model.notif.OdBody;
 
 public class NotificationUtil
 {
