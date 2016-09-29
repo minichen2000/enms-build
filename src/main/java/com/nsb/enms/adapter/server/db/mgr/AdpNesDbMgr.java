@@ -161,23 +161,41 @@ public class AdpNesDbMgr {
 		return neList;
 	}
 	
+	private List<AdpNe> getNesByGroupId(String groupId) throws Exception
+	{
+	    List<AdpNe> nes = getNes();
+	    for (int i = nes.size() - 1; i >=0; i--)
+	    {
+	        String moi = nes.get( i ).getKeyOnNe(); 
+	        if (!moi.split( "/" )[0].split( "=" )[1].equals( groupId ))
+	        {
+	            nes.remove( i );
+	        }
+	    }
+	    return nes;
+	}
+	
 	public List<Integer> getNeIdsByGroupId(String groupId) throws Exception
 	{
-	    List<Document> docList = dbc.find(eq( "groupId", groupId )).into(new ArrayList<Document>());
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find ne");
-            return new ArrayList<Integer>();
-        }
+	    List<AdpNe> nes = getNesByGroupId( groupId );
         List<Integer> neIdList = new ArrayList<Integer>();
-        for (Document doc : docList) {
-            AdpNe ne = constructNe(doc);
-            String moi = ne.getKeyOnNe();
-            int neId = Integer.parseInt( moi.split( "/" )[1].split( "=" )[1] );
-            neIdList.add(neId);
-            System.out.println(ne);
+        for (AdpNe ne : nes)
+        {
+            neIdList.add( Integer.parseInt( ne.getKeyOnNe().split( "/" )[1].split( "=" )[1] ) );
         }
         return neIdList;
-	}
+	}		
+
+    public Response deleteNesByGroupId( int groupId ) throws Exception
+    {
+        List<AdpNe> nes = getNesByGroupId( String.valueOf( groupId ) );
+        for (AdpNe ne : nes)
+        {
+            deleteNe( ne.getId() );
+        }
+        return Response.ok().build();
+        
+    }
 
 /*	public Response getMaxNeId(SecurityContext securityContext) throws Exception {
 		String maxNeId = MaxNeIdMgr.getId();

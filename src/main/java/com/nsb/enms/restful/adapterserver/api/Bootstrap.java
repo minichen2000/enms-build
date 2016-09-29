@@ -1,5 +1,8 @@
 package com.nsb.enms.restful.adapterserver.api;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -9,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.business.ping.PingApp;
-import com.nsb.enms.adapter.server.business.register.Register2ControllerUtils;
+import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
@@ -105,7 +108,22 @@ public class Bootstrap extends HttpServlet
     private void register2Controller()
     {
         long period = ConfLoader.getInstance().getInt( "REG_PERIOD", 60000 );
-        Register2ControllerUtils.register( period );
+        final Timer timer = new Timer();
+        final RegisterManager register = new RegisterManager();
+        timer.scheduleAtFixedRate( new TimerTask()
+        {
+            public void run()
+            {
+                log.debug( "start to register to Controller" );
+                boolean isOk = register.register2Controller();
+                log.debug( "the result of registering to Controller is :{}",
+                    isOk );
+                if( isOk )
+                {
+                    timer.cancel();
+                }
+            }
+        }, 0, period );
     }
 
     /*private class WSClientThread extends Thread

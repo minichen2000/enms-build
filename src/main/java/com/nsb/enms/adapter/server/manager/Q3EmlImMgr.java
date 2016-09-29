@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
@@ -26,7 +27,10 @@ public class Q3EmlImMgr
 
     private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
 
-    private static final int MAX_NE_OF_ONE_EMLIM = ConfLoader.getInstance().getInt( "MAX_NE_OF_ONE_EMLIM", 200 );
+    private static final int MAX_NE_OF_ONE_EMLIM = ConfLoader.getInstance()
+            .getInt( "MAX_NE_OF_ONE_EMLIM", 200 );
+
+    private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
     private ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
@@ -105,5 +109,30 @@ public class Q3EmlImMgr
         rwLock.writeLock().lock();
         neIdList.remove( new Integer( neId ) );
         rwLock.writeLock().unlock();
+    }
+
+    public void destroy()
+    {
+        for( int i = neIdList.size() - 1; i >= 0; i-- )
+        {
+            try
+            {
+                DeleteNe.deleteNe( groupId, neIdList.get( i ) );
+            }
+            catch( AdapterException e )
+            {
+                log.error( "DeleteNe", e );
+            }
+        }
+        
+        try
+        {
+            nesDbMgr.deleteNesByGroupId( groupId );
+        }
+        catch( Exception e )
+        {
+            log.error("deleteNe", e);
+        }
+        System.exit( 0 );
     }
 }

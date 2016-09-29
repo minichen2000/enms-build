@@ -6,29 +6,28 @@ import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.business.register.Register2ControllerUtils;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.restful.controllerclient.ApiException;
 import com.nsb.enms.restful.controllerclient.api.CtlSystemApi;
 
 public class PingApp
 {
-    private static final Logger log = LogManager
-            .getLogger( PingApp.class );
+    private static final Logger log = LogManager.getLogger( PingApp.class );
 
     private CtlSystemApi systemApi = new CtlSystemApi();
-    
-    private static final int PERIOD = 10 * 1000;
-    
-    private static boolean flag = false;
+
+    private static final int MAX_COUNT = ConfLoader.getInstance()
+            .getInt( "ADP_PING_MAX_NUM", 10 );
+
+    private static int count = 0;
 
     public void checkPing()
     {
         Timer timer = new Timer();
         long time = ConfLoader.getInstance().getInt(
-            ConfigKey.ADP_PING_INTERVAL,
-            ConfigKey.DEFAULT_ADP_PING_INTERVAL );
+            ConfigKey.ADP_PING_INTERVAL, ConfigKey.DEFAULT_ADP_PING_INTERVAL );
         timer.scheduleAtFixedRate( new Task(), time, time );
     }
 
@@ -38,22 +37,30 @@ public class PingApp
         @Override
         public void run()
         {
+            ping();
+        }
+
+        private void ping()
+        {
             try
             {
                 systemApi.ping();
-                if (flag)
-                {
-                    Register2ControllerUtils.register( PERIOD );
-                    flag = false;
-                }
+                count = 0;
                 log.debug( "controller is in service" );
             }
             catch( ApiException e )
             {
                 log.error( "controller is out of service" );
-                //不做什么操作，只是不断尝试注册，记下相关日志。
-                flag = true;
+                count++;
+                if( count < MAX_COUNT )
+                {
+                    ping();
+                }
+                else
+                {
+                    Q3EmlImMgr.getInstance().destroy();
+                }
             }
-        }      
+        }
     }
 }
