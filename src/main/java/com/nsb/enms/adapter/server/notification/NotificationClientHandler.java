@@ -60,6 +60,6 @@ public class NotificationClientHandler extends WebSocketAdapter
             entity = NotificationParseUtil.parseOtherNotification( event );
         }
         //NotificationQueue.push( event );
-        NotificationSender.getInstance().send( entity );
+        NotificationSender.instance().send( entity );
     }
 }

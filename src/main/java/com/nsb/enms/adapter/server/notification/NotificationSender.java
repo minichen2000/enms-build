@@ -11,18 +11,23 @@ import com.nsb.enms.restful.model.notif.OdBody;
 
 public class NotificationSender
 {
-    private static NotificationSender instance = new NotificationSender();
+    private static NotificationSender inst_ = null;
 
-    private static EnmsPublisher publisher;
+    private static EnmsPublisher publisher = null;
 
     private NotificationSender()
     {
 
     }
 
-    public static NotificationSender getInstance()
+    public static NotificationSender instance()
     {
-        return instance;
+        if( inst_ == null )
+        {
+            inst_ = new NotificationSender();
+        }
+
+        return inst_;
     }
 
     public void init()
@@ -58,7 +63,8 @@ public class NotificationSender
                 avc.setKey( entity.getDefinition().getAttributeID() );
                 avc.setObjectID( entity.getMoi().toString() );
                 avc.setObjectType( entity.getMoc().toString() );
-                avc.setOldValue( entity.getDefinition().getOldAttributeValue() );
+                avc.setOldValue(
+                    entity.getDefinition().getOldAttributeValue() );
                 avc.setValue( entity.getDefinition().getNewAttributeValue() );
                 avc.setValueType( "String" );
                 publisher.sendMessage( avc );

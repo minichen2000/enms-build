@@ -16,6 +16,7 @@ import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
+import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 
 import io.swagger.jaxrs.config.SwaggerContextService;
@@ -41,22 +42,15 @@ public class Bootstrap extends HttpServlet
         ServletContext context = config.getServletContext();
         loadConf( context );
 
-        Swagger swagger = new Swagger().info( info );
-        new SwaggerContextService().withServletConfig( config )
-                .updateSwagger( swagger );
-
         register2Controller();
 
-        /*String q3WSServerUri = ConfLoader.getInstance()
+        String q3WSServerUri = ConfLoader.getInstance()
                 .getConf( "Q3_WS_SERVER_URI", "" );
         new Thread( new WSClientThread( q3WSServerUri ) ).start();
-
+        /*
         int adapterWSServerPort = ConfLoader.getInstance()
                 .getInt( "ADP_WS_SERVER_PORT", 7778 );
-        new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/
-
-        PingApp pingApp = new PingApp();
-        pingApp.checkPing();
+        new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/        
         
         try
         {
@@ -65,11 +59,17 @@ public class Bootstrap extends HttpServlet
         }
         catch( AdapterException e )
         {
-            log.error( "initQ3EmlImMgr", e );
-            throw new ServletException( e.getMessage() );
+            e.printStackTrace();
         }
         
-        NotificationSender.getInstance().init();
+        NotificationSender.instance().init();
+        
+        PingApp pingApp = new PingApp();
+        pingApp.checkPing();
+        
+        Swagger swagger = new Swagger().info( info );
+        new SwaggerContextService().withServletConfig( config )
+                .updateSwagger( swagger );
     }
 
     private void loadConf( ServletContext context )
@@ -129,7 +129,7 @@ public class Bootstrap extends HttpServlet
         }, 0, period );
     }
 
-    /*private class WSClientThread extends Thread
+    private class WSClientThread extends Thread
     {
         private String uri;
 
@@ -144,6 +144,7 @@ public class Bootstrap extends HttpServlet
         }
     }
 
+    /*
     private class WSServerThread extends Thread
     {
         private int port;
