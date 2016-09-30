@@ -18,6 +18,16 @@
     </properties>
 
 	<dependencies>
+	
+	    <dependency>
+	    	<groupId>com.nsb.enms</groupId>
+	    	<artifactId>common.def</artifactId>
+	    </dependency>
+	    
+	    <dependency>
+	    	<groupId>com.nsb.enms</groupId>
+	    	<artifactId>common.enms_mq</artifactId>
+	    </dependency>
 		<dependency>
 			<groupId>com.nsb.enms</groupId>
 			<artifactId>statemachine</artifactId>			
@@ -30,9 +40,8 @@
 		
 		<dependency>
 			<groupId>com.nsb.enms</groupId>
-			<artifactId>common.enms_mq</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+			<artifactId>common.def</artifactId>
+		</dependency>		
 
 		<dependency>
 			<groupId>log4j</groupId>
