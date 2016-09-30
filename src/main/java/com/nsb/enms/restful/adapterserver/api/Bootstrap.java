@@ -16,6 +16,7 @@ import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
+import com.nsb.enms.adapter.server.notification.NotificationSender;
 
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Contact;
@@ -67,6 +68,8 @@ public class Bootstrap extends HttpServlet
             log.error( "initQ3EmlImMgr", e );
             throw new ServletException( e.getMessage() );
         }
+        
+        NotificationSender.getInstance().init();
     }
 
     private void loadConf( ServletContext context )

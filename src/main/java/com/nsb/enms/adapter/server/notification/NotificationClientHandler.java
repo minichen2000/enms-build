@@ -8,8 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
+import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.adapter.server.notification.util.NotificationParseUtil;
-import com.nsb.enms.adapter.server.notification.util.NotificationQueue;
+
 
 public class NotificationClientHandler extends WebSocketAdapter
 {
@@ -47,16 +48,18 @@ public class NotificationClientHandler extends WebSocketAdapter
     @Override
     public void onWebSocketText( String event )
     {
+        NotificationEntity entity;
         if( event.contains( "eventType { stateChange }" )
                 || event.contains( "eventType { attributeValueChange }" ) )
         {
-            event = NotificationParseUtil
+            entity = NotificationParseUtil
                     .parseModificationNotification( event );
         }
         else
         {
-            event = NotificationParseUtil.parseOtherNotification( event );
+            entity = NotificationParseUtil.parseOtherNotification( event );
         }
-        NotificationQueue.push( event );
+        //NotificationQueue.push( event );
+        NotificationSender.getInstance().send( entity );
     }
 }

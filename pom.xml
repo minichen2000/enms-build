@@ -27,6 +27,12 @@
 			<groupId>com.nsb.enms</groupId>
 			<artifactId>common.util</artifactId>			
 		</dependency>
+		
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>common.enms_mq</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>

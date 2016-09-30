@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.util.JsonUtils;
 import com.nsb.enms.adapter.server.notification.entity.DefinitionEntity;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.Moc;
@@ -19,7 +18,7 @@ public class NotificationParseUtil
     private static final Logger log = LogManager
             .getLogger( NotificationParseUtil.class );
 
-    public static String parseModificationNotification( String event )
+    public static NotificationEntity parseModificationNotification( String event )
     {
         List<String> msgList = splitMsg( event );
         NotificationEntity entity = new NotificationEntity();
@@ -196,10 +195,10 @@ public class NotificationParseUtil
 
         }
 
-        return JsonUtils.entity2Json( entity );
+        return entity;
     }
 
-    public static String parseOtherNotification( String event )
+    public static NotificationEntity parseOtherNotification( String event )
     {
         List<String> msgList = splitMsg( event );
         NotificationEntity entity = new NotificationEntity();
@@ -253,7 +252,7 @@ public class NotificationParseUtil
             }
         }
 
-        return JsonUtils.entity2Json( entity );
+        return entity;
     }
 
     private static List<String> splitMsg( String event )
