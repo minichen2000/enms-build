@@ -18,35 +18,44 @@ public class NotificationClient
     public NotificationClient( String uri )
     {
         this.uri = uri;
-    }
+    }    
 
     public void start()
     {
-        WebSocketClient client = new WebSocketClient();
-        NotificationClientHandler socket = new NotificationClientHandler();
-        try
+        final WebSocketClient client = new WebSocketClient();
+        final NotificationClientHandler socket = new NotificationClientHandler();
+        new Thread( new Runnable()
         {
-            client.start();
-            URI serverUri = new URI( uri );
-            ClientUpgradeRequest request = new ClientUpgradeRequest();
-            client.connect( socket, serverUri, request );
-            log.debug( "Connecting to ", serverUri );
-            socket.awaitClose( Integer.MAX_VALUE, TimeUnit.DAYS );
-        }
-        catch( Exception e )
-        {
-            log.error( "StartWebSocektClient", e);
-        }
-        finally
-        {
-            try
+
+            @Override
+            public void run()
             {
-                client.stop();
+                try
+                {
+                    client.start();
+                    URI serverUri = new URI( uri );
+                    ClientUpgradeRequest request = new ClientUpgradeRequest();
+                    client.connect( socket, serverUri, request );
+                    log.debug( "Connecting to ", serverUri );
+                    socket.awaitClose( Integer.MAX_VALUE, TimeUnit.DAYS );
+                }
+                catch( Exception e )
+                {
+                    log.error( "StartWebSocektClient", e );
+                }
+                finally
+                {
+                    try
+                    {
+                        client.stop();
+                    }
+                    catch( Exception e )
+                    {
+                        log.error( "StopWebSocketClient", e );
+                    }
+                }
+
             }
-            catch( Exception e )
-            {
-                log.error( "StopWebSocketClient", e );
-            }
-        }                
+        } ).start();
     }
 }
