@@ -46,11 +46,13 @@ public class Bootstrap extends HttpServlet
 
         String q3WSServerUri = ConfLoader.getInstance()
                 .getConf( "Q3_WS_SERVER_URI", "" );
-        new Thread( new WSClientThread( q3WSServerUri ) ).start();
-        /*
-        int adapterWSServerPort = ConfLoader.getInstance()
+        NotificationClient client = new NotificationClient( q3WSServerUri );
+        client.start();
+        
+        /*int adapterWSServerPort = ConfLoader.getInstance()
                 .getInt( "ADP_WS_SERVER_PORT", 7778 );
-        new Thread( new WSServerThread( adapterWSServerPort ) ).start();*/        
+        NotificationServer server = new NotificationServer( adapterWSServerPort );
+        server.start();*/
         
         try
         {
@@ -85,10 +87,6 @@ public class Bootstrap extends HttpServlet
             e.printStackTrace();
         }
 
-        /*String dbUrl = ConfLoader.getInstance().getConf( "DB_URL", "" );
-        log.debug( "The dbUrl is " + dbUrl );
-        initDbApiClient( dbUrl );*/
-
         String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
         log.debug( "The ctrlUrl is " + ctrlUrl );
         initControllerApiClient( ctrlUrl );
@@ -100,13 +98,6 @@ public class Bootstrap extends HttpServlet
             new com.nsb.enms.restful.controllerclient.ApiClient()
                     .setBasePath( ctrlUrl ) );
     }
-
-    /*private void initDbApiClient( String dbUrl )
-    {
-        com.nsb.enms.restful.dbclient.Configuration.setDefaultApiClient(
-            new com.nsb.enms.restful.dbclient.ApiClient()
-                    .setBasePath( dbUrl ) );
-    }*/
 
     private void register2Controller()
     {
@@ -127,36 +118,5 @@ public class Bootstrap extends HttpServlet
                 }
             }
         }, 0, period );
-    }
-
-    private class WSClientThread extends Thread
-    {
-        private String uri;
-
-        public WSClientThread( String uri )
-        {
-            this.uri = uri;
-        }
-
-        public void run()
-        {
-            new NotificationClient( uri ).start();
-        }
-    }
-
-    /*
-    private class WSServerThread extends Thread
-    {
-        private int port;
-
-        public WSServerThread( int port )
-        {
-            this.port = port;
-        }
-
-        public void run()
-        {
-            new NotificationServer( port ).start();
-        }
-    }*/
+    }    
 }

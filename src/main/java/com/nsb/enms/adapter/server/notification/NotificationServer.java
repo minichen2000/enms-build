@@ -19,30 +19,39 @@ public class NotificationServer
 
     public void start()
     {
-        Server server = new Server( port );
+        final Server server = new Server( port );
         ContextHandler context = new ContextHandler();
         context.setContextPath( "/Adapter/message" );
         NotificationServerHandler handler = new NotificationServerHandler();
         context.setHandler( handler );
         server.setHandler( handler );
-        try
+        new Thread( new Runnable()
         {
-            server.start();
-            server.join();
-        }
-        catch( Exception e )
-        {
-            log.error( "StartWebSocketServer", e );
-        } finally
-        {
-            try
+
+            @Override
+            public void run()
             {
-                server.stop();
+                try
+                {
+                    server.start();
+                    server.join();
+                }
+                catch( Exception e )
+                {
+                    log.error( "StartWebSocketServer", e );
+                }
+                finally
+                {
+                    try
+                    {
+                        server.stop();
+                    }
+                    catch( Exception e )
+                    {
+                        log.error( "StopWebSocketServer", e );
+                    }
+                }
             }
-            catch( Exception e )
-            {
-                log.error( "StopWebSocketServer", e );
-            }
-        }
+        } ).start();
     }
 }
