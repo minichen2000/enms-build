@@ -11,7 +11,7 @@
 			<param-value>
                 io.swagger.jaxrs.listing,
                 io.swagger.sample.resource,
-                com.nsb.enms.adapterserver.api
+               	com.nsb.enms.restful.adapterserver.api
             </param-value>
 		</init-param>
 		<init-param>
