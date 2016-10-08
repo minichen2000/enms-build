@@ -55,7 +55,7 @@ public class Bootstrap extends HttpServlet
         try
         {
             //The real groupId should be set
-            Q3EmlImMgr.getInstance().init( 100 );
+            Q3EmlImMgr.instance().init( 100 );
         }
         catch( AdapterException e )
         {

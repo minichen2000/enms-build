@@ -91,7 +91,7 @@ public class DeleteNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Delete ne failed!!!" );
             }
-            Q3EmlImMgr.getInstance().removeNe( neId );
+            Q3EmlImMgr.instance().removeNe( neId );
             return flag;
         }
         catch( Exception e )

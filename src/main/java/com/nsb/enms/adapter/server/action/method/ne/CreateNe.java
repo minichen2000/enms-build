@@ -40,7 +40,7 @@ public class CreateNe
             String userLabel, String locationName, String neAddress )
             throws AdapterException
     {
-        Pair<Integer, Integer> groupNeId = Q3EmlImMgr.getInstance()
+        Pair<Integer, Integer> groupNeId = Q3EmlImMgr.instance()
                 .getGroupNeId();
         int groupId = groupNeId.getFirst();
         int neId = groupNeId.getSecond();

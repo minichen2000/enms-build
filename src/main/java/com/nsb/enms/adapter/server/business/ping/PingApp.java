@@ -58,7 +58,7 @@ public class PingApp
                 }
                 else
                 {
-                    Q3EmlImMgr.getInstance().destroy();
+                    Q3EmlImMgr.instance().destroy();
                 }
             }
         }

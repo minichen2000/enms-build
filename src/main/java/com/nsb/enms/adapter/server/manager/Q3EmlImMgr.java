@@ -25,7 +25,7 @@ public class Q3EmlImMgr
 
     private static List<Integer> neIdList = new LinkedList<Integer>();
 
-    private static Q3EmlImMgr q3EmlImMgr = new Q3EmlImMgr();
+    private static Q3EmlImMgr inst_ = new Q3EmlImMgr();
 
     private static final int MAX_NE_OF_ONE_EMLIM = ConfLoader.getInstance()
             .getInt( "MAX_NE_OF_ONE_EMLIM", 200 );
@@ -41,9 +41,13 @@ public class Q3EmlImMgr
 
     }
 
-    public static Q3EmlImMgr getInstance()
+    public static Q3EmlImMgr instance()
     {
-        return Q3EmlImMgr.q3EmlImMgr;
+        if (inst_ == null)
+        {
+            inst_ = new Q3EmlImMgr();
+        }
+        return inst_;
     }
 
     public void init( final int groupId ) throws AdapterException
