@@ -39,8 +39,8 @@ public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-	
-	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf( "NAMESERVERFILE_URL", "" );
+
+	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
@@ -106,23 +106,26 @@ public class NesApiServiceImpl extends NesApiService {
 		ne.setSynchState(SynchStateEnum.UNSYNCHRONIZED);
 		ne.setSupervisionState(SupervisionStateEnum.UNSUPERVISED);
 		ne.setLocationName(entity.getLocationName());
-		String[] groupNeId = entity.getMoi().split( "/" );
+		String[] groupNeId = entity.getMoi().split("/");
 		StringBuilder neUsmParameter = new StringBuilder();
-		neUsmParameter.append( "NE_TYPE=" ).append( entity.getNeType() )
-		.append( "&NE_RELEASE=" ).append( entity.getNeRelease() )
-		.append( "&GROUP_ID=" ).append( groupNeId[0].split( "=" )[1] )
-		.append( "&NE_ID=" ).append( groupNeId[1].split( "=" )[1] )
-		.append( "&NAMESERVERFILE_URL=" )
-		.append( NAMESERVERFILE_URL );
+		neUsmParameter.append("NE_TYPE=").append(entity.getNeType()).append("&NE_RELEASE=")
+				.append(entity.getNeRelease()).append("&GROUP_ID=").append(groupNeId[0].split("=")[1]).append("&NE_ID=")
+				.append(groupNeId[1].split("=")[1]).append("&NAMESERVERFILE_URL=").append(NAMESERVERFILE_URL);
 		AdpNeExtraInfo neExtraInfo = new AdpNeExtraInfo();
-		neExtraInfo.setNeUsmParameter( neUsmParameter.toString() );
-		ne.setExtraInfo( neExtraInfo );
+		neExtraInfo.setNeUsmParameter(neUsmParameter.toString());
+		ne.setExtraInfo(neExtraInfo);
 		return ne;
 	}
 
 	@Override
 	public Response deleteNe(String neid, SecurityContext securityContext) throws NotFoundException {
 		log.debug("adapter------deleteNE");
+
+		boolean hasBussiness = checkBussiness();
+		if (hasBussiness) {
+			return Response.serverError().build();
+		}
+
 		try {
 			AdpNe ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
@@ -157,6 +160,10 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 
 		return Response.ok().build();
+	}
+
+	private boolean checkBussiness() {
+		return true;
 	}
 
 	@Override
