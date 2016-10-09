@@ -1,61 +1,67 @@
 package com.nsb.enms.adapter.server.common.statemachine.ne;
 
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.restful.model.adapter.AdpNe;
+
 class NeStateCallBack
 {
-    private NeState.AdminStates adminStates;
+    private MaintenanceState maintenanceState;
 
-    private NeState.CommunicationState communicationState;
+    private AdpNe.CommunicationStateEnum communicationState;
 
-    private NeState.MaintenanceState maintenanceState;
+    private AdpNe.OperationalStateEnum operationalState;
 
-    private NeState.OperationalState operationalState;
+    private AdpNe.SupervisionStateEnum supervisionState;
 
-    private NeState.SupervisionState supervisionState;
+    private AdpNe.SynchStateEnum synchState;
 
-    private NeState.SynchState synchState;
-    
     private String id;
 
-    public void tellMe( NeState.AdminStates adminStates )
+    private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+
+    public void tellMe( AdpNe.CommunicationStateEnum communicationState )
+            throws Exception
     {
-        System.out.println(
-            "Tell me, current state is: " + adminStates.getValue() );
+        AdpNe ne = new AdpNe();
+        ne.setId( id );
+        ne.setCommunicationState( communicationState );
+        nesDbMgr.updateNe( ne );
     }
 
-    public void tellMe( NeState.CommunicationState communicationState )
+    public void tellMe( MaintenanceState maintenanceState ) throws Exception
     {
-        System.out.println(
-            "Tell me, current state is: " + communicationState.toString()
-            + " , id is " + id);
+        AdpNe ne = new AdpNe();
+        ne.setId( id );
+        ne.maintenanceState( maintenanceState.getValue() );
+        nesDbMgr.updateNe( ne );
     }
 
-    public void tellMe( NeState.MaintenanceState maintenanceState )
+    public void tellMe( AdpNe.OperationalStateEnum operationalState )
+            throws Exception
     {
-        System.out.println(
-            "Tell me, current state is: " + maintenanceState.toString() );
+        AdpNe ne = new AdpNe();
+        ne.setId( id );
+        ne.setOperationalState( operationalState );
+        nesDbMgr.updateNe( ne );
     }
 
-    public void tellMe( NeState.OperationalState operationalState )
+    public void tellMe( AdpNe.SupervisionStateEnum supervisionState )
+            throws Exception
     {
-        System.out.println(
-            "Tell me, current state is: " + operationalState.toString()
-            + ", id is " + id);
+        AdpNe ne = new AdpNe();
+        ne.setId( id );
+        ne.setSupervisionState( supervisionState );
+        nesDbMgr.updateNe( ne );
     }
 
-    public void tellMe( NeState.SupervisionState supervisionState )
+    public void tellMe( AdpNe.SynchStateEnum synchState ) throws Exception
     {
-        System.out.println(
-            "Tell me, current state is: " + supervisionState.toString()
-            + ", id is " + id);
+        AdpNe ne = new AdpNe();
+        ne.setId( id );
+        ne.setSynchState( synchState );
+        nesDbMgr.updateNe( ne );
     }
 
-    public void tellMe( NeState.SynchState synchState )
-    {
-        System.out.println(
-            "Tell me, current state is: " + synchState.toString()
-            + ", id is " + id);
-    }
-    
     public String getId()
     {
         return id;
@@ -66,63 +72,55 @@ class NeStateCallBack
         this.id = id;
     }
 
-    public NeState.AdminStates getAdminStates()
-    {
-        return adminStates;
-    }
-
-    public void setAdminStates( NeState.AdminStates adminStates )
-    {
-        this.adminStates = adminStates;
-    }
-
-    public NeState.CommunicationState getCommunicationState()
+    public AdpNe.CommunicationStateEnum getCommunicationState()
     {
         return communicationState;
     }
 
     public void setCommunicationState(
-            NeState.CommunicationState communicationState )
+            AdpNe.CommunicationStateEnum communicationState )
     {
         this.communicationState = communicationState;
     }
 
-    public NeState.MaintenanceState getMaintenanceState()
+    public MaintenanceState getMaintenanceState()
     {
         return maintenanceState;
     }
 
-    public void setMaintenanceState( NeState.MaintenanceState maintenanceState )
+    public void setMaintenanceState( MaintenanceState maintenanceState )
     {
         this.maintenanceState = maintenanceState;
     }
 
-    public NeState.OperationalState getOperationalState()
+    public AdpNe.OperationalStateEnum getOperationalState()
     {
         return operationalState;
     }
 
-    public void setOperationalState( NeState.OperationalState operationalState )
+    public void setOperationalState(
+            AdpNe.OperationalStateEnum operationalState )
     {
         this.operationalState = operationalState;
     }
 
-    public NeState.SupervisionState getSupervisionState()
+    public AdpNe.SupervisionStateEnum getSupervisionState()
     {
         return supervisionState;
     }
 
-    public void setSupervisionState( NeState.SupervisionState supervisionState )
+    public void setSupervisionState(
+            AdpNe.SupervisionStateEnum supervisionState )
     {
         this.supervisionState = supervisionState;
     }
 
-    public NeState.SynchState getSynchState()
+    public AdpNe.SynchStateEnum getSynchState()
     {
         return synchState;
     }
 
-    public void setSynchState( NeState.SynchState synchState )
+    public void setSynchState( AdpNe.SynchStateEnum synchState )
     {
         this.synchState = synchState;
     }

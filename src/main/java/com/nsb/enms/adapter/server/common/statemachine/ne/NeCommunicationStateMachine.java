@@ -3,13 +3,14 @@ package com.nsb.enms.adapter.server.common.statemachine.ne;
 import org.squirrelframework.foundation.fsm.annotation.StateMachineParameters;
 import org.squirrelframework.foundation.fsm.impl.AbstractUntypedStateMachine;
 
-import com.nsb.enms.adapter.server.common.statemachine.ne.NeState.CommunicationState;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 
-@StateMachineParameters(stateType = CommunicationState.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)
+@StateMachineParameters(stateType = AdpNe.CommunicationStateEnum.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)
 public class NeCommunicationStateMachine extends AbstractUntypedStateMachine
 {
-    protected void transState( CommunicationState from, CommunicationState to,
-            NeEvent event, NeStateCallBack context )
+    protected void transState( AdpNe.CommunicationStateEnum from,
+            AdpNe.CommunicationStateEnum to, NeEvent event,
+            NeStateCallBack context ) throws Exception
     {
         System.out.println( "Transition from '" + from + "' to '" + to
                 + "' on event '" + event + "'." );
@@ -17,22 +18,15 @@ public class NeCommunicationStateMachine extends AbstractUntypedStateMachine
         context = null;
     }
 
-    protected void entringState( CommunicationState from, CommunicationState to,
-            NeEvent event, NeStateCallBack context )
+    protected void entringState( AdpNe.CommunicationStateEnum from,
+            AdpNe.CommunicationStateEnum to, NeEvent event,
+            NeStateCallBack context ) throws Exception
     {
-        System.out.println( "Entry State \'" + to + "\'." );
-        context.tellMe( to );
     }
 
-    protected void leavingState( CommunicationState from, CommunicationState to,
-            NeEvent event, NeStateCallBack context )
+    protected void leavingState( AdpNe.CommunicationStateEnum from,
+            AdpNe.CommunicationStateEnum to, NeEvent event,
+            NeStateCallBack context ) throws Exception
     {
-        if( context != null )
-        {
-            System.out.println( "Exiting State \'" + from + "\'" );
-            context.tellMe( from );
-            context = null;
-        }
     }
-
 }
