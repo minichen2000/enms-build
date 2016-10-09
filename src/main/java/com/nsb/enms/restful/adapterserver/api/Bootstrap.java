@@ -15,6 +15,7 @@ import com.nsb.enms.adapter.server.business.ping.PingApp;
 import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.statemachine.ne.NeStateMachineApp;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
@@ -64,6 +65,7 @@ public class Bootstrap extends HttpServlet
             e.printStackTrace();
         }
         
+        NeStateMachineApp.instance().init();
         NotificationSender.instance().init();
         
         PingApp pingApp = new PingApp();

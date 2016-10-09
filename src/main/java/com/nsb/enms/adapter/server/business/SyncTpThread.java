@@ -13,16 +13,13 @@ import com.nsb.enms.adapter.server.action.method.tp.GetTp;
 import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.statemachine.ne.NeStateMachineApp;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class SyncTpThread extends Thread {
@@ -43,17 +40,21 @@ public class SyncTpThread extends Thread {
 		boolean isSuccess;
 		try {
 			log.debug("before startSuppervision");
+			NeStateMachineApp.instance().beforeSuperviseNe( id );
 			isSuccess = StartSuppervision.startSuppervision(groupId, neId);
 			log.debug("isSuccess = " + isSuccess);
 			if (!isSuccess) {
 				return;
 			}
+			NeStateMachineApp.instance().afterSuperviseNe( id );
 		} catch (AdapterException e) {
 			e.printStackTrace();
 			return;
 		}
-
+		
+		NeStateMachineApp.instance().beforeSynchData( id );
 		syncTp();
+		NeStateMachineApp.instance().afterSynchData( id );
 
 		// update the value of alignmentStatus for ne to true
 		updateNeAttr(id);
@@ -199,11 +200,7 @@ public class SyncTpThread extends Thread {
 		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setAdminState( true );
-		ne.setOperationalState( OperationalStateEnum.IDLE );
-		ne.setCommunicationState( CommunicationStateEnum.REACHABLE );
-		ne.setSynchState( SynchStateEnum.SYNCHRONIZED );
-		ne.setSupervisionState( SupervisionStateEnum.SUPERVISIED );
+		ne.setAdminState( true );		
 		try {
 			nesDbMgr.updateNe(ne);
 		} catch (Exception e) {
