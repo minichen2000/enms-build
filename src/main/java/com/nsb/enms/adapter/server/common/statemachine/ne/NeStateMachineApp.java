@@ -1,5 +1,12 @@
 package com.nsb.enms.adapter.server.common.statemachine.ne;
 
+import java.util.List;
+
+import com.nsb.enms.adapter.server.common.statemachine.ne.model.AdminState;
+import com.nsb.enms.adapter.server.common.statemachine.ne.model.MaintenanceState;
+import com.nsb.enms.adapter.server.common.statemachine.ne.model.NeEvent;
+import com.nsb.enms.adapter.server.common.statemachine.ne.model.NeStateCallBack;
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.statemachine.wrapper.StateMachineWrapper;
 import com.nsb.enms.statemachine.wrapper.StateMachineWrapper.STMachineBuilder;
@@ -17,6 +24,10 @@ public class NeStateMachineApp
     private StateMachineWrapper<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> neSyncStateMachine;
 
     private StateMachineWrapper<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
+    
+    private StateMachineWrapper<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack> neAdminStateMachine;
+
+    private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
     private NeStateMachineApp()
     {
@@ -34,55 +45,71 @@ public class NeStateMachineApp
 
     public void init()
     {
-        STMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> builder1 = new STMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack>(
+        STMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> operationalStateBuilder = new STMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack>(
                 NeOperationalStateMachine.class );
-        builder1.registExTransition( AdpNe.OperationalStateEnum.IDLE,
+        operationalStateBuilder.registExTransition(
+            AdpNe.OperationalStateEnum.IDLE,
             AdpNe.OperationalStateEnum.SUPERVISING,
             NeEvent.E_IDLE_2_SUPERVISING, "transState" );
-        builder1.registExTransition( AdpNe.OperationalStateEnum.SUPERVISING,
+        operationalStateBuilder.registExTransition(
+            AdpNe.OperationalStateEnum.SUPERVISING,
             AdpNe.OperationalStateEnum.IDLE, NeEvent.E_SUPERVISING_2_IDLE,
             "transState" );
-        builder1.registExTransition( AdpNe.OperationalStateEnum.IDLE,
+        operationalStateBuilder.registExTransition(
+            AdpNe.OperationalStateEnum.IDLE,
             AdpNe.OperationalStateEnum.SYNCHRONIZING,
             NeEvent.E_IDLE_2_SYNCHRONIZING, "transState" );
-        builder1.registExTransition( AdpNe.OperationalStateEnum.SYNCHRONIZING,
+        operationalStateBuilder.registExTransition(
+            AdpNe.OperationalStateEnum.SYNCHRONIZING,
             AdpNe.OperationalStateEnum.IDLE, NeEvent.E_SYNCHRONIZING_2_IDLE,
             "transState" );
-        neOperationalStateMachine = builder1
+        neOperationalStateMachine = operationalStateBuilder
                 .build( AdpNe.OperationalStateEnum.IDLE );
 
-        STMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> builder2 = new STMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack>(
+        STMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> communicationStateBuilder = new STMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack>(
                 NeCommunicationStateMachine.class );
-        builder2.registExTransition( AdpNe.CommunicationStateEnum.UNREACHABLE,
+        communicationStateBuilder.registExTransition(
+            AdpNe.CommunicationStateEnum.UNREACHABLE,
             AdpNe.CommunicationStateEnum.REACHABLE,
             NeEvent.E_UNREACHABLE_2_REACHABLE, "transState" );
-        builder2.registExTransition( AdpNe.CommunicationStateEnum.REACHABLE,
+        communicationStateBuilder.registExTransition(
+            AdpNe.CommunicationStateEnum.REACHABLE,
             AdpNe.CommunicationStateEnum.UNREACHABLE,
             NeEvent.E_REACHABLE_2_UNREACHABLE, "transState" );
-        neCommunicationStateMachine = builder2
+        neCommunicationStateMachine = communicationStateBuilder
                 .build( AdpNe.CommunicationStateEnum.UNREACHABLE );
 
-        STMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> builder3 = new STMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack>(
+        STMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> supervisionStateBuilder = new STMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack>(
                 NeSupervisionStateMachine.class );
-        builder3.registExTransition( AdpNe.SupervisionStateEnum.UNSUPERVISED,
+        supervisionStateBuilder.registExTransition(
+            AdpNe.SupervisionStateEnum.UNSUPERVISED,
             AdpNe.SupervisionStateEnum.SUPERVISIED,
             NeEvent.E_UNSUPERVISIED_2_SUPERVISIED, "transState" );
-        neSupervisionStateMachine = builder3
+        neSupervisionStateMachine = supervisionStateBuilder
                 .build( AdpNe.SupervisionStateEnum.UNSUPERVISED );
 
-        STMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> builder4 = new STMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack>(
+        STMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> syncStateBuilder = new STMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack>(
                 NeSyncStateMachine.class );
-        builder4.registExTransition( AdpNe.SynchStateEnum.UNSYNCHRONIZED,
+        syncStateBuilder.registExTransition(
+            AdpNe.SynchStateEnum.UNSYNCHRONIZED,
             AdpNe.SynchStateEnum.SYNCHRONIZED,
             NeEvent.E_UNSYNCHRONIZED_2_SYNCHRONIZED, "transState" );
-        neSyncStateMachine = builder4
+        neSyncStateMachine = syncStateBuilder
                 .build( AdpNe.SynchStateEnum.UNSYNCHRONIZED );
 
-        STMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> builder5 = new STMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack>(
+        STMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> maintenanceStateBuilder = new STMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack>(
                 NeMaintenanceStateMachine.class );
-        builder5.registExTransition( MaintenanceState.FALSE,
+        maintenanceStateBuilder.registExTransition( MaintenanceState.FALSE,
             MaintenanceState.TRUE, NeEvent.E_FALSE_2_TRUE, "transState" );
-        neMaintenanaceStateMachine = builder5.build( MaintenanceState.FALSE );
+        neMaintenanaceStateMachine = maintenanceStateBuilder
+                .build( MaintenanceState.FALSE );
+        
+        STMachineBuilder<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack> adminStateBuilder = new STMachineBuilder<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack>(
+                NeAdminStateMachine.class );
+        adminStateBuilder.registExTransition( AdminState.FALSE,
+            AdminState.TRUE, NeEvent.E_FALSE_2_TRUE, "transState" );
+        neAdminStateMachine = adminStateBuilder
+                .build( AdminState.FALSE );
     }
 
     public void beforeSuperviseNe( String id )
@@ -126,12 +153,38 @@ public class NeStateMachineApp
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
+        neAdminStateMachine.start();
         neSyncStateMachine.start();
         neOperationalStateMachine.start();
+        neAdminStateMachine.fire( NeEvent.E_FALSE_2_TRUE, ne );
         neSyncStateMachine.fire( NeEvent.E_UNSYNCHRONIZED_2_SYNCHRONIZED, ne );
         neOperationalStateMachine.fire( NeEvent.E_SYNCHRONIZING_2_IDLE, ne );
+        neAdminStateMachine.terminate();
         neSyncStateMachine.terminate();
         neOperationalStateMachine.terminate();
+    }
+
+    public void updateCommunicationStateForNes( int groupId )
+    {
+        try
+        {
+            NeStateCallBack ne = new NeStateCallBack();
+            List<AdpNe> nes = nesDbMgr
+                    .getNesByGroupId( String.valueOf( groupId ) );
+            for( AdpNe adpNe : nes )
+            {
+                ne.setId( adpNe.getId() );
+                neCommunicationStateMachine.start();
+                neCommunicationStateMachine
+                        .fire( NeEvent.E_REACHABLE_2_UNREACHABLE, ne );
+                neCommunicationStateMachine.terminate();
+            }
+        }
+        catch( Exception e )
+        {
+            e.printStackTrace();
+        }
+
     }
 
     public StateMachineWrapper<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> getNeOperationalStateMachine()
@@ -157,5 +210,10 @@ public class NeStateMachineApp
     public StateMachineWrapper<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> getNeMaintenanaceStateMachine()
     {
         return neMaintenanaceStateMachine;
+    }
+    
+    public StateMachineWrapper<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack> getNeAdminStateMachine()
+    {
+        return neAdminStateMachine;
     }
 }

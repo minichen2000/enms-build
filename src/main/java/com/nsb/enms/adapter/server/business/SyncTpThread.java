@@ -57,7 +57,7 @@ public class SyncTpThread extends Thread {
 		NeStateMachineApp.instance().afterSynchData( id );
 
 		// update the value of alignmentStatus for ne to true
-		updateNeAttr(id);
+		//updateNeAttr(id);
 
 		log.debug("sync tp end");
 	}
@@ -196,7 +196,7 @@ public class SyncTpThread extends Thread {
 	/**
 	 * update the value of alignmentStatus for ne to true
 	 */
-	private void updateNeAttr(String id) {
+	/*private void updateNeAttr(String id) {
 		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
@@ -206,7 +206,7 @@ public class SyncTpThread extends Thread {
 		} catch (Exception e) {
 			log.error("updateNeAttr", e);
 		}
-	}
+	}*/
 	
 	private int getLayerRate(TpEntity tp)
 	{

@@ -161,7 +161,7 @@ public class AdpNesDbMgr {
 		return neList;
 	}
 	
-	private List<AdpNe> getNesByGroupId(String groupId) throws Exception
+	public List<AdpNe> getNesByGroupId(String groupId) throws Exception
 	{
 	    List<AdpNe> nes = getNes();
 	    for (int i = nes.size() - 1; i >=0; i--)
