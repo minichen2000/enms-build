@@ -32,7 +32,6 @@ public class NotificationSender
 
     public void init()
     {
-        String host = ConfLoader.getInstance().getConf( "ADP_IP", "localhost" );
         int port = ConfLoader.getInstance().getInt( "NOTIF_SERVER_PORT", 8025 );
         publisher = EnmsPubFactory.createMqPub( port );
     }

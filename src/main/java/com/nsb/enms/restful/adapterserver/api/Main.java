@@ -28,6 +28,9 @@ public class Main
 
     public static void main( String[] args )
     {
+        
+        loadConf();
+        
         String[] packages = new String[] {"io.swagger.jaxrs.listing",
                 "io.swagger.sample.resource",
                 "com.nsb.enms.restful.adapterserver.api"};
@@ -38,8 +41,10 @@ public class Main
 
         ServletHolder servlet = new ServletHolder(
                 new ServletContainer( config ) );
-
-        final Server server1 = new Server( 9090 );
+        
+        
+        int port = ConfLoader.getInstance().getInt( "ADP_PORT", 8081 );
+        final Server server1 = new Server( port );
         ServletContextHandler context = new ServletContextHandler( server1,
                 "/*" );
         context.addServlet( servlet, "/*" );
@@ -69,21 +74,12 @@ public class Main
             }
         } ).start();
 
-        loadConf();
-
         register2Controller();
 
         String q3WSServerUri = ConfLoader.getInstance()
                 .getConf( "Q3_WS_SERVER_URI", "" );
         NotificationClient client = new NotificationClient( q3WSServerUri );
-        client.start();
-
-        // int adapterWSServerPort = ConfLoader.getInstance()
-        // .getInt( "ADP_WS_SERVER_PORT", 7778 );
-        /*
-         * NotificationServer server = new NotificationServer(
-         * adapterWSServerPort ); server.start();
-         */
+        client.start();        
 
         try
         {
@@ -105,7 +101,7 @@ public class Main
 
     private static void loadConf()
     {
-        String confPath = "D:\\gitrepo\\enms\\adapter\\src\\main\\webapp\\WEB-INF\\conf";
+        String confPath = System.getenv( "ADPCONFPATH" );
         log.debug( "The confPath is " + confPath );
         try
         {
