@@ -8,8 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
+import com.nsb.enms.adapter.server.common.util.JsonUtils;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.adapter.server.notification.util.NotificationParseUtil;
+import com.nsb.enms.adapter.server.notification.util.NotificationQueue;
 
 
 public class NotificationClientHandler extends WebSocketAdapter
@@ -59,7 +61,7 @@ public class NotificationClientHandler extends WebSocketAdapter
         {
             entity = NotificationParseUtil.parseOtherNotification( event );
         }
-        //NotificationQueue.push( event );
+        //NotificationQueue.push( JsonUtils.entity2Json( entity ) );
         NotificationSender.instance().send( entity );
     }
 }

@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>adapter</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
     <properties>
         <swagger-model-path>../common-lib/swagger_models</swagger-model-path>
@@ -161,10 +161,11 @@
 			<artifactId>websocket-server</artifactId>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.eclipse.jetty.websocket</groupId>
 			<artifactId>websocket-servlet</artifactId>
 		</dependency>
+		 -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-codegen-cli</artifactId>
@@ -516,7 +517,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.rest.test.App</mainClass>
+							<mainClass>com.nsb.enms.restful.adapterserver.api.Main</mainClass>
 						</manifest>
 					</archive>
 
