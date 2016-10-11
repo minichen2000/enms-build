@@ -1,121 +1,73 @@
 package com.nsb.enms.adapter.server.notification.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import com.nsb.enms.restful.model.notif.Alarm;
 import com.nsb.enms.restful.model.notif.AvcBody;
-import com.nsb.enms.restful.model.notif.Message;
 import com.nsb.enms.restful.model.notif.OcBody;
 import com.nsb.enms.restful.model.notif.OdBody;
 
 public class NotificationUtil
 {
-    private String messageType = null;
+    private static SimpleDateFormat format = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss" );
 
-    private String eventTime = null;
-
-    private String objectType = null;
-
-    private String objectID = null;
-
-    private String key = null;
-
-    private String valueType = null;
-
-    private String value = null;
-
-    private String oldValue = null;
-
-    public Message createNotification()
-    {
-        Message message = new Message();
-        message.setSender( NotificationConverter.getSender() );
-        message.setMessageType( messageType );
-        if( message.equals( "oc" ) )
-        {
-            message.setOcDetail( createOcBody() );
-        }
-        else if( message.equals( "od" ) )
-        {
-            message.setOdDetail( createOdBody() );
-        }
-        else if( message.equals( "avc" ) )
-        {
-            List<AvcBody> avcs = new ArrayList<AvcBody>();
-            avcs.add( createAvcBody() );
-            message.setAvcs( avcs );
-        }
-        return message;
-    }
-
-    private AvcBody createAvcBody()
+    public static AvcBody createAvcNotif( Date date, String objectType,
+            String objectID, String key, String valueType, String value,
+            String oldValue )
     {
         AvcBody avc = new AvcBody();
-        avc.setEventTime( eventTime );
-        avc.setKey( key );
-        avc.setObjectID( objectID );
+        avc.setEventTime( format.format( date ) );
         avc.setObjectType( objectType );
+        avc.setObjectID( objectID );
+        avc.setKey( key );
+        avc.setValueType( valueType );
         avc.setValue( value );
         avc.setOldValue( oldValue );
-        avc.setValueType( valueType );
+
         return avc;
     }
 
-    private OcBody createOcBody()
+    public static OcBody createOcNotif( Date date, String objectID,
+            String objectType )
     {
         OcBody oc = new OcBody();
-        oc.setEventTime( eventTime );
+        oc.setEventTime( format.format( date ) );
         oc.setObjectID( objectID );
         oc.setObjectType( objectType );
         return oc;
     }
 
-    private OdBody createOdBody()
+    public static OdBody createOdNotif( Date date, String objectType,
+            String objectID )
     {
         OdBody od = new OdBody();
-        od.setEventTime( eventTime );
-        od.setObjectID( objectID );
+        od.setEventTime( format.format( date ) );
         od.setObjectType( objectType );
+        od.setObjectID( objectID );
         return od;
     }
 
-    public void setMessageType( String messageType )
+    public static Alarm createAlarm( String alarmCode, String alarmType,
+            String severity, Date date, String occureTime,
+            String clearTime, String probableCause, String objectType,
+            String objectId, String ackStatus, String ackTime,
+            String description )
     {
-        this.messageType = messageType;
-    }
-
-    public void setEventTime( String eventTime )
-    {
-        this.eventTime = eventTime;
-    }
-
-    public void setObjectType( String objectType )
-    {
-        this.objectType = objectType;
-    }
-
-    public void setObjectID( String objectID )
-    {
-        this.objectID = objectID;
-    }
-
-    public void setKey( String key )
-    {
-        this.key = key;
-    }
-
-    public void setValueType( String valueType )
-    {
-        this.valueType = valueType;
-    }
-
-    public void setValue( String value )
-    {
-        this.value = value;
-    }
-
-    public void setOldValue( String oldValue )
-    {
-        this.oldValue = oldValue;
+        Alarm alarm = new Alarm();
+        alarm.setAlarmCode( alarmCode );
+        alarm.setAlarmType( alarmType );
+        alarm.setSeverity( severity );
+        alarm.setEventTime( format.format( date ) );
+        alarm.setOccureTime( occureTime );
+        alarm.setClearTime( clearTime );
+        alarm.setProbableCause( probableCause );
+        alarm.setObjectType( objectType );
+        alarm.setObjectId( objectId );
+        alarm.setAckStatus( ackStatus );
+        alarm.setAckTime( ackTime );
+        alarm.setDescription( description );
+        return alarm;
     }
 }

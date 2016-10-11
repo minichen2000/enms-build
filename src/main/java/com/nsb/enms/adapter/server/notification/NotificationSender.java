@@ -52,12 +52,12 @@ public class NotificationSender
             case OBJECT_CREATION:
                 OcBody ocBody = publisher.createOcBody( eventTime, objectType,
                     objectID );
-                publisher.sendMessage( ocBody );
+                send( ocBody );
                 break;
             case OBJECT_DELETION:
                 OdBody odBody = publisher.createOdBody( eventTime, objectType,
                     objectID );
-                publisher.sendMessage( odBody );
+                send( odBody );
                 break;
             case ATTRIBUTE_VALUE_CHANGE:
             case STATE_CHANGE:
@@ -65,7 +65,7 @@ public class NotificationSender
                     objectID, entity.getDefinition().getAttributeID(), "String",
                     entity.getDefinition().getNewAttributeValue(),
                     entity.getDefinition().getOldAttributeValue() );
-                publisher.sendMessage( avc );
+                send( avc );
                 break;
             case ALARM:
 
@@ -73,6 +73,11 @@ public class NotificationSender
             default:
                 break;
         }
+    }
+    
+    public void send(Object object)
+    {
+        publisher.sendMessage( object );
     }
 
     private ObjectType getObjectType( String moc )
