@@ -27,7 +27,7 @@ public class Main
 {
     private static Logger log;
 
-    public static void main( String[] args )
+    public static void main( String[] args ) throws AdapterException
     {
         String confPath = loadConf();
 
@@ -92,15 +92,8 @@ public class Main
         NotificationClient client = new NotificationClient( q3WSServerUri );
         client.start();
 
-        try
-        {
-            // The real groupId should be set
-            Q3EmlImMgr.instance().init( 100 );
-        }
-        catch( AdapterException e )
-        {
-            e.printStackTrace();
-        }
+        // The real groupId should be set
+        Q3EmlImMgr.instance().init( 100 );
 
         NeStateMachineApp.instance().init();
         NotificationSender.instance().init();
