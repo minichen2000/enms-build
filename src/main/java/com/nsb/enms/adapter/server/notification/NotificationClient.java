@@ -36,7 +36,7 @@ public class NotificationClient
                     URI serverUri = new URI( uri );
                     ClientUpgradeRequest request = new ClientUpgradeRequest();
                     client.connect( socket, serverUri, request );
-                    log.debug( "Connecting to ", serverUri );
+                    log.debug( "Connecting to {}", serverUri );
                     socket.awaitClose( Integer.MAX_VALUE, TimeUnit.DAYS );
                 }
                 catch( Exception e )

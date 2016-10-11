@@ -3,8 +3,9 @@ package com.nsb.enms.restful.adapterserver.api;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -24,13 +25,24 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 
 public class Main
 {
-    private static Logger log = LogManager.getLogger( Main.class );
+    private static Logger log;
 
     public static void main( String[] args )
     {
-        
-        loadConf();
-        
+        String confPath = loadConf();
+
+        System.setProperty( "log4j.configurationFile",
+            confPath + "/log4j2.xml" );
+        LoggerContext loggerContext = (LoggerContext) LogManager
+                .getContext( false );
+        loggerContext.reconfigure();
+
+        log = LogManager.getLogger( Main.class );
+
+        String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
+        log.debug( "The ctrlUrl is " + ctrlUrl );
+        initControllerApiClient( ctrlUrl );
+
         String[] packages = new String[] {"io.swagger.jaxrs.listing",
                 "io.swagger.sample.resource",
                 "com.nsb.enms.restful.adapterserver.api"};
@@ -41,8 +53,7 @@ public class Main
 
         ServletHolder servlet = new ServletHolder(
                 new ServletContainer( config ) );
-        
-        
+
         int port = ConfLoader.getInstance().getInt( "ADP_PORT", 8081 );
         final Server server1 = new Server( port );
         ServletContextHandler context = new ServletContextHandler( server1,
@@ -79,7 +90,7 @@ public class Main
         String q3WSServerUri = ConfLoader.getInstance()
                 .getConf( "Q3_WS_SERVER_URI", "" );
         NotificationClient client = new NotificationClient( q3WSServerUri );
-        client.start();        
+        client.start();
 
         try
         {
@@ -99,10 +110,9 @@ public class Main
 
     }
 
-    private static void loadConf()
+    private static String loadConf()
     {
         String confPath = System.getenv( "ADPCONFPATH" );
-        log.debug( "The confPath is " + confPath );
         try
         {
             ConfLoader.getInstance().loadConf( confPath + "/conf.properties" );
@@ -112,9 +122,7 @@ public class Main
             e.printStackTrace();
         }
 
-        String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
-        log.debug( "The ctrlUrl is " + ctrlUrl );
-        initControllerApiClient( ctrlUrl );
+        return confPath;
     }
 
     private static void initControllerApiClient( String ctrlUrl )

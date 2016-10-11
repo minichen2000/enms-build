@@ -42,30 +42,22 @@ public class NotificationSender
         switch( eventType )
         {
             case OBJECT_CREATION:
-                OcBody ocBody = new OcBody();
-                ocBody.setEventTime( entity.getEventTime() );
-                ocBody.setObjectID( entity.getMoi().toString() );
-                ocBody.setObjectType( entity.getMoc().toString() );
+                OcBody ocBody = publisher.createOcBody( entity.getEventTime(),
+                    entity.getMoc().getMoc(), entity.getMoi().getMoi() );
                 publisher.sendMessage( ocBody );
                 break;
             case OBJECT_DELETION:
-                OdBody odBody = new OdBody();
-                odBody.setEventTime( entity.getEventTime() );
-                odBody.setObjectID( entity.getMoi().toString() );
-                odBody.setObjectType( entity.getMoc().toString() );
+                OdBody odBody = publisher.createOdBody( entity.getEventTime(),
+                    entity.getMoc().getMoc(), entity.getMoi().getMoi() );
                 publisher.sendMessage( odBody );
                 break;
             case ATTRIBUTE_VALUE_CHANGE:
             case STATE_CHANGE:
-                AvcBody avc = new AvcBody();
-                avc.setEventTime( entity.getEventTime() );
-                avc.setKey( entity.getDefinition().getAttributeID() );
-                avc.setObjectID( entity.getMoi().toString() );
-                avc.setObjectType( entity.getMoc().toString() );
-                avc.setOldValue(
+                AvcBody avc = publisher.createAvcBody( entity.getEventTime(),
+                    entity.getMoc().getMoc(), entity.getMoi().getMoi(),
+                    entity.getDefinition().getAttributeID(), "String",
+                    entity.getDefinition().getNewAttributeValue(),
                     entity.getDefinition().getOldAttributeValue() );
-                avc.setValue( entity.getDefinition().getNewAttributeValue() );
-                avc.setValueType( "String" );
                 publisher.sendMessage( avc );
                 break;
             default:
