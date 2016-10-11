@@ -1,5 +1,8 @@
 package com.nsb.enms.adapter.server.notification;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
@@ -9,6 +12,7 @@ import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.common.enms_mq.EnmsPubFactory;
 import com.nsb.enms.common.enms_mq.EnmsPublisher;
 import com.nsb.enms.common.util.ObjectType;
+import com.nsb.enms.restful.model.notif.Alarm;
 import com.nsb.enms.restful.model.notif.AvcBody;
 import com.nsb.enms.restful.model.notif.OcBody;
 import com.nsb.enms.restful.model.notif.OdBody;
@@ -18,6 +22,9 @@ public class NotificationSender
     private static NotificationSender inst_ = null;
 
     private static EnmsPublisher publisher = null;
+
+    private static SimpleDateFormat format = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss" );
 
     private NotificationSender()
     {
@@ -74,15 +81,15 @@ public class NotificationSender
                 break;
         }
     }
-    
-    public void send(Object object)
+
+    private void send( Object object )
     {
         publisher.sendMessage( object );
     }
 
     private ObjectType getObjectType( String moc )
     {
-        if( "sdhNetworkElement".equals( moc ) )
+        if( moc.contains( "NetworkElement" ) )
         {
             return ObjectType.NE;
         }
@@ -129,5 +136,45 @@ public class NotificationSender
             default:
                 return null;
         }
+    }
+
+    public void sendAvcNotif( Date date, ObjectType objectType, String objectID,
+            String key, String valueType, String value, String oldValue )
+    {
+        String eventTime = format.format( date );
+
+        AvcBody avc = publisher.createAvcBody( eventTime, objectType, objectID,
+            key, valueType, value, oldValue );
+
+        send( avc );
+        ;
+    }
+
+    public void sendOcNotif( Date date, ObjectType objectType, String objectID )
+    {
+        String eventTime = format.format( date );
+        OcBody oc = publisher.createOcBody( eventTime, objectType, objectID );
+        send( oc );
+    }
+
+    public void createOdNotif( Date date, ObjectType objectType,
+            String objectID )
+    {
+        String eventTime = format.format( date );
+        OdBody od = publisher.createOdBody( eventTime, objectType, objectID );
+        send( od );
+    }
+
+    public void createAlarm( String alarmCode, String alarmType,
+            String severity, Date date, String occureTime, String clearTime,
+            String probableCause, String objectType, String objectId,
+            String ackStatus, String ackTime, String description )
+    {
+        String eventTime = format.format( date );
+        Alarm alarm = publisher.createAlarm( alarmCode, alarmType, severity,
+            eventTime, occureTime, clearTime, probableCause, objectType,
+            objectId, ackStatus, ackTime, description );
+        send( alarm );
+        ;
     }
 }
