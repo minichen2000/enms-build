@@ -36,34 +36,34 @@ public class SyncTpThread extends Thread {
 
 	@Override
 	public void run() {
-		//StartSuppervision start = new StartSuppervision();
+		// StartSuppervision start = new StartSuppervision();
 		boolean isSuccess;
 		try {
 			log.debug("before startSuppervision");
-			NeStateMachineApp.instance().beforeSuperviseNe( id );
+			NeStateMachineApp.instance().beforeSuperviseNe(id);
 			isSuccess = StartSuppervision.startSuppervision(groupId, neId);
 			log.debug("isSuccess = " + isSuccess);
 			if (!isSuccess) {
 				return;
 			}
-			NeStateMachineApp.instance().afterSuperviseNe( id );
+			NeStateMachineApp.instance().afterSuperviseNe(id);
 		} catch (AdapterException e) {
 			e.printStackTrace();
 			return;
 		}
-		
-		NeStateMachineApp.instance().beforeSynchData( id );
+
+		NeStateMachineApp.instance().beforeSynchData(id);
 		syncTp();
-		NeStateMachineApp.instance().afterSynchData( id );
+		NeStateMachineApp.instance().afterSynchData(id);
 
 		// update the value of alignmentStatus for ne to true
-		//updateNeAttr(id);
+		// updateNeAttr(id);
 
 		log.debug("sync tp end");
 	}
 
 	private void syncTp() {
-		//GetTp getTp = new GetTp();
+		// GetTp getTp = new GetTp();
 		try {
 			List<TpEntity> tpList = GetTp.getTp(groupId, neId);
 			log.debug("tpList = " + tpList.size() + ", neId = " + neId);
@@ -74,12 +74,12 @@ public class SyncTpThread extends Thread {
 				AdpTp newTp = new AdpTp();
 				newTp.setNeId(id);
 				String moi = tp.getMoi();
-				String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, tp.getMoc(), moi );
-				newTp.setId( id + ":" + keyOnNe );
-				newTp.setKeyOnNe( keyOnNe );
-				newTp.setAdminState( tp.getAdministrativeState() );
-				newTp.setOperationalState( tp.getOperationalState() );
-				String userLabel = GenerateUserLabelUtils.generateTpUserLabel( tp );
+				String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe(TYPES.TP, tp.getMoc(), moi);
+				newTp.setId(id + ":" + keyOnNe);
+				newTp.setKeyOnNe(keyOnNe);
+				newTp.setAdminState(tp.getAdministrativeState());
+				newTp.setOperationalState(tp.getOperationalState());
+				String userLabel = GenerateUserLabelUtils.generateTpUserLabel(tp);
 				newTp.setUserLabel(userLabel);
 				newTp.setNativeName(userLabel);
 				newTp.setTpType(tp.getMoc());
@@ -87,8 +87,8 @@ public class SyncTpThread extends Thread {
 				// TODO 读取映射文件获取层速率
 				int layerRate = getLayerRate(tp);
 				List<String> layerRates = new ArrayList<String>();
-                layerRates.add( String.valueOf( layerRate ) );
-                newTp.setLayerRates(layerRates);
+				layerRates.add(String.valueOf(layerRate));
+				newTp.setLayerRates(layerRates);
 				tps.add(newTp);
 
 				tps = tpsDbMgr.addTps(tps);
@@ -121,15 +121,15 @@ public class SyncTpThread extends Thread {
 
 		List<AdpTp> tps = new ArrayList<AdpTp>();
 		for (TpEntity ctp : ctpList) {
-		    AdpTp newCtp = new AdpTp();
+			AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
-			String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, ctp.getMoc(), ctpMoi );
-			newCtp.setId( id + ":" + keyOnNe );
-			newCtp.setKeyOnNe( keyOnNe );
-			newCtp.setAdminState( ctp.getAdministrativeState() );
-			newCtp.setOperationalState( ctp.getOperationalState() );
-			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
+			String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe(TYPES.TP, ctp.getMoc(), ctpMoi);
+			newCtp.setId(id + ":" + keyOnNe);
+			newCtp.setKeyOnNe(keyOnNe);
+			newCtp.setAdminState(ctp.getAdministrativeState());
+			newCtp.setOperationalState(ctp.getOperationalState());
+			String userLabel = GenerateUserLabelUtils.generateTpUserLabel(ctp);
 			newCtp.setUserLabel(userLabel);
 			newCtp.setNativeName(userLabel);
 			newCtp.setTpType(ctp.getMoc());
@@ -137,13 +137,13 @@ public class SyncTpThread extends Thread {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-            layerRates.add( String.valueOf( LayerRateConst.LR_STS3c_and_AU4_VC4 ) );
-            newCtp.setLayerRates(layerRates);
+			layerRates.add(String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4));
+			newCtp.setLayerRates(layerRates);
 			tps.add(newCtp);
 		}
 
 		try {
-		    tpsDbMgr.addTps(tps);
+			tpsDbMgr.addTps(tps);
 		} catch (Exception e) {
 			log.error("syncCtp", e);
 		}
@@ -151,6 +151,10 @@ public class SyncTpThread extends Thread {
 
 	private void syncPdhCtp(String moi, String ptpId, String ptpDbId) throws AdapterException {
 		Pair<Integer, List<TpEntity>> pair = GetCtp.getPdhCtp(groupId, neId, ptpId);
+		if (null == pair) {
+			log.error("pair is null");
+			return;
+		}
 		List<TpEntity> ctpList = pair.getSecond();
 		if (null == ctpList || ctpList.isEmpty()) {
 			log.error("ctpList is null or empty");
@@ -158,15 +162,15 @@ public class SyncTpThread extends Thread {
 		}
 		List<AdpTp> tps = new ArrayList<AdpTp>();
 		for (TpEntity ctp : ctpList) {
-		    AdpTp newCtp = new AdpTp();
+			AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
-			String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.TP, ctp.getMoc(), ctpMoi );
-			newCtp.setId( id + ":" + keyOnNe );
-			newCtp.setKeyOnNe( keyOnNe );
-			newCtp.setAdminState( ctp.getAdministrativeState() );
-			newCtp.setOperationalState( ctp.getOperationalState() );
-			String userLabel = GenerateUserLabelUtils.generateTpUserLabel( ctp );
+			String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe(TYPES.TP, ctp.getMoc(), ctpMoi);
+			newCtp.setId(id + ":" + keyOnNe);
+			newCtp.setKeyOnNe(keyOnNe);
+			newCtp.setAdminState(ctp.getAdministrativeState());
+			newCtp.setOperationalState(ctp.getOperationalState());
+			String userLabel = GenerateUserLabelUtils.generateTpUserLabel(ctp);
 			newCtp.setUserLabel(userLabel);
 			newCtp.setNativeName(userLabel);
 			newCtp.setTpType(ctp.getMoc());
@@ -174,20 +178,20 @@ public class SyncTpThread extends Thread {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-            layerRates.add( String.valueOf( LayerRateConst.LR_VT2_and_TU12_VC12 ) );
-            newCtp.setLayerRates(layerRates);
+			layerRates.add(String.valueOf(LayerRateConst.LR_VT2_and_TU12_VC12));
+			newCtp.setLayerRates(layerRates);
 			tps.add(newCtp);
 		}
-		
+
 		AdpTp pdhPTP = new AdpTp();
-		pdhPTP.setId( ptpDbId );
+		pdhPTP.setId(ptpDbId);
 		int layerRate = pair.getFirst();
 		List<String> layerRates = new ArrayList<String>();
-        layerRates.add( String.valueOf( layerRate ) );
-        pdhPTP.setLayerRates(layerRates);
+		layerRates.add(String.valueOf(layerRate));
+		pdhPTP.setLayerRates(layerRates);
 		try {
 			tpsDbMgr.addTps(tps);
-			tpsDbMgr.updateTp( pdhPTP );
+			tpsDbMgr.updateTp(pdhPTP);
 		} catch (Exception e) {
 			log.error("syncCtp", e);
 		}
@@ -196,43 +200,34 @@ public class SyncTpThread extends Thread {
 	/**
 	 * update the value of alignmentStatus for ne to true
 	 */
-	/*private void updateNeAttr(String id) {
-		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-		AdpNe ne = new AdpNe();
-		ne.setId(id);
-		ne.setAdminState( true );		
-		try {
-			nesDbMgr.updateNe(ne);
-		} catch (Exception e) {
-			log.error("updateNeAttr", e);
+	/*
+	 * private void updateNeAttr(String id) { AdpNesDbMgr nesDbMgr = new
+	 * AdpNesDbMgr(); AdpNe ne = new AdpNe(); ne.setId(id); ne.setAdminState(
+	 * true ); try { nesDbMgr.updateNe(ne); } catch (Exception e) {
+	 * log.error("updateNeAttr", e); } }
+	 */
+
+	private int getLayerRate(TpEntity tp) {
+		String moc = tp.getMoc();
+		if (moc.contains("OpticalSPITTP")) {
+			int stmLevel = tp.getStmLevel();
+			switch (stmLevel) {
+			case 1:
+				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM1;
+			case 4:
+				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM4;
+			case 16:
+				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM16;
+			case 64:
+				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM64;
+			case 256:
+				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM256;
+			default:
+				return LayerRateConst.LR_UNDEFINE;
+			}
+		} else if (moc.contains("pPITTP")) {
+			return LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_2M;
 		}
-	}*/
-	
-	private int getLayerRate(TpEntity tp)
-	{
-	    String moc = tp.getMoc();
-	    if (moc.contains( "OpticalSPITTP" ))
-        {
-            int stmLevel = tp.getStmLevel();
-            switch( stmLevel )
-            {
-                case 1:
-                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM1;
-                case 4:
-                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM4;
-                case 16:
-                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM16;
-                case 64:
-                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM64;
-                case 256:
-                    return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM256;
-                default:
-                    return LayerRateConst.LR_UNDEFINE;
-            }
-        } else if (moc.contains( "pPITTP" ))
-        {
-            return LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_2M;
-        }
-	    return LayerRateConst.LR_UNDEFINE;
+		return LayerRateConst.LR_UNDEFINE;
 	}
 }
