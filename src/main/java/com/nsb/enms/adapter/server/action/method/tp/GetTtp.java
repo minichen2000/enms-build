@@ -16,7 +16,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class GetTtp {
 	private static final Logger log = LogManager.getLogger(GetTtp.class);
@@ -44,28 +44,28 @@ public class GetTtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							portEntity.setMoc(moc);
 							continue;
 						}
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							portEntity.setMoi(moi);
 							continue;
 						}
 
 						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtils.parseAttr(line));
+							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
 							continue;
 						}
 
 						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtils.parseList(line));
+							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
 							continue;
 						}
 
 						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtils.parseAttr(line));
+							portEntity.setOperationalState(ParseUtil.parseAttr(line));
 							continue;
 						}
 

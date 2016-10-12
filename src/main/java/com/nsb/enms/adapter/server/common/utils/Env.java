@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.util;
+package com.nsb.enms.adapter.server.common.utils;
 
 import java.util.Map;
 import com.nsb.enms.adapter.server.common.EnmsEnv;

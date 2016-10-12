@@ -54,7 +54,7 @@ public class CheckQ3EmlImApp
                     //        .updateCommunicationStateForNes( groupId );
                     Q3EmlImMgr.instance().sendAlarm();
                     log.error(
-                        "The emlim with groupId=" + groupId + " died!!!" );
+                        "The emlim_" + groupId + " died!!!" );
                     System.exit( 1 );
                 }
                 log.debug( "Connect to emlim_" + groupId + " failed!!!" );

@@ -14,7 +14,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class GetManagerAddress
 {
@@ -47,14 +47,14 @@ public class GetManagerAddress
                         line = line.trim();
                         if( line.startsWith( "osMainAddress" ) )
                         {
-                            String osMainAddress = ParseUtils.parseAttr( line );
+                            String osMainAddress = ParseUtil.parseAttr( line );
                             pair.setFirst( osMainAddress );
                             continue;
                         }
 
                         if( line.startsWith( "osSpareAddress" ) )
                         {
-                            String osSpareAddress = ParseUtils.parseAttr( line );
+                            String osSpareAddress = ParseUtil.parseAttr( line );
                             pair.setSecond( osSpareAddress );
                             continue;
                         }

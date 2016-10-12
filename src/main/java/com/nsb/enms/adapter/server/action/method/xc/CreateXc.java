@@ -15,7 +15,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class CreateXc {
 	private static final Logger log = LogManager.getLogger(CreateXc.class);
@@ -41,13 +41,13 @@ public class CreateXc {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							xcEntity.setMoc(moc);
 							continue;
 						}
 
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							xcEntity.setMoi(moi);
 							continue;
 						}
@@ -63,12 +63,12 @@ public class CreateXc {
 							line = line.replaceAll(StringUtils.SPACE, StringUtils.EMPTY);
 							line = line.replaceAll("connected pointToPoint", StringUtils.EMPTY);
 							String fromTp = line.substring(line.indexOf("fromTp") + 6, line.indexOf("toTp") - 1);
-							fromTp = ParseUtils.parseMultiValueWithNoBlank(fromTp);
+							fromTp = ParseUtil.parseMultiValueWithNoBlank(fromTp);
 							log.debug("fromTp=" + fromTp);
 							xcEntity.setFromTermination(fromTp);
 
 							String toTp = line.substring(line.indexOf("toTp") + 4, line.indexOf("xCon") - 1);
-							toTp = ParseUtils.parseMultiValueWithNoBlank(toTp);
+							toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
 							log.debug("toTp=" + toTp);
 
 							xcEntity.setToTermination(toTp);
@@ -109,13 +109,13 @@ public class CreateXc {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							xcEntity.setMoc(moc);
 							continue;
 						}
 
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							xcEntity.setMoi(moi);
 							continue;
 						}
@@ -131,12 +131,12 @@ public class CreateXc {
 							line = line.replaceAll(StringUtils.SPACE, StringUtils.EMPTY);
 							line = line.replaceAll("connected pointToPoint", StringUtils.EMPTY);
 							String fromTp = line.substring(line.indexOf("fromTp") + 6, line.indexOf("toTp") - 1);
-							fromTp = ParseUtils.parseMultiValueWithNoBlank(fromTp);
+							fromTp = ParseUtil.parseMultiValueWithNoBlank(fromTp);
 							log.debug("fromTp=" + fromTp);
 							xcEntity.setFromTermination(fromTp);
 
 							String toTp = line.substring(line.indexOf("toTp") + 4, line.indexOf("xCon") - 1);
-							toTp = ParseUtils.parseMultiValueWithNoBlank(toTp);
+							toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
 							log.debug("toTp=" + toTp);
 
 							xcEntity.setToTermination(toTp);
@@ -169,11 +169,11 @@ public class CreateXc {
 
 		s = s.replaceAll("connected pointToPoint", "");
 		String fromTp = s.substring(s.indexOf("fromTp") + 6, s.indexOf("toTp") - 1);
-		fromTp = ParseUtils.parseMultiValueWithNoBlank(fromTp);
+		fromTp = ParseUtil.parseMultiValueWithNoBlank(fromTp);
 		System.out.println("fromTp=" + fromTp);
 
 		String toTp = s.substring(s.indexOf("toTp") + 4, s.indexOf("xCon") - 1);
-		toTp = ParseUtils.parseMultiValueWithNoBlank(toTp);
+		toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
 		System.out.println("toTp=" + toTp);
 	}
 }

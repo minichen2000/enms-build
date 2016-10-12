@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.adapter.server.common.util.TimeUtils;
+import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
@@ -92,7 +92,7 @@ public class NotificationSender
     public void sendAvcNotif( Date date, ObjectType objectType, String objectID,
             String key, String valueType, String value, String oldValue )
     {
-        String eventTime = TimeUtils.getLocalTmfTime( date );
+        String eventTime = TimeUtil.getLocalTmfTime( date );
 
         AvcBody avc = publisher.createAvcBody( eventTime, objectType, objectID,
             key, valueType, value, oldValue );
@@ -102,7 +102,7 @@ public class NotificationSender
 
     public void sendOcNotif( Date date, ObjectType objectType, String objectID )
     {
-        String eventTime = TimeUtils.getLocalTmfTime( date );
+        String eventTime = TimeUtil.getLocalTmfTime( date );
         OcBody oc = publisher.createOcBody( eventTime, objectType, objectID );
         send( oc );
     }
@@ -110,7 +110,7 @@ public class NotificationSender
     public void sendOdNotif( Date date, ObjectType objectType,
             String objectID )
     {
-        String eventTime = TimeUtils.getLocalTmfTime( date );
+        String eventTime = TimeUtil.getLocalTmfTime( date );
         OdBody od = publisher.createOdBody( eventTime, objectType, objectID );
         send( od );
     }

@@ -13,7 +13,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.Env;
+import com.nsb.enms.adapter.server.common.utils.Env;
 
 public class ExecExternalScript
 {

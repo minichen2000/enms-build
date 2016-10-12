@@ -1,10 +1,10 @@
-package com.nsb.enms.adapter.server.common.util;
+package com.nsb.enms.adapter.server.common.utils;
 
 import java.util.List;
 
 import com.nsb.enms.adapter.server.action.entity.TpEntity;
 
-public class GenerateUserLabelUtils
+public class GenerateUserLabelUtil
 {
     public static String generateTpUserLabel( TpEntity entity )
     {

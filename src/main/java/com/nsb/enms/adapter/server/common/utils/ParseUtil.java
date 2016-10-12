@@ -1,11 +1,11 @@
-package com.nsb.enms.adapter.server.common.util;
+package com.nsb.enms.adapter.server.common.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParseUtils
+public class ParseUtil
 {
     private static Pattern pattern = Pattern.compile( "=\\s*(\\w+.*?)\\s+" );
 

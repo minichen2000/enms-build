@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
-import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
+import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
@@ -108,8 +108,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 			String tpType = tp.getTpType();
 			String neid = tp.getNeId();
 			AdpNe ne = new AdpNesDbMgr().getNeById( neid );
-			String neMoi = GenerateKeyOnNeUtils.getMoi( ne.getKeyOnNe() );
-			String moi = GenerateKeyOnNeUtils.getMoi( tp.getKeyOnNe() );
+			String neMoi = GenerateKeyOnNeUtil.getMoi( ne.getKeyOnNe() );
+			String moi = GenerateKeyOnNeUtil.getMoi( tp.getKeyOnNe() );
 			if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
 				bean.setSdhTp(true);
 				groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);

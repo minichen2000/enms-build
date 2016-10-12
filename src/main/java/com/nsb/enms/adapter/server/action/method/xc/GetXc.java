@@ -16,7 +16,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class GetXc
 {
@@ -49,7 +49,7 @@ public class GetXc
                         line = line.trim();
                         if( line.startsWith( "managedObjectClass" ) )
                         {
-                            String moc = ParseUtils
+                            String moc = ParseUtil
                                     .parseAttrWithSingleValue( line );
                             xcEntity.setMoc( moc );
                             continue;
@@ -57,7 +57,7 @@ public class GetXc
 
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtils
+                            String moi = ParseUtil
                                     .parseAttrWithMultiValue( line );
                             xcEntity.setMoi( moi );
                             continue;
@@ -66,42 +66,42 @@ public class GetXc
                         if( line.startsWith( "directionality" ) )
                         {
                             xcEntity.setDirectionality(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "toTermination" ) )
                         {
                             xcEntity.setToTermination(
-                                ParseUtils.parseAttrWithMultiValue( line ) );
+                                ParseUtil.parseAttrWithMultiValue( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "fromTermination" ) )
                         {
                             xcEntity.setFromTermination(
-                                ParseUtils.parseAttrWithMultiValue( line ) );
+                                ParseUtil.parseAttrWithMultiValue( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "signalType" ) )
                         {
                             xcEntity.setSignalType(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "operationalState" ) )
                         {
                             xcEntity.setOperationalState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             xcEntity.setAdministrativeState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 

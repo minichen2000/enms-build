@@ -16,7 +16,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class GetTp
 {
@@ -48,14 +48,14 @@ public class GetTp
                         line = line.trim();
                         if( line.startsWith( "managedObjectClass" ) )
                         {
-                            String moc = ParseUtils
+                            String moc = ParseUtil
                                     .parseAttrWithSingleValue( line );
                             portEntity.setMoc( moc );
                             continue;
                         }
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtils
+                            String moi = ParseUtil
                                     .parseAttrWithMultiValue( line );
                             portEntity.setMoi( moi );
                             continue;
@@ -64,42 +64,42 @@ public class GetTp
                         if( line.startsWith( "userLabel" ) )
                         {
                             portEntity.setUserLabel(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "stmLevel" ) )
                         {
                             portEntity.setStmLevel( Integer
-                                    .parseInt( ParseUtils.parseAttr( line ) ) );
+                                    .parseInt( ParseUtil.parseAttr( line ) ) );
                             continue;
                         }
 
                         if( line.startsWith( "alarmStatus" ) )
                         {
                             portEntity.setAlarmStatus(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             portEntity.setAdministrativeState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "supportedByObjectList" ) )
                         {
                             portEntity.setSupportedByObjectList(
-                                ParseUtils.parseList( line ) );
+                                ParseUtil.parseList( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "operationalState" ) )
                         {
                             portEntity.setOperationalState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 

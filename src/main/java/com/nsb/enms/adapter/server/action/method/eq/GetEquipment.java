@@ -16,7 +16,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class GetEquipment
 {
@@ -53,7 +53,7 @@ public class GetEquipment
                         line = line.trim();
                         if( line.indexOf( "managedObjectClass" ) >= 0 )
                         {
-                            String moc = ParseUtils
+                            String moc = ParseUtil
                                     .parseAttrWithSingleValue( line );
                             equipmentEntity.setMoc( moc );
                             continue;
@@ -61,7 +61,7 @@ public class GetEquipment
 
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtils
+                            String moi = ParseUtil
                                     .parseAttrWithMultiValue( line );
                             equipmentEntity.setMoi( moi );
                             continue;
@@ -70,56 +70,56 @@ public class GetEquipment
                         if( line.startsWith( "equipmentActual" ) )
                         {
                             equipmentEntity.setEquipmentActual(
-                                ParseUtils.parseAttr1( line ) );
+                                ParseUtil.parseAttr1( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "equipmentExpected" ) )
                         {
                             equipmentEntity.setEquipmentExpected(
-                                ParseUtils.parseAttr1( line ) );
+                                ParseUtil.parseAttr1( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "version" ) )
                         {
                             equipmentEntity
-                                    .setVersion( ParseUtils.parseAttr( line ) );
+                                    .setVersion( ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "availabilityStatus" ) )
                         {
                             equipmentEntity.setAvailabilityStatus(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "alarmStatus" ) )
                         {
                             equipmentEntity.setAlarmStatus(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "locationName" ) )
                         {
                             equipmentEntity.setLocationName(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "operationalState" ) )
                         {
                             equipmentEntity.setOperationalState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             equipmentEntity.setAdministrativeState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 

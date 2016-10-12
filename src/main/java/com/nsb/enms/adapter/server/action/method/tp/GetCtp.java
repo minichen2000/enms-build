@@ -18,7 +18,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.common.LayerRate;
 
 public class GetCtp {
@@ -77,7 +77,7 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("downstreamConnectivityPointer")) {
-							rsTTPId = ParseUtils.parseAttrWithMultiValue(line);
+							rsTTPId = ParseUtil.parseAttrWithMultiValue(line);
 							rsTTPId = rsTTPId.replaceAll("rsTTPId=", StringUtils.EMPTY);
 							isOk = true;
 							break;
@@ -126,7 +126,7 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("downstreamConnectivityPointer")) {
-							msTTPId = ParseUtils.parseAttrWithMultiValue(line);
+							msTTPId = ParseUtil.parseAttrWithMultiValue(line);
 							msTTPId = msTTPId.replaceAll("msTTPId=", StringUtils.EMPTY);
 							isOk = true;
 							break;
@@ -175,7 +175,7 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("downstreamConnectivityPointer=single")) {
-							protectedTTPId = ParseUtils.parseAttrWithMultiValue(line);
+							protectedTTPId = ParseUtil.parseAttrWithMultiValue(line);
 							protectedTTPId = protectedTTPId.replaceAll("protectedTTPId=", StringUtils.EMPTY);
 							isOk = true;
 							break;
@@ -227,28 +227,28 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							portEntity.setMoc(moc);
 							continue;
 						}
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							portEntity.setMoi(moi);
 							continue;
 						}
 
 						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtils.parseAttr(line));
+							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
 							continue;
 						}
 
 						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtils.parseList(line));
+							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
 							continue;
 						}
 
 						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtils.parseAttr(line));
+							portEntity.setOperationalState(ParseUtil.parseAttr(line));
 							continue;
 						}
 
@@ -327,7 +327,7 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							log.debug("moc = " + moc);
 							/*
 							 * if
@@ -338,7 +338,7 @@ public class GetCtp {
 						}
 
 						if (line.startsWith("downstreamConnectivityPointer")) {
-							ttpId = ParseUtils.parseAttrWithMultiValue(line);
+							ttpId = ParseUtil.parseAttrWithMultiValue(line);
 							log.debug("ttpId = " + ttpId);
 							ttpId = ttpId.split("/")[0];
 							ttpId = ttpId.split("=")[1];
@@ -389,28 +389,28 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							portEntity.setMoc(moc);
 							continue;
 						}
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							portEntity.setMoi(moi);
 							continue;
 						}
 
 						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtils.parseAttr(line));
+							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
 							continue;
 						}
 
 						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtils.parseList(line));
+							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
 							continue;
 						}
 
 						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtils.parseAttr(line));
+							portEntity.setOperationalState(ParseUtil.parseAttr(line));
 							continue;
 						}
 
@@ -456,28 +456,28 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							portEntity.setMoc(moc);
 							continue;
 						}
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							portEntity.setMoi(moi);
 							continue;
 						}
 
 						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtils.parseAttr(line));
+							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
 							continue;
 						}
 
 						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtils.parseList(line));
+							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
 							continue;
 						}
 
 						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtils.parseAttr(line));
+							portEntity.setOperationalState(ParseUtil.parseAttr(line));
 							continue;
 						}
 
@@ -527,28 +527,28 @@ public class GetCtp {
 					while ((line = br.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtils.parseAttrWithSingleValue(line);
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
 							portEntity.setMoc(moc);
 							continue;
 						}
 						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtils.parseAttrWithMultiValue(line);
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							portEntity.setMoi(moi);
 							continue;
 						}
 
 						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtils.parseAttr(line));
+							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
 							continue;
 						}
 
 						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtils.parseList(line));
+							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
 							continue;
 						}
 
 						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtils.parseAttr(line));
+							portEntity.setOperationalState(ParseUtil.parseAttr(line));
 							continue;
 						}
 

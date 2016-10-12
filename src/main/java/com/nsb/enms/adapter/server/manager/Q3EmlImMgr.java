@@ -17,7 +17,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.TimeUtils;
+import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
@@ -156,19 +156,19 @@ public class Q3EmlImMgr
             {
                 String id = ne.getId();
                 Date date = new Date();
-                String eventTime = TimeUtils.getLocalTmfTime( date );
+                String eventTime = TimeUtil.getLocalTmfTime( date );
                 String occureTime = eventTime;
                 NotificationSender.instance().sendAlarm(
                     String.valueOf(
                         ErrorCode.ALM_NE_MISALIGNMENT.getErrorCode() ),
                     "NE", "CRITICAL", eventTime, occureTime, "",
                     ErrorCode.ALM_NE_MISALIGNMENT.getMessage(), "NE", id, "",
-                    "", "emlim is down" );
+                    "", "emlim_" + groupId + " is unreachable" );
             }
         }
         catch( Exception e )
         {
-            log.error( "getNesByGroupId", e );
+            log.error( "sendAlarm", e );
         }
     }
 }

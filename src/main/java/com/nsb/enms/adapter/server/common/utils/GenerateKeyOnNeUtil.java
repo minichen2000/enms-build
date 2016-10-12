@@ -1,10 +1,10 @@
-package com.nsb.enms.adapter.server.common.util;
+package com.nsb.enms.adapter.server.common.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.nsb.enms.adapter.server.common.TYPES;
 
-public class GenerateKeyOnNeUtils
+public class GenerateKeyOnNeUtil
 {
     public static String generateKeyOnNe(TYPES type, String moc, String moi)
     {

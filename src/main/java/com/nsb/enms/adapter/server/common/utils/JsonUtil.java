@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.util;
+package com.nsb.enms.adapter.server.common.utils;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -16,10 +16,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-public class JsonUtils
+public class JsonUtil
 {
     private static final Logger logger = LogManager
-            .getLogger( JsonUtils.class );
+            .getLogger( JsonUtil.class );
 
     private static final ObjectMapper objectMapper;
 

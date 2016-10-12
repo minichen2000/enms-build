@@ -14,7 +14,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 
 public class GetNe
 {
@@ -47,7 +47,7 @@ public class GetNe
                         line = line.trim();
                         if( line.startsWith( "managedObjectClass" ) )
                         {
-                            String moc = ParseUtils
+                            String moc = ParseUtil
                                     .parseAttrWithSingleValue( line );
                             neEntity.setMoc( moc );
                             continue;
@@ -55,7 +55,7 @@ public class GetNe
 
                         if( line.startsWith( "managedObjectInstance" ) )
                         {
-                            String moi = ParseUtils
+                            String moi = ParseUtil
                                     .parseAttrWithMultiValue( line );
                             neEntity.setMoi( moi );
                             continue;
@@ -64,48 +64,48 @@ public class GetNe
                         if( line.startsWith( "userLabel" ) )
                         {
                             neEntity.setUserLabel(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "neType" ) )
                         {
-                            neEntity.setNeType( ParseUtils.parseAttr1( line ) );
+                            neEntity.setNeType( ParseUtil.parseAttr1( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "neRelease" ) )
                         {
                             neEntity.setNeRelease(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "locationName" ) )
                         {
                             neEntity.setLocationName(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "ntpEnabled" ) )
                         {
                             neEntity.setNtpEnabled(
-                                ParseUtils.parseBooleanAttr( line ) );
+                                ParseUtil.parseBooleanAttr( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "networkAddress" ) )
                         {
                             neEntity.setNetworkAddress(
-                                ParseUtils.parseAttrWithSingleValue( line ) );
+                                ParseUtil.parseAttrWithSingleValue( line ) );
                             continue;
                         }
 
                         if( line.startsWith( "administrativeState" ) )
                         {
                             neEntity.setAdministrativeState(
-                                ParseUtils.parseAttr( line ) );
+                                ParseUtil.parseAttr( line ) );
                             continue;
                         }
 

@@ -17,7 +17,7 @@ import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
+import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
@@ -87,7 +87,7 @@ public class NesApiServiceImpl extends NesApiService {
 	private AdpNe constructNe(NeEntity entity, String id) {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setKeyOnNe(GenerateKeyOnNeUtils.generateKeyOnNe(TYPES.NE, entity.getMoc(), entity.getMoi()));
+		ne.setKeyOnNe(GenerateKeyOnNeUtil.generateKeyOnNe(TYPES.NE, entity.getMoc(), entity.getMoi()));
 		ne.setUserLabel(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
 
@@ -131,7 +131,7 @@ public class NesApiServiceImpl extends NesApiService {
 			log.debug("ne = " + ne);
 
 			String moi = StringUtils.EMPTY;
-			moi = GenerateKeyOnNeUtils.getMoi(ne.getKeyOnNe());
+			moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 
 			if (StringUtils.isEmpty(moi)) {
 				return Response.serverError().build();
