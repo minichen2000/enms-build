@@ -1,0 +1,37 @@
+{
+    "id":null,
+    "aid":null,
+    "adapterType":null,
+    "userLabel":"test-3",
+    "nativeName":null,
+    "neType":"ne1662smc",
+    "techDomain":null,
+    "version":"2.7B",
+    "addresses":{
+        "q3Address":{
+            "address":"47000580000000000000010001002060620A021D",
+            "osMain":null,
+            "osSpare":null
+        },
+        "tl1Address":[
+
+        ],
+        "snmpAddress":{
+            "snmpAgent":null,
+            "snmpTraps":[
+
+            ]
+        }
+    },
+    "supervisionStatus":null,
+    "operationStatus":null,
+    "communicationStatus":null,
+    "alignmentStatus":null,
+    "loginname":null,
+    "password":null,
+    "coordinates":{
+        "longitude":null,
+        "latitude":null
+    },
+    "extraInfo":null
+}

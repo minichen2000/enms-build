@@ -13,35 +13,35 @@
 	<artifactId>adapter</artifactId>
 	<packaging>jar</packaging>
 
-    <properties>
-        <swagger-model-path>../common-lib/swagger_models</swagger-model-path>
-    </properties>
+	<properties>
+		<swagger-model-path>../common-lib/swagger_models</swagger-model-path>
+	</properties>
 
 	<dependencies>
-	
-	    <dependency>
-	    	<groupId>com.nsb.enms</groupId>
-	    	<artifactId>common.def</artifactId>
-	    </dependency>
-	    
-	    <dependency>
-	    	<groupId>com.nsb.enms</groupId>
-	    	<artifactId>common.enms_mq</artifactId>
-	    </dependency>
-		<dependency>
-			<groupId>com.nsb.enms</groupId>
-			<artifactId>statemachine</artifactId>			
-		</dependency>
-		
-		<dependency>
-			<groupId>com.nsb.enms</groupId>
-			<artifactId>common.util</artifactId>			
-		</dependency>
-		
+
 		<dependency>
 			<groupId>com.nsb.enms</groupId>
 			<artifactId>common.def</artifactId>
-		</dependency>		
+		</dependency>
+
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>common.enms_mq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>statemachine</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>common.util</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>common.def</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>log4j</groupId>
@@ -161,11 +161,8 @@
 			<artifactId>websocket-server</artifactId>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>org.eclipse.jetty.websocket</groupId>
-			<artifactId>websocket-servlet</artifactId>
-		</dependency>
-		 -->
+		<!-- <dependency> <groupId>org.eclipse.jetty.websocket</groupId> <artifactId>websocket-servlet</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-codegen-cli</artifactId>
@@ -334,154 +331,154 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<groupId>org.codehaus.mojo</groupId>
 				<executions>
-                    <!-- ###################################################### -->
-                    <!-- # Adapter -->
-                    <!-- Generate Adapter Model Restful Model source code -->
-                    <execution>
-                        <id>gen-adapter-model-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-Dmodels</argument>
-                                <argument>-DhideGenerationTimestamp=true</argument>
-                                <argument>-jar</argument>
-                                <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
-                                <argument>generate</argument>
-                                <argument>-i</argument>
-                                <argument>${swagger-model-path}/adapter.yaml</argument>
-                                <argument>-l</argument>
-                                <argument>jaxrs</argument>
-                                <argument>-o</argument>
-                                <argument>${swagger-api-path}</argument>
-                                <argument>-c</argument>
-                                <argument>${swagger-model-path}/config/adapter_model_config.json</argument>
-                                <argument>-s</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <!-- Generate Adapter Server Restful API source code -->
-                    <execution>
-                        <id>gen-adapter-server-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-Dapis</argument>
-                                <argument>-DsupportingFiles</argument>
-                                <argument>-DhideGenerationTimestamp=true</argument>
-                                <argument>-jar</argument>
-                                <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
-                                <argument>generate</argument>
-                                <argument>-i</argument>
-                                <argument>${swagger-model-path}/adapter.yaml</argument>
-                                <argument>-l</argument>
-                                <argument>jaxrs</argument>
-                                <argument>-o</argument>
-                                <argument>${swagger-api-path}</argument>
-                                <argument>-c</argument>
-                                <argument>${swagger-model-path}/config/adapter_server_config.json</argument>
-                                <argument>-s</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <!-- ###################################################### -->
-                    <!-- # Controller -->
-                    <!-- Generate Controller Model Restful source code -->
-                    <execution>
-                        <id>gen-ctrl-model-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-Dmodels</argument>
-                                <argument>-DhideGenerationTimestamp=true</argument>
-                                <argument>-jar</argument>
-                                <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
-                                <argument>generate</argument>
-                                <argument>-i</argument>
-                                <argument>${swagger-model-path}/controller.yaml</argument>
-                                <argument>-l</argument>
-                                <argument>jaxrs</argument>
-                                <argument>-o</argument>
-                                <argument>${swagger-api-path}</argument>
-                                <argument>-c</argument>
-                                <argument>${swagger-model-path}/config/controller_model_config.json</argument>
-                                <argument>-s</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <!-- Generate Controller Client Restful API source code -->
-                    <execution>
-                        <id>gen-ctrl-client-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-Dapis</argument>
-                                <argument>-DsupportingFiles</argument>
-                                <argument>-DhideGenerationTimestamp=true</argument>
-                                <argument>-jar</argument>
-                                <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
-                                <argument>generate</argument>
-                                <argument>-i</argument>
-                                <argument>${swagger-model-path}/controller.yaml</argument>
-                                <argument>-l</argument>
-                                <argument>java</argument>
-                                <argument>-o</argument>
-                                <argument>${swagger-api-path}</argument>
-                                <argument>-c</argument>
-                                <argument>${swagger-model-path}/config/controller_client_config.json</argument>
-                                <argument>-s</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <!-- ###################################################### -->
-                    <!-- # Notification -->
-                    <!-- Generate Notification Model Restful source code -->
-                    <execution>
-                        <id>gen-notif-model-source</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <workingDirectory>${basedir}</workingDirectory>
-                            <arguments>
-                                <argument>-Dmodels</argument>
-                                <argument>-DhideGenerationTimestamp=true</argument>
-                                <argument>-jar</argument>
-                                <argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
-                                <argument>generate</argument>
-                                <argument>-i</argument>
-                                <argument>${swagger-model-path}/notification.yaml</argument>
-                                <argument>-l</argument>
-                                <argument>jaxrs</argument>
-                                <argument>-o</argument>
-                                <argument>${swagger-api-path}</argument>
-                                <argument>-c</argument>
-                                <argument>${swagger-model-path}/config/notification_model_config.json</argument>
-                                <argument>-s</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
+					<!-- ###################################################### -->
+					<!-- # Adapter -->
+					<!-- Generate Adapter Model Restful Model source code -->
+					<execution>
+						<id>gen-adapter-model-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-Dmodels</argument>
+								<argument>-DhideGenerationTimestamp=true</argument>
+								<argument>-jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>generate</argument>
+								<argument>-i</argument>
+								<argument>${swagger-model-path}/adapter.yaml</argument>
+								<argument>-l</argument>
+								<argument>jaxrs</argument>
+								<argument>-o</argument>
+								<argument>${swagger-api-path}</argument>
+								<argument>-c</argument>
+								<argument>${swagger-model-path}/config/adapter_model_config.json</argument>
+								<argument>-s</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- Generate Adapter Server Restful API source code -->
+					<execution>
+						<id>gen-adapter-server-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-Dapis</argument>
+								<argument>-DsupportingFiles</argument>
+								<argument>-DhideGenerationTimestamp=true</argument>
+								<argument>-jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>generate</argument>
+								<argument>-i</argument>
+								<argument>${swagger-model-path}/adapter.yaml</argument>
+								<argument>-l</argument>
+								<argument>jaxrs</argument>
+								<argument>-o</argument>
+								<argument>${swagger-api-path}</argument>
+								<argument>-c</argument>
+								<argument>${swagger-model-path}/config/adapter_server_config.json</argument>
+								<argument>-s</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- ###################################################### -->
+					<!-- # Controller -->
+					<!-- Generate Controller Model Restful source code -->
+					<execution>
+						<id>gen-ctrl-model-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-Dmodels</argument>
+								<argument>-DhideGenerationTimestamp=true</argument>
+								<argument>-jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>generate</argument>
+								<argument>-i</argument>
+								<argument>${swagger-model-path}/controller.yaml</argument>
+								<argument>-l</argument>
+								<argument>jaxrs</argument>
+								<argument>-o</argument>
+								<argument>${swagger-api-path}</argument>
+								<argument>-c</argument>
+								<argument>${swagger-model-path}/config/controller_model_config.json</argument>
+								<argument>-s</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- Generate Controller Client Restful API source code -->
+					<execution>
+						<id>gen-ctrl-client-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-Dapis</argument>
+								<argument>-DsupportingFiles</argument>
+								<argument>-DhideGenerationTimestamp=true</argument>
+								<argument>-jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>generate</argument>
+								<argument>-i</argument>
+								<argument>${swagger-model-path}/controller.yaml</argument>
+								<argument>-l</argument>
+								<argument>java</argument>
+								<argument>-o</argument>
+								<argument>${swagger-api-path}</argument>
+								<argument>-c</argument>
+								<argument>${swagger-model-path}/config/controller_client_config.json</argument>
+								<argument>-s</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<!-- ###################################################### -->
+					<!-- # Notification -->
+					<!-- Generate Notification Model Restful source code -->
+					<execution>
+						<id>gen-notif-model-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>java</executable>
+							<workingDirectory>${basedir}</workingDirectory>
+							<arguments>
+								<argument>-Dmodels</argument>
+								<argument>-DhideGenerationTimestamp=true</argument>
+								<argument>-jar</argument>
+								<argument>target/swagger-codegen-cli-${swagger-codegen-cli-version}.jar</argument>
+								<argument>generate</argument>
+								<argument>-i</argument>
+								<argument>${swagger-model-path}/notification.yaml</argument>
+								<argument>-l</argument>
+								<argument>jaxrs</argument>
+								<argument>-o</argument>
+								<argument>${swagger-api-path}</argument>
+								<argument>-c</argument>
+								<argument>${swagger-model-path}/config/notification_model_config.json</argument>
+								<argument>-s</argument>
+							</arguments>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -532,6 +529,15 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
