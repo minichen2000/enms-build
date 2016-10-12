@@ -3,8 +3,12 @@ package com.nsb.enms.adapter.server.notification;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
@@ -26,6 +30,9 @@ public class NotificationSender
     private static SimpleDateFormat format = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss" );
 
+    private static final Logger log = LogManager
+            .getLogger( NotificationSender.class );
+
     private NotificationSender()
     {
 
@@ -43,7 +50,8 @@ public class NotificationSender
 
     public void init()
     {
-        int port = ConfLoader.getInstance().getInt( "NOTIF_SERVER_PORT", 8025 );
+        int port = ConfLoader.getInstance().getInt( ConfigKey.NOTIF_SERVER_PORT,
+            ConfigKey.DEFAULT_NOTIF_SERVER_PORT );
         publisher = EnmsPubFactory.createMqPub( port );
     }
 
@@ -87,57 +95,6 @@ public class NotificationSender
         publisher.sendMessage( object );
     }
 
-    private ObjectType getObjectType( String moc )
-    {
-        if( moc.contains( "NetworkElement" ) )
-        {
-            return ObjectType.NE;
-        }
-
-        if( moc.contains( "TTP" ) )
-        {
-            return ObjectType.TP;
-        }
-
-        if( moc.contains( "Equipment" ) )
-        {
-            return ObjectType.Board;
-        }
-
-        return null;
-    }
-
-    private String getObjectId( ObjectType objectType, String moc, String moi )
-    {
-        switch( objectType )
-        {
-            case NE:
-                AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-                String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.NE,
-                    moc, moi );
-                try
-                {
-                    return nesDbMgr.getIdByKeyOnNe( keyOnNe );
-                }
-                catch( Exception e )
-                {
-                    e.printStackTrace();
-                    return "";
-                }
-            case TP:
-
-                return "";
-            case Board:
-
-                return "";
-            case Connection:
-
-                return "";
-            default:
-                return null;
-        }
-    }
-
     public void sendAvcNotif( Date date, ObjectType objectType, String objectID,
             String key, String valueType, String value, String oldValue )
     {
@@ -147,7 +104,6 @@ public class NotificationSender
             key, valueType, value, oldValue );
 
         send( avc );
-        ;
     }
 
     public void sendOcNotif( Date date, ObjectType objectType, String objectID )
@@ -175,6 +131,56 @@ public class NotificationSender
             eventTime, occureTime, clearTime, probableCause, objectType,
             objectId, ackStatus, ackTime, description );
         send( alarm );
-        ;
+    }
+
+    private ObjectType getObjectType( String moc )
+    {
+        if( moc.contains( "NetworkElement" ) )
+        {
+            return ObjectType.NE;
+        }
+
+        if( moc.contains( "TTP" ) )
+        {
+            return ObjectType.TP;
+        }
+
+        if( moc.contains( "Equipment" ) )
+        {
+            return ObjectType.Equipment;
+        }
+
+        return null;
+    }
+
+    private String getObjectId( ObjectType objectType, String moc, String moi )
+    {
+        switch( objectType )
+        {
+            case NE:
+                AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+                String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.NE,
+                    moc, moi );
+                try
+                {
+                    return nesDbMgr.getIdByKeyOnNe( keyOnNe );
+                }
+                catch( Exception e )
+                {
+                    log.error( "getIdByKeOneNe", e );
+                    return "";
+                }
+            case TP:
+
+                return "";
+            case Equipment:
+
+                return "";
+            case Connection:
+
+                return "";
+            default:
+                return null;
+        }
     }
 }

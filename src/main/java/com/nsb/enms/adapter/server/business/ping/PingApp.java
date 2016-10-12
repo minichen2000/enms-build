@@ -18,8 +18,8 @@ public class PingApp
 
     private CtlSystemApi systemApi = new CtlSystemApi();
 
-    private static final int MAX_COUNT = ConfLoader.getInstance()
-            .getInt( "ADP_PING_MAX_NUM", 10 );
+    private static final int MAX_COUNT = ConfLoader.getInstance().getInt(
+        ConfigKey.ADP_PING_MAX_NUM, ConfigKey.DEFAULT_ADP_PING_MAX_NUM );
 
     private static int count = 0;
 

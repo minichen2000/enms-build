@@ -16,6 +16,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import com.nsb.enms.adapter.server.business.ping.PingApp;
 import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.statemachine.ne.NeStateMachineApp;
 import com.nsb.enms.adapter.server.filter.AccessControlFilter;
@@ -39,7 +40,7 @@ public class Main
 
         log = LogManager.getLogger( Main.class );
 
-        String ctrlUrl = ConfLoader.getInstance().getConf( "CTRL_URL", "" );
+        String ctrlUrl = ConfLoader.getInstance().getConf( ConfigKey.CTRL_URL );
         log.debug( "The ctrlUrl is " + ctrlUrl );
         initControllerApiClient( ctrlUrl );
 
@@ -54,7 +55,8 @@ public class Main
         ServletHolder servlet = new ServletHolder(
                 new ServletContainer( config ) );
 
-        int port = ConfLoader.getInstance().getInt( "ADP_PORT", 8081 );
+        int port = ConfLoader.getInstance().getInt( ConfigKey.ADP_PORT,
+            ConfigKey.DEFAULT_ADP_PORT );
         final Server server1 = new Server( port );
         ServletContextHandler context = new ServletContextHandler( server1,
                 "/*" );
@@ -88,7 +90,7 @@ public class Main
         register2Controller();
 
         String q3WSServerUri = ConfLoader.getInstance()
-                .getConf( "Q3_WS_SERVER_URI", "" );
+                .getConf( ConfigKey.Q3_WS_SERVER_URI );
         NotificationClient client = new NotificationClient( q3WSServerUri );
         client.start();
 
@@ -127,7 +129,8 @@ public class Main
 
     private static void register2Controller()
     {
-        long period = ConfLoader.getInstance().getInt( "REG_PERIOD", 60000 );
+        long period = ConfLoader.getInstance().getInt( ConfigKey.REG_PERIOD,
+            ConfigKey.DEFAULT_REG_PERIOD );
         final Timer timer = new Timer();
         final RegisterManager register = new RegisterManager();
         timer.scheduleAtFixedRate( new TimerTask()

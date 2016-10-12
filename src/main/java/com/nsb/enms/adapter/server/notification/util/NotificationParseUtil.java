@@ -302,15 +302,7 @@ public class NotificationParseUtil
     }
 
     private static EventType getEventType( String type )
-    {
-        /*
-         * switch( line ) { case "objectCreation": return
-         * EventType.OBJECT_CREATION; case "objectDeletion": return
-         * EventType.OBJECT_DELETION; case "stateChange": return
-         * EventType.STATE_CHANGE; case "attributeValueChange": return
-         * EventType.ATTRIBUTE_VALUE_CHANGE; default: return null; }
-         */
-
+    {        
         if( "objectCreation".equals( type ) )
         {
             return EventType.OBJECT_CREATION;

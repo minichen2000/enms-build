@@ -1,6 +1,7 @@
 package com.nsb.enms.adapter.server.business;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,9 +18,9 @@ import com.nsb.enms.adapter.server.common.statemachine.ne.NeStateMachineApp;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
 import com.nsb.enms.adapter.server.common.util.LayerRateConst;
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
-import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class SyncTpThread extends Thread {
@@ -55,7 +56,7 @@ public class SyncTpThread extends Thread {
 		NeStateMachineApp.instance().beforeSynchData(id);
 		syncTp();
 		NeStateMachineApp.instance().afterSynchData(id);
-
+		NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, id, "adminState", "Boolean", String.valueOf( true ), String.valueOf( false ) );
 		// update the value of alignmentStatus for ne to true
 		// updateNeAttr(id);
 
