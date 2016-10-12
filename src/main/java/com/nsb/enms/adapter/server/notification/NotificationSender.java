@@ -1,15 +1,13 @@
 package com.nsb.enms.adapter.server.notification;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
+import com.nsb.enms.adapter.server.common.util.TimeUtils;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
@@ -25,10 +23,7 @@ public class NotificationSender
 {
     private static NotificationSender inst_ = null;
 
-    private static EnmsPublisher publisher = null;
-
-    private static SimpleDateFormat format = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss" );
+    private static EnmsPublisher publisher = null;    
 
     private static final Logger log = LogManager
             .getLogger( NotificationSender.class );
@@ -60,8 +55,7 @@ public class NotificationSender
         EventType eventType = entity.getEventType();
         String eventTime = entity.getEventTime();
         ObjectType objectType = getObjectType( entity.getMoc().getMoc() );
-        String objectID = getObjectId( objectType, entity.getMoc().getMoc(),
-            entity.getMoi().getMoi() );
+        String objectID = getObjectId( objectType, entity.getMoi().getMoi() );
         switch( eventType )
         {
             case OBJECT_CREATION:
@@ -98,7 +92,7 @@ public class NotificationSender
     public void sendAvcNotif( Date date, ObjectType objectType, String objectID,
             String key, String valueType, String value, String oldValue )
     {
-        String eventTime = format.format( date );
+        String eventTime = TimeUtils.getLocalTmfTime( date );
 
         AvcBody avc = publisher.createAvcBody( eventTime, objectType, objectID,
             key, valueType, value, oldValue );
@@ -108,25 +102,24 @@ public class NotificationSender
 
     public void sendOcNotif( Date date, ObjectType objectType, String objectID )
     {
-        String eventTime = format.format( date );
+        String eventTime = TimeUtils.getLocalTmfTime( date );
         OcBody oc = publisher.createOcBody( eventTime, objectType, objectID );
         send( oc );
     }
 
-    public void createOdNotif( Date date, ObjectType objectType,
+    public void sendOdNotif( Date date, ObjectType objectType,
             String objectID )
     {
-        String eventTime = format.format( date );
+        String eventTime = TimeUtils.getLocalTmfTime( date );
         OdBody od = publisher.createOdBody( eventTime, objectType, objectID );
         send( od );
     }
 
-    public void createAlarm( String alarmCode, String alarmType,
-            String severity, Date date, String occureTime, String clearTime,
+    public void sendAlarm( String alarmCode, String alarmType,
+            String severity, String eventTime, String occureTime, String clearTime,
             String probableCause, String objectType, String objectId,
             String ackStatus, String ackTime, String description )
     {
-        String eventTime = format.format( date );
         Alarm alarm = publisher.createAlarm( alarmCode, alarmType, severity,
             eventTime, occureTime, clearTime, probableCause, objectType,
             objectId, ackStatus, ackTime, description );
@@ -135,7 +128,8 @@ public class NotificationSender
 
     private ObjectType getObjectType( String moc )
     {
-        if( moc.contains( "NetworkElement" ) )
+        if( moc.contains( "NetworkElement" )
+                || moc.toLowerCase().contains( "ne" ) )
         {
             return ObjectType.NE;
         }
@@ -150,20 +144,20 @@ public class NotificationSender
             return ObjectType.Equipment;
         }
 
-        return null;
+        return ObjectType.NE;
     }
 
-    private String getObjectId( ObjectType objectType, String moc, String moi )
+    private String getObjectId( ObjectType objectType, String moi )
     {
         switch( objectType )
         {
             case NE:
                 AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-                String keyOnNe = GenerateKeyOnNeUtils.generateKeyOnNe( TYPES.NE,
-                    moc, moi );
+                String groupId = moi.split( "/" )[0].split( "=" )[1];
+                String neId = moi.split( "/" )[1].split( "=" )[1];
                 try
                 {
-                    return nesDbMgr.getIdByKeyOnNe( keyOnNe );
+                    return groupId + "/" + neId;
                 }
                 catch( Exception e )
                 {

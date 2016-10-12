@@ -1,12 +1,12 @@
-package com.nsb.enms.adapter.server.common.statemachine.ne;
+package com.nsb.enms.adapter.server.statemachine.ne;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.squirrelframework.foundation.fsm.annotation.StateMachineParameters;
 import org.squirrelframework.foundation.fsm.impl.AbstractUntypedStateMachine;
 
-import com.nsb.enms.adapter.server.common.statemachine.ne.model.NeEvent;
-import com.nsb.enms.adapter.server.common.statemachine.ne.model.NeStateCallBack;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 @StateMachineParameters(stateType = AdpNe.OperationalStateEnum.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)

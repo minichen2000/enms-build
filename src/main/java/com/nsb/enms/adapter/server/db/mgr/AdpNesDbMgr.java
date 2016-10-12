@@ -184,19 +184,7 @@ public class AdpNesDbMgr {
             neIdList.add( Integer.parseInt( ne.getKeyOnNe().split( "/" )[1].split( "=" )[1] ) );
         }
         return neIdList;
-	}		
-	
-	public String getIdByKeyOnNe(String keyOnNe) throws Exception
-	{
-	    List<Document> docList = dbc.find(eq( "keyOnNe", keyOnNe )).into(new ArrayList<Document>());
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find ne, query by keyOnNe = " + keyOnNe);
-            return null;
-        }
-        Document doc = docList.get(0);
-        AdpNe ne = constructNe(doc);
-        return ne.getKeyOnNe();
-	}
+	}				
 
     public Response deleteNesByGroupId( int groupId ) throws Exception
     {

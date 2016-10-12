@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.statemachine.ne.model;
+package com.nsb.enms.adapter.server.statemachine.ne.model;
 
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;

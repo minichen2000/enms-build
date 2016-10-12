@@ -1,12 +1,12 @@
-package com.nsb.enms.adapter.server.common.statemachine.ne;
+package com.nsb.enms.adapter.server.statemachine.ne;
 
 import java.util.List;
 
-import com.nsb.enms.adapter.server.common.statemachine.ne.model.AdminState;
-import com.nsb.enms.adapter.server.common.statemachine.ne.model.MaintenanceState;
-import com.nsb.enms.adapter.server.common.statemachine.ne.model.NeEvent;
-import com.nsb.enms.adapter.server.common.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.statemachine.ne.model.AdminState;
+import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.statemachine.wrapper.StateMachineWrapper;
 import com.nsb.enms.statemachine.wrapper.StateMachineWrapper.STMachineBuilder;

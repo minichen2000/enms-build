@@ -1,11 +1,11 @@
-package com.nsb.enms.adapter.server.common.statemachine.ne.model;
+package com.nsb.enms.adapter.server.statemachine.ne.model;
 
-public enum AdminState {
+public enum MaintenanceState {
     TRUE(true), FALSE(false);
 
     private boolean value;
 
-    private AdminState( boolean value )
+    private MaintenanceState( boolean value )
     {
         this.value = value;
     }

@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.manager;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -16,8 +17,12 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.adapter.server.common.util.TimeUtils;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
+import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class Q3EmlImMgr
 {
@@ -43,7 +48,7 @@ public class Q3EmlImMgr
 
     public static Q3EmlImMgr instance()
     {
-        if (inst_ == null)
+        if( inst_ == null )
         {
             inst_ = new Q3EmlImMgr();
         }
@@ -128,15 +133,42 @@ public class Q3EmlImMgr
                 log.error( "DeleteNe", e );
             }
         }
-        
+
         try
         {
             nesDbMgr.deleteNesByGroupId( groupId );
         }
         catch( Exception e )
         {
-            log.error("deleteNe", e);
+            log.error( "deleteNe", e );
         }
         System.exit( 0 );
+    }
+
+    public void sendAlarm()
+    {
+        AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+        try
+        {
+            List<AdpNe> neList = nesDbMgr
+                    .getNesByGroupId( String.valueOf( groupId ) );
+            for( AdpNe ne : neList )
+            {
+                String id = ne.getId();
+                Date date = new Date();
+                String eventTime = TimeUtils.getLocalTmfTime( date );
+                String occureTime = eventTime;
+                NotificationSender.instance().sendAlarm(
+                    String.valueOf(
+                        ErrorCode.ALM_NE_MISALIGNMENT.getErrorCode() ),
+                    "NE", "CRITICAL", eventTime, occureTime, "",
+                    ErrorCode.ALM_NE_MISALIGNMENT.getMessage(), "NE", id, "",
+                    "", "emlim is down" );
+            }
+        }
+        catch( Exception e )
+        {
+            log.error( "getNesByGroupId", e );
+        }
     }
 }
