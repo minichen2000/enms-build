@@ -17,10 +17,10 @@ import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
-import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
+import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
@@ -146,7 +146,7 @@ public class TerminateTpMgr {
 
 				// TODO 读取映射文件获取层速率
 				List<String> layerRates = new ArrayList<String>();
-				layerRates.add( String.valueOf(LayerRateConst.LR_VT2_and_TU12_VC12) );
+				layerRates.add( String.valueOf(LayerRate.LR_DSR_2M) );
 				ctp.setLayerRates(layerRates);
 				tps.add(ctp);
 			}
@@ -182,7 +182,7 @@ public class TerminateTpMgr {
 
 					// TODO 读取映射文件获取层速率
 					List<String> layerRates = new ArrayList<String>();
-	                layerRates.add( String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4) );
+	                layerRates.add( String.valueOf(LayerRate.LR_VC4) );
 	                ttp.setLayerRates(layerRates);
 					tps.add(ttp);
 					break;

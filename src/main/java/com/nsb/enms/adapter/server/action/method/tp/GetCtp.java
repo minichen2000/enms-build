@@ -18,8 +18,8 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.common.util.ParseUtils;
+import com.nsb.enms.common.LayerRate;
 
 public class GetCtp {
 	private static final Logger log = LogManager.getLogger(GetCtp.class);
@@ -287,14 +287,14 @@ public class GetCtp {
 		Pair<Integer, List<TpEntity>> pair2 = new Pair<Integer, List<TpEntity>>();
 		if (moc.startsWith("e1")) {
 			tpList = getVc12Ttp(groupId, neId, ttpId);
-			pair2.setFirst(LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_2M);
+			pair2.setFirst(LayerRate.LR_DSR_2M.getVal());
 			pair2.setSecond(tpList);
 			return pair2;
 		}
 
 		if (moc.startsWith("e3")) {
 			tpList = getVc3Ttp(groupId, neId, ttpId);
-			pair2.setFirst(LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_34M);
+			pair2.setFirst(LayerRate.LR_DSR_34M.getVal());
 			pair2.setSecond(tpList);
 			return pair2;
 		}

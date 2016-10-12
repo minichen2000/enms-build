@@ -17,9 +17,9 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.statemachine.ne.NeStateMachineApp;
 import com.nsb.enms.adapter.server.common.util.GenerateKeyOnNeUtils;
 import com.nsb.enms.adapter.server.common.util.GenerateUserLabelUtils;
-import com.nsb.enms.adapter.server.common.util.LayerRateConst;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
@@ -86,9 +86,9 @@ public class SyncTpThread extends Thread {
 				newTp.setTpType(tp.getMoc());
 
 				// TODO 读取映射文件获取层速率
-				int layerRate = getLayerRate(tp);
+				LayerRate layerRate = getLayerRate(tp);
 				List<String> layerRates = new ArrayList<String>();
-				layerRates.add(String.valueOf(layerRate));
+				layerRates.add(String.valueOf( layerRate.getVal() ));
 				newTp.setLayerRates(layerRates);
 				tps.add(newTp);
 
@@ -138,7 +138,7 @@ public class SyncTpThread extends Thread {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRateConst.LR_STS3c_and_AU4_VC4));
+			layerRates.add(String.valueOf(LayerRate.LR_AU4));
 			newCtp.setLayerRates(layerRates);
 			tps.add(newCtp);
 		}
@@ -179,7 +179,7 @@ public class SyncTpThread extends Thread {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRateConst.LR_VT2_and_TU12_VC12));
+			layerRates.add(String.valueOf(LayerRate.LR_TUVC12));
 			newCtp.setLayerRates(layerRates);
 			tps.add(newCtp);
 		}
@@ -208,27 +208,27 @@ public class SyncTpThread extends Thread {
 	 * log.error("updateNeAttr", e); } }
 	 */
 
-	private int getLayerRate(TpEntity tp) {
+	private LayerRate getLayerRate(TpEntity tp) {
 		String moc = tp.getMoc();
 		if (moc.contains("OpticalSPITTP")) {
 			int stmLevel = tp.getStmLevel();
 			switch (stmLevel) {
 			case 1:
-				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM1;
+				return LayerRate.LR_STM1;
 			case 4:
-				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM4;
+				return LayerRate.LR_STM4;
 			case 16:
-				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM16;
+				return LayerRate.LR_STM16;
 			case 64:
-				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM64;
+				return LayerRate.LR_STM64;
 			case 256:
-				return LayerRateConst.LR_PHYSICAL_OPTICAL_MS_STM256;
+				return LayerRate.LR_STM256;
 			default:
-				return LayerRateConst.LR_UNDEFINE;
+				return null;
 			}
 		} else if (moc.contains("pPITTP")) {
-			return LayerRateConst.LR_PHYSICAL_ELECTRICAL_DSR_2M;
+			return LayerRate.LR_ELECTRICAL;
 		}
-		return LayerRateConst.LR_UNDEFINE;
+		return null;
 	}
 }
