@@ -13,13 +13,13 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.TpEntity;
 import com.nsb.enms.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.common.ExternalScriptType;
-import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.common.LayerRate;
+import com.nsb.enms.common.utils.Pair;
 
 public class GetCtp {
 	private static final Logger log = LogManager.getLogger(GetCtp.class);

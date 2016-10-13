@@ -11,7 +11,6 @@ import com.nsb.enms.adapter.server.action.entity.TpEntity;
 import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.adapter.server.action.method.tp.GetTp;
-import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
@@ -21,6 +20,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.util.ObjectType;
+import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
@@ -53,6 +53,10 @@ public class SyncTpThread extends Thread
         {
             log.debug( "before startSuppervision" );
             // NeStateMachineApp.instance().beforeSuperviseNe(id);
+            NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE,
+                id, "operationalState", "enum",
+                OperationalStateEnum.IDLE.toString(),
+                OperationalStateEnum.SYNCHRONIZING.toString() );
             isSuccess = StartSuppervision.startSuppervision( groupId, neId );
             log.debug( "isSuccess = " + isSuccess );
             if( !isSuccess )

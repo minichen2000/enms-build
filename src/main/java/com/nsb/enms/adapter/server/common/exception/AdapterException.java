@@ -1,5 +1,7 @@
 package com.nsb.enms.adapter.server.common.exception;
 
+import com.nsb.enms.common.ErrorCode;
+
 public class AdapterException extends Exception
 {
     private static final long serialVersionUID = 479829418798909619L;
@@ -18,8 +20,17 @@ public class AdapterException extends Exception
         type_ = type;
         errorReason_ = errorReason;
     }
+    
+    public AdapterException( AdapterExceptionType type, ErrorCode errorCode )
+    {
+        super( errorCode.getMessage() );
+        type_ = type;
+        errorCode_ = errorCode.getErrorCode();
+    }
 
     public AdapterExceptionType type_;
 
     public String errorReason_;
+    
+    public int errorCode_;
 }

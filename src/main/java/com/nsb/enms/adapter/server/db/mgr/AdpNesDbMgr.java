@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -21,6 +22,11 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
+import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.util.ObjectType;
+import com.nsb.enms.common.utils.ModelAttrPatchApp;
+import com.nsb.enms.common.utils.Pair;
+import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class AdpNesDbMgr {
@@ -63,9 +69,28 @@ public class AdpNesDbMgr {
 		return ne;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public Response updateNe(AdpNe body) throws Exception {
-		for (Field f : body.getClass().getDeclaredFields()) {
+	    
+	    ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
+	    Map<String, Object> nonNullAttrs = modelAttrPatchApp.getNonNullAttrs( body );
+	    for (String attrName : nonNullAttrs.keySet())
+	    {
+	        if (!attrName.equalsIgnoreCase( "id" ))
+            {
+	            try
+	            {
+	                AdpNe ne = getNeById( body.getId() );
+	                dbc.updateOne(new BasicDBObject("id", body.getId()),
+	                    set(attrName, nonNullAttrs.get( attrName ).toString()));
+	                Pair<String, String> pair = modelAttrPatchApp.getValueByName( ne, attrName );
+	                NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, body.getId(), attrName, pair.getSecond(), (String)nonNullAttrs.get( attrName ), pair.getFirst() );
+	            }catch (Exception e)
+	            {
+	                log.error( "updateNe", e );
+	            }
+	        }
+	    }
+		/*for (Field f : body.getClass().getDeclaredFields()) {
 			f.setAccessible(true);
 			try {
 				if (List.class == f.getType()) {
@@ -83,7 +108,7 @@ public class AdpNesDbMgr {
 			} catch (Exception e) {
 				log.error("updateNe", e);
 			}
-		}
+		}*/
 		return Response.ok().build();
 	}
 

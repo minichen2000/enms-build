@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
-import com.nsb.enms.adapter.server.common.Pair;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
@@ -22,6 +21,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class Q3EmlImMgr
