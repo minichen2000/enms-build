@@ -11,7 +11,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -19,11 +21,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.nsb.enms.restful.adapterserver.api.NesApiService;
-
 public class NesApiServiceImplTest {
 	private String url = "http://localhost:8002";
-	NesApiService service = new NesApiServiceImpl();
 	CloseableHttpClient httpclient = HttpClients.createDefault();
 
 	@BeforeClass
@@ -78,7 +77,30 @@ public class NesApiServiceImplTest {
 
 	@Test
 	public void testUpdateNe() {
-		fail("Not yet implemented");
+		try {
+			updateNe();
+		} catch (Exception e) {
+			fail("failed to getNes" + e.getMessage());
+		}
+	}
+
+	private void updateNe() throws Exception {
+		CloseableHttpResponse response = null;
+		HttpPatch httpPatch = new HttpPatch(url + "/nes");
+		InputStream is = getClass().getResourceAsStream("/updateNe.json");
+		String json = stream2String(is);
+		System.out.println(json);
+		httpPatch.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+		response = httpclient.execute(httpPatch);
+		System.out.println(response.getStatusLine());
+		HttpEntity entity = response.getEntity();
+
+		// InputStream is = entity.getContent();
+		// String json = stream2String(is);
+		// System.out.println("updateNe:" + json);
+
+		EntityUtils.consume(entity);
+		response.close();
 	}
 
 	private void getNeById(String neId) throws Exception {
@@ -114,10 +136,11 @@ public class NesApiServiceImplTest {
 	public static void main(String args[]) {
 		try {
 			NesApiServiceImplTest api = new NesApiServiceImplTest();
-//			api.getNes();
-			// api.testAddNe();
+			// api.getNes();
+//			api.testAddNe();
 			// api.testDeleteNe();
 			api.testGetNeById();
+			api.testUpdateNe();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

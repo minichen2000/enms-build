@@ -66,10 +66,10 @@ public class Bootstrap extends HttpServlet
         }
         
         NeStateMachineApp.instance().init();
-        NotificationSender.instance().init();
+//        NotificationSender.instance().init();
         
-        PingApp pingApp = new PingApp();
-        pingApp.checkPing();
+//        PingApp pingApp = new PingApp();
+//        pingApp.checkPing();
         
         Swagger swagger = new Swagger().info( info );
         new SwaggerContextService().withServletConfig( config )
