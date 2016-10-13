@@ -180,14 +180,24 @@ public class NesApiServiceImpl extends NesApiService {
 	public Response deleteNe(String neid, SecurityContext securityContext) throws NotFoundException {
 		log.debug("adapter------deleteNE");
 
-		boolean hasBussiness = checkBussiness();
-		if (hasBussiness) {
+		boolean hasBusiness = checkBusiness();
+		if (hasBusiness) {
+			AdpErrorInfo errorInfo = new AdpErrorInfo();
+			// TODO 确定错误码是否正确
+			errorInfo.setCode(ErrorCode.FAIL_NOT_OPERABLE.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_NOT_OPERABLE.getMessage());
 			return Response.serverError().build();
 		}
 
 		try {
 			AdpNe ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
+			if (StringUtils.isEmpty(ne.getId())) {
+				AdpErrorInfo errorInfo = new AdpErrorInfo();
+				errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
+				errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
+				return Response.serverError().entity(errorInfo).build();
+			}
 
 			String moi = StringUtils.EMPTY;
 			moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
@@ -221,7 +231,7 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().build();
 	}
 
-	private boolean checkBussiness() {
+	private boolean checkBusiness() {
 		return false;
 	}
 
