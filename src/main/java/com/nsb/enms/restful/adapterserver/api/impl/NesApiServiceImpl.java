@@ -160,7 +160,6 @@ public class NesApiServiceImpl extends NesApiService {
 
 		ne.setNeType(entity.getNeType());
 		ne.setOperationalState(OperationalStateEnum.IDLE);
-		ne.setAdminState(false);
 		ne.setCommunicationState(CommunicationStateEnum.UNREACHABLE);
 		ne.setSynchState(SynchStateEnum.UNSYNCHRONIZED);
 		ne.setSupervisionState(SupervisionStateEnum.UNSUPERVISED);

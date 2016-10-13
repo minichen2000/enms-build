@@ -7,8 +7,6 @@ public class NeStateCallBack
 {
     private MaintenanceState maintenanceState;
 
-    private AdminState adminState;
-
     private AdpNe.CommunicationStateEnum communicationState;
 
     private AdpNe.OperationalStateEnum operationalState;
@@ -20,14 +18,6 @@ public class NeStateCallBack
     private String id;
 
     private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-
-    public void tellMe( AdminState adminState ) throws Exception
-    {
-        AdpNe ne = new AdpNe();
-        ne.setId( id );
-        ne.setAdminState( Boolean.valueOf( adminState.toString() ) );
-        nesDbMgr.updateNe( ne );
-    }
 
     public void tellMe( AdpNe.CommunicationStateEnum communicationState )
             throws Exception
@@ -80,17 +70,7 @@ public class NeStateCallBack
     public void setId( String id )
     {
         this.id = id;
-    }
-    
-    public AdminState getAdminState()
-    {
-        return adminState;
-    }
-    
-    public void setAdminState(AdminState adminState)
-    {
-        this.adminState = adminState;
-    }
+    }      
 
     public AdpNe.CommunicationStateEnum getCommunicationState()
     {

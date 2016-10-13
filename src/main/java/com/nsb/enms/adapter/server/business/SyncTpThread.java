@@ -76,10 +76,7 @@ public class SyncTpThread extends Thread
         // NeStateMachineApp.instance().afterSynchData(id);
 
         // update the value of alignmentStatus for ne to true
-        updateNeAttr( id );
-        NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE,
-            id, "adminState", "Boolean", String.valueOf( true ),
-            String.valueOf( false ) );
+        //updateNeAttr( id );        
         NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE,
             id, "synchState", "enum", SynchStateEnum.UNSYNCHRONIZED.toString(),
             SynchStateEnum.SYNCHRONIZED.toString() );
@@ -262,7 +259,7 @@ public class SyncTpThread extends Thread
      * update the value of alignmentStatus for ne to true
      */
 
-    private void updateNeAttr( String id )
+    /*private void updateNeAttr( String id )
     {
         AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
         AdpNe ne = new AdpNe();
@@ -276,7 +273,7 @@ public class SyncTpThread extends Thread
         {
             log.error( "updateNeAttr", e );
         }
-    }
+    }*/
 
     private LayerRate getLayerRate( TpEntity tp )
     {

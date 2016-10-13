@@ -3,7 +3,6 @@ package com.nsb.enms.adapter.server.statemachine.ne;
 import java.util.List;
 
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
-import com.nsb.enms.adapter.server.statemachine.ne.model.AdminState;
 import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
@@ -24,8 +23,6 @@ public class NeStateMachineApp
     private StateMachineWrapper<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> neSyncStateMachine;
 
     private StateMachineWrapper<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
-
-    private StateMachineWrapper<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack> neAdminStateMachine;
 
     private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
@@ -104,13 +101,6 @@ public class NeStateMachineApp
         neMaintenanaceStateMachine = maintenanceStateBuilder
                 .build( MaintenanceState.FALSE );
 
-        STMachineBuilder<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack> adminStateBuilder = new STMachineBuilder<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack>(
-                NeAdminStateMachine.class );
-        adminStateBuilder.registExTransition( AdminState.FALSE, AdminState.TRUE,
-            NeEvent.E_FALSE_2_TRUE, "transState" );
-        neAdminStateMachine = adminStateBuilder.build( AdminState.FALSE );
-        
-        neAdminStateMachine.start();
         neCommunicationStateMachine.start();
         neMaintenanaceStateMachine.start();
         neOperationalStateMachine.start();
@@ -148,7 +138,6 @@ public class NeStateMachineApp
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
-        neAdminStateMachine.fire( NeEvent.E_FALSE_2_TRUE, ne );
         neSyncStateMachine.fire( NeEvent.E_UNSYNCHRONIZED_2_SYNCHRONIZED, ne );
         neOperationalStateMachine.fire( NeEvent.E_SYNCHRONIZING_2_IDLE, ne );
     }
@@ -201,10 +190,5 @@ public class NeStateMachineApp
     public StateMachineWrapper<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> getNeMaintenanaceStateMachine()
     {
         return neMaintenanaceStateMachine;
-    }
-
-    public StateMachineWrapper<NeAdminStateMachine, AdminState, NeEvent, NeStateCallBack> getNeAdminStateMachine()
-    {
-        return neAdminStateMachine;
     }
 }
