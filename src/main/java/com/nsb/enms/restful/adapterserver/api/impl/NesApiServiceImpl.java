@@ -22,10 +22,13 @@ import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
+import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
+import com.nsb.enms.restful.model.adapter.AdpErrorInfo;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
@@ -44,6 +47,11 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
+		Response response = validateParam4AddNe(body);
+		if (null != response) {
+			return response;
+		}
+
 		String location = body.getLocationName();
 		NeEntity entity = null;
 		String id = "";
@@ -82,6 +90,57 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter----------------addNe----------end");
 
 		return Response.ok().entity(ne).build();
+	}
+
+	private Response validateParam4AddNe(AdpNe body) {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		String userLabel = body.getUserLabel();
+		if (!ValidationUtil.isValidUserLabel(userLabel)) {
+			errorInfo.setCode(ErrorCode.FAIL_INVALID_USER_LABEL.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_INVALID_USER_LABEL.getMessage());
+			return Response.serverError().entity(errorInfo).build();
+		}
+
+		try {
+			boolean isExisted = nesDbMgr.isUserLabelExisted(userLabel);
+			if (isExisted) {
+				errorInfo.setCode(ErrorCode.FAIL_USER_LABEL_EXISTED.getErrorCode());
+				errorInfo.setMessage(ErrorCode.FAIL_USER_LABEL_EXISTED.getMessage());
+				return Response.serverError().entity(errorInfo).build();
+			}
+		} catch (Exception e) {
+			return Response.serverError().entity(e).build();
+		}
+
+		String locationName = body.getLocationName();
+		if (!ValidationUtil.isValidLocationName(locationName)) {
+			errorInfo.setCode(ErrorCode.FAIL_INVALID_LOCATION_NAME.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_INVALID_LOCATION_NAME.getMessage());
+			return Response.serverError().entity(errorInfo).build();
+		}
+
+		AdpQ3Address q3Address = body.getAddresses().getQ3Address();
+		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
+			errorInfo.setCode(ErrorCode.FAIL_INVALID_Q3_ADDRESS.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_INVALID_Q3_ADDRESS.getMessage());
+			return Response.serverError().entity(errorInfo).build();
+		}
+
+		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
+			errorInfo.setCode(ErrorCode.FAIL_INVALID_Q3_MAIN_ADDRESS.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_INVALID_Q3_MAIN_ADDRESS.getMessage());
+			return Response.serverError().entity(errorInfo).build();
+		}
+
+		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
+			errorInfo.setCode(ErrorCode.FAIL_INVALID_Q3_SPARE_ADDRESS.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_INVALID_Q3_SPARE_ADDRESS.getMessage());
+			return Response.serverError().entity(errorInfo).build();
+		}
+
+		// TODO 其他校验条件
+
+		return null;
 	}
 
 	private AdpNe constructNe(NeEntity entity, String id) {

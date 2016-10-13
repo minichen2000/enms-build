@@ -3,7 +3,6 @@ package com.nsb.enms.adapter.server.db.mgr;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.set;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,7 +25,6 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.common.utils.ModelAttrPatchApp;
 import com.nsb.enms.common.utils.Pair;
-import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class AdpNesDbMgr {
@@ -53,7 +51,7 @@ public class AdpNesDbMgr {
 	}
 
 	public AdpNe getNeById(String neid) throws Exception {
-		List<Document> docList = dbc.find(eq( "id", neid )).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(eq("id", neid)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne, query by neId = " + neid);
 			return new AdpNe();
@@ -64,108 +62,74 @@ public class AdpNesDbMgr {
 	}
 
 	private AdpNe constructNe(Document doc) {
-	    AdpNe ne = gson.fromJson(doc.toJson(), AdpNe.class);
-		//ne.setId(doc.getObjectId("_id").toString());
+		AdpNe ne = gson.fromJson(doc.toJson(), AdpNe.class);
+		// ne.setId(doc.getObjectId("_id").toString());
 		return ne;
 	}
 
 	public Response updateNe(AdpNe body) throws Exception {
-	    
-	    ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
-	    Map<String, Object> nonNullAttrs = modelAttrPatchApp.getNonNullAttrs( body );
-	    for (String attrName : nonNullAttrs.keySet())
-	    {
-	        if (!attrName.equalsIgnoreCase( "id" ))
-            {
-	            try
-	            {
-	                AdpNe ne = getNeById( body.getId() );
-	                dbc.updateOne(new BasicDBObject("id", body.getId()),
-	                    set(attrName, nonNullAttrs.get( attrName ).toString()));
-	                Pair<String, String> pair = modelAttrPatchApp.getValueByName( ne, attrName );
-	                NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, body.getId(), attrName, pair.getSecond(), (String)nonNullAttrs.get( attrName ), pair.getFirst() );
-	            }catch (Exception e)
-	            {
-	                log.error( "updateNe", e );
-	            }
-	        }
-	    }
-		/*for (Field f : body.getClass().getDeclaredFields()) {
-			f.setAccessible(true);
-			try {
-				if (List.class == f.getType()) {
-					if (!((List) f.get(body)).isEmpty()) {
-						// TODO 更新list中的数据
-					}
-				} else {
-					Object obj = f.get(body);
-					if (null != obj && !(obj.toString().equalsIgnoreCase("id"))) {
-						dbc.updateOne(new BasicDBObject("id", body.getId()),
-								set(f.getName(), f.get(body).toString()));
-					}
-				}
 
-			} catch (Exception e) {
-				log.error("updateNe", e);
+		ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
+		Map<String, Object> nonNullAttrs = modelAttrPatchApp.getNonNullAttrs(body);
+		for (String attrName : nonNullAttrs.keySet()) {
+			if (!attrName.equalsIgnoreCase("id")) {
+				try {
+					AdpNe ne = getNeById(body.getId());
+					dbc.updateOne(new BasicDBObject("id", body.getId()),
+							set(attrName, nonNullAttrs.get(attrName).toString()));
+					Pair<String, String> pair = modelAttrPatchApp.getValueByName(ne, attrName);
+					NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, body.getId(), attrName,
+							pair.getSecond(), (String) nonNullAttrs.get(attrName), pair.getFirst());
+				} catch (Exception e) {
+					log.error("updateNe", e);
+				}
 			}
-		}*/
+		}
+		/*
+		 * for (Field f : body.getClass().getDeclaredFields()) {
+		 * f.setAccessible(true); try { if (List.class == f.getType()) { if
+		 * (!((List) f.get(body)).isEmpty()) { // TODO 更新list中的数据 } } else {
+		 * Object obj = f.get(body); if (null != obj &&
+		 * !(obj.toString().equalsIgnoreCase("id"))) { dbc.updateOne(new
+		 * BasicDBObject("id", body.getId()), set(f.getName(),
+		 * f.get(body).toString())); } }
+		 * 
+		 * } catch (Exception e) { log.error("updateNe", e); } }
+		 */
 		return Response.ok().build();
 	}
 
-	/*public List<AdpNe> findNesByType(String netype) throws Exception {
-		Date begin = new Date();
-		List<Document> docList = dbc.find(eq("neType", netype)).into(new ArrayList<Document>());
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find ne");
-			return new ArrayList<AdpNe>();
-		}
-		List<AdpNe> neList = new ArrayList<AdpNe>();
-		for (Document doc : docList) {
-		    AdpNe ne = constructNe(doc);
-			neList.add(ne);
-			System.out.println(ne);
-		}
-		Date end = new Date();
-		log.debug("findNeByType, cost time = " + (end.getTime() - begin.getTime()));
-		return neList;
-	}
-
-	public List<AdpNe> findNeByTypeVersion(String netype, String neversion) throws Exception {
-		Date begin = new Date();
-		List<Document> docList = dbc.find(and(eq("neType", netype), eq("version", neversion)))
-				.into(new ArrayList<Document>());
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find ne");
-			return new ArrayList<AdpNe>();
-		}
-		List<AdpNe> neList = new ArrayList<AdpNe>();
-		for (Document doc : docList) {
-		    AdpNe ne = constructNe(doc);
-			neList.add(ne);
-			System.out.println(ne);
-		}
-		Date end = new Date();
-		log.debug("findNeByTypeVersion, cost time = " + (end.getTime() - begin.getTime()));
-		return neList;
-	}
-
-	public List<AdpNe> findNesByVersion(String neversion) throws Exception {
-		Date begin = new Date();
-		List<Document> docList = dbc.find(eq("version", neversion)).into(new ArrayList<Document>());
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find ne");
-			return new ArrayList<AdpNe>();
-		}
-		List<AdpNe> neList = new ArrayList<AdpNe>();
-		for (Document doc : docList) {
-		    AdpNe ne = constructNe(doc);
-			neList.add(ne);
-			System.out.println(ne);
-		}
-		Date end = new Date();
-		log.debug("findNeByVersion, cost time = " + (end.getTime() - begin.getTime()));
-		return neList;
-	}*/
+	/*
+	 * public List<AdpNe> findNesByType(String netype) throws Exception { Date
+	 * begin = new Date(); List<Document> docList = dbc.find(eq("neType",
+	 * netype)).into(new ArrayList<Document>()); if (null == docList ||
+	 * docList.isEmpty()) { log.error("can not find ne"); return new
+	 * ArrayList<AdpNe>(); } List<AdpNe> neList = new ArrayList<AdpNe>(); for
+	 * (Document doc : docList) { AdpNe ne = constructNe(doc); neList.add(ne);
+	 * System.out.println(ne); } Date end = new Date(); log.debug(
+	 * "findNeByType, cost time = " + (end.getTime() - begin.getTime())); return
+	 * neList; }
+	 * 
+	 * public List<AdpNe> findNeByTypeVersion(String netype, String neversion)
+	 * throws Exception { Date begin = new Date(); List<Document> docList =
+	 * dbc.find(and(eq("neType", netype), eq("version", neversion))) .into(new
+	 * ArrayList<Document>()); if (null == docList || docList.isEmpty()) {
+	 * log.error("can not find ne"); return new ArrayList<AdpNe>(); }
+	 * List<AdpNe> neList = new ArrayList<AdpNe>(); for (Document doc : docList)
+	 * { AdpNe ne = constructNe(doc); neList.add(ne); System.out.println(ne); }
+	 * Date end = new Date(); log.debug("findNeByTypeVersion, cost time = " +
+	 * (end.getTime() - begin.getTime())); return neList; }
+	 * 
+	 * public List<AdpNe> findNesByVersion(String neversion) throws Exception {
+	 * Date begin = new Date(); List<Document> docList = dbc.find(eq("version",
+	 * neversion)).into(new ArrayList<Document>()); if (null == docList ||
+	 * docList.isEmpty()) { log.error("can not find ne"); return new
+	 * ArrayList<AdpNe>(); } List<AdpNe> neList = new ArrayList<AdpNe>(); for
+	 * (Document doc : docList) { AdpNe ne = constructNe(doc); neList.add(ne);
+	 * System.out.println(ne); } Date end = new Date(); log.debug(
+	 * "findNeByVersion, cost time = " + (end.getTime() - begin.getTime()));
+	 * return neList; }
+	 */
 
 	public List<AdpNe> getNes() throws Exception {
 		Date begin = new Date();
@@ -176,7 +140,7 @@ public class AdpNesDbMgr {
 		}
 		List<AdpNe> neList = new ArrayList<AdpNe>();
 		for (Document doc : docList) {
-		    AdpNe ne = constructNe(doc);
+			AdpNe ne = constructNe(doc);
 			neList.add(ne);
 			System.out.println(ne);
 		}
@@ -185,50 +149,54 @@ public class AdpNesDbMgr {
 
 		return neList;
 	}
-	
-	public List<AdpNe> getNesByGroupId(String groupId) throws Exception
-	{
-	    List<AdpNe> nes = getNes();
-	    for (int i = nes.size() - 1; i >=0; i--)
-	    {
-	        String moi = nes.get( i ).getKeyOnNe(); 
-	        if (!moi.split( "/" )[0].split( "=" )[1].equals( groupId ))
-	        {
-	            nes.remove( i );
-	        }
-	    }
-	    return nes;
-	}
-	
-	public List<Integer> getNeIdsByGroupId(String groupId) throws Exception
-	{
-	    List<AdpNe> nes = getNesByGroupId( groupId );
-        List<Integer> neIdList = new ArrayList<Integer>();
-        for (AdpNe ne : nes)
-        {
-            neIdList.add( Integer.parseInt( ne.getKeyOnNe().split( "/" )[1].split( "=" )[1] ) );
-        }
-        return neIdList;
-	}				
 
-    public Response deleteNesByGroupId( int groupId ) throws Exception
-    {
-        List<AdpNe> nes = getNesByGroupId( String.valueOf( groupId ) );
-        for (AdpNe ne : nes)
-        {
-            deleteNe( ne.getId() );
-        }
-        return Response.ok().build();
-        
-    }
-
-/*	public Response getMaxNeId(SecurityContext securityContext) throws Exception {
-		String maxNeId = MaxNeIdMgr.getId();
-		return Response.ok().entity(maxNeId).build();
+	public List<AdpNe> getNesByGroupId(String groupId) throws Exception {
+		List<AdpNe> nes = getNes();
+		for (int i = nes.size() - 1; i >= 0; i--) {
+			String moi = nes.get(i).getKeyOnNe();
+			if (!moi.split("/")[0].split("=")[1].equals(groupId)) {
+				nes.remove(i);
+			}
+		}
+		return nes;
 	}
 
-	public Response updateMaxNeId(String body) throws Exception {
-		MaxNeIdMgr.updateId(body);
+	public List<Integer> getNeIdsByGroupId(String groupId) throws Exception {
+		List<AdpNe> nes = getNesByGroupId(groupId);
+		List<Integer> neIdList = new ArrayList<Integer>();
+		for (AdpNe ne : nes) {
+			neIdList.add(Integer.parseInt(ne.getKeyOnNe().split("/")[1].split("=")[1]));
+		}
+		return neIdList;
+	}
+
+	public Response deleteNesByGroupId(int groupId) throws Exception {
+		List<AdpNe> nes = getNesByGroupId(String.valueOf(groupId));
+		for (AdpNe ne : nes) {
+			deleteNe(ne.getId());
+		}
 		return Response.ok().build();
-	}*/
+
+	}
+
+	/*
+	 * public Response getMaxNeId(SecurityContext securityContext) throws
+	 * Exception { String maxNeId = MaxNeIdMgr.getId(); return
+	 * Response.ok().entity(maxNeId).build(); }
+	 * 
+	 * public Response updateMaxNeId(String body) throws Exception {
+	 * MaxNeIdMgr.updateId(body); return Response.ok().build(); }
+	 */
+
+	public boolean isUserLabelExisted(String userLabel) throws Exception {
+		Date begin = new Date();
+		List<Document> docList = dbc.find(eq("userLabel", userLabel)).into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			return false;
+		}
+		Date end = new Date();
+		log.debug("isUserLabelExisted, cost time = " + (end.getTime() - begin.getTime()));
+
+		return true;
+	}
 }
