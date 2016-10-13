@@ -19,6 +19,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
+import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
@@ -198,4 +199,19 @@ public class AdpNesDbMgr {
 
 		return true;
 	}
+
+    public String getIdByGroupAndNeId( String groupId, String neId ) throws Exception
+    {
+        List<AdpNe> nes = getNesByGroupId( groupId );
+        for (AdpNe ne : nes)
+        {
+            String keyOnNe = ne.getKeyOnNe();
+            String moi = GenerateKeyOnNeUtil.getMoi( keyOnNe );
+            if (moi.split( "/" )[1].split( "=" )[1].equals( neId ))
+            {
+                return ne.getId();
+            }
+        }
+        return null;
+    }
 }

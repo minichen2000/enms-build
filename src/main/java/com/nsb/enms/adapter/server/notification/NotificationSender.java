@@ -152,12 +152,12 @@ public class NotificationSender
         switch( objectType )
         {
             case NE:
-                AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+                AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();                
                 String groupId = moi.split( "/" )[0].split( "=" )[1];
                 String neId = moi.split( "/" )[1].split( "=" )[1];
                 try
                 {
-                    return groupId + "/" + neId;
+                    return nesDbMgr.getIdByGroupAndNeId(groupId, neId);
                 }
                 catch( Exception e )
                 {
