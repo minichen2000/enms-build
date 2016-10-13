@@ -240,6 +240,12 @@ public class NesApiServiceImpl extends NesApiService {
 		AdpNe ne = new AdpNe();
 		try {
 			ne = nesDbMgr.getNeById(neid);
+			if (StringUtils.isEmpty(ne.getId())) {
+				AdpErrorInfo errorInfo = new AdpErrorInfo();
+				errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
+				errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
+				return Response.serverError().entity(errorInfo).build();
+			}
 		} catch (Exception e) {
 			log.error("getNeById", e);
 			return Response.serverError().entity(e).build();
