@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +48,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
-		Response response = validateParam4AddNe(body);
+		Response response = validateParam(body);
 		if (null != response) {
 			return response;
 		}
@@ -92,7 +93,7 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().entity(ne).build();
 	}
 
-	private Response validateParam4AddNe(AdpNe body) {
+	private Response validateParam(AdpNe body) {
 		AdpErrorInfo errorInfo = new AdpErrorInfo();
 		String userLabel = body.getUserLabel();
 		if (!ValidationUtil.isValidUserLabel(userLabel)) {
@@ -238,12 +239,40 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response updateNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
+		Response response = validateParam(body);
+		if (null != response) {
+			return response;
+		}
+
+		response = isNeExisted(body);
+		if (Status.OK.getStatusCode() != response.getStatus()) {
+			return response;
+		}
+
 		try {
 			nesDbMgr.updateNe(body);
 		} catch (Exception e) {
 			log.error("updateNe", e);
 			return Response.serverError().entity(e).build();
 		}
+		return Response.ok().build();
+	}
+
+	private Response isNeExisted(AdpNe body) {
+		String id = body.getId();
+		try {
+			AdpNe ne = nesDbMgr.getNeById(id);
+			if (StringUtils.isEmpty(ne.getId())) {
+				AdpErrorInfo errorInfo = new AdpErrorInfo();
+				errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
+				errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
+				return Response.serverError().entity(errorInfo).build();
+			}
+		} catch (Exception e) {
+			log.error("failed to getNeById, id=" + id, e);
+			return Response.serverError().entity(e).build();
+		}
+
 		return Response.ok().build();
 	}
 

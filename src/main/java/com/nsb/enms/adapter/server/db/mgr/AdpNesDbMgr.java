@@ -68,7 +68,6 @@ public class AdpNesDbMgr {
 	}
 
 	public Response updateNe(AdpNe body) throws Exception {
-
 		ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
 		Map<String, Object> nonNullAttrs = modelAttrPatchApp.getNonNullAttrs(body);
 		for (String attrName : nonNullAttrs.keySet()) {
