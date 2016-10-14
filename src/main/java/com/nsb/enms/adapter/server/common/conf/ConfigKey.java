@@ -149,4 +149,8 @@ public class ConfigKey
     public static final String REG_PERIOD = "REG_PERIOD";
 
     public static final int DEFAULT_REG_PERIOD = 60 * 1000;
+
+    public static final String MAX_NE_OF_ONE_EMLIM = "MAX_NE_OF_ONE_EMLIM";
+    
+    public static final int DEFAULT_MAX_NE_OF_ONE_EMLIM = 200;
 }

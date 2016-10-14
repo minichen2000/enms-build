@@ -15,7 +15,6 @@ import com.nsb.enms.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
-import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
@@ -24,6 +23,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
@@ -147,7 +147,7 @@ public class NesApiServiceImpl extends NesApiService {
 	private AdpNe constructNe(NeEntity entity, String id) {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setKeyOnNe(GenerateKeyOnNeUtil.generateKeyOnNe(TYPES.NE, entity.getMoc(), entity.getMoi()));
+		ne.setKeyOnNe(GenerateKeyOnNeUtil.generateKeyOnNe(ObjectType.NE, entity.getMoc(), entity.getMoi()));
 		ne.setUserLabel(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
 

@@ -32,8 +32,9 @@ public class Q3EmlImMgr
 
     private static Q3EmlImMgr inst_ = new Q3EmlImMgr();
 
-    private static final int MAX_NE_OF_ONE_EMLIM = ConfLoader.getInstance()
-            .getInt( "MAX_NE_OF_ONE_EMLIM", 200 );
+    private static final int MAX_NE_NUM = ConfLoader.getInstance()
+            .getInt( ConfigKey.MAX_NE_OF_ONE_EMLIM,
+                ConfigKey.DEFAULT_MAX_NE_OF_ONE_EMLIM );
 
     private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
@@ -58,7 +59,6 @@ public class Q3EmlImMgr
     public void init( final int groupId ) throws AdapterException
     {
         this.groupId = groupId;
-        AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
         try
         {
             neIdList = nesDbMgr.getNeIdsByGroupId( String.valueOf( groupId ) );
@@ -84,7 +84,7 @@ public class Q3EmlImMgr
     public synchronized Pair<Integer, Integer> getGroupNeId()
             throws AdapterException
     {
-        if( neIdList.size() < MAX_NE_OF_ONE_EMLIM )
+        if( neIdList.size() < MAX_NE_NUM )
         {
             int neId = getMaxNeIdFromDb() + 1;
             updateMaxNeId2Db( neId );
@@ -137,6 +137,8 @@ public class Q3EmlImMgr
         try
         {
             nesDbMgr.deleteNesByGroupId( groupId );
+            AdpMaxNeIdMgr.updateNeIdByGroupId( String.valueOf( groupId ),
+                String.valueOf( 0 ) );
         }
         catch( Exception e )
         {
@@ -147,7 +149,6 @@ public class Q3EmlImMgr
 
     public void sendAlarm()
     {
-        AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
         try
         {
             List<AdpNe> neList = nesDbMgr

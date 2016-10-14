@@ -11,7 +11,6 @@ import com.nsb.enms.adapter.server.action.entity.TpEntity;
 import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.adapter.server.action.method.tp.GetTp;
-import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
@@ -103,7 +102,7 @@ public class SyncTpThread extends Thread
                 AdpTp newTp = new AdpTp();
                 newTp.setNeId( id );
                 String moi = tp.getMoi();
-                String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( TYPES.TP,
+                String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( ObjectType.TP,
                     tp.getMoc(), moi );
                 newTp.setId( id + ":" + keyOnNe );
                 newTp.setKeyOnNe( keyOnNe );
@@ -166,7 +165,7 @@ public class SyncTpThread extends Thread
             AdpTp newCtp = new AdpTp();
             newCtp.setNeId( id );
             String ctpMoi = ctp.getMoi();
-            String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( TYPES.TP,
+            String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( ObjectType.TP,
                 ctp.getMoc(), ctpMoi );
             newCtp.setId( id + ":" + keyOnNe );
             newCtp.setKeyOnNe( keyOnNe );
@@ -218,7 +217,7 @@ public class SyncTpThread extends Thread
             AdpTp newCtp = new AdpTp();
             newCtp.setNeId( id );
             String ctpMoi = ctp.getMoi();
-            String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( TYPES.TP,
+            String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( ObjectType.TP,
                 ctp.getMoc(), ctpMoi );
             newCtp.setId( id + ":" + keyOnNe );
             newCtp.setKeyOnNe( keyOnNe );

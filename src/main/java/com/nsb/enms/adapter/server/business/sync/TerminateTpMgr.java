@@ -13,7 +13,6 @@ import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
 import com.nsb.enms.adapter.server.action.method.tp.GetTtp;
 import com.nsb.enms.adapter.server.action.method.tp.TerminateTug3ToTu12;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
-import com.nsb.enms.adapter.server.common.TYPES;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
@@ -21,6 +20,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.common.LayerRate;
+import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
@@ -133,7 +133,7 @@ public class TerminateTpMgr {
 				AdpTp ctp = new AdpTp();
 				ctp.setNeId(neDbId);
 				String moi = tp.getMoi();
-				String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( TYPES.TP, tp.getMoc(), moi );
+				String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( ObjectType.TP, tp.getMoc(), moi );
 				ctp.setId( neDbId + ":" + keyOnNe );
 				ctp.keyOnNe( keyOnNe );
 				ctp.setAdminState( tp.getAdministrativeState() );
@@ -170,7 +170,7 @@ public class TerminateTpMgr {
 				if (moi.endsWith(vc4TtpId)) {
 				    AdpTp ttp = new AdpTp();
 					ttp.setNeId(neDbId);
-					String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( TYPES.TP, tp.getMoc(), moi );
+					String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( ObjectType.TP, tp.getMoc(), moi );
 					ttp.setId( neDbId + ":" + keyOnNe );
 					ttp.setKeyOnNe( keyOnNe );
 					ttp.setAdminState( tp.getAdministrativeState() );
