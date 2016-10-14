@@ -1,6 +1,7 @@
 package com.nsb.enms.restful.adapterserver.api.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -23,6 +24,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
+import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.common.utils.ValidationUtil;
@@ -268,6 +270,7 @@ public class NesApiServiceImpl extends NesApiService {
 			// 监管网元
 			boolean isSuccess = false;
 			try {
+			    NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, body.getId(), "operationalState", "enum", OperationalStateEnum.SUPERVISING.toString(), OperationalStateEnum.IDLE.toString() );
 				isSuccess = StartSupervision.startSupervision(Integer.valueOf(groupId), Integer.valueOf(neId));
 			} catch (Exception e) {
 				log.error("failed to supervision ne", e);
@@ -279,6 +282,7 @@ public class NesApiServiceImpl extends NesApiService {
 				errorInfo.setMessage(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getMessage());
 				return Response.serverError().entity(errorInfo).build();
 			}
+			NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, body.getId(), "operationalState", "enum", OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SUPERVISING.toString() );
 			break;
 		case SYNCHRONIZING:
 			// 同步TP

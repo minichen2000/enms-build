@@ -46,7 +46,7 @@ public class SyncTpThread extends Thread {
 		log.debug("before startSuppervision");
 		// NeStateMachineApp.instance().beforeSuperviseNe(id);
 		NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, id, "operationalState", "enum",
-				OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SYNCHRONIZING.toString());
+				OperationalStateEnum.SYNCHRONIZING.toString(), OperationalStateEnum.IDLE.toString());
 		// isSuccess = StartSuppervision.startSuppervision( groupId, neId );
 		// log.debug( "isSuccess = " + isSuccess );
 		// if( !isSuccess )
@@ -68,9 +68,9 @@ public class SyncTpThread extends Thread {
 		// update the value of alignmentStatus for ne to true
 		// updateNeAttr( id );
 		NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, id, "synchState", "enum",
-				SynchStateEnum.UNSYNCHRONIZED.toString(), SynchStateEnum.SYNCHRONIZED.toString());
+				SynchStateEnum.SYNCHRONIZED.toString(), SynchStateEnum.UNSYNCHRONIZED.toString());
 		NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, id, "operationalState", "enum",
-				OperationalStateEnum.SYNCHRONIZING.toString(), OperationalStateEnum.IDLE.toString());
+				OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SYNCHRONIZING.toString());
 
 		log.debug("sync tp end");
 	}

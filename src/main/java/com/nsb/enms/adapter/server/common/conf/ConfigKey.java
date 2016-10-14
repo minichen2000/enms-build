@@ -136,7 +136,7 @@ public class ConfigKey
 
     public static final String NOTIF_SERVER_PORT = "NOTIF_SERVER_PORT";
 
-    public static final int DEFAULT_NOTIF_SERVER_PORT = 8025;
+    public static final int DEFAULT_NOTIF_SERVER_PORT = 19000;
 
     public static final String Q3_WS_SERVER_URI = "Q3_WS_SERVER_URI";
 
@@ -144,7 +144,7 @@ public class ConfigKey
 
     public static final String ADP_PORT = "ADP_PORT";
 
-    public static final int DEFAULT_ADP_PORT = 8081;
+    public static final int DEFAULT_ADP_PORT = 9000;
 
     public static final String REG_PERIOD = "REG_PERIOD";
 
