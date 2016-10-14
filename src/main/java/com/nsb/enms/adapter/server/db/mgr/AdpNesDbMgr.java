@@ -23,7 +23,7 @@ import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
-import com.nsb.enms.common.util.ObjectType;
+import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.utils.ModelAttrPatchApp;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
@@ -78,7 +78,7 @@ public class AdpNesDbMgr {
 					dbc.updateOne(new BasicDBObject("id", body.getId()),
 							set(attrName, nonNullAttrs.get(attrName).toString()));
 					Pair<String, String> pair = modelAttrPatchApp.getValueByName(ne, attrName);
-					NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, body.getId(), attrName,
+					NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, body.getId(), attrName,
 							pair.getSecond(), (String) nonNullAttrs.get(attrName), pair.getFirst());
 				} catch (Exception e) {
 					log.error("updateNe", e);

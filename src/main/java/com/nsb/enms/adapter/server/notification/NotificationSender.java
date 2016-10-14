@@ -11,9 +11,9 @@ import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.enms_mq.EnmsPubFactory;
 import com.nsb.enms.common.enms_mq.EnmsPublisher;
-import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.restful.model.notif.Alarm;
 import com.nsb.enms.restful.model.notif.AvcBody;
 import com.nsb.enms.restful.model.notif.OcBody;
@@ -54,7 +54,7 @@ public class NotificationSender
     {
         EventType eventType = entity.getEventType();
         String eventTime = entity.getEventTime();
-        ObjectType objectType = getObjectType( entity.getMoc().getMoc() );
+        EntityType objectType = getObjectType( entity.getMoc().getMoc() );
         String objectID = getObjectId( objectType, entity.getMoi().getMoi() );
         switch( eventType )
         {
@@ -89,7 +89,7 @@ public class NotificationSender
         publisher.sendMessage( object );
     }
 
-    public void sendAvcNotif( Date date, ObjectType objectType, String objectID,
+    public void sendAvcNotif( Date date, EntityType objectType, String objectID,
             String key, String valueType, String value, String oldValue )
     {
         String eventTime = TimeUtil.getLocalTmfTime( date );
@@ -100,14 +100,14 @@ public class NotificationSender
         send( avc );
     }
 
-    public void sendOcNotif( Date date, ObjectType objectType, String objectID )
+    public void sendOcNotif( Date date, EntityType objectType, String objectID )
     {
         String eventTime = TimeUtil.getLocalTmfTime( date );
         OcBody oc = publisher.createOcBody( eventTime, objectType, objectID );
         send( oc );
     }
 
-    public void sendOdNotif( Date date, ObjectType objectType,
+    public void sendOdNotif( Date date, EntityType objectType,
             String objectID )
     {
         String eventTime = TimeUtil.getLocalTmfTime( date );
@@ -126,28 +126,28 @@ public class NotificationSender
         send( alarm );
     }
 
-    private ObjectType getObjectType( String moc )
+    private EntityType getObjectType( String moc )
     {
         if( moc.contains( "NetworkElement" )
                 || moc.toLowerCase().contains( "ne" ) )
         {
-            return ObjectType.NE;
+            return EntityType.NE;
         }
 
         if( moc.contains( "TTP" ) )
         {
-            return ObjectType.TP;
+            return EntityType.TP;
         }
 
         if( moc.contains( "Equipment" ) )
         {
-            return ObjectType.Equipment;
+            return EntityType.BOARD;
         }
 
-        return ObjectType.NE;
+        return EntityType.NE;
     }
 
-    private String getObjectId( ObjectType objectType, String moi )
+    private String getObjectId( EntityType objectType, String moi )
     {
         switch( objectType )
         {
@@ -167,10 +167,10 @@ public class NotificationSender
             case TP:
 
                 return "";
-            case Equipment:
+            case BOARD:
 
                 return "";
-            case Connection:
+            case CONNECTION:
 
                 return "";
             default:

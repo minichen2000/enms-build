@@ -15,8 +15,8 @@ import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.LayerRate;
-import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
@@ -45,7 +45,7 @@ public class SyncTpThread extends Thread {
 		// {
 		log.debug("before startSuppervision");
 		// NeStateMachineApp.instance().beforeSuperviseNe(id);
-		NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, id, "operationalState", "enum",
+		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "operationalState", "enum",
 				OperationalStateEnum.SYNCHRONIZING.toString(), OperationalStateEnum.IDLE.toString());
 		// isSuccess = StartSuppervision.startSuppervision( groupId, neId );
 		// log.debug( "isSuccess = " + isSuccess );
@@ -67,9 +67,9 @@ public class SyncTpThread extends Thread {
 
 		// update the value of alignmentStatus for ne to true
 		// updateNeAttr( id );
-		NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, id, "synchState", "enum",
+		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "synchState", "enum",
 				SynchStateEnum.SYNCHRONIZED.toString(), SynchStateEnum.UNSYNCHRONIZED.toString());
-		NotificationSender.instance().sendAvcNotif(new Date(), ObjectType.NE, id, "operationalState", "enum",
+		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "operationalState", "enum",
 				OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SYNCHRONIZING.toString());
 
 		log.debug("sync tp end");
@@ -87,7 +87,7 @@ public class SyncTpThread extends Thread {
 				AdpTp newTp = new AdpTp();
 				newTp.setNeId(id);
 				String moi = tp.getMoi();
-				String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(ObjectType.TP, tp.getMoc(), moi);
+				String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.TP, tp.getMoc(), moi);
 				newTp.setId(id + ":" + keyOnNe);
 				newTp.setKeyOnNe(keyOnNe);
 				newTp.setAdminState(tp.getAdministrativeState());
@@ -137,7 +137,7 @@ public class SyncTpThread extends Thread {
 			AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
-			String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(ObjectType.TP, ctp.getMoc(), ctpMoi);
+			String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.TP, ctp.getMoc(), ctpMoi);
 			newCtp.setId(id + ":" + keyOnNe);
 			newCtp.setKeyOnNe(keyOnNe);
 			newCtp.setAdminState(ctp.getAdministrativeState());
@@ -178,7 +178,7 @@ public class SyncTpThread extends Thread {
 			AdpTp newCtp = new AdpTp();
 			newCtp.setNeId(id);
 			String ctpMoi = ctp.getMoi();
-			String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(ObjectType.TP, ctp.getMoc(), ctpMoi);
+			String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.TP, ctp.getMoc(), ctpMoi);
 			newCtp.setId(id + ":" + keyOnNe);
 			newCtp.setKeyOnNe(keyOnNe);
 			newCtp.setAdminState(ctp.getAdministrativeState());

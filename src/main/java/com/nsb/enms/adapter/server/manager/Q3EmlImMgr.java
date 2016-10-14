@@ -18,8 +18,12 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.AlarmSeverity;
+import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
@@ -32,9 +36,8 @@ public class Q3EmlImMgr
 
     private static Q3EmlImMgr inst_ = new Q3EmlImMgr();
 
-    private static final int MAX_NE_NUM = ConfLoader.getInstance()
-            .getInt( ConfigKey.MAX_NE_OF_ONE_EMLIM,
-                ConfigKey.DEFAULT_MAX_NE_OF_ONE_EMLIM );
+    private static final int MAX_NE_NUM = ConfLoader.getInstance().getInt(
+        ConfigKey.MAX_NE_OF_ONE_EMLIM, ConfigKey.DEFAULT_MAX_NE_OF_ONE_EMLIM );
 
     private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
@@ -136,6 +139,15 @@ public class Q3EmlImMgr
 
         try
         {
+            AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
+            AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
+            List<AdpNe> nes = nesDbMgr
+                    .getNesByGroupId( String.valueOf( groupId ) );
+            for( AdpNe ne : nes )
+            {
+                xcsDbMgr.deleteXcsByNeId( ne.getId() );
+                tpsDbMgr.deleteTpsbyNeId( ne.getId() );
+            }
             nesDbMgr.deleteNesByGroupId( groupId );
             AdpMaxNeIdMgr.updateNeIdByGroupId( String.valueOf( groupId ),
                 String.valueOf( 0 ) );
@@ -162,9 +174,11 @@ public class Q3EmlImMgr
                 NotificationSender.instance().sendAlarm(
                     String.valueOf(
                         ErrorCode.ALM_NE_MISALIGNMENT.getErrorCode() ),
-                    "NE", "CRITICAL", eventTime, occureTime, "",
-                    ErrorCode.ALM_NE_MISALIGNMENT.getMessage(), "NE", id, "",
-                    "", "emlim_" + groupId + " is unreachable" );
+                    EntityType.NE.toString(), AlarmSeverity.CRITICAL.toString(),
+                    eventTime, occureTime, "",
+                    ErrorCode.ALM_NE_MISALIGNMENT.getMessage(),
+                    EntityType.NE.toString(), id, "", "",
+                    "emlim_" + groupId + " is unreachable" );
             }
         }
         catch( Exception e )

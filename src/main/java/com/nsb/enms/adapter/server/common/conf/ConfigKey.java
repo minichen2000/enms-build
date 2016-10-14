@@ -105,18 +105,6 @@ public class ConfigKey
     public static final String DEFAULT_STOP_SUPERVISION_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
             + "StopSupervision.req";
 
-    public static final String EMLIM_MONITOR_INTERVAL = "EMLIM_MONITOR_INTERVAL";
-
-    public static final int DEFAULT_EMLIM_MONITOR_INTERVAL = 300 * 1000;
-
-    public static final String ADP_PING_INTERVAL = "ADP_HEARTBEAT_INTERVAL";
-
-    public static final int DEFAULT_ADP_PING_INTERVAL = 60 * 1000;
-
-    public static final String ADP_PING_MAX_NUM = "ADP_PING_MAX_NUM";
-
-    public static final int DEFAULT_ADP_PING_MAX_NUM = 10;
-
     public static final String GET_MANAGER_ADDRESS_REQ = "GET_MANAGER_ADDRESS_REQ";
 
     public static final String DEFAULT_GET_MANAGER_ADDRESS_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
@@ -131,6 +119,28 @@ public class ConfigKey
 
     public static final String DEFAULT_GET_T_PORT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
             + "syncTTP.req";
+
+    public static final String SET_MAIN_OS_ADDR_REQ = "SET_MAIN_OS_ADDR_REQ";
+
+    public static final String DEFAULT_SET_MAIN_OS_ADDR_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
+            + "SetMainOSAddress.req";
+
+    public static final String SET_SPARE_OS_ADDR_REQ = "SET_MAIN_OS_ADDR_REQ";
+
+    public static final String DEFAULT_SET_SPARE_OS_ADDR_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
+            + "SetSpareOSAddress.req";
+
+    public static final String EMLIM_MONITOR_INTERVAL = "EMLIM_MONITOR_INTERVAL";
+
+    public static final int DEFAULT_EMLIM_MONITOR_INTERVAL = 300 * 1000;
+
+    public static final String ADP_PING_INTERVAL = "ADP_HEARTBEAT_INTERVAL";
+
+    public static final int DEFAULT_ADP_PING_INTERVAL = 60 * 1000;
+
+    public static final String ADP_PING_MAX_NUM = "ADP_PING_MAX_NUM";
+
+    public static final int DEFAULT_ADP_PING_MAX_NUM = 10;
 
     public static final String GET_T_PORT_REQ = "GET_T_PORT_REQ";
 
@@ -151,6 +161,6 @@ public class ConfigKey
     public static final int DEFAULT_REG_PERIOD = 60 * 1000;
 
     public static final String MAX_NE_OF_ONE_EMLIM = "MAX_NE_OF_ONE_EMLIM";
-    
+
     public static final int DEFAULT_MAX_NE_OF_ONE_EMLIM = 200;
 }

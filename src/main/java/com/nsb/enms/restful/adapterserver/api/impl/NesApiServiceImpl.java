@@ -25,8 +25,8 @@ import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
-import com.nsb.enms.common.util.ObjectType;
 import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
@@ -143,7 +143,7 @@ public class NesApiServiceImpl extends NesApiService {
 	private AdpNe constructNe(NeEntity entity, String id) {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setKeyOnNe(GenerateKeyOnNeUtil.generateKeyOnNe(ObjectType.NE, entity.getMoc(), entity.getMoi()));
+		ne.setKeyOnNe(GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.NE, entity.getMoc(), entity.getMoi()));
 		ne.setUserLabel(entity.getUserLabel());
 		ne.setVersion(entity.getNeRelease());
 
@@ -270,7 +270,7 @@ public class NesApiServiceImpl extends NesApiService {
 			// 监管网元
 			boolean isSuccess = false;
 			try {
-			    NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, body.getId(), "operationalState", "enum", OperationalStateEnum.SUPERVISING.toString(), OperationalStateEnum.IDLE.toString() );
+			    NotificationSender.instance().sendAvcNotif( new Date(), EntityType.NE, body.getId(), "operationalState", "enum", OperationalStateEnum.SUPERVISING.toString(), OperationalStateEnum.IDLE.toString() );
 				isSuccess = StartSupervision.startSupervision(Integer.valueOf(groupId), Integer.valueOf(neId));
 			} catch (Exception e) {
 				log.error("failed to supervision ne", e);
@@ -282,7 +282,8 @@ public class NesApiServiceImpl extends NesApiService {
 				errorInfo.setMessage(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getMessage());
 				return Response.serverError().entity(errorInfo).build();
 			}
-			NotificationSender.instance().sendAvcNotif( new Date(), ObjectType.NE, body.getId(), "operationalState", "enum", OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SUPERVISING.toString() );
+			NotificationSender.instance().sendAvcNotif( new Date(), EntityType.NE, body.getId(), "supervsionState", "enum", SupervisionStateEnum.SUPERVISIED.toString(), SupervisionStateEnum.UNSUPERVISED.toString() );
+			NotificationSender.instance().sendAvcNotif( new Date(), EntityType.NE, body.getId(), "operationalState", "enum", OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SUPERVISING.toString() );
 			break;
 		case SYNCHRONIZING:
 			// 同步TP
