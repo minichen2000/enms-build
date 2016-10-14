@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
+import com.nsb.enms.adapter.server.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.EnmsApiService;

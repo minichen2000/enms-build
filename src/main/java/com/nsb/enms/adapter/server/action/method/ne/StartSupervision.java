@@ -14,10 +14,10 @@ import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 
-public class StartSuppervision
+public class StartSupervision
 {
     private static final Logger log = LogManager
-            .getLogger( StartSuppervision.class );
+            .getLogger( StartSupervision.class );
 
     private static final int MAX_COUNT = 3;
 
@@ -27,7 +27,7 @@ public class StartSuppervision
             .getConf( ConfigKey.START_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_START_SUPERVISION_REQ );
 
-    public static boolean startSuppervision( int groupId, int neId )
+    public static boolean startSupervision( int groupId, int neId )
             throws AdapterException
     {
         boolean flag = false;

@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
-import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
+import com.nsb.enms.adapter.server.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
@@ -268,7 +268,7 @@ public class NesApiServiceImpl extends NesApiService {
 			// 监管网元
 			boolean isSuccess = false;
 			try {
-				isSuccess = StartSuppervision.startSuppervision(Integer.valueOf(groupId), Integer.valueOf(neId));
+				isSuccess = StartSupervision.startSupervision(Integer.valueOf(groupId), Integer.valueOf(neId));
 			} catch (Exception e) {
 				log.error("failed to supervision ne", e);
 			}
