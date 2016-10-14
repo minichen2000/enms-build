@@ -72,10 +72,6 @@ public class NesApiServiceImpl extends NesApiService {
 
 		log.debug(entity);
 
-		String moi = entity.getMoi();
-		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-
 		AdpNe ne = constructNe(entity, id);
 
 		try {
@@ -84,9 +80,6 @@ public class NesApiServiceImpl extends NesApiService {
 			log.error("addNe", e);
 			return Response.serverError().entity(e).build();
 		}
-
-		// new thread
-		new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), ne.getId()).start();
 
 		log.debug("adapter----------------addNe----------end");
 
@@ -263,6 +256,16 @@ public class NesApiServiceImpl extends NesApiService {
 		response = isNeExisted(body);
 		if (Status.OK.getStatusCode() != response.getStatus()) {
 			return response;
+		}
+
+		// 同步TP
+		OperationalStateEnum operationalState = body.getOperationalState();
+		if (OperationalStateEnum.SYNCHRONIZING == operationalState) {
+			String moi = GenerateKeyOnNeUtil.getMoi(body.getKeyOnNe());
+			String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+			String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+			// new thread
+			new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), body.getId()).start();
 		}
 
 		try {
