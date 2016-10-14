@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
+import com.nsb.enms.adapter.server.action.method.ne.StartSuppervision;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
@@ -258,14 +259,33 @@ public class NesApiServiceImpl extends NesApiService {
 			return response;
 		}
 
-		// 同步TP
+		String moi = GenerateKeyOnNeUtil.getMoi(body.getKeyOnNe());
+		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 		OperationalStateEnum operationalState = body.getOperationalState();
-		if (OperationalStateEnum.SYNCHRONIZING == operationalState) {
-			String moi = GenerateKeyOnNeUtil.getMoi(body.getKeyOnNe());
-			String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-			String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-			// new thread
+		switch (operationalState) {
+		case SUPERVISING:
+			// 监管网元
+			boolean isSuccess = false;
+			try {
+				isSuccess = StartSuppervision.startSuppervision(Integer.valueOf(groupId), Integer.valueOf(neId));
+			} catch (Exception e) {
+				log.error("failed to supervision ne", e);
+			}
+			log.debug("isSuccess = " + isSuccess);
+			if (!isSuccess) {
+				AdpErrorInfo errorInfo = new AdpErrorInfo();
+				errorInfo.setCode(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getErrorCode());
+				errorInfo.setMessage(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getMessage());
+				return Response.serverError().entity(errorInfo).build();
+			}
+			break;
+		case SYNCHRONIZING:
+			// 同步TP
 			new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), body.getId()).start();
+			break;
+		default:
+			break;
 		}
 
 		try {
