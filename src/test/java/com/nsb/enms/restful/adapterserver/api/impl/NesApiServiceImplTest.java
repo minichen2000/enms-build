@@ -21,12 +21,19 @@ import org.apache.http.util.EntityUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.nsb.enms.restful.adapterserver.util.LoadConf;
+
 public class NesApiServiceImplTest {
 	private String url = "http://localhost:8002";
 	CloseableHttpClient httpclient = HttpClients.createDefault();
 
 	@BeforeClass
 	public static void setUpClass() {
+	}
+
+	public NesApiServiceImplTest() {
+		url = "http://" + LoadConf.ADP_IP + ":" + LoadConf.ADP_PORT;
+		System.out.println("url = " + url);
 	}
 
 	@Test
@@ -72,7 +79,7 @@ public class NesApiServiceImplTest {
 			fail("failed to getNes" + e.getMessage());
 		}
 
-		assertTrue("create ok", true);
+		assertTrue("getNes ok", true);
 	}
 
 	@Test
@@ -80,7 +87,7 @@ public class NesApiServiceImplTest {
 		try {
 			updateNe();
 		} catch (Exception e) {
-			fail("failed to getNes" + e.getMessage());
+			fail("failed to updateNe" + e.getMessage());
 		}
 	}
 
@@ -136,11 +143,11 @@ public class NesApiServiceImplTest {
 	public static void main(String args[]) {
 		try {
 			NesApiServiceImplTest api = new NesApiServiceImplTest();
-			// api.getNes();
-//			api.testAddNe();
-			// api.testDeleteNe();
-			api.testGetNeById();
+			api.testAddNe();
+			api.testGetNes();
 			api.testUpdateNe();
+			api.testGetNeById();
+			api.testDeleteNe();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
