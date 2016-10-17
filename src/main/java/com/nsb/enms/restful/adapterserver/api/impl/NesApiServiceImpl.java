@@ -256,12 +256,22 @@ public class NesApiServiceImpl extends NesApiService {
 			return response;
 		}
 
-		response = isNeExisted(body);
-		if (Status.OK.getStatusCode() != response.getStatus()) {
-			return response;
+		AdpNe ne = null;
+		String id = body.getId();
+		try {
+			ne = nesDbMgr.getNeById(id);
+		} catch (Exception e) {
+			log.error("failed to getNeById, id=" + id, e);
+			return Response.serverError().entity(e).build();
+		}
+		if (null == ne || StringUtils.isEmpty(ne.getId())) {
+			AdpErrorInfo errorInfo = new AdpErrorInfo();
+			errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
+			errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
+			return Response.serverError().entity(errorInfo).build();
 		}
 
-		String moi = GenerateKeyOnNeUtil.getMoi(body.getKeyOnNe());
+		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 		OperationalStateEnum operationalState = body.getOperationalState();
