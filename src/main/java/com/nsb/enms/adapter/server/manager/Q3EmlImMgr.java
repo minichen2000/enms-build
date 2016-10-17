@@ -173,13 +173,10 @@ public class Q3EmlImMgr
                 String eventTime = TimeUtil.getLocalTmfTime( date );
                 String occureTime = eventTime;
                 NotificationSender.instance().sendAlarm(
-                    String.valueOf(
-                        ErrorCode.ALM_NE_MISALIGNMENT.getErrorCode() ),
-                    AlarmType.ALM_COMMUNICATION.toString(), AlarmSeverity.CRITICAL.toString(),
-                    eventTime, occureTime, "",
-                    ErrorCode.ALM_NE_MISALIGNMENT.getMessage(),
-                    EntityType.NE.toString(), id, "", "",
-                    "emlim_" + groupId + " is unreachable" );
+                    ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,
+                    AlarmSeverity.MAJOR, eventTime, occureTime, "", "",
+                    EntityType.NE, id, "", "",
+                    ErrorCode.ALM_NE_MISALIGNMENT.getMessage() );
             }
         }
         catch( Exception e )

@@ -11,7 +11,10 @@ import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.common.AlarmSeverity;
+import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
+import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.enms_mq.EnmsPubFactory;
 import com.nsb.enms.common.enms_mq.EnmsPublisher;
 import com.nsb.enms.restful.model.notif.Alarm;
@@ -115,9 +118,9 @@ public class NotificationSender
         send( od );
     }
 
-    public void sendAlarm( String alarmCode, String alarmType,
-            String severity, String eventTime, String occureTime, String clearTime,
-            String probableCause, String objectType, String objectId,
+    public void sendAlarm( ErrorCode alarmCode, AlarmType alarmType,
+            AlarmSeverity severity, String eventTime, String occureTime, String clearTime,
+            String probableCause, EntityType objectType, String objectId,
             String ackStatus, String ackTime, String description )
     {
         Alarm alarm = publisher.createAlarm( alarmCode, alarmType, severity,

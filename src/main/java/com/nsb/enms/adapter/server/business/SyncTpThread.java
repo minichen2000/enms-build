@@ -13,11 +13,13 @@ import com.nsb.enms.adapter.server.action.method.tp.GetTp;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
+import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.utils.Pair;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -66,7 +68,11 @@ public class SyncTpThread extends Thread {
 		// NeStateMachineApp.instance().afterSynchData(id);
 
 		// update the value of alignmentStatus for ne to true
-		// updateNeAttr( id );
+		AdpNe ne = new AdpNe();
+		ne.setId( id );
+		ne.setSynchState( SynchStateEnum.SYNCHRONIZED );
+		ne.setOperationalState( OperationalStateEnum.IDLE );
+		updateNeAttr( ne );
 		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "synchState", "enum",
 				SynchStateEnum.SYNCHRONIZED.toString(), SynchStateEnum.UNSYNCHRONIZED.toString());
 		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "operationalState", "enum",
@@ -214,12 +220,16 @@ public class SyncTpThread extends Thread {
 	 * update the value of alignmentStatus for ne to true
 	 */
 
-	/*
-	 * private void updateNeAttr( String id ) { AdpNesDbMgr nesDbMgr = new
-	 * AdpNesDbMgr(); AdpNe ne = new AdpNe(); ne.setId( id ); ne.setAdminState(
-	 * true ); try { nesDbMgr.updateNe( ne ); } catch( Exception e ) {
-	 * log.error( "updateNeAttr", e ); } }
-	 */
+	
+	 private void updateNeAttr( AdpNe ne ) {
+	     AdpNesDbMgr nesDbMgr = new AdpNesDbMgr(); 
+	     try { 
+	         nesDbMgr.updateNe( ne ); 
+	     } catch( Exception e ) {
+	         log.error( "updateNeAttr", e ); 
+	     } 
+	 }
+	 
 
 	private LayerRate getLayerRate(TpEntity tp) {
 		String moc = tp.getMoc();

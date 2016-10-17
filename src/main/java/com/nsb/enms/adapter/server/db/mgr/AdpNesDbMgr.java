@@ -6,7 +6,6 @@ import static com.mongodb.client.model.Updates.set;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -24,8 +23,6 @@ import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.EntityType;
-import com.nsb.enms.common.utils.ModelAttrPatchApp;
-import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class AdpNesDbMgr {
@@ -69,22 +66,45 @@ public class AdpNesDbMgr {
 	}
 
 	public Response updateNe(AdpNe body) throws Exception {
-		ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
+	    String id = body.getId();
+	    AdpNe ne = getNeById( id );
+	    if (body.getLocationName() != null && body.getLocationName().equals( ne.getLocationName() ))
+	    {
+	        dbc.updateOne( new BasicDBObject("id", id),
+                            set("locationName", body.getLocationName()) );
+	        NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "locationName",
+                "String", body.getLocationName(), ne.getLocationName());
+	    }
+	    
+	    if (body.getUserLabel() != null && body.getUserLabel().equals( ne.getUserLabel() ))
+	    {
+	        dbc.updateOne( new BasicDBObject("id", id),
+                set("userLabel", body.getLocationName()) );
+	        NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "userLabel",
+	            "String", body.getUserLabel(), ne.getUserLabel());
+	    }
+	    
+	    if (body.getAddresses() != null && body.getAddresses().equals( ne.getAddresses() ))
+	    {
+	        dbc.updateOne( new BasicDBObject("id", id),
+                set("addresses", body.getAddresses()) );
+	        NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "addresses",
+                "AdpAddress", body.getAddresses().toString(), ne.getAddresses().toString());
+	    }
+	    
+	    
+		/*ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
 		Map<String, Object> nonNullAttrs = modelAttrPatchApp.getNonNullAttrs(body);
 		for (String attrName : nonNullAttrs.keySet()) {
 			if (!attrName.equalsIgnoreCase("id")) {
-				try {
-					AdpNe ne = getNeById(body.getId());
-					dbc.updateOne(new BasicDBObject("id", body.getId()),
-							set(attrName, nonNullAttrs.get(attrName).toString()));
-					Pair<String, String> pair = modelAttrPatchApp.getValueByName(ne, attrName);
-					NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, body.getId(), attrName,
+				AdpNe ne = getNeById(body.getId());
+				dbc.updateOne(new BasicDBObject("id", body.getId()),
+						set(attrName, nonNullAttrs.get(attrName).toString()));
+				Pair<String, String> pair = modelAttrPatchApp.getValueByName(ne, attrName);
+				NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, body.getId(), attrName,
 							pair.getSecond(), (String) nonNullAttrs.get(attrName), pair.getFirst());
-				} catch (Exception e) {
-					log.error("updateNe", e);
-				}
 			}
-		}
+		}*/
 		/*
 		 * for (Field f : body.getClass().getDeclaredFields()) {
 		 * f.setAccessible(true); try { if (List.class == f.getType()) { if
