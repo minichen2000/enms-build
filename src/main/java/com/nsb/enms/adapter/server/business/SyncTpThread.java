@@ -100,7 +100,7 @@ public class SyncTpThread extends Thread {
 				// TODO 读取映射文件获取层速率
 				LayerRate layerRate = getLayerRate(tp);
 				List<String> layerRates = new ArrayList<String>();
-				layerRates.add(String.valueOf(layerRate.getVal()));
+				layerRates.add(String.valueOf(layerRate.toInt()));
 				newTp.setLayerRates(layerRates);
 				tps.add(newTp);
 

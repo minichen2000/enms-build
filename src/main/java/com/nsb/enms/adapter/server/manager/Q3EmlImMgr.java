@@ -23,6 +23,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.AlarmSeverity;
+import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
@@ -174,7 +175,7 @@ public class Q3EmlImMgr
                 NotificationSender.instance().sendAlarm(
                     String.valueOf(
                         ErrorCode.ALM_NE_MISALIGNMENT.getErrorCode() ),
-                    EntityType.NE.toString(), AlarmSeverity.CRITICAL.toString(),
+                    AlarmType.ALM_COMMUNICATION.toString(), AlarmSeverity.CRITICAL.toString(),
                     eventTime, occureTime, "",
                     ErrorCode.ALM_NE_MISALIGNMENT.getMessage(),
                     EntityType.NE.toString(), id, "", "",
