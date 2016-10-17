@@ -1,24 +1,22 @@
 package com.nsb.enms.adapter.server.filter;
 
 import java.io.IOException;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MultivaluedMap;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletResponse;
+public class AccessControlFilter implements ContainerResponseFilter
+{
+    @Override
+    public void filter( ContainerRequestContext requestContext,
+            ContainerResponseContext responseContext ) throws IOException
+    {
+        MultivaluedMap<String, Object> headers = responseContext.getHeaders();
 
-public class AccessControlFilter implements javax.servlet.Filter {
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		HttpServletResponse res = (HttpServletResponse) response;
-		res.addHeader("Access-Control-Allow-Origin", "*");
-		res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-		res.addHeader("Access-Control-Allow-Headers",
-				"Access-Control-Allow-Origin,Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers");
-		chain.doFilter(request, response);
-	}
-
-	public void destroy() {
-	}
-
-	public void init(FilterConfig filterConfig) throws ServletException {
-	}
+        headers.add( "Access-Control-Allow-Origin", "*" );
+        headers.add( "Access-Control-Allow-Methods", "GET, POST, DELETE, PUT" );
+        headers.add( "Access-Control-Allow-Headers",
+            "X-Requested-With, Content-Type, Accept, Origin, access-control-allow-origin" );
+    }
 }
