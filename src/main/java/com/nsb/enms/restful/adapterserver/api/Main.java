@@ -57,8 +57,8 @@ public class Main
 
         int port = ConfLoader.getInstance().getInt( ConfigKey.ADP_PORT,
             ConfigKey.DEFAULT_ADP_PORT );
-        final Server server1 = new Server( port );
-        ServletContextHandler context = new ServletContextHandler( server1,
+        final Server server = new Server( port );
+        ServletContextHandler context = new ServletContextHandler( server,
                 "/*" );
         context.addServlet( servlet, "/*" );
         new Thread( new Runnable()
@@ -71,8 +71,8 @@ public class Main
                 {
                     try
                     {
-                        server1.start();
-                        server1.join();
+                        server.start();
+                        server.join();
                     }
                     catch( Exception e )
                     {
@@ -81,7 +81,7 @@ public class Main
                 }
                 finally
                 {
-                    server1.destroy();
+                    server.destroy();
                 }
 
             }

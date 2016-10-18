@@ -68,7 +68,7 @@ public class AdpNesDbMgr {
 	public Response updateNe(AdpNe body) throws Exception {
 	    String id = body.getId();
 	    AdpNe ne = getNeById( id );
-	    if (body.getLocationName() != null && body.getLocationName().equals( ne.getLocationName() ))
+	    if (body.getLocationName() != null && !body.getLocationName().equals( ne.getLocationName() ))
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
                             set("locationName", body.getLocationName()) );
@@ -76,7 +76,7 @@ public class AdpNesDbMgr {
                 "String", body.getLocationName(), ne.getLocationName());
 	    }
 	    
-	    if (body.getUserLabel() != null && body.getUserLabel().equals( ne.getUserLabel() ))
+	    if (body.getUserLabel() != null && !body.getUserLabel().equals( ne.getUserLabel() ))
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
                 set("userLabel", body.getLocationName()) );
@@ -84,7 +84,7 @@ public class AdpNesDbMgr {
 	            "String", body.getUserLabel(), ne.getUserLabel());
 	    }
 	    
-	    if (body.getAddresses() != null && body.getAddresses().equals( ne.getAddresses() ))
+	    if (body.getAddresses() != null && !body.getAddresses().equals( ne.getAddresses() ))
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
                 set("addresses", body.getAddresses()) );
