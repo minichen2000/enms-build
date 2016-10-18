@@ -1,7 +1,6 @@
 package com.nsb.enms.adapter.server.business;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +46,7 @@ public class SyncTpThread extends Thread {
 		// {
 		log.debug("before startSuppervision");
 		// NeStateMachineApp.instance().beforeSuperviseNe(id);
-		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "operationalState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
 				OperationalStateEnum.SYNCHRONIZING.toString(), OperationalStateEnum.IDLE.toString());
 		// isSuccess = StartSuppervision.startSuppervision( groupId, neId );
 		// log.debug( "isSuccess = " + isSuccess );
@@ -73,9 +72,9 @@ public class SyncTpThread extends Thread {
 		ne.setSynchState( SynchStateEnum.SYNCHRONIZED );
 		ne.setOperationalState( OperationalStateEnum.IDLE );
 		updateNeAttr( ne );
-		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "synchState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum",
 				SynchStateEnum.SYNCHRONIZED.toString(), SynchStateEnum.UNSYNCHRONIZED.toString());
-		NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "operationalState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
 				OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SYNCHRONIZING.toString());
 
 		log.debug("sync tp end");

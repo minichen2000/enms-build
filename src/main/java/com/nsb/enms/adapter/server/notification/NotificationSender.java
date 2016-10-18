@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.notification;
 
-import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +25,7 @@ public class NotificationSender
 {
     private static NotificationSender inst_ = null;
 
-    private static EnmsPublisher publisher = null;    
+    private static EnmsPublisher publisher = null;
 
     private static final Logger log = LogManager
             .getLogger( NotificationSender.class );
@@ -92,10 +91,10 @@ public class NotificationSender
         publisher.sendMessage( object );
     }
 
-    public void sendAvcNotif( Date date, EntityType objectType, String objectID,
+    public void sendAvcNotif( EntityType objectType, String objectID,
             String key, String valueType, String value, String oldValue )
     {
-        String eventTime = TimeUtil.getLocalTmfTime( date );
+        String eventTime = TimeUtil.getLocalTmfTime();
 
         AvcBody avc = publisher.createAvcBody( eventTime, objectType, objectID,
             key, valueType, value, oldValue );
@@ -103,25 +102,25 @@ public class NotificationSender
         send( avc );
     }
 
-    public void sendOcNotif( Date date, EntityType objectType, String objectID )
+    public void sendOcNotif( EntityType objectType, String objectID )
     {
-        String eventTime = TimeUtil.getLocalTmfTime( date );
+        String eventTime = TimeUtil.getLocalTmfTime();
         OcBody oc = publisher.createOcBody( eventTime, objectType, objectID );
         send( oc );
     }
 
-    public void sendOdNotif( Date date, EntityType objectType,
-            String objectID )
+    public void sendOdNotif( EntityType objectType, String objectID )
     {
-        String eventTime = TimeUtil.getLocalTmfTime( date );
+        String eventTime = TimeUtil.getLocalTmfTime();
         OdBody od = publisher.createOdBody( eventTime, objectType, objectID );
         send( od );
     }
 
     public void sendAlarm( ErrorCode alarmCode, AlarmType alarmType,
-            AlarmSeverity severity, String eventTime, String occureTime, String clearTime,
-            String probableCause, EntityType objectType, String objectId,
-            String ackStatus, String ackTime, String description )
+            AlarmSeverity severity, String eventTime, String occureTime,
+            String clearTime, String probableCause, EntityType objectType,
+            String objectId, String ackStatus, String ackTime,
+            String description )
     {
         Alarm alarm = publisher.createAlarm( alarmCode, alarmType, severity,
             eventTime, occureTime, clearTime, probableCause, objectType,
@@ -155,12 +154,12 @@ public class NotificationSender
         switch( objectType )
         {
             case NE:
-                AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();                
+                AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
                 String groupId = moi.split( "/" )[0].split( "=" )[1];
                 String neId = moi.split( "/" )[1].split( "=" )[1];
                 try
                 {
-                    return nesDbMgr.getIdByGroupAndNeId(groupId, neId);
+                    return nesDbMgr.getIdByGroupAndNeId( groupId, neId );
                 }
                 catch( Exception e )
                 {

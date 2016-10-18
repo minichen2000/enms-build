@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.manager;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
@@ -169,8 +168,7 @@ public class Q3EmlImMgr
             for( AdpNe ne : neList )
             {
                 String id = ne.getId();
-                Date date = new Date();
-                String eventTime = TimeUtil.getLocalTmfTime( date );
+                String eventTime = TimeUtil.getLocalTmfTime();
                 String occureTime = eventTime;
                 NotificationSender.instance().sendAlarm(
                     ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,

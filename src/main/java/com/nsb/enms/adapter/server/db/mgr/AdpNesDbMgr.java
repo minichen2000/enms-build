@@ -72,7 +72,7 @@ public class AdpNesDbMgr {
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
                             set("locationName", body.getLocationName()) );
-	        NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "locationName",
+	        NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "locationName",
                 "String", body.getLocationName(), ne.getLocationName());
 	    }
 	    
@@ -80,7 +80,7 @@ public class AdpNesDbMgr {
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
                 set("userLabel", body.getLocationName()) );
-	        NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "userLabel",
+	        NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "userLabel",
 	            "String", body.getUserLabel(), ne.getUserLabel());
 	    }
 	    
@@ -88,7 +88,7 @@ public class AdpNesDbMgr {
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
                 set("addresses", body.getAddresses()) );
-	        NotificationSender.instance().sendAvcNotif(new Date(), EntityType.NE, id, "addresses",
+	        NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "addresses",
                 "AdpAddress", body.getAddresses().toString(), ne.getAddresses().toString());
 	    }
 	    
