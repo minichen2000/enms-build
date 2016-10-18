@@ -7,22 +7,22 @@ import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.statemachine.wrapper.StateMachineWrapper;
-import com.nsb.enms.statemachine.wrapper.StateMachineWrapper.STMachineBuilder;
+import com.nsb.enms.statemachine.component.StateMachine;
+import com.nsb.enms.statemachine.component.StateMachine.StateMachineBuilder;
 
 public class NeStateMachineApp
 {
     private static NeStateMachineApp inst_ = new NeStateMachineApp();
 
-    private StateMachineWrapper<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> neOperationalStateMachine;
+    private StateMachine<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> neOperationalStateMachine;
 
-    private StateMachineWrapper<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> neCommunicationStateMachine;
+    private StateMachine<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> neCommunicationStateMachine;
 
-    private StateMachineWrapper<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> neSupervisionStateMachine;
+    private StateMachine<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> neSupervisionStateMachine;
 
-    private StateMachineWrapper<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> neSyncStateMachine;
+    private StateMachine<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> neSyncStateMachine;
 
-    private StateMachineWrapper<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
+    private StateMachine<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
 
     private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
@@ -42,7 +42,7 @@ public class NeStateMachineApp
 
     public void init()
     {
-        STMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> operationalStateBuilder = new STMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack>(
+        StateMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> operationalStateBuilder = new StateMachineBuilder<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack>(
                 NeOperationalStateMachine.class );
         operationalStateBuilder.registExTransition(
             AdpNe.OperationalStateEnum.IDLE,
@@ -63,7 +63,7 @@ public class NeStateMachineApp
         neOperationalStateMachine = operationalStateBuilder
                 .build( AdpNe.OperationalStateEnum.IDLE );
 
-        STMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> communicationStateBuilder = new STMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack>(
+        StateMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> communicationStateBuilder = new StateMachineBuilder<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack>(
                 NeCommunicationStateMachine.class );
         communicationStateBuilder.registExTransition(
             AdpNe.CommunicationStateEnum.UNREACHABLE,
@@ -76,7 +76,7 @@ public class NeStateMachineApp
         neCommunicationStateMachine = communicationStateBuilder
                 .build( AdpNe.CommunicationStateEnum.UNREACHABLE );
 
-        STMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> supervisionStateBuilder = new STMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack>(
+        StateMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> supervisionStateBuilder = new StateMachineBuilder<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack>(
                 NeSupervisionStateMachine.class );
         supervisionStateBuilder.registExTransition(
             AdpNe.SupervisionStateEnum.UNSUPERVISED,
@@ -85,7 +85,7 @@ public class NeStateMachineApp
         neSupervisionStateMachine = supervisionStateBuilder
                 .build( AdpNe.SupervisionStateEnum.UNSUPERVISED );
 
-        STMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> syncStateBuilder = new STMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack>(
+        StateMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> syncStateBuilder = new StateMachineBuilder<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack>(
                 NeSyncStateMachine.class );
         syncStateBuilder.registExTransition(
             AdpNe.SynchStateEnum.UNSYNCHRONIZED,
@@ -94,18 +94,18 @@ public class NeStateMachineApp
         neSyncStateMachine = syncStateBuilder
                 .build( AdpNe.SynchStateEnum.UNSYNCHRONIZED );
 
-        STMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> maintenanceStateBuilder = new STMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack>(
+        StateMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> maintenanceStateBuilder = new StateMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack>(
                 NeMaintenanceStateMachine.class );
         maintenanceStateBuilder.registExTransition( MaintenanceState.FALSE,
             MaintenanceState.TRUE, NeEvent.E_FALSE_2_TRUE, "transState" );
         neMaintenanaceStateMachine = maintenanceStateBuilder
                 .build( MaintenanceState.FALSE );
 
-        neCommunicationStateMachine.start();
+        /*neCommunicationStateMachine.start();
         neMaintenanaceStateMachine.start();
         neOperationalStateMachine.start();
         neSupervisionStateMachine.start();
-        neSyncStateMachine.start();
+        neSyncStateMachine.start();*/
     }
 
     public void beforeSuperviseNe( String id )
@@ -167,27 +167,27 @@ public class NeStateMachineApp
 
     }
 
-    public StateMachineWrapper<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> getNeOperationalStateMachine()
+    public StateMachine<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> getNeOperationalStateMachine()
     {
         return neOperationalStateMachine;
     }
 
-    public StateMachineWrapper<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> getNeCommunicationStateMachine()
+    public StateMachine<NeCommunicationStateMachine, AdpNe.CommunicationStateEnum, NeEvent, NeStateCallBack> getNeCommunicationStateMachine()
     {
         return neCommunicationStateMachine;
     }
 
-    public StateMachineWrapper<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> getNeSupervisionStateMachine()
+    public StateMachine<NeSupervisionStateMachine, AdpNe.SupervisionStateEnum, NeEvent, NeStateCallBack> getNeSupervisionStateMachine()
     {
         return neSupervisionStateMachine;
     }
 
-    public StateMachineWrapper<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> getNeSyncStateMachine()
+    public StateMachine<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> getNeSyncStateMachine()
     {
         return neSyncStateMachine;
     }
 
-    public StateMachineWrapper<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> getNeMaintenanaceStateMachine()
+    public StateMachine<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> getNeMaintenanaceStateMachine()
     {
         return neMaintenanaceStateMachine;
     }
