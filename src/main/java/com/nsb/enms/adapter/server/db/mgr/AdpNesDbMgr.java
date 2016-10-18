@@ -24,6 +24,7 @@ import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 
 public class AdpNesDbMgr {
 	private final static Logger log = LogManager.getLogger(AdpNesDbMgr.class);
@@ -79,17 +80,60 @@ public class AdpNesDbMgr {
 	    if (body.getUserLabel() != null && !body.getUserLabel().equals( ne.getUserLabel() ))
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
-                set("userLabel", body.getLocationName()) );
+                set("userLabel", body.getUserLabel()) );
 	        NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "userLabel",
 	            "String", body.getUserLabel(), ne.getUserLabel());
 	    }
 	    
-	    if (body.getAddresses() != null && !body.getAddresses().equals( ne.getAddresses() ))
+	    if (body.getSupervisionState() != null && !body.getSupervisionState().equals( ne.getSupervisionState() ))
 	    {
 	        dbc.updateOne( new BasicDBObject("id", id),
-                set("addresses", body.getAddresses()) );
-	        NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "addresses",
-                "AdpAddress", body.getAddresses().toString(), ne.getAddresses().toString());
+                set("supervisionState", body.getSupervisionState().name()) );
+            NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervisionState",
+                "enum", body.getSupervisionState().name(), ne.getSupervisionState().name());
+	    }
+	    
+	    if (body.getSynchState() != null && !body.getSynchState().equals( ne.getSynchState() ))
+        {
+            dbc.updateOne( new BasicDBObject("id", id),
+                set("synchState", body.getSupervisionState().name()) );
+            NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState",
+                "enum", body.getSynchState().name(), ne.getSynchState().name());
+        }
+	    
+	    if (body.getAddresses() != null && !body.getAddresses().equals( ne.getAddresses() ))
+	    {
+	        AdpQ3Address q3Address = body.getAddresses().getQ3Address();
+	        if (q3Address != null && !q3Address.equals( ne.getAddresses().getQ3Address() ))
+	        {
+	            String address = q3Address.getAddress();
+	            String osMain = q3Address.getOsMain();
+	            String osSpare = q3Address.getOsSpare();
+	            if (address != null && !address.equals( ne.getAddresses().getQ3Address().getAddress() ))
+	            {
+	                dbc.updateOne( new BasicDBObject("id", id),
+	                    set("addresses.q3Address.address", body.getAddresses().getQ3Address().getAddress()) );
+	                NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "addresses.q3Address.address",
+	                    "String", body.getAddresses().getQ3Address().getAddress(), ne.getAddresses().getQ3Address().getAddress());
+	            }
+	            
+	            if (osMain != null && !osMain.equals( ne.getAddresses().getQ3Address().getOsMain() ))
+                {
+                    dbc.updateOne( new BasicDBObject("id", id),
+                        set("addresses.q3Address.osMain", body.getAddresses().getQ3Address().getOsMain()) );
+                    NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "addresses.q3Address.osMain",
+                        "String", body.getAddresses().getQ3Address().getOsMain(), ne.getAddresses().getQ3Address().getOsMain());
+                }
+	            
+	            if (osSpare != null && !osSpare.equals( ne.getAddresses().getQ3Address().getOsSpare() ))
+                {
+                    dbc.updateOne( new BasicDBObject("id", id),
+                        set("addresses.q3Address.osSpare", body.getAddresses().getQ3Address().getOsSpare()) );
+                    NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "addresses.q3Address.osSpare",
+                        "String", body.getAddresses().getQ3Address().getOsSpare(), ne.getAddresses().getQ3Address().getOsSpare());
+                }
+	        }
+	        
 	    }
 	    
 	    

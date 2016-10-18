@@ -293,7 +293,7 @@ public class NesApiServiceImpl extends NesApiService {
 			boolean isSuccess = false;
 			try {
 				NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-						"enum", OperationalStateEnum.SUPERVISING.toString(), OperationalStateEnum.IDLE.toString());
+						"enum", OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
 				isSuccess = StartSupervision.startSupervision(Integer.valueOf(groupId), Integer.valueOf(neId));
 			} catch (Exception e) {
 				log.error("failed to supervision ne", e);
@@ -313,9 +313,9 @@ public class NesApiServiceImpl extends NesApiService {
 				return Response.serverError().entity(errorInfo).build();
 			}
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "supervsionState",
-					"enum", SupervisionStateEnum.SUPERVISIED.toString(), SupervisionStateEnum.UNSUPERVISED.toString());
+					"enum", SupervisionStateEnum.SUPERVISIED.name(), SupervisionStateEnum.UNSUPERVISED.name());
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-					"enum", OperationalStateEnum.IDLE.toString(), OperationalStateEnum.SUPERVISING.toString());
+					"enum", OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
 			break;
 		case SYNCHRONIZING:
 			// 同步TP
