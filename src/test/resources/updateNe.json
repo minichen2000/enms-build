@@ -9,5 +9,6 @@
         }
     },
     "supervisionState":"UNSUPERVISED",
-    "synchState":"UNSYNCHRONIZED"
+    "synchState":"UNSYNCHRONIZED",
+    "operationalState":null
 }

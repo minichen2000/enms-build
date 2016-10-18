@@ -286,6 +286,15 @@ public class NesApiServiceImpl extends NesApiService {
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 		OperationalStateEnum operationalState = body.getOperationalState();
+		if (null == operationalState) {
+			try {
+				nesDbMgr.updateNe(body);
+			} catch (Exception e) {
+				log.error("updateNe", e);
+				return Response.serverError().entity(e).build();
+			}
+			return Response.ok().build();
+		}
 		switch (operationalState) {
 		case SUPERVISING:
 			// 监管网元
