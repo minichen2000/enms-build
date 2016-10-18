@@ -15,6 +15,7 @@ import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
+import com.nsb.enms.adapter.server.common.MethodOperator;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
@@ -52,7 +53,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
-		Response response = validateParam(body);
+		Response response = validateParam(body, MethodOperator.ADD);
 		if (null != response) {
 			return response;
 		}
@@ -84,18 +85,22 @@ public class NesApiServiceImpl extends NesApiService {
 			log.error("addNe", e);
 			return Response.serverError().entity(e).build();
 		}
-		
-        String eventTime = TimeUtil.getLocalTmfTime();
-        String occureTime = eventTime;
-		NotificationSender.instance().sendAlarm( ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.ALM_COMMUNICATION, AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "", ErrorCode.ALM_NE_NOT_SUPERVISED.getMessage() );
-        NotificationSender.instance().sendAlarm( ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION, AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "", ErrorCode.ALM_NE_MISALIGNMENT.getMessage() );
-        
+
+		String eventTime = TimeUtil.getLocalTmfTime();
+		String occureTime = eventTime;
+		NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.ALM_COMMUNICATION,
+				AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
+				ErrorCode.ALM_NE_NOT_SUPERVISED.getMessage());
+		NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,
+				AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
+				ErrorCode.ALM_NE_MISALIGNMENT.getMessage());
+
 		log.debug("adapter----------------addNe----------end");
 
 		return Response.ok().entity(ne).build();
 	}
 
-	private Response validateParam(AdpNe body) {
+	private Response validateParam(AdpNe body, MethodOperator operate) {
 		AdpErrorInfo errorInfo = new AdpErrorInfo();
 		String userLabel = body.getUserLabel();
 		if (!ValidationUtil.isValidUserLabel(userLabel)) {
@@ -105,7 +110,7 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 
 		try {
-			boolean isExisted = nesDbMgr.isUserLabelExisted(userLabel);
+			boolean isExisted = nesDbMgr.isUserLabelExisted(body.getId(), userLabel, operate);
 			if (isExisted) {
 				errorInfo.setCode(ErrorCode.FAIL_USER_LABEL_EXISTED.getErrorCode());
 				errorInfo.setMessage(ErrorCode.FAIL_USER_LABEL_EXISTED.getMessage());
@@ -257,7 +262,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response updateNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
-		Response response = validateParam(body);
+		Response response = validateParam(body, MethodOperator.UPDATE);
 		if (null != response) {
 			return response;
 		}
@@ -292,8 +297,8 @@ public class NesApiServiceImpl extends NesApiService {
 			}
 			boolean isSuccess = false;
 			try {
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-						"enum", OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState", "enum",
+						OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
 				isSuccess = StartSupervision.startSupervision(Integer.valueOf(groupId), Integer.valueOf(neId));
 			} catch (Exception e) {
 				log.error("failed to supervision ne", e);
@@ -301,7 +306,7 @@ public class NesApiServiceImpl extends NesApiService {
 					body.setOperationalState(OperationalStateEnum.IDLE);
 					nesDbMgr.updateNe(body);
 				} catch (Exception ex) {
-					log.error("updateNe", ex);
+					log.error("failed to updateNe", ex);
 					return Response.serverError().entity(e).build();
 				}
 			}
@@ -312,22 +317,28 @@ public class NesApiServiceImpl extends NesApiService {
 				errorInfo.setMessage(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getMessage());
 				return Response.serverError().entity(errorInfo).build();
 			}
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "supervsionState",
-					"enum", SupervisionStateEnum.SUPERVISIED.name(), SupervisionStateEnum.UNSUPERVISED.name());
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-					"enum", OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "supervsionState", "enum",
+					SupervisionStateEnum.SUPERVISIED.name(), SupervisionStateEnum.UNSUPERVISED.name());
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState", "enum",
+					OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
 			break;
 		case SYNCHRONIZING:
 			// 同步TP
 			try {
 				nesDbMgr.updateNe(body);
 			} catch (Exception e) {
-				log.error("updateNe", e);
+				log.error("failed to updateNe", e);
 				return Response.serverError().entity(e).build();
 			}
 			new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), body.getId()).start();
 			break;
 		default:
+			try {
+				nesDbMgr.updateNe(body);
+			} catch (Exception e) {
+				log.error("failed to updateNe", e);
+				return Response.serverError().entity(e).build();
+			}
 			break;
 		}
 

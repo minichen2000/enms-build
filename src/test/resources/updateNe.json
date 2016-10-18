@@ -1,4 +1,13 @@
 {
     "id":"47000580000000000000010001002060620A021D",
-    "userLabel":"test-updateNe"
+    "userLabel":"test-1111",
+    "addresses" : {
+        "q3Address" : {
+            "address" : "pSelector =0002",
+            "osMain" : "ssssss",
+            "osSpare":"xxxxxxxxxxxx"
+        }
+    },
+    "supervisionState":"UNSUPERVISED",
+    "synchState":"UNSYNCHRONIZED"
 }
