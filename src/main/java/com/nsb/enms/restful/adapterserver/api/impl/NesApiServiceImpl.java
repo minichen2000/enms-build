@@ -30,7 +30,6 @@ import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.ValidationUtil;
-import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
@@ -67,12 +66,11 @@ public class NesApiServiceImpl extends NesApiService {
 			entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
 		} catch (AdapterException e) {
 			log.error("create ne occur error", e);
-			return Response.serverError().entity(e).build();
+			return failCreateNeByEMLIM();
 		}
 
 		if (null == entity) {
-			return Response.serverError()
-					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "failed to create ne")).build();
+			return failCreateNeByEMLIM();
 		}
 
 		log.debug(entity);
@@ -83,7 +81,7 @@ public class NesApiServiceImpl extends NesApiService {
 			ne = nesDbMgr.addNe(ne);
 		} catch (Exception e) {
 			log.error("addNe", e);
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 
 		String eventTime = TimeUtil.getLocalTmfTime();
@@ -98,6 +96,20 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter----------------addNe----------end");
 
 		return Response.ok().entity(ne).build();
+	}
+
+	private Response failCreateNeByEMLIM() {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(ErrorCode.FAIL_CREATE_NE_BY_EMLIM.getErrorCode());
+		errorInfo.setMessage(ErrorCode.FAIL_CREATE_NE_BY_EMLIM.getMessage());
+		return Response.serverError().entity(errorInfo).build();
+	}
+
+	private Response failDbOperation() {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(ErrorCode.FAIL_DB_OPERATION.getErrorCode());
+		errorInfo.setMessage(ErrorCode.FAIL_DB_OPERATION.getMessage());
+		return Response.serverError().entity(errorInfo).build();
 	}
 
 	private Response validateParam(AdpNe body, MethodOperator operate) {
@@ -196,32 +208,40 @@ public class NesApiServiceImpl extends NesApiService {
 			return Response.serverError().build();
 		}
 
+		AdpNe ne = null;
+
 		try {
-			AdpNe ne = nesDbMgr.getNeById(neid);
-			log.debug("ne = " + ne);
-			if (StringUtils.isEmpty(ne.getId())) {
-				AdpErrorInfo errorInfo = new AdpErrorInfo();
-				errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
-				errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
-				return Response.serverError().entity(errorInfo).build();
-			}
+			ne = nesDbMgr.getNeById(neid);
+		} catch (Exception e) {
+			log.error("getNeById", e);
+			return failDbOperation();
+		}
 
-			String moi = StringUtils.EMPTY;
-			moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
+		log.debug("ne = " + ne);
+		if (null == ne || StringUtils.isEmpty(ne.getId())) {
+			return failObjNotExist();
+		}
 
-			if (StringUtils.isEmpty(moi)) {
-				return Response.serverError().build();
-			}
-			String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-			String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
+		if (StringUtils.isEmpty(moi)) {
+			return failObjNotExist();
+		}
 
-			log.debug("groupId = " + groupId + ", neId = " + neId);
+		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 
+		log.debug("groupId = " + groupId + ", neId = " + neId);
+
+		try {
 			DeleteNe.deleteNe(Integer.valueOf(groupId), Integer.valueOf(neId));
+		} catch (Exception e) {
+			log.error("deleteNe", e);
+			return failDeleteNeByEMLIM();
+		}
 
-			// delete db record, contains ne and tp
+		// delete db record, contains ne and tp
+		try {
 			nesDbMgr.deleteNe(neid);
-
 			AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 			xcsDbMgr.deleteXcsByNeId(neId);
 
@@ -231,11 +251,24 @@ public class NesApiServiceImpl extends NesApiService {
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
 			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
 		} catch (Exception e) {
-			log.error("deleteNE", e);
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 
 		return Response.ok().build();
+	}
+
+	private Response failDeleteNeByEMLIM() {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(ErrorCode.FAIL_DELETE_NE_BY_EMLIM.getErrorCode());
+		errorInfo.setMessage(ErrorCode.FAIL_DELETE_NE_BY_EMLIM.getMessage());
+		return Response.serverError().entity(errorInfo).build();
+	}
+
+	private Response failObjNotExist() {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
+		errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
+		return Response.serverError().entity(errorInfo).build();
 	}
 
 	private boolean checkBusiness() {
@@ -248,14 +281,11 @@ public class NesApiServiceImpl extends NesApiService {
 		try {
 			ne = nesDbMgr.getNeById(neid);
 			if (StringUtils.isEmpty(ne.getId())) {
-				AdpErrorInfo errorInfo = new AdpErrorInfo();
-				errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
-				errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
-				return Response.serverError().entity(errorInfo).build();
+				return failObjNotExist();
 			}
 		} catch (Exception e) {
 			log.error("getNeById", e);
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 		return Response.ok().entity(ne).build();
 	}
@@ -273,13 +303,10 @@ public class NesApiServiceImpl extends NesApiService {
 			ne = nesDbMgr.getNeById(id);
 		} catch (Exception e) {
 			log.error("failed to getNeById, id=" + id, e);
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 		if (null == ne || StringUtils.isEmpty(ne.getId())) {
-			AdpErrorInfo errorInfo = new AdpErrorInfo();
-			errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
-			return Response.serverError().entity(errorInfo).build();
+			return failObjNotExist();
 		}
 
 		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
@@ -291,7 +318,7 @@ public class NesApiServiceImpl extends NesApiService {
 				nesDbMgr.updateNe(body);
 			} catch (Exception e) {
 				log.error("updateNe", e);
-				return Response.serverError().entity(e).build();
+				return failDbOperation();
 			}
 			return Response.ok().build();
 		}
@@ -302,7 +329,7 @@ public class NesApiServiceImpl extends NesApiService {
 				nesDbMgr.updateNe(body);
 			} catch (Exception e) {
 				log.error("updateNe", e);
-				return Response.serverError().entity(e).build();
+				return failDbOperation();
 			}
 			boolean isSuccess = false;
 			try {
@@ -316,15 +343,12 @@ public class NesApiServiceImpl extends NesApiService {
 					nesDbMgr.updateNe(body);
 				} catch (Exception ex) {
 					log.error("failed to updateNe", ex);
-					return Response.serverError().entity(e).build();
+					return failDbOperation();
 				}
 			}
 			log.debug("isSuccess = " + isSuccess);
 			if (!isSuccess) {
-				AdpErrorInfo errorInfo = new AdpErrorInfo();
-				errorInfo.setCode(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getErrorCode());
-				errorInfo.setMessage(ErrorCode.FAIL_EMLIM_1_NOT_WORK.getMessage());
-				return Response.serverError().entity(errorInfo).build();
+				return failSuperviseNeByEMLIM();
 			}
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "supervsionState", "enum",
 					SupervisionStateEnum.SUPERVISIED.name(), SupervisionStateEnum.UNSUPERVISED.name());
@@ -337,7 +361,7 @@ public class NesApiServiceImpl extends NesApiService {
 				nesDbMgr.updateNe(body);
 			} catch (Exception e) {
 				log.error("failed to updateNe", e);
-				return Response.serverError().entity(e).build();
+				return failDbOperation();
 			}
 			new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), body.getId()).start();
 			break;
@@ -346,7 +370,7 @@ public class NesApiServiceImpl extends NesApiService {
 				nesDbMgr.updateNe(body);
 			} catch (Exception e) {
 				log.error("failed to updateNe", e);
-				return Response.serverError().entity(e).build();
+				return failDbOperation();
 			}
 			break;
 		}
@@ -354,19 +378,23 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().build();
 	}
 
+	private Response failSuperviseNeByEMLIM() {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM.getErrorCode());
+		errorInfo.setMessage(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM.getMessage());
+		return Response.serverError().entity(errorInfo).build();
+	}
+
 	private Response isNeExisted(AdpNe body) {
 		String id = body.getId();
 		try {
 			AdpNe ne = nesDbMgr.getNeById(id);
 			if (StringUtils.isEmpty(ne.getId())) {
-				AdpErrorInfo errorInfo = new AdpErrorInfo();
-				errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
-				errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
-				return Response.serverError().entity(errorInfo).build();
+				return failObjNotExist();
 			}
 		} catch (Exception e) {
 			log.error("failed to getNeById, id=" + id, e);
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 
 		return Response.ok().build();
@@ -380,7 +408,7 @@ public class NesApiServiceImpl extends NesApiService {
 			nes = nesDbMgr.getNes();
 		} catch (Exception e) {
 			log.error("nesGet", e);
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 		return Response.ok().entity(nes).build();
 	}
