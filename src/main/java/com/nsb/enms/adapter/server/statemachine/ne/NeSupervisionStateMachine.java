@@ -1,7 +1,7 @@
 package com.nsb.enms.adapter.server.statemachine.ne;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
@@ -14,7 +14,7 @@ public class NeSupervisionStateMachine
     private static final Logger log = LogManager
             .getLogger( NeSupervisionStateMachine.class );
 
-    protected void transState( AdpNe.SupervisionStateEnum from,
+    public void transState( AdpNe.SupervisionStateEnum from,
             AdpNe.SupervisionStateEnum to, NeEvent event,
             NeStateCallBack context ) throws Exception
     {
@@ -24,13 +24,13 @@ public class NeSupervisionStateMachine
         context = null;
     }
 
-    protected void entringState( AdpNe.SupervisionStateEnum from,
+    public void entringState( AdpNe.SupervisionStateEnum from,
             AdpNe.SupervisionStateEnum to, NeEvent event,
             NeStateCallBack context )
     {
     }
 
-    protected void leavingState( AdpNe.SupervisionStateEnum from,
+    public void leavingState( AdpNe.SupervisionStateEnum from,
             AdpNe.SupervisionStateEnum to, NeEvent event,
             NeStateCallBack context )
     {

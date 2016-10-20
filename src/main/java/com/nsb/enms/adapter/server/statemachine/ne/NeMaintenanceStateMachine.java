@@ -1,7 +1,7 @@
 package com.nsb.enms.adapter.server.statemachine.ne;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
@@ -14,7 +14,7 @@ public class NeMaintenanceStateMachine
     private static final Logger log = LogManager
             .getLogger( NeMaintenanceStateMachine.class );
 
-    protected void transState( MaintenanceState from, MaintenanceState to,
+    public void transState( MaintenanceState from, MaintenanceState to,
             NeEvent event, NeStateCallBack context ) throws Exception
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
@@ -23,12 +23,12 @@ public class NeMaintenanceStateMachine
         context = null;
     }
 
-    protected void entringState( MaintenanceState from, MaintenanceState to,
+    public void entringState( MaintenanceState from, MaintenanceState to,
             NeEvent event, NeStateCallBack context )
     {
     }
 
-    protected void leavingState( MaintenanceState from, MaintenanceState to,
+    public void leavingState( MaintenanceState from, MaintenanceState to,
             NeEvent event, NeStateCallBack context )
     {
     }

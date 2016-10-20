@@ -21,6 +21,9 @@ import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
@@ -159,15 +162,19 @@ public class Q3EmlImMgr
         System.exit( 0 );
     }
 
-    public void sendAlarm()
+    public void updateCommunicationState()
     {
         try
         {
-            List<AdpNe> neList = nesDbMgr
-                    .getNesByGroupId( String.valueOf( groupId ) );
-            for( AdpNe ne : neList )
+            List<AdpNe> neList = nesDbMgr.getNesByGroupId( String.valueOf( groupId ) );
+            for (AdpNe ne : neList)
             {
+                NeStateCallBack ne1 = new NeStateCallBack();
                 String id = ne.getId();
+                ne1.setId( id );
+                NeStateMachineApp.instance().getNeCommunicationStateMachine().setCurrentState( ne.getCommunicationState() );
+                NeStateMachineApp.instance().getNeCommunicationStateMachine().fire( NeEvent.E_REACHABLE_2_UNREACHABLE, ne1 );
+                
                 String eventTime = TimeUtil.getLocalTmfTime();
                 String occureTime = eventTime;
                 NotificationSender.instance().sendAlarm(
@@ -179,7 +186,7 @@ public class Q3EmlImMgr
         }
         catch( Exception e )
         {
-            log.error( "sendAlarm", e );
+            log.error( "updateCommunicationState", e );
         }
     }
 }

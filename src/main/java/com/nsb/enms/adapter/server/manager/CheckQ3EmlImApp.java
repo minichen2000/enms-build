@@ -12,7 +12,6 @@ import com.nsb.enms.adapter.server.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
-import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
 
 public class CheckQ3EmlImApp
 {
@@ -50,9 +49,7 @@ public class CheckQ3EmlImApp
                 {
                     // todo
                     // adapter把所有网元communicationState置为unreachable，并发通知,记日志，后退出。
-                    //NeStateMachineApp.instance()
-                    //        .updateCommunicationStateForNes( groupId );
-                    Q3EmlImMgr.instance().sendAlarm();
+                    Q3EmlImMgr.instance().updateCommunicationState();
                     log.error(
                         "The emlim_" + groupId + " died!!!" );
                     System.exit( 1 );

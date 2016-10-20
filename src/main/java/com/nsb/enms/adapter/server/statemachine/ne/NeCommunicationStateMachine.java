@@ -14,7 +14,7 @@ public class NeCommunicationStateMachine
     private static final Logger log = LogManager
             .getLogger( NeCommunicationStateMachine.class );
 
-    protected void transState( AdpNe.CommunicationStateEnum from,
+    public void transState( AdpNe.CommunicationStateEnum from,
             AdpNe.CommunicationStateEnum to, NeEvent event,
             NeStateCallBack context ) throws Exception
     {
@@ -24,13 +24,13 @@ public class NeCommunicationStateMachine
         context = null;
     }
 
-    protected void entringState( AdpNe.CommunicationStateEnum from,
+    public void entringState( AdpNe.CommunicationStateEnum from,
             AdpNe.CommunicationStateEnum to, NeEvent event,
             NeStateCallBack context ) throws Exception
     {
     }
 
-    protected void leavingState( AdpNe.CommunicationStateEnum from,
+    public void leavingState( AdpNe.CommunicationStateEnum from,
             AdpNe.CommunicationStateEnum to, NeEvent event,
             NeStateCallBack context ) throws Exception
     {

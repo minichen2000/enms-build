@@ -15,6 +15,9 @@ import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
+import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.utils.Pair;
@@ -67,11 +70,17 @@ public class SyncTpThread extends Thread {
 		// NeStateMachineApp.instance().afterSynchData(id);
 
 		// update the value of alignmentStatus for ne to true
-		AdpNe ne = new AdpNe();
+		/*AdpNe ne = new AdpNe();
 		ne.setId( id );
 		ne.setSynchState( SynchStateEnum.SYNCHRONIZED );
 		ne.setOperationalState( OperationalStateEnum.IDLE );
-		updateNeAttr( ne );
+		updateNeAttr( ne );*/
+		NeStateCallBack ne = new NeStateCallBack();
+		ne.setId( id );
+		NeStateMachineApp.instance().getNeSyncStateMachine().setCurrentState( SynchStateEnum.UNSYNCHRONIZED );
+		NeStateMachineApp.instance().getNeSyncStateMachine().fire( NeEvent.E_UNSYNCHRONIZED_2_SYNCHRONIZED, ne );
+		NeStateMachineApp.instance().getNeOperationalStateMachine().setCurrentState( OperationalStateEnum.SYNCHRONIZING );
+        NeStateMachineApp.instance().getNeOperationalStateMachine().fire( NeEvent.E_SYNCHRONIZING_2_IDLE, ne );
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum",
 				SynchStateEnum.SYNCHRONIZED.name(), SynchStateEnum.UNSYNCHRONIZED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
