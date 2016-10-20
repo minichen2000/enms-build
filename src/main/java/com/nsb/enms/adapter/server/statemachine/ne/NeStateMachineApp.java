@@ -108,13 +108,13 @@ public class NeStateMachineApp
          */
     }
 
-    public void beforeSuperviseNe( String id )
+   /* public void beforeSuperviseNe( String id )
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
         neOperationalStateMachine.setCurrentState( OperationalStateEnum.IDLE );
         neOperationalStateMachine.fire( NeEvent.E_IDLE_2_SUPERVISING, ne );
-    }
+    }*/
 
     public void afterSuperviseNe( String id )
     {
@@ -133,13 +133,13 @@ public class NeStateMachineApp
         neOperationalStateMachine.fire( NeEvent.E_SUPERVISING_2_IDLE, ne );
     }
 
-    public void beforeSynchData( String id )
+    /*public void beforeSynchData( String id )
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
         neOperationalStateMachine.setCurrentState( OperationalStateEnum.IDLE );
         neOperationalStateMachine.fire( NeEvent.E_IDLE_2_SYNCHRONIZING, ne );
-    }
+    }*/
 
     public void afterSynchData( String id )
     {

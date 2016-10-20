@@ -20,46 +20,55 @@ public class NeStateCallBack
     private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
     public void tellMe( AdpNe.CommunicationStateEnum communicationState )
-            throws Exception
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
         ne.setCommunicationState( communicationState );
-        nesDbMgr.updateNe( ne );
+        updateNe( ne );
     }
 
-    public void tellMe( MaintenanceState maintenanceState ) throws Exception
+    public void tellMe( MaintenanceState maintenanceState )
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
         ne.maintenanceState( Boolean.valueOf( maintenanceState.toString() ) );
-        nesDbMgr.updateNe( ne );
+        updateNe( ne );
     }
 
     public void tellMe( AdpNe.OperationalStateEnum operationalState )
-            throws Exception
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
         ne.setOperationalState( operationalState );
-        nesDbMgr.updateNe( ne );
+        updateNe( ne );
     }
 
     public void tellMe( AdpNe.SupervisionStateEnum supervisionState )
-            throws Exception
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
         ne.setSupervisionState( supervisionState );
-        nesDbMgr.updateNe( ne );
+        updateNe( ne );
     }
 
-    public void tellMe( AdpNe.SynchStateEnum synchState ) throws Exception
+    public void tellMe( AdpNe.SynchStateEnum synchState )
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
         ne.setSynchState( synchState );
-        nesDbMgr.updateNe( ne );
+        updateNe( ne );
+    }
+
+    private void updateNe( AdpNe ne )
+    {
+        try
+        {
+            nesDbMgr.updateNe( ne );
+        }
+        catch( Exception e )
+        {
+            e.printStackTrace();
+        }
     }
 
     public String getId()
@@ -70,7 +79,7 @@ public class NeStateCallBack
     public void setId( String id )
     {
         this.id = id;
-    }      
+    }
 
     public AdpNe.CommunicationStateEnum getCommunicationState()
     {

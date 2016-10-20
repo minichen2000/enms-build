@@ -16,7 +16,7 @@ public class NeCommunicationStateMachine
 
     public void transState( AdpNe.CommunicationStateEnum from,
             AdpNe.CommunicationStateEnum to, NeEvent event,
-            NeStateCallBack context ) throws Exception
+            NeStateCallBack context )
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
                 + event + "'." );
@@ -26,13 +26,13 @@ public class NeCommunicationStateMachine
 
     public void entringState( AdpNe.CommunicationStateEnum from,
             AdpNe.CommunicationStateEnum to, NeEvent event,
-            NeStateCallBack context ) throws Exception
+            NeStateCallBack context )
     {
     }
 
     public void leavingState( AdpNe.CommunicationStateEnum from,
             AdpNe.CommunicationStateEnum to, NeEvent event,
-            NeStateCallBack context ) throws Exception
+            NeStateCallBack context )
     {
     }
 }

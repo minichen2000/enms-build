@@ -16,7 +16,7 @@ public class NeSupervisionStateMachine
 
     public void transState( AdpNe.SupervisionStateEnum from,
             AdpNe.SupervisionStateEnum to, NeEvent event,
-            NeStateCallBack context ) throws Exception
+            NeStateCallBack context )
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
                 + event + "'." );

@@ -15,7 +15,7 @@ public class NeMaintenanceStateMachine
             .getLogger( NeMaintenanceStateMachine.class );
 
     public void transState( MaintenanceState from, MaintenanceState to,
-            NeEvent event, NeStateCallBack context ) throws Exception
+            NeEvent event, NeStateCallBack context )
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
                 + event + "'." );

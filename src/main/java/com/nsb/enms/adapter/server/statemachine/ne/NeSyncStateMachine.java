@@ -14,9 +14,8 @@ public class NeSyncStateMachine
     private static final Logger log = LogManager
             .getLogger( NeSyncStateMachine.class );
 
-    public void transState( AdpNe.SynchStateEnum from,
-            AdpNe.SynchStateEnum to, NeEvent event, NeStateCallBack context )
-            throws Exception
+    public void transState( AdpNe.SynchStateEnum from, AdpNe.SynchStateEnum to,
+            NeEvent event, NeStateCallBack context )
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
                 + event + "'." );

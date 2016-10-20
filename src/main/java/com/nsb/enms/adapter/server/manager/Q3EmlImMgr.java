@@ -187,7 +187,7 @@ public class Q3EmlImMgr
                     String occureTime = eventTime;
                     NotificationSender.instance().sendAlarm(
                         ErrorCode.ALM_NE_MISALIGNMENT,
-                        AlarmType.ALM_COMMUNICATION, AlarmSeverity.MAJOR,
+                        AlarmType.ALM_COMMUNICATION, AlarmSeverity.CRITICAL,
                         eventTime, occureTime, "", "", EntityType.NE, id, "",
                         "", ErrorCode.ALM_NE_MISALIGNMENT.getMessage() );
                 }
