@@ -12,16 +12,12 @@ import com.nsb.enms.adapter.server.action.method.tp.GetTp;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
-import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
-import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.utils.Pair;
-import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -75,12 +71,7 @@ public class SyncTpThread extends Thread {
 		ne.setSynchState( SynchStateEnum.SYNCHRONIZED );
 		ne.setOperationalState( OperationalStateEnum.IDLE );
 		updateNeAttr( ne );*/
-		NeStateCallBack ne = new NeStateCallBack();
-		ne.setId( id );
-		NeStateMachineApp.instance().getNeSyncStateMachine().setCurrentState( SynchStateEnum.UNSYNCHRONIZED );
-		NeStateMachineApp.instance().getNeSyncStateMachine().fire( NeEvent.E_UNSYNCHRONIZED_2_SYNCHRONIZED, ne );
-		NeStateMachineApp.instance().getNeOperationalStateMachine().setCurrentState( OperationalStateEnum.SYNCHRONIZING );
-        NeStateMachineApp.instance().getNeOperationalStateMachine().fire( NeEvent.E_SYNCHRONIZING_2_IDLE, ne );
+		NeStateMachineApp.instance().afterSynchData( id );
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum",
 				SynchStateEnum.SYNCHRONIZED.name(), SynchStateEnum.UNSYNCHRONIZED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
@@ -229,14 +220,14 @@ public class SyncTpThread extends Thread {
 	 */
 
 	
-	 private void updateNeAttr( AdpNe ne ) {
+	 /*private void updateNeAttr( AdpNe ne ) {
 	     AdpNesDbMgr nesDbMgr = new AdpNesDbMgr(); 
 	     try { 
 	         nesDbMgr.updateNe( ne ); 
 	     } catch( Exception e ) {
 	         log.error( "updateNeAttr", e ); 
 	     } 
-	 }
+	 }*/
 	 
 
 	private LayerRate getLayerRate(TpEntity tp) {

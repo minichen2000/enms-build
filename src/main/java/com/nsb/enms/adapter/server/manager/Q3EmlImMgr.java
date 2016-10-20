@@ -30,6 +30,7 @@ import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
 
 public class Q3EmlImMgr
 {
@@ -166,22 +167,30 @@ public class Q3EmlImMgr
     {
         try
         {
-            List<AdpNe> neList = nesDbMgr.getNesByGroupId( String.valueOf( groupId ) );
-            for (AdpNe ne : neList)
+            List<AdpNe> neList = nesDbMgr
+                    .getNesByGroupId( String.valueOf( groupId ) );
+            for( AdpNe ne : neList )
             {
-                NeStateCallBack ne1 = new NeStateCallBack();
+                NeStateCallBack callBack = new NeStateCallBack();
                 String id = ne.getId();
-                ne1.setId( id );
-                NeStateMachineApp.instance().getNeCommunicationStateMachine().setCurrentState( ne.getCommunicationState() );
-                NeStateMachineApp.instance().getNeCommunicationStateMachine().fire( NeEvent.E_REACHABLE_2_UNREACHABLE, ne1 );
-                
-                String eventTime = TimeUtil.getLocalTmfTime();
-                String occureTime = eventTime;
-                NotificationSender.instance().sendAlarm(
-                    ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,
-                    AlarmSeverity.MAJOR, eventTime, occureTime, "", "",
-                    EntityType.NE, id, "", "",
-                    ErrorCode.ALM_NE_MISALIGNMENT.getMessage() );
+                callBack.setId( id );
+                if( ne.getCommunicationState() == CommunicationStateEnum.REACHABLE )
+                {
+                    NeStateMachineApp.instance()
+                            .getNeCommunicationStateMachine()
+                            .setCurrentState( ne.getCommunicationState() );
+                    NeStateMachineApp.instance()
+                            .getNeCommunicationStateMachine()
+                            .fire( NeEvent.E_REACHABLE_2_UNREACHABLE, callBack );
+
+                    String eventTime = TimeUtil.getLocalTmfTime();
+                    String occureTime = eventTime;
+                    NotificationSender.instance().sendAlarm(
+                        ErrorCode.ALM_NE_MISALIGNMENT,
+                        AlarmType.ALM_COMMUNICATION, AlarmSeverity.MAJOR,
+                        eventTime, occureTime, "", "", EntityType.NE, id, "",
+                        "", ErrorCode.ALM_NE_MISALIGNMENT.getMessage() );
+                }
             }
         }
         catch( Exception e )

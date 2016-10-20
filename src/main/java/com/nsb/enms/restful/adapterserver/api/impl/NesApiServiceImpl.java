@@ -26,8 +26,6 @@ import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
-import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
-import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
@@ -353,16 +351,7 @@ public class NesApiServiceImpl extends NesApiService {
 			if (!isSuccess) {
 				return failSuperviseNeByEMLIM();
 			}
-			NeStateCallBack ne1 = new NeStateCallBack();
-			ne1.setId( id );
-			NeStateMachineApp.instance().getNeSupervisionStateMachine().setCurrentState( SupervisionStateEnum.UNSUPERVISED );
-			NeStateMachineApp.instance().getNeSupervisionStateMachine().fire( NeEvent.E_UNSUPERVISIED_2_SUPERVISIED, ne1 );
-			
-			NeStateMachineApp.instance().getNeCommunicationStateMachine().setCurrentState( CommunicationStateEnum.UNREACHABLE );
-            NeStateMachineApp.instance().getNeCommunicationStateMachine().fire( NeEvent.E_UNREACHABLE_2_REACHABLE, ne1 );
-			
-			NeStateMachineApp.instance().getNeOperationalStateMachine().setCurrentState( OperationalStateEnum.SUPERVISING );
-            NeStateMachineApp.instance().getNeOperationalStateMachine().fire( NeEvent.E_SUPERVISING_2_IDLE, ne1 );
+			NeStateMachineApp.instance().afterSuperviseNe( id );
             
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", "enum",
 					SupervisionStateEnum.SUPERVISIED.name(), SupervisionStateEnum.UNSUPERVISED.name());

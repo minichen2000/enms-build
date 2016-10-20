@@ -1,12 +1,13 @@
 package com.nsb.enms.adapter.server.statemachine.ne;
 
-import java.util.List;
-
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 import com.nsb.enms.statemachine.component.StateMachine;
 import com.nsb.enms.statemachine.component.StateMachine.StateMachineBuilder;
 
@@ -23,8 +24,6 @@ public class NeStateMachineApp
     private StateMachine<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> neSyncStateMachine;
 
     private StateMachine<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
-
-    private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
     private NeStateMachineApp()
     {
@@ -101,17 +100,19 @@ public class NeStateMachineApp
         neMaintenanaceStateMachine = maintenanceStateBuilder
                 .build( MaintenanceState.FALSE );
 
-        /*neCommunicationStateMachine.start();
-        neMaintenanaceStateMachine.start();
-        neOperationalStateMachine.start();
-        neSupervisionStateMachine.start();
-        neSyncStateMachine.start();*/
+        /*
+         * neCommunicationStateMachine.start();
+         * neMaintenanaceStateMachine.start();
+         * neOperationalStateMachine.start(); neSupervisionStateMachine.start();
+         * neSyncStateMachine.start();
+         */
     }
 
     public void beforeSuperviseNe( String id )
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
+        neOperationalStateMachine.setCurrentState( OperationalStateEnum.IDLE );
         neOperationalStateMachine.fire( NeEvent.E_IDLE_2_SUPERVISING, ne );
     }
 
@@ -119,7 +120,12 @@ public class NeStateMachineApp
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
-
+        neSupervisionStateMachine
+                .setCurrentState( SupervisionStateEnum.UNSUPERVISED );
+        neCommunicationStateMachine
+                .setCurrentState( CommunicationStateEnum.UNREACHABLE );
+        neOperationalStateMachine
+                .setCurrentState( OperationalStateEnum.SUPERVISING );
         neSupervisionStateMachine.fire( NeEvent.E_UNSUPERVISIED_2_SUPERVISIED,
             ne );
         neCommunicationStateMachine.fire( NeEvent.E_UNREACHABLE_2_REACHABLE,
@@ -131,6 +137,7 @@ public class NeStateMachineApp
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
+        neOperationalStateMachine.setCurrentState( OperationalStateEnum.IDLE );
         neOperationalStateMachine.fire( NeEvent.E_IDLE_2_SYNCHRONIZING, ne );
     }
 
@@ -138,33 +145,11 @@ public class NeStateMachineApp
     {
         NeStateCallBack ne = new NeStateCallBack();
         ne.setId( id );
+        neSyncStateMachine.setCurrentState( SynchStateEnum.UNSYNCHRONIZED );
         neSyncStateMachine.fire( NeEvent.E_UNSYNCHRONIZED_2_SYNCHRONIZED, ne );
+        neOperationalStateMachine
+                .setCurrentState( OperationalStateEnum.SYNCHRONIZING );
         neOperationalStateMachine.fire( NeEvent.E_SYNCHRONIZING_2_IDLE, ne );
-    }
-
-    public void updateCommunicationStateForNes( int groupId )
-    {
-        try
-        {
-            NeStateCallBack ne = new NeStateCallBack();
-            List<AdpNe> nes = nesDbMgr
-                    .getNesByGroupId( String.valueOf( groupId ) );
-            for( AdpNe adpNe : nes )
-            {
-                if( adpNe.getCommunicationState()
-                        .equals( AdpNe.CommunicationStateEnum.REACHABLE ) )
-                {
-                    ne.setId( adpNe.getId() );
-                    neCommunicationStateMachine
-                            .fire( NeEvent.E_REACHABLE_2_UNREACHABLE, ne );
-                }
-            }
-        }
-        catch( Exception e )
-        {
-            e.printStackTrace();
-        }
-
     }
 
     public StateMachine<NeOperationalStateMachine, AdpNe.OperationalStateEnum, NeEvent, NeStateCallBack> getNeOperationalStateMachine()
