@@ -29,6 +29,8 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
+import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
@@ -114,6 +116,30 @@ public class AdpNesDbMgr {
 		return Response.ok().build();
 	}
 
+	private void updateOperationalState(AdpNe body, String id, AdpNe ne) {
+		OperationalStateEnum operationalState = body.getOperationalState();
+		OperationalStateEnum operationalStateFromDb = ne.getOperationalState();
+		if (operationalState == null || operationalState == operationalStateFromDb) {
+			return;
+		}
+		String value = operationalState.name();
+		dbc.updateOne(new BasicDBObject("id", id), set("operationalState", value));
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum", value,
+				(operationalStateFromDb == null ? null : operationalStateFromDb.name()));
+	}
+
+	private void updateCommunicationState(AdpNe body, String id, AdpNe ne) {
+		CommunicationStateEnum communicationState = body.getCommunicationState();
+		CommunicationStateEnum communicationStateFromDb = ne.getCommunicationState();
+		if (communicationState == null || communicationState == communicationStateFromDb) {
+			return;
+		}
+		String value = communicationState.name();
+		dbc.updateOne(new BasicDBObject("id", id), set("communicationState", value));
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum", value,
+				(communicationStateFromDb == null ? null : communicationStateFromDb.name()));
+	}
+
 	private void updateUserLabel(AdpNe body, String id, AdpNe ne) {
 		String userLabel = body.getUserLabel();
 		if (userLabel != null && !userLabel.equals(ne.getUserLabel())) {
@@ -188,25 +214,26 @@ public class AdpNesDbMgr {
 
 	private void updateSupervisionState(AdpNe body, String id, AdpNe ne) {
 		SupervisionStateEnum supervisionState = body.getSupervisionState();
-		if (null == supervisionState || supervisionState == ne.getSupervisionState()) {
+		SupervisionStateEnum supervisionStateFromDb = ne.getSupervisionState();
+		if (null == supervisionState || supervisionState == supervisionStateFromDb) {
 			return;
 		}
 		String value = supervisionState.name();
 		dbc.updateOne(new BasicDBObject("id", id), set("supervisionState", value));
-		SupervisionStateEnum supervisionStateFromDb = ne.getSupervisionState();
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervisionState", "String", value,
 				(supervisionStateFromDb == null ? null : supervisionStateFromDb.name()));
 	}
 
 	private void updateSyncState(AdpNe body, String id, AdpNe ne) {
 		SynchStateEnum synchState = body.getSynchState();
-		if (null == synchState || synchState == ne.getSynchState()) {
+		SynchStateEnum synchStateFromDb = ne.getSynchState();
+		if (null == synchState || synchState == synchStateFromDb) {
 			return;
 		}
 		String value = synchState.name();
 		dbc.updateOne(new BasicDBObject("id", id), set("synchState", value));
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "String", value,
-				ne.getSynchState().name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum", value,
+				(synchStateFromDb == null ? null : synchStateFromDb.name()));
 	}
 
 	/*
