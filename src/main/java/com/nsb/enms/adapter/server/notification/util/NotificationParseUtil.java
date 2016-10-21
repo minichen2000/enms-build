@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.notification.entity.AttributeInfo;
 import com.nsb.enms.adapter.server.notification.entity.DefinitionEntity;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.Moc;
@@ -18,7 +19,8 @@ public class NotificationParseUtil
     private static final Logger log = LogManager
             .getLogger( NotificationParseUtil.class );
 
-    public static NotificationEntity parseModificationNotification( String event )
+    public static NotificationEntity parseModificationNotification(
+            String event )
     {
         List<String> msgList = splitMsg( event );
         NotificationEntity entity = new NotificationEntity();
@@ -131,7 +133,7 @@ public class NotificationParseUtil
                 if( hasValue( line ) )
                 {
                     definition.setNewAttributeValue( parseValue1( line ) );
-                    entity.setDefinitions( definition );
+                    entity.setDefinition( definition );
                     break;
                 }
                 continue;
@@ -160,7 +162,7 @@ public class NotificationParseUtil
                         definition.setNewAttributeValue( StringUtils.EMPTY );
                     }
                 }
-                entity.setDefinitions( definition );
+                entity.setDefinition( definition );
                 break;
             }
 
@@ -187,7 +189,7 @@ public class NotificationParseUtil
                         definition.setNewAttributeValue( StringUtils.EMPTY );
                     }
                 }
-                entity.setDefinitions( definition );
+                entity.setDefinition( definition );
                 break;
             }
 
@@ -255,11 +257,82 @@ public class NotificationParseUtil
         return entity;
     }
 
+    public static NotificationEntity parseAlarm( String event )
+    {
+        List<String> msgList = splitMsg( event );
+        NotificationEntity entity = new NotificationEntity();
+        AttributeInfo attributeInfo = new AttributeInfo();
+        String temp = StringUtils.EMPTY;
+        for( String line : msgList )
+        {
+            if( line.startsWith( "managedObjectClass" ) )
+            {
+                entity.setMoc( new Moc( parseValue2( line ) ) );
+                continue;
+            }
+
+            if( line.startsWith( "managedObjectInstance" ) )
+            {
+                
+                continue;
+            }
+            
+            if( line.startsWith( "attributeType" ) )
+            {
+                temp = temp + parseValue1( line ) + "=";
+                continue;
+            }
+
+            if( line.startsWith( "attributeValue" ) )
+            {
+                temp = temp + parseValue2( line ) + "/";
+                continue;
+            }
+            
+            if( line.startsWith( "eventTime" ) )
+            {
+                if( !temp.isEmpty() )
+                {
+                    entity.setMoi(
+                        new Moi( temp.substring( 0, temp.length() - 1 ) ) );
+                    temp = StringUtils.EMPTY;
+                }
+                else
+                {
+                    entity.setMoi( new Moi( StringUtils.EMPTY ) );
+                }
+                entity.setEventTime( parseValue1( line ) );
+                continue;
+            }
+
+            if( line.startsWith( "eventType" ) )
+            {
+                attributeInfo.put( "alarmType", parseValue1( line ) );
+                entity.setEventType( EventType.ALARM );
+                continue;
+            }
+
+            if( line.startsWith( "probableCause" ) )
+            {
+                attributeInfo.put( "probableCause", parseValue2( line ) );
+                continue;
+            }
+
+            if( line.startsWith( "perceivedSeverity" ) )
+            {
+                attributeInfo.put( "perceivedSeverity", parseValue1( line ) );
+                break;
+            }
+
+        }
+        entity.setAttributeInfo( attributeInfo );
+        return entity;
+    }
+
     private static List<String> splitMsg( String event )
     {
         log.debug( "Original Notification:" + event );
-        event = event
-                .replaceAll( "-- SEQUENCE\\s*\\w* --", StringUtils.EMPTY )
+        event = event.replaceAll( "-- SEQUENCE\\s*\\w* --", StringUtils.EMPTY )
                 .replace( "-- SET OF --", StringUtils.EMPTY )
                 .replace( ",", StringUtils.EMPTY )
                 .replace( "{", StringUtils.EMPTY )
@@ -302,7 +375,7 @@ public class NotificationParseUtil
     }
 
     private static EventType getEventType( String type )
-    {        
+    {
         if( "objectCreation".equals( type ) )
         {
             return EventType.OBJECT_CREATION;

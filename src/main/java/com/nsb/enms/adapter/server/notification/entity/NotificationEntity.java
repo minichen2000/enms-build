@@ -10,6 +10,8 @@ public class NotificationEntity
 
     private EventType eventType;
     
+    private AttributeInfo attributeInfo;
+    
     private DefinitionEntity definition;
 
     public Moc getMoc()
@@ -51,13 +53,23 @@ public class NotificationEntity
     {
         this.eventType = eventType;
     }    
+    
+    public AttributeInfo getAttributeInfo()
+    {
+        return attributeInfo;
+    }
+
+    public void setAttributeInfo( AttributeInfo attributeInfo )
+    {
+        this.attributeInfo = attributeInfo;
+    }
 
     public DefinitionEntity getDefinition()
     {
         return definition;
     }
 
-    public void setDefinitions(
+    public void setDefinition(
             DefinitionEntity definition )
     {
         this.definition = definition;

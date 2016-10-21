@@ -55,6 +55,10 @@ public class NotificationClientHandler extends WebSocketAdapter
             entity = NotificationParseUtil
                     .parseModificationNotification( event );
         }
+        else if (event.contains( "probableCause" ))
+        {
+            entity = NotificationParseUtil.parseAlarm(event);
+        }
         else
         {
             entity = NotificationParseUtil.parseOtherNotification( event );

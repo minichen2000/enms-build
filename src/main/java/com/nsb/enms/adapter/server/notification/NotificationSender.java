@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.notification;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,7 +78,11 @@ public class NotificationSender
                 send( avc );
                 break;
             case ALARM:
-
+                AlarmType alarmType = getAlarmType( entity.getAttributeInfo().get( "alarmType" ) );
+                AlarmSeverity alarmSeverity = getAlarmSeverity(entity.getAttributeInfo().get( "perceivedSeverity" ));
+                String probableCause = entity.getAttributeInfo().get( "probableCause" );
+                Alarm alarm = publisher.createAlarm( ErrorCode.ALM_NE_OUT_OF_MNGT, alarmType, alarmSeverity, eventTime, "", "", probableCause, objectType, objectID, "", "", "" );
+                send( alarm );
                 break;
             default:
                 break;
@@ -95,7 +98,7 @@ public class NotificationSender
             String key, String valueType, String value, String oldValue )
     {
         String eventTime = TimeUtil.getLocalTmfTime();
-
+        
         AvcBody avc = publisher.createAvcBody( eventTime, objectType, objectID,
             key, valueType, value, oldValue );
 
@@ -147,6 +150,62 @@ public class NotificationSender
         }
 
         return EntityType.NE;
+    }
+    
+    private AlarmType getAlarmType( String type )
+    {
+        if( "equipmentAlarm".equals( type ) )
+        {
+            return AlarmType.ALM_EQUIPMENT;
+        }
+        else if( "communicationsAlarm".equals( type ) )
+        {
+            return AlarmType.ALM_COMMUNICATION;
+        }
+        else if( "environmentalAlarm".equals( type ) )
+        {
+            return AlarmType.ALM_ENVIRONMENT;
+        }
+        else if( "processingErrorAlarm".equals( type ) )
+        {
+            return AlarmType.ALM_PROCESSING_ERROR;
+        }
+        else if( "qualityofServiceAlarm".equals( type ) )
+        {
+            return AlarmType.ALM_QoS;
+        }
+        else
+        {
+            return AlarmType.ALM_NONE;
+        }
+    }
+    
+    private AlarmSeverity getAlarmSeverity( String type )
+    {
+        if( "major".equals( type ) )
+        {
+            return AlarmSeverity.MAJOR;
+        }
+        else if( "minor".equals( type ) )
+        {
+            return AlarmSeverity.MINOR;
+        }
+        else if( "critical".equals( type ) )
+        {
+            return AlarmSeverity.CRITICAL;
+        }
+        else if( "warning".equals( type ) )
+        {
+            return AlarmSeverity.WARNING;
+        }
+        else if( "cleared".equals( type ) )
+        {
+            return AlarmSeverity.CLEARED;
+        }
+        else
+        {
+            return AlarmSeverity.INDETERMINATE;
+        }
     }
 
     private String getObjectId( EntityType objectType, String moi )
