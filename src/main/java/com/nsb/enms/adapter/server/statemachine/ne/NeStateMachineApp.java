@@ -79,7 +79,7 @@ public class NeStateMachineApp
                 NeSupervisionStateMachine.class );
         supervisionStateBuilder.registExTransition(
             AdpNe.SupervisionStateEnum.UNSUPERVISED,
-            AdpNe.SupervisionStateEnum.SUPERVISIED,
+            AdpNe.SupervisionStateEnum.SUPERVISED,
             NeEvent.E_UNSUPERVISIED_2_SUPERVISIED, "transState" );
         neSupervisionStateMachine = supervisionStateBuilder
                 .build( AdpNe.SupervisionStateEnum.UNSUPERVISED );

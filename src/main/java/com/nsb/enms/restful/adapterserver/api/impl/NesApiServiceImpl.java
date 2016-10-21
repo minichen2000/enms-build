@@ -354,7 +354,7 @@ public class NesApiServiceImpl extends NesApiService {
 			NeStateMachineApp.instance().afterSuperviseNe( id );
             
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", "enum",
-					SupervisionStateEnum.SUPERVISIED.name(), SupervisionStateEnum.UNSUPERVISED.name());
+					SupervisionStateEnum.SUPERVISED.name(), SupervisionStateEnum.UNSUPERVISED.name());
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum",
                 CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
