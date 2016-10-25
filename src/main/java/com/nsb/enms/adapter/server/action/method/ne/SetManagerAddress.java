@@ -14,9 +14,9 @@ import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 
-public class SetAddress
+public class SetManagerAddress
 {
-    private final static Logger log = LogManager.getLogger( SetAddress.class );
+    private final static Logger log = LogManager.getLogger( SetManagerAddress.class );
 
     private static String setMainOSAddressScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.SET_MAIN_OS_ADDR_REQ,
@@ -26,14 +26,14 @@ public class SetAddress
             .getConf( ConfigKey.SET_SPARE_OS_ADDR_REQ,
                 ConfigKey.DEFAULT_SET_SPARE_OS_ADDR_REQ );
 
-    public static boolean setMainOSAddress( int groupId, int neId,
+    public static boolean setMainOSAddress( String groupId, String neId,
             String mainOSAddress ) throws AdapterException
     {
         try
         {
             Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
-                setMainOSAddressScenario, String.valueOf( groupId ),
-                String.valueOf( neId ) );
+                setMainOSAddressScenario, groupId,
+                neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -59,14 +59,14 @@ public class SetAddress
         }
     }
 
-    public static boolean setSpareOSAddress( int groupId, int neId,
+    public static boolean setSpareOSAddress( String groupId, String neId,
             String spareOSAddress ) throws AdapterException
     {
         try
         {
             Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
-                setSpareOSAddressScenario, String.valueOf( groupId ),
-                String.valueOf( neId ) );
+                setSpareOSAddressScenario, groupId,
+                neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(

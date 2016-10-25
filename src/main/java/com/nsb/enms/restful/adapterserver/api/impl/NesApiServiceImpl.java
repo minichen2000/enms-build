@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.NeEntity;
 import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
-import com.nsb.enms.adapter.server.action.method.ne.SetAddress;
+import com.nsb.enms.adapter.server.action.method.ne.SetManagerAddress;
 import com.nsb.enms.adapter.server.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.business.SyncTpThread;
 import com.nsb.enms.adapter.server.common.MethodOperator;
@@ -81,8 +81,8 @@ public class NesApiServiceImpl extends NesApiService {
 	            return failCreateNeByEMLIM();
 	        }
 	        String moi = entity.getMoi();
-	        int groupId = Integer.valueOf( moi.split( "/" )[0].split( "=" )[1] );
-	        int neId = Integer.valueOf( moi.split( "/" )[1].split( "=" )[1] );
+	        String groupId = moi.split( "/" )[0].split( "=" )[1];
+	        String neId = moi.split( "/" )[1].split( "=" )[1];
 	        boolean isSuccess = false;
 		    try
             {
@@ -101,8 +101,11 @@ public class NesApiServiceImpl extends NesApiService {
 		    String spareOSAddress = body.getAddresses().getQ3Address().getOsSpare();
 		    try
             {
-                SetAddress.setMainOSAddress( groupId, neId, mainOSAddress );
-                SetAddress.setSpareOSAddress( groupId, neId, spareOSAddress );
+		        if (mainOSAddress != null && !mainOSAddress.isEmpty())
+		            SetManagerAddress.setMainOSAddress( groupId, neId, mainOSAddress );
+		        
+		        if (spareOSAddress != null && !spareOSAddress.isEmpty())
+		            SetManagerAddress.setSpareOSAddress( groupId, neId, spareOSAddress );
             }
             catch( AdapterException e )
             {
@@ -301,7 +304,8 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("groupId = " + groupId + ", neId = " + neId);
 
 		try {
-			DeleteNe.deleteNe(Integer.valueOf(groupId), Integer.valueOf(neId));
+			DeleteNe.deleteNe(groupId, neId);
+			NotificationSender.instance().sendOdNotif( EntityType.NE, neid );
 		} catch (Exception e) {
 			log.error("deleteNe", e);
 			return failDeleteNeByEMLIM();
@@ -410,7 +414,7 @@ public class NesApiServiceImpl extends NesApiService {
 			try {
 				NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState", "enum",
 						OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
-				isSuccess = StartSupervision.startSupervision(Integer.valueOf(groupId), Integer.valueOf(neId));
+				isSuccess = StartSupervision.startSupervision(groupId, neId);
 			} catch (Exception e) {
 				log.error("failed to supervision ne", e);
 				try {

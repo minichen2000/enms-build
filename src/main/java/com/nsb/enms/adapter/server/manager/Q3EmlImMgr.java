@@ -134,7 +134,7 @@ public class Q3EmlImMgr
         {
             try
             {
-                DeleteNe.deleteNe( groupId, neIdList.get( i ) );
+                DeleteNe.deleteNe( String.valueOf( groupId ), String.valueOf( neIdList.get( i ) ) );
             }
             catch( AdapterException e )
             {

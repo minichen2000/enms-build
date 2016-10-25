@@ -27,7 +27,7 @@ public class StartSupervision
             .getConf( ConfigKey.START_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_START_SUPERVISION_REQ );
 
-    public static boolean startSupervision( int groupId, int neId )
+    public static boolean startSupervision( String groupId, String neId )
             throws AdapterException
     {
         boolean flag = false;
@@ -38,7 +38,7 @@ public class StartSupervision
             {
                 Process process = ExecExternalScript.run(
                     ExternalScriptType.TSTMGR, startSupervisionScenario,
-                    String.valueOf( groupId ), String.valueOf( neId ) );
+                    groupId, neId );
                 InputStream inputStream = process.getInputStream();
                 BufferedReader br = new BufferedReader(
                         new InputStreamReader( inputStream ) );

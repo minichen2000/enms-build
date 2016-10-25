@@ -26,7 +26,7 @@ public class DeleteNe
             .getConf( ConfigKey.STOP_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_STOP_SUPERVISION_REQ );
 
-    public static boolean deleteNe( int groupId, int neId )
+    public static boolean deleteNe( String groupId, String neId )
             throws AdapterException
     {
         boolean flag = false;
@@ -35,14 +35,14 @@ public class DeleteNe
         return flag;
     }
 
-    private static void stopSuppervision( int groupId, int neId )
+    private static void stopSuppervision( String groupId, String neId )
             throws AdapterException
     {
         try
         {
             Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, stopSupervisionScenario,
-                String.valueOf( groupId ), String.valueOf( neId ) );
+                groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -63,14 +63,14 @@ public class DeleteNe
         }
     }
 
-    private static boolean removeNe( int groupId, int neId )
+    private static boolean removeNe( String groupId, String neId )
             throws AdapterException
     {
         try
         {
             Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, deleteNeScenario,
-                String.valueOf( groupId ), String.valueOf( neId ) );
+                groupId, neId );
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
@@ -91,7 +91,7 @@ public class DeleteNe
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Delete ne failed!!!" );
             }
-            Q3EmlImMgr.instance().removeNe( neId );
+            Q3EmlImMgr.instance().removeNe( Integer.valueOf( neId ) );
             return flag;
         }
         catch( Exception e )
