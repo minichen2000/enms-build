@@ -14,7 +14,8 @@ public class GenerateKeyOnNeUtil
             case NE:
                 return moc + ":" + moi;
             case TP:
-                return moc + ":" + moi.split( "/" )[2];
+            case XC:       
+                return moc + ":" + moi.replaceAll( "neGroupId=\\d+/networkElementId=\\d+/", StringUtils.EMPTY );
             default:
                 return StringUtils.EMPTY;
         }
