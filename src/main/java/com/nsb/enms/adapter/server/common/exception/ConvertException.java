@@ -1,12 +1,14 @@
 package com.nsb.enms.adapter.server.common.exception;
 
+import com.nsb.enms.common.ErrorCode;
+
 public class ConvertException extends AdapterException
 {
     private static final long serialVersionUID = -6668381592205174586L;
 
     public ConvertException()
     {
-        super( AdapterExceptionType.EXCPT_CONVERT_ERROR, "" );
+        super( ErrorCode.FAIL_OBJ_NOT_EXIST );
     }
 
     public ConvertException( String msg )

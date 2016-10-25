@@ -3,6 +3,7 @@ package com.nsb.enms.adapter.server.statemachine.ne;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.restful.model.adapter.AdpNe;
@@ -16,7 +17,7 @@ public class NeOperationalStateMachine
 
     public void transState( AdpNe.OperationalStateEnum from,
             AdpNe.OperationalStateEnum to, NeEvent event,
-            NeStateCallBack context )
+            NeStateCallBack context ) throws AdapterException
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
                 + event + "'." );

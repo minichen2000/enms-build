@@ -23,9 +23,17 @@ public class AdapterException extends Exception
     
     public AdapterException( AdapterExceptionType type, ErrorCode errorCode )
     {
-        super( errorCode.getMessage() );
+        super( errorCode.name() );
         type_ = type;
         errorCode_ = errorCode.getErrorCode();
+        errorReason_ = errorCode.name();
+    }
+    
+    public AdapterException( ErrorCode errorCode )
+    {
+        super( errorCode.name() );
+        errorCode_ = errorCode.getErrorCode();
+        errorReason_ = errorCode.name();
     }
 
     public AdapterExceptionType type_;

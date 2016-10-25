@@ -1,6 +1,9 @@
 package com.nsb.enms.adapter.server.statemachine.ne.model;
 
+import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class NeStateCallBack
@@ -20,6 +23,7 @@ public class NeStateCallBack
     private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
     public void tellMe( AdpNe.CommunicationStateEnum communicationState )
+            throws AdapterException
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
@@ -28,6 +32,7 @@ public class NeStateCallBack
     }
 
     public void tellMe( MaintenanceState maintenanceState )
+            throws AdapterException
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
@@ -36,6 +41,7 @@ public class NeStateCallBack
     }
 
     public void tellMe( AdpNe.OperationalStateEnum operationalState )
+            throws AdapterException
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
@@ -44,6 +50,7 @@ public class NeStateCallBack
     }
 
     public void tellMe( AdpNe.SupervisionStateEnum supervisionState )
+            throws AdapterException
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
@@ -52,6 +59,7 @@ public class NeStateCallBack
     }
 
     public void tellMe( AdpNe.SynchStateEnum synchState )
+            throws AdapterException
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
@@ -59,7 +67,7 @@ public class NeStateCallBack
         updateNe( ne );
     }
 
-    private void updateNe( AdpNe ne )
+    private void updateNe( AdpNe ne ) throws AdapterException
     {
         try
         {
@@ -67,7 +75,9 @@ public class NeStateCallBack
         }
         catch( Exception e )
         {
-            e.printStackTrace();
+            throw new AdapterException(
+                    AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+                    ErrorCode.FAIL_DB_OPERATION );
         }
     }
 
