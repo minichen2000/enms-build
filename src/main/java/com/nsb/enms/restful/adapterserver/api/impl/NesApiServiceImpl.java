@@ -20,6 +20,7 @@ import com.nsb.enms.adapter.server.common.MethodOperator;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
@@ -52,8 +53,8 @@ public class NesApiServiceImpl extends NesApiService {
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
 	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
-	
-	private final static String ADP_ADDRESS = ConfLoader.getInstance().getConf( ConfigKey.ADP_ADDRESS, "" );
+
+	private final static String ADP_ADDRESS = ConfLoader.getInstance().getConf(ConfigKey.ADP_ADDRESS, "");
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
@@ -61,111 +62,99 @@ public class NesApiServiceImpl extends NesApiService {
 		if (null != response) {
 			return response;
 		}
-		
+
 		String osMain = body.getAddresses().getQ3Address().getOsMain();
-		if (!ADP_ADDRESS.equals( osMain ))
-		{
-		    String location = body.getLocationName();
-	        NeEntity entity = null;
-	        String id = "";
-	        try {
-	            AdpAddresses address = body.getAddresses();
-	            id = address.getQ3Address().getAddress();
-	            entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
-	        } catch (AdapterException e) {
-	            log.error("create ne occur error", e);
-	            return failCreateNeByEMLIM();
-	        }
+		if (!ADP_ADDRESS.equals(osMain)) {
+			String location = body.getLocationName();
+			NeEntity entity = null;
+			String id = "";
+			try {
+				AdpAddresses address = body.getAddresses();
+				id = address.getQ3Address().getAddress();
+				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
+			} catch (AdapterException e) {
+				log.error("create ne occur error", e);
+				return failCreateNeByEMLIM();
+			}
 
-	        if (null == entity) {
-	            return failCreateNeByEMLIM();
-	        }
-	        String moi = entity.getMoi();
-	        String groupId = moi.split( "/" )[0].split( "=" )[1];
-	        String neId = moi.split( "/" )[1].split( "=" )[1];
-	        boolean isSuccess = false;
-		    try
-            {
-                isSuccess = StartSupervision.startSupervision( groupId, neId );
-            }
-            catch( AdapterException e )
-            {
-                log.error("failed to supervision ne", e);
-            }
-		    
-		    if (!isSuccess)
-		    {
-		        return failSuperviseNeByEMLIM();
-		    }
-		    String mainOSAddress = body.getAddresses().getQ3Address().getOsMain();
-		    String spareOSAddress = body.getAddresses().getQ3Address().getOsSpare();
-		    try
-            {
-		        if (mainOSAddress != null && !mainOSAddress.isEmpty())
-		            SetManagerAddress.setMainOSAddress( groupId, neId, mainOSAddress );
-		        
-		        if (spareOSAddress != null && !spareOSAddress.isEmpty())
-		            SetManagerAddress.setSpareOSAddress( groupId, neId, spareOSAddress );
-            }
-            catch( AdapterException e )
-            {
-                log.error( "setAddress", e );
-                return failSetManagerAddress();
-            }
-		    
-		    try
-            {
-                DeleteNe.deleteNe( groupId, neId );
-            }
-            catch( AdapterException e )
-            {
-                log.error("deleteNe", e);
-                return failDeleteNeByEMLIM();
-            }
-		    return Response.ok().build();
-		} else
-		{		    		
-		    String location = body.getLocationName();
-		    NeEntity entity = null;
-		    String id = "";
-		    try {
-		        AdpAddresses address = body.getAddresses();
-		        id = address.getQ3Address().getAddress();
-		        entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
-		    } catch (AdapterException e) {
-		        log.error("create ne occur error", e);
-		        return failCreateNeByEMLIM();
-		    }
+			if (null == entity) {
+				return failCreateNeByEMLIM();
+			}
+			String moi = entity.getMoi();
+			String groupId = moi.split("/")[0].split("=")[1];
+			String neId = moi.split("/")[1].split("=")[1];
+			boolean isSuccess = false;
+			try {
+				isSuccess = StartSupervision.startSupervision(groupId, neId);
+			} catch (AdapterException e) {
+				log.error("failed to supervision ne", e);
+			}
 
-		    if (null == entity) {
-		        return failCreateNeByEMLIM();
-		    }
+			if (!isSuccess) {
+				return failSuperviseNeByEMLIM();
+			}
+			String mainOSAddress = body.getAddresses().getQ3Address().getOsMain();
+			String spareOSAddress = body.getAddresses().getQ3Address().getOsSpare();
+			try {
+				if (mainOSAddress != null && !mainOSAddress.isEmpty())
+					SetManagerAddress.setMainOSAddress(groupId, neId, mainOSAddress);
 
-		    log.debug(entity);
+				if (spareOSAddress != null && !spareOSAddress.isEmpty())
+					SetManagerAddress.setSpareOSAddress(groupId, neId, spareOSAddress);
+			} catch (AdapterException e) {
+				log.error("setAddress", e);
+				return failSetManagerAddress();
+			}
 
-		    AdpNe ne = constructNe(entity, id);
+			try {
+				DeleteNe.deleteNe(groupId, neId);
+			} catch (AdapterException e) {
+				log.error("deleteNe", e);
+				return failDeleteNeByEMLIM();
+			}
+			return Response.ok().build();
+		} else {
+			String location = body.getLocationName();
+			NeEntity entity = null;
+			String id = "";
+			try {
+				AdpAddresses address = body.getAddresses();
+				id = address.getQ3Address().getAddress();
+				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
+			} catch (AdapterException e) {
+				log.error("create ne occur error", e);
+				return failCreateNeByEMLIM();
+			}
 
-		    try {
-		        ne = nesDbMgr.addNe(ne);
-		    } catch (Exception e) {
-		        log.error("addNe", e);
-		        return failDbOperation();
-		    }
-		    
-		    NotificationSender.instance().sendOcNotif( EntityType.NE, ne.getId() );
-		    
-		    String eventTime = TimeUtil.getLocalTmfTime();
-		    String occureTime = eventTime;
-		    NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.ALM_COMMUNICATION,
-				AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-				ErrorCode.ALM_NE_NOT_SUPERVISED.getMessage());
-		    NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,
-				AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-				ErrorCode.ALM_NE_MISALIGNMENT.getMessage());
+			if (null == entity) {
+				return failCreateNeByEMLIM();
+			}
 
-		    log.debug("adapter----------------addNe----------end");
+			log.debug(entity);
 
-		    return Response.ok().entity(ne).build();
+			AdpNe ne = constructNe(entity, id);
+
+			try {
+				ne = nesDbMgr.addNe(ne);
+			} catch (Exception e) {
+				log.error("addNe", e);
+				return failDbOperation();
+			}
+
+			NotificationSender.instance().sendOcNotif(EntityType.NE, ne.getId());
+
+			String eventTime = TimeUtil.getLocalTmfTime();
+			String occureTime = eventTime;
+			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.ALM_COMMUNICATION,
+					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
+					ErrorCode.ALM_NE_NOT_SUPERVISED.getMessage());
+			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,
+					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
+					ErrorCode.ALM_NE_MISALIGNMENT.getMessage());
+
+			log.debug("adapter----------------addNe----------end");
+
+			return Response.ok().entity(ne).build();
 		}
 	}
 
@@ -177,10 +166,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	private Response failDbOperation() {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_DB_OPERATION.getErrorCode());
-		errorInfo.setMessage(ErrorCode.FAIL_DB_OPERATION.getMessage());
-		return Response.serverError().entity(errorInfo).build();
+		return ErrorWrapperUtils.failDbOperation();
 	}
 
 	private Response validateParam(AdpNe body, MethodOperator operate) {
@@ -305,7 +291,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 		try {
 			DeleteNe.deleteNe(groupId, neId);
-			NotificationSender.instance().sendOdNotif( EntityType.NE, neid );
+			NotificationSender.instance().sendOdNotif(EntityType.NE, neid);
 		} catch (Exception e) {
 			log.error("deleteNe", e);
 			return failDeleteNeByEMLIM();
@@ -335,13 +321,13 @@ public class NesApiServiceImpl extends NesApiService {
 		errorInfo.setMessage(ErrorCode.FAIL_DELETE_NE_BY_EMLIM.getMessage());
 		return Response.serverError().entity(errorInfo).build();
 	}
-	
+
 	private Response failSetManagerAddress() {
-        AdpErrorInfo errorInfo = new AdpErrorInfo();
-        errorInfo.setCode(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM.getErrorCode());
-        errorInfo.setMessage(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM.getMessage());
-        return Response.serverError().entity(errorInfo).build();
-    }
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM.getErrorCode());
+		errorInfo.setMessage(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM.getMessage());
+		return Response.serverError().entity(errorInfo).build();
+	}
 
 	private Response failObjNotExist() {
 		AdpErrorInfo errorInfo = new AdpErrorInfo();
@@ -429,12 +415,12 @@ public class NesApiServiceImpl extends NesApiService {
 			if (!isSuccess) {
 				return failSuperviseNeByEMLIM();
 			}
-			NeStateMachineApp.instance().afterSuperviseNe( id );
-            
+			NeStateMachineApp.instance().afterSuperviseNe(id);
+
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", "enum",
 					SupervisionStateEnum.SUPERVISED.name(), SupervisionStateEnum.UNSUPERVISED.name());
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum",
-                CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
+					CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
 					OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
 			break;
