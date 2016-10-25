@@ -57,6 +57,11 @@ public class NotificationSender
         String eventTime = entity.getEventTime();
         EntityType objectType = getObjectType( entity.getMoc().getMoc() );
         String objectID = getObjectId( objectType, entity.getMoi().getMoi() );
+        if (objectID == null)
+        {
+            return;
+        }
+        
         switch( eventType )
         {
             case OBJECT_CREATION:
@@ -223,7 +228,7 @@ public class NotificationSender
                 catch( Exception e )
                 {
                     log.error( "getIdByKeOneNe", e );
-                    return "";
+                    return null;
                 }
             case TP:
 

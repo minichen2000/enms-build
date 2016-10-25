@@ -151,6 +151,8 @@ public class ConfigKey
     public static final String Q3_WS_SERVER_URI = "Q3_WS_SERVER_URI";
 
     public static final String CTRL_URL = "CTRL_URL";
+    
+    public static final String ADP_IP = "ADP_IP";
 
     public static final String ADP_PORT = "ADP_PORT";
 

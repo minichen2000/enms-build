@@ -16,6 +16,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.TimeUtil;
+import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
@@ -145,12 +146,14 @@ public class Q3EmlImMgr
         {
             AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
             AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
+            AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
             List<AdpNe> nes = nesDbMgr
                     .getNesByGroupId( String.valueOf( groupId ) );
             for( AdpNe ne : nes )
             {
                 xcsDbMgr.deleteXcsByNeId( ne.getId() );
                 tpsDbMgr.deleteTpsbyNeId( ne.getId() );
+                equsDbMgr.deleteEquipmentsByNeId( ne.getId() );
             }
             nesDbMgr.deleteNesByGroupId( groupId );
             AdpMaxNeIdMgr.updateNeIdByGroupId( String.valueOf( groupId ),
