@@ -59,7 +59,7 @@ public class Main
             ConfigKey.DEFAULT_ADP_PORT );
         final Server server = new Server( port );
         ServletContextHandler context = new ServletContextHandler( server,
-                "/*" );
+                "/Adapter/*" );
         context.addServlet( servlet, "/*" );
         new Thread( new Runnable()
         {

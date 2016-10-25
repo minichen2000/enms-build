@@ -32,7 +32,7 @@ public class NesApiServiceImplTest {
 	}
 
 	public NesApiServiceImplTest() {
-		url = "http://" + LoadConf.ADP_IP + ":" + LoadConf.ADP_PORT;
+		url = "http://" + LoadConf.ADP_IP + ":" + LoadConf.ADP_PORT + "/Adapter";
 		System.out.println("url = " + url);
 	}
 
