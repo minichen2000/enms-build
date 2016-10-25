@@ -53,7 +53,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
 	
-	private final static String ADP_IP = ConfLoader.getInstance().getConf( ConfigKey.ADP_IP, "" );
+	private final static String ADP_ADDRESS = ConfLoader.getInstance().getConf( ConfigKey.ADP_ADDRESS, "" );
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
@@ -63,7 +63,7 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 		
 		String osMain = body.getAddresses().getQ3Address().getOsMain();
-		if (!ADP_IP.equals( osMain ))
+		if (!ADP_ADDRESS.equals( osMain ))
 		{
 		    String location = body.getLocationName();
 	        NeEntity entity = null;
