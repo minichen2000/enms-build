@@ -15,8 +15,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
+import com.nsb.enms.common.ErrorCode;
 
 public class GetTtp {
 	private static final Logger log = LogManager.getLogger(GetTtp.class);
@@ -79,12 +79,13 @@ public class GetTtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get VC4TTP failed!!!");
+				log.error("Get VC4TTP failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return tpList;
 		} catch (Exception e) {
 			log.error("getVc4Ttp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 }

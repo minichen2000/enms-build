@@ -16,8 +16,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
+import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.utils.Pair;
 
@@ -92,12 +92,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get rsCtp failed!!!");
+				log.error("Get rsCtp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return rsTTPId;
 		} catch (Exception e) {
 			log.error("getRsCtp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -141,12 +142,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get msCtp failed!!!");
+				log.error("Get msCtp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return msTTPId;
 		} catch (Exception e) {
 			log.error("getMsCtp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -191,12 +193,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get unProtectedCtp failed!!!");
+				log.error("Get unProtectedCtp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return protectedTTPId;
 		} catch (Exception e) {
 			log.error("getUnProtectedCtp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -262,12 +265,14 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get au4Ctp failed!!!");
+				log.error("");
+				log.error("Get au4Ctp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return tpList;
 		} catch (Exception e) {
 			log.error("getAu4Ctp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -356,12 +361,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get ePdhCtp failed!!!");
+				log.error("Get ePdhCtp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return pair;
 		} catch (Exception e) {
 			log.error("getEpdhCtp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -424,12 +430,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get vc12Ttp failed!!!");
+				log.error("Get vc12Ttp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return tpList;
 		} catch (Exception e) {
 			log.error("getVc12Ttp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -491,12 +498,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get vc3Ttp failed!!!");
+				log.error("Get vc3Ttp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return tpList;
 		} catch (Exception e) {
 			log.error("getVc3Ttp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
@@ -562,12 +570,13 @@ public class GetCtp {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "Get tu12Ctp failed!!!");
+				log.error("Get tu12Ctp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
 			return tpList;
 		} catch (Exception e) {
 			log.error("getTu12Ctp", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 }
