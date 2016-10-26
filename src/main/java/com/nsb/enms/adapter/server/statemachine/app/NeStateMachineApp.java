@@ -1,6 +1,10 @@
-package com.nsb.enms.adapter.server.statemachine.ne;
+package com.nsb.enms.adapter.server.statemachine.app;
 
-import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
+import com.nsb.enms.adapter.server.statemachine.ne.NeCommunicationStateMachine;
+import com.nsb.enms.adapter.server.statemachine.ne.NeMaintenanceStateMachine;
+import com.nsb.enms.adapter.server.statemachine.ne.NeOperationalStateMachine;
+import com.nsb.enms.adapter.server.statemachine.ne.NeSupervisionStateMachine;
+import com.nsb.enms.adapter.server.statemachine.ne.NeSyncStateMachine;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.restful.model.adapter.AdpNe;
@@ -23,7 +27,7 @@ public class NeStateMachineApp
 
     private StateMachine<NeSyncStateMachine, AdpNe.SynchStateEnum, NeEvent, NeStateCallBack> neSyncStateMachine;
 
-    private StateMachine<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
+    private StateMachine<NeMaintenanceStateMachine, Boolean, NeEvent, NeStateCallBack> neMaintenanaceStateMachine;
 
     private NeStateMachineApp()
     {
@@ -93,12 +97,12 @@ public class NeStateMachineApp
         neSyncStateMachine = syncStateBuilder
                 .build( AdpNe.SynchStateEnum.UNSYNCHRONIZED );
 
-        StateMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> maintenanceStateBuilder = new StateMachineBuilder<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack>(
+        StateMachineBuilder<NeMaintenanceStateMachine, Boolean, NeEvent, NeStateCallBack> maintenanceStateBuilder = new StateMachineBuilder<NeMaintenanceStateMachine, Boolean, NeEvent, NeStateCallBack>(
                 NeMaintenanceStateMachine.class );
-        maintenanceStateBuilder.registExTransition( MaintenanceState.FALSE,
-            MaintenanceState.TRUE, NeEvent.E_FALSE_2_TRUE, "transState" );
+        maintenanceStateBuilder.registExTransition( Boolean.FALSE,
+            Boolean.TRUE, NeEvent.E_FALSE_2_TRUE, "transState" );
         neMaintenanaceStateMachine = maintenanceStateBuilder
-                .build( MaintenanceState.FALSE );
+                .build( Boolean.FALSE );
 
         /*
          * neCommunicationStateMachine.start();
@@ -172,7 +176,7 @@ public class NeStateMachineApp
         return neSyncStateMachine;
     }
 
-    public StateMachine<NeMaintenanceStateMachine, MaintenanceState, NeEvent, NeStateCallBack> getNeMaintenanaceStateMachine()
+    public StateMachine<NeMaintenanceStateMachine, Boolean, NeEvent, NeStateCallBack> getNeMaintenanaceStateMachine()
     {
         return neMaintenanaceStateMachine;
     }

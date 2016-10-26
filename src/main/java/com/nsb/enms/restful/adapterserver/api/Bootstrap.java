@@ -11,14 +11,12 @@ import javax.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.business.ping.PingApp;
 import com.nsb.enms.adapter.server.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
-import com.nsb.enms.adapter.server.notification.NotificationSender;
-import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
+import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Contact;

@@ -14,7 +14,7 @@ import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
-import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
+import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.utils.Pair;

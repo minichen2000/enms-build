@@ -22,7 +22,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMaxNeIdMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
-import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
+import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.common.AlarmSeverity;

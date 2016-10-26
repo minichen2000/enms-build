@@ -8,7 +8,7 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class NeStateCallBack
 {
-    private MaintenanceState maintenanceState;
+    private Boolean maintenanceState;
 
     private AdpNe.CommunicationStateEnum communicationState;
 
@@ -31,12 +31,12 @@ public class NeStateCallBack
         updateNe( ne );
     }
 
-    public void tellMe( MaintenanceState maintenanceState )
+    public void tellMe( Boolean maintenanceState )
             throws AdapterException
     {
         AdpNe ne = new AdpNe();
         ne.setId( id );
-        ne.maintenanceState( Boolean.valueOf( maintenanceState.toString() ) );
+        ne.setMaintenanceState( maintenanceState );
         updateNe( ne );
     }
 
@@ -102,12 +102,12 @@ public class NeStateCallBack
         this.communicationState = communicationState;
     }
 
-    public MaintenanceState getMaintenanceState()
+    public Boolean getMaintenanceState()
     {
         return maintenanceState;
     }
 
-    public void setMaintenanceState( MaintenanceState maintenanceState )
+    public void setMaintenanceState( Boolean maintenanceState )
     {
         this.maintenanceState = maintenanceState;
     }

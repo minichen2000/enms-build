@@ -22,7 +22,7 @@ import com.nsb.enms.adapter.server.filter.AccessControlFilter;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.notification.NotificationClient;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
-import com.nsb.enms.adapter.server.statemachine.ne.NeStateMachineApp;
+import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 
 public class Main
 {

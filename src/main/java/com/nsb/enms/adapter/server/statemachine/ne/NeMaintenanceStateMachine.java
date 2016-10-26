@@ -4,18 +4,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.statemachine.ne.model.MaintenanceState;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.statemachine.annotation.StateMachineParameters;
 
-@StateMachineParameters(stateType = MaintenanceState.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)
+@StateMachineParameters(stateType = Boolean.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)
 public class NeMaintenanceStateMachine
 {
     private static final Logger log = LogManager
             .getLogger( NeMaintenanceStateMachine.class );
 
-    public void transState( MaintenanceState from, MaintenanceState to,
+    public void transState( Boolean from, Boolean to,
             NeEvent event, NeStateCallBack context ) throws AdapterException
     {
         log.debug( "Transition from '" + from + "' to '" + to + "' on event '"
@@ -24,12 +23,12 @@ public class NeMaintenanceStateMachine
         context = null;
     }
 
-    public void entringState( MaintenanceState from, MaintenanceState to,
+    public void entringState( Boolean from, Boolean to,
             NeEvent event, NeStateCallBack context )
     {
     }
 
-    public void leavingState( MaintenanceState from, MaintenanceState to,
+    public void leavingState( Boolean from, Boolean to,
             NeEvent event, NeStateCallBack context )
     {
     }
