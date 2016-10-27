@@ -20,7 +20,6 @@ import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.XcsApiService;
-import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
@@ -108,23 +107,11 @@ public class XcsApiServiceImpl extends XcsApiService {
 				}
 				log.debug("successed to createXcVc4 by ctpId = {}", au4CtpId);
 
-				// 执行打散操作
-				TerminateTpMgr mgr = new TerminateTpMgr();
-				String[] list = atpTimeSlot.split("-");
-				if (list.length == 3) {
-					try {
-						String[] neInfos = adpXcMgr.getNeInfo(au4CtpId);
-						String groupId = neInfos[0];
-						String neId = neInfos[1];
-						mgr.terminateTp(groupId, neId, vc4TTPId, list[0]);
-						AdpTpsMgr tpsMgr = new AdpTpsMgr();
-						List<AdpTp> tpList = tpsMgr.syncTu12Ctp(groupId, neId, vc4TTPId, au4CtpId, neInfos[2]);
-					} catch (AdapterException e) {
-						log.error("terminate tp occur error", e);
-						ErrorWrapperUtils.adapterException(e);
-					}
-				} else {
-					// TODO
+				try {
+					terminateTp(atpTimeSlot, au4CtpId, vc4TTPId);
+				} catch (AdapterException e) {
+					log.error("terminate tp occur error", e);
+					return ErrorWrapperUtils.adapterException(e);
 				}
 
 			} else {
@@ -142,6 +129,29 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 		}
 		return Response.ok().entity(xc).build();
+	}
+
+	/**
+	 * 执行打散操作
+	 * 
+	 * @param tpTimeSlot
+	 * @param au4CtpId
+	 * @param vc4TTPId
+	 * @throws AdapterException
+	 */
+	private void terminateTp(String tpTimeSlot, String au4CtpId, String vc4TTPId) throws AdapterException {
+		TerminateTpMgr terminateMgr = new TerminateTpMgr();
+		String[] neInfos = adpXcMgr.getNeInfo(au4CtpId);
+		String groupId = neInfos[0];
+		String neId = neInfos[1];
+		String[] list = tpTimeSlot.split("-");
+		// TODO 根据LayerRate来判断是打散为2M还是34M
+		if (list.length == 3) {
+			terminateMgr.terminateTug3ToTu12(groupId, neId, vc4TTPId, list[0]);
+			new AdpTpsMgr().syncTu12Ctp(groupId, neId, vc4TTPId, au4CtpId, neInfos[2]);
+		} else {
+			terminateMgr.terminateTug3ToTu3(groupId, neId, vc4TTPId, list[0]);
+		}
 	}
 
 	// TODO 完成对sdh端口的判断
