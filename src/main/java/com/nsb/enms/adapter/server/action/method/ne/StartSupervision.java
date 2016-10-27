@@ -12,7 +12,7 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.common.ErrorCode;
 
 public class StartSupervision
 {
@@ -68,10 +68,9 @@ public class StartSupervision
             }
             catch( Exception e )
             {
-                log.error( "startSuppervision", e );
+                log.error( "startSupervision", e );
                 throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        e.getMessage() );
+                        ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM );
             }
         }
         return false;

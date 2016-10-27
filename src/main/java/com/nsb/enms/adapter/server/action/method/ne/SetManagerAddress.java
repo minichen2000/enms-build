@@ -12,11 +12,12 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.common.ErrorCode;
 
 public class SetManagerAddress
 {
-    private final static Logger log = LogManager.getLogger( SetManagerAddress.class );
+    private final static Logger log = LogManager
+            .getLogger( SetManagerAddress.class );
 
     private static String setMainOSAddressScenario = ConfLoader.getInstance()
             .getConf( ConfigKey.SET_MAIN_OS_ADDR_REQ,
@@ -32,8 +33,7 @@ public class SetManagerAddress
         try
         {
             Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
-                setMainOSAddressScenario, groupId,
-                neId );
+                setMainOSAddressScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -42,7 +42,7 @@ public class SetManagerAddress
             boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-                if(line.contains( "SetReply received" ))
+                if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
                 }
@@ -53,9 +53,9 @@ public class SetManagerAddress
         }
         catch( Exception e )
         {
-            log.error( "stopSuppervision", e );
+            log.error( "setMainOSAddress", e );
             throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+                    ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
         }
     }
 
@@ -65,8 +65,7 @@ public class SetManagerAddress
         try
         {
             Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
-                setSpareOSAddressScenario, groupId,
-                neId );
+                setSpareOSAddressScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -75,7 +74,7 @@ public class SetManagerAddress
             boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-                if(line.contains( "SetReply received" ))
+                if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
                 }
@@ -86,9 +85,9 @@ public class SetManagerAddress
         }
         catch( Exception e )
         {
-            log.error( "stopSuppervision", e );
+            log.error( "setSpareOSAddress", e );
             throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+                    ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
         }
     }
 }

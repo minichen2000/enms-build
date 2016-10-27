@@ -16,6 +16,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
+import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
 
 public class CreateNe
@@ -40,8 +41,7 @@ public class CreateNe
             String userLabel, String locationName, String neAddress )
             throws AdapterException
     {
-        Pair<Integer, Integer> groupNeId = Q3EmlImMgr.instance()
-                .getGroupNeId();
+        Pair<Integer, Integer> groupNeId = Q3EmlImMgr.instance().getGroupNeId();
         int groupId = groupNeId.getFirst();
         int neId = groupNeId.getSecond();
         log.debug( "The groupId = " + groupId + ", neId = " + neId );
@@ -66,10 +66,10 @@ public class CreateNe
     {
         try
         {
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, createNeScenario,
-                String.valueOf( groupId ), String.valueOf( neId ), neRelease,
-                neType, userLabel, locationName );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                createNeScenario, String.valueOf( groupId ),
+                String.valueOf( neId ), neRelease, neType, userLabel,
+                locationName );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -111,9 +111,9 @@ public class CreateNe
             {
                 scenario = setNeIsaAddressScenario;
             }
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, scenario, String.valueOf( groupId ),
-                String.valueOf( neId ), neAddress );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                scenario, String.valueOf( groupId ), String.valueOf( neId ),
+                neAddress );
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
@@ -130,8 +130,7 @@ public class CreateNe
             if( process.waitFor() != 0 || !flag )
             {
                 throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Set ne address failed!!!" );
+                        ErrorCode.FAIL_SET_NE_ADDRESS_BY_EMLIM );
             }
             return flag;
         }
@@ -139,7 +138,7 @@ public class CreateNe
         {
             log.error( "setNeAddress", e );
             throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+                    ErrorCode.FAIL_SET_NE_ADDRESS_BY_EMLIM );
         }
     }
 }

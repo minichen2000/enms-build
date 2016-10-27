@@ -75,7 +75,7 @@ public class NesApiServiceImpl extends NesApiService {
 				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
-				return failCreateNeByEMLIM();
+				return ErrorWrapperUtils.adapterException( e );
 			}
 
 			if (null == entity) {
@@ -111,7 +111,7 @@ public class NesApiServiceImpl extends NesApiService {
 				DeleteNe.deleteNe(groupId, neId);
 			} catch (AdapterException e) {
 				log.error("deleteNe", e);
-				return failDeleteNeByEMLIM();
+				return ErrorWrapperUtils.adapterException( e );
 			}
 			return Response.ok().build();
 		} else {
@@ -124,7 +124,7 @@ public class NesApiServiceImpl extends NesApiService {
 				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
-				return failCreateNeByEMLIM();
+				return ErrorWrapperUtils.adapterException( e );
 			}
 
 			if (null == entity) {
@@ -293,9 +293,9 @@ public class NesApiServiceImpl extends NesApiService {
 		try {
 			DeleteNe.deleteNe(groupId, neId);
 			NotificationSender.instance().sendOdNotif(EntityType.NE, neid);
-		} catch (Exception e) {
+		} catch (AdapterException e) {
 			log.error("deleteNe", e);
-			return failDeleteNeByEMLIM();
+			return ErrorWrapperUtils.adapterException( e );
 		}
 
 		// delete db record, contains ne and tp

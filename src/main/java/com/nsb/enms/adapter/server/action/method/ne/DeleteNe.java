@@ -12,8 +12,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
+import com.nsb.enms.common.ErrorCode;
 
 public class DeleteNe
 {
@@ -30,19 +30,18 @@ public class DeleteNe
             throws AdapterException
     {
         boolean flag = false;
-        stopSuppervision( groupId, neId );
+        stopSupervision( groupId, neId );
         flag = removeNe( groupId, neId );
         return flag;
     }
 
-    private static void stopSuppervision( String groupId, String neId )
+    private static void stopSupervision( String groupId, String neId )
             throws AdapterException
     {
         try
         {
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, stopSupervisionScenario,
-                groupId, neId );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                stopSupervisionScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -57,9 +56,9 @@ public class DeleteNe
         }
         catch( Exception e )
         {
-            log.error( "stopSuppervision", e );
+            log.error( "stopSupervision", e );
             throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+                    ErrorCode.FAIL_UNSUPERVISE_NE_BY_EMLIM );
         }
     }
 
@@ -68,9 +67,8 @@ public class DeleteNe
     {
         try
         {
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, deleteNeScenario,
-                groupId, neId );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                deleteNeScenario, groupId, neId );
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
@@ -87,9 +85,7 @@ public class DeleteNe
 
             if( process.waitFor() != 0 || !flag )
             {
-                throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Delete ne failed!!!" );
+                throw new AdapterException( ErrorCode.FAIL_DELETE_NE_BY_EMLIM );
             }
             Q3EmlImMgr.instance().removeNe( Integer.valueOf( neId ) );
             return flag;
@@ -97,8 +93,7 @@ public class DeleteNe
         catch( Exception e )
         {
             log.error( "removeNe", e );
-            throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+            throw new AdapterException( ErrorCode.FAIL_DELETE_NE_BY_EMLIM );
         }
     }
 }

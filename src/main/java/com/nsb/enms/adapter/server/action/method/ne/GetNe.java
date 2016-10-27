@@ -13,8 +13,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
+import com.nsb.enms.common.ErrorCode;
 
 public class GetNe
 {
@@ -29,9 +29,8 @@ public class GetNe
         log.debug( "------------Start getNe-------------------" );
         try
         {
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
-                String.valueOf( neId ) );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                SCENARIO, String.valueOf( groupId ), String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();
             NeEntity neEntity = new NeEntity();
             BufferedReader br = new BufferedReader(
@@ -120,9 +119,7 @@ public class GetNe
 
             if( process.waitFor() != 0 )
             {
-                throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get ne failed!!!" );
+                throw new AdapterException( ErrorCode.FAIL_GET_NE_BY_EMLIM );
             }
             log.debug( "------------End getNe-------------------" );
             return neEntity;
@@ -130,8 +127,7 @@ public class GetNe
         catch( Exception e )
         {
             log.error( "getNe", e );
-            throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+            throw new AdapterException( ErrorCode.FAIL_GET_NE_BY_EMLIM );
         }
     }
 }

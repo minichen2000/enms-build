@@ -49,7 +49,7 @@ public class AdpTpsMgr {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_DSR_2M));
+			layerRates.add(String.valueOf(LayerRate.LR_DSR_2M.toInt()));
 			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, au4CtpId, layerRates);
 
 			tps.add(ctp);
@@ -83,7 +83,7 @@ public class AdpTpsMgr {
 
 				// TODO 读取映射文件获取层速率
 				List<String> layerRates = new ArrayList<String>();
-				layerRates.add(String.valueOf(LayerRate.LR_VC4));
+				layerRates.add(String.valueOf(LayerRate.LR_VC4.toInt()));
 				AdpTp ttp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
 				tps.add(ttp);
 				break;
@@ -163,7 +163,7 @@ public class AdpTpsMgr {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_AU4));
+			layerRates.add(String.valueOf(LayerRate.LR_AU4.toInt()));
 
 			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
 			tps.add(newCtp);
@@ -190,7 +190,7 @@ public class AdpTpsMgr {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_TUVC12));
+			layerRates.add(String.valueOf(LayerRate.LR_TUVC12.toInt()));
 
 			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
 			tps.add(newCtp);
