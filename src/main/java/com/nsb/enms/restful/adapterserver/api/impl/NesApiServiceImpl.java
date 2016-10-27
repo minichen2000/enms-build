@@ -2,6 +2,7 @@ package com.nsb.enms.restful.adapterserver.api.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.FutureTask;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -379,69 +380,98 @@ public class NesApiServiceImpl extends NesApiService {
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 		OperationalStateEnum operationalState = body.getOperationalState();
 		if (null == operationalState) {
-			try {
-				nesDbMgr.updateNe(body);
-			} catch (Exception e) {
-				log.error("updateNe", e);
-				return failDbOperation();
-			}
-			return Response.ok().build();
+			return updateNe(body);
 		}
 		switch (operationalState) {
 		case SUPERVISING:
-			// 监管网元
-			try {
-				nesDbMgr.updateNe(body);
-			} catch (Exception e) {
-				log.error("updateNe", e);
-				return failDbOperation();
-			}
-			boolean isSuccess = false;
-			try {
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState", "enum",
-						OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
-				isSuccess = StartSupervision.startSupervision(groupId, neId);
-			} catch (Exception e) {
-				log.error("failed to supervision ne", e);
-				try {
-					body.setOperationalState(OperationalStateEnum.IDLE);
-					nesDbMgr.updateNe(body);
-				} catch (Exception ex) {
-					log.error("failed to updateNe", ex);
-					return failDbOperation();
-				}
-			}
-			log.debug("isSuccess = " + isSuccess);
-			if (!isSuccess) {
-				return failSuperviseNeByEMLIM();
-			}
-			NeStateMachineApp.instance().afterSuperviseNe(id);
-
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", "enum",
-					SupervisionStateEnum.SUPERVISED.name(), SupervisionStateEnum.UNSUPERVISED.name());
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum",
-					CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
-					OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
-			break;
+			return supervising(body, id, groupId, neId);
 		case SYNCHRONIZING:
-			// 同步TP
-			try {
-				nesDbMgr.updateNe(body);
-			} catch (Exception e) {
-				log.error("failed to updateNe", e);
-				return failDbOperation();
-			}
-			new SyncTpThread(groupId, neId, body.getId()).start();
-			break;
+			return synchronizing(body, groupId, neId);
 		default:
+			return updateNe(body);
+		}
+	}
+
+	private Response updateNe(AdpNe body) {
+		try {
+			nesDbMgr.updateNe(body);
+		} catch (Exception e) {
+			log.error("updateNe", e);
+			return failDbOperation();
+		}
+		return Response.ok().build();
+	}
+
+	/**
+	 * 监管网元
+	 * 
+	 * @param body
+	 * @param id
+	 * @param groupId
+	 * @param neId
+	 * @return
+	 */
+	private Response supervising(AdpNe body, String id, String groupId, String neId) {
+		Response response = updateNe(body);
+		if (Response.Status.OK.getStatusCode() != response.getStatus()) {
+			return response;
+		}
+
+		boolean isSuccess = false;
+		try {
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState", "enum",
+					OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
+			isSuccess = StartSupervision.startSupervision(groupId, neId);
+		} catch (Exception e) {
+			log.error("failed to supervision ne", e);
 			try {
+				body.setOperationalState(OperationalStateEnum.IDLE);
 				nesDbMgr.updateNe(body);
-			} catch (Exception e) {
-				log.error("failed to updateNe", e);
+			} catch (Exception ex) {
+				log.error("failed to updateNe", ex);
 				return failDbOperation();
 			}
-			break;
+		}
+		log.debug("isSuccess = " + isSuccess);
+		if (!isSuccess) {
+			return failSuperviseNeByEMLIM();
+		}
+		NeStateMachineApp.instance().afterSuperviseNe(id);
+
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", "enum",
+				SupervisionStateEnum.SUPERVISED.name(), SupervisionStateEnum.UNSUPERVISED.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum",
+				CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
+				OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
+		return Response.ok().build();
+	}
+
+	/**
+	 * 同步TP
+	 * 
+	 * @param body
+	 * @param groupId
+	 * @param neId
+	 * @return
+	 */
+	private Response synchronizing(AdpNe body, String groupId, String neId) {
+		Response response = updateNe(body);
+		if (Response.Status.OK.getStatusCode() != response.getStatus()) {
+			return response;
+		}
+
+		try {
+			SyncTpThread thread = new SyncTpThread(groupId, neId, body.getId());
+			FutureTask<Object> ft = new FutureTask<Object>(thread);
+			new Thread(ft).start();
+		} catch (Exception e) {
+			log.error("failed to sync TP", e);
+			if (e instanceof AdapterException) {
+				AdapterException adpExp = (AdapterException) e;
+				return ErrorWrapperUtils.adapterException(adpExp);
+			}
+			return Response.serverError().entity(e).build();
 		}
 
 		return Response.ok().build();

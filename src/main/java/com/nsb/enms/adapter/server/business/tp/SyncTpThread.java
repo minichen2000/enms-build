@@ -1,5 +1,7 @@
 package com.nsb.enms.adapter.server.business.tp;
 
+import java.util.concurrent.Callable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +14,7 @@ import com.nsb.enms.common.EntityType;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 
-public class SyncTpThread extends Thread {
+public class SyncTpThread implements Callable<Object> {
 	private final static Logger log = LogManager.getLogger(SyncTpThread.class);
 
 	private String groupId, neId, id;
@@ -24,7 +26,7 @@ public class SyncTpThread extends Thread {
 	}
 
 	@Override
-	public void run() {
+	public Object call() throws Exception {
 		// StartSuppervision start = new StartSuppervision();
 		// boolean isSuccess;
 		// try
@@ -48,12 +50,12 @@ public class SyncTpThread extends Thread {
 		// }
 
 		// NeStateMachineApp.instance().beforeSynchData(id);
-		try {
-			new AdpTpsMgr().syncTp(groupId, neId, id);
-		} catch (AdapterException e) {
-			log.error("sync tp occur error", e);
-			ErrorWrapperUtils.adapterException(e);
-		}
+		// try {
+		new AdpTpsMgr().syncTp(groupId, neId, id);
+		// } catch (AdapterException e) {
+		// log.error("sync tp occur error", e);
+		// ErrorWrapperUtils.adapterException(e);
+		// }
 		// NeStateMachineApp.instance().afterSynchData(id);
 
 		// update the value of alignmentStatus for ne to true
@@ -69,6 +71,7 @@ public class SyncTpThread extends Thread {
 				OperationalStateEnum.IDLE.name(), OperationalStateEnum.SYNCHRONIZING.name());
 
 		log.debug("sync tp end");
+		return null;
 	}
 
 	/**
