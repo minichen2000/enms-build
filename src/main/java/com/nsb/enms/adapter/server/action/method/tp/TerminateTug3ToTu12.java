@@ -12,7 +12,7 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.common.ErrorCode;
 
 public class TerminateTug3ToTu12 {
 	private static final Logger log = LogManager.getLogger(TerminateTug3ToTu12.class);
@@ -30,7 +30,7 @@ public class TerminateTug3ToTu12 {
 		}
 	}
 
-	private static boolean terminateTug3ToTu12(String groupId, String neId, String vc4TTPId, String tug3Id)
+	public static boolean terminateTug3ToTu12(String groupId, String neId, String vc4TTPId, String tug3Id)
 			throws AdapterException {
 		boolean isOk = false;
 
@@ -50,12 +50,13 @@ public class TerminateTug3ToTu12 {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "terminateTug3ToTu12 failed!!!");
+				log.error("terminateTug3ToTu12 failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
 			return isOk;
 		} catch (Exception e) {
 			log.error("terminateTug3ToTu12", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
 	}
 }

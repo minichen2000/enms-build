@@ -27,7 +27,7 @@ public class GetCtp {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_CONNECTION_PORT_REQ,
 			ConfigKey.DEFAULT_GET_CONNECTION_PORT_REQ);
 
-	public static List<TpEntity> getSdhCtp(int groupId, int neId, String tpId) throws AdapterException {
+	public static List<TpEntity> getSdhCtp(String groupId, String neId, String tpId) throws AdapterException {
 		log.debug("tpId = " + tpId);
 
 		String rsTTPId = getRsCtp(groupId, neId, tpId);
@@ -52,7 +52,7 @@ public class GetCtp {
 		return ctpList;
 	}
 
-	private static String getRsCtp(int groupId, int neId, String tpId) throws AdapterException {
+	private static String getRsCtp(String groupId, String neId, String tpId) throws AdapterException {
 		try {
 			// labelledOpticalSPITTPBidirectional = 0.0.7.774.127.7.0.3.4
 			String objectClass = "0.0.7.774.127.7.0.3.4";
@@ -64,8 +64,8 @@ public class GetCtp {
 			String rsCTPId = "0.0.7.774.0.7.22";
 			String filterParam = rsCTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -102,7 +102,7 @@ public class GetCtp {
 		}
 	}
 
-	private static String getMsCtp(int groupId, int neId, String rsTtpId) throws AdapterException {
+	private static String getMsCtp(String groupId, String neId, String rsTtpId) throws AdapterException {
 		try {
 			// rsTTPBidirectional = 0.0.7.774.0.3.40
 			String objectClass = "0.0.7.774.0.3.40";
@@ -114,8 +114,8 @@ public class GetCtp {
 			String msCTPId = "0.0.7.774.0.7.13";
 			String filterParam = msCTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -152,7 +152,7 @@ public class GetCtp {
 		}
 	}
 
-	private static String getUnProtectedCtp(int groupId, int neId, String msTtpId) throws AdapterException {
+	private static String getUnProtectedCtp(String groupId, String neId, String msTtpId) throws AdapterException {
 		try {
 			// msTTPBidirectional = 0.0.7.774.0.3.25
 			String objectClass = "0.0.7.774.0.3.25";
@@ -164,8 +164,8 @@ public class GetCtp {
 			String unprotectedCTPId = "0.0.7.774.127.3.0.7.16";
 			String filterParam = unprotectedCTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -203,7 +203,8 @@ public class GetCtp {
 		}
 	}
 
-	private static List<TpEntity> getAu4Ctp(int groupId, int neId, String protectedTtpId) throws AdapterException {
+	private static List<TpEntity> getAu4Ctp(String groupId, String neId, String protectedTtpId)
+			throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 
 		try {
@@ -218,8 +219,8 @@ public class GetCtp {
 			String au4CTPId = "0.0.7.774.0.7.2";
 			String filterParam = au4CTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -276,7 +277,8 @@ public class GetCtp {
 		}
 	}
 
-	public static Pair<Integer, List<TpEntity>> getPdhCtp(int groupId, int neId, String tpId) throws AdapterException {
+	public static Pair<Integer, List<TpEntity>> getPdhCtp(String groupId, String neId, String tpId)
+			throws AdapterException {
 		log.debug("tpId = " + tpId);
 
 		Pair<String, String> pair = getEPdhCtp(groupId, neId, tpId);
@@ -306,7 +308,7 @@ public class GetCtp {
 		return pair2;
 	}
 
-	private static Pair<String, String> getEPdhCtp(int groupId, int neId, String tpId) throws AdapterException {
+	private static Pair<String, String> getEPdhCtp(String groupId, String neId, String tpId) throws AdapterException {
 		try {
 			// pPITTPBidirectionalR1 = 1.3.12.2.1006.54.0.0.3.210
 			String objectClass = "1.3.12.2.1006.54.0.0.3.210";
@@ -318,8 +320,8 @@ public class GetCtp {
 			String ePDHCTPId = "0.4.0.371.0.7.2";
 			String filterParam = ePDHCTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -371,7 +373,7 @@ public class GetCtp {
 		}
 	}
 
-	private static List<TpEntity> getVc12Ttp(int groupId, int neId, String tpId) throws AdapterException {
+	private static List<TpEntity> getVc12Ttp(String groupId, String neId, String tpId) throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 		try {
 			// vc12PathTraceTTPBidirectional = 0.0.7.774.127.7.0.3.10
@@ -383,8 +385,8 @@ public class GetCtp {
 
 			String filterParam = vc12TTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -440,7 +442,7 @@ public class GetCtp {
 		}
 	}
 
-	private static List<TpEntity> getVc3Ttp(int groupId, int neId, String tpId) throws AdapterException {
+	private static List<TpEntity> getVc3Ttp(String groupId, String neId, String tpId) throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 		try {
 			String objectClass = "0.0.7.774.0.3.101";
@@ -451,8 +453,8 @@ public class GetCtp {
 
 			String filterParam = vc3TTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass,
-					String.valueOf(groupId), String.valueOf(neId), paramKey, paramValue, scope, filterParam);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));

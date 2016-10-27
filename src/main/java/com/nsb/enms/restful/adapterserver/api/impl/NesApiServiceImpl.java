@@ -432,7 +432,7 @@ public class NesApiServiceImpl extends NesApiService {
 				log.error("failed to updateNe", e);
 				return failDbOperation();
 			}
-			new SyncTpThread(Integer.valueOf(groupId), Integer.valueOf(neId), body.getId()).start();
+			new SyncTpThread(groupId, neId, body.getId()).start();
 			break;
 		default:
 			try {

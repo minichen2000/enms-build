@@ -21,10 +21,10 @@ public class TerminationsApiServiceImpl extends TerminationsApiService {
 	@Override
 	public Response terminateCtp(String ctpid, SecurityContext securityContext) throws NotFoundException {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
-		TerminateTpMgr mgr = new TerminateTpMgr(ctpid);
-		log.debug("start to terminate tp by ctpId = {}", ctpid);
-		tpList = mgr.run();
-		log.debug("successed to terminate tp by ctpId = {}", ctpid);
+		// TerminateTpMgr mgr = new TerminateTpMgr();
+		// log.debug("start to terminate tp by ctpId = {}", ctpid);
+		// tpList = mgr.run("", "", ctpid, "");
+		// log.debug("successed to terminate tp by ctpId = {}", ctpid);
 		return Response.ok().entity(tpList).build();
 	}
 }

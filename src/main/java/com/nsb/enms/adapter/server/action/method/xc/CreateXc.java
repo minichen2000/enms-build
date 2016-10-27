@@ -14,8 +14,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
+import com.nsb.enms.common.ErrorCode;
 
 public class CreateXc {
 	private static final Logger log = LogManager.getLogger(CreateXc.class);
@@ -29,8 +29,8 @@ public class CreateXc {
 	public static XcEntity createXcVc4(String groupId, String neId, String pTTPId, String augId, String au4CTPId)
 			throws AdapterException {
 		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC4, groupId, neId,
-					pTTPId, augId, au4CTPId);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC4, groupId, neId, pTTPId,
+					augId, au4CTPId);
 			InputStream inputStream = process.getInputStream();
 			XcEntity xcEntity = new XcEntity();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -84,21 +84,21 @@ public class CreateXc {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "create xc failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
 			return xcEntity;
 
 		} catch (Exception e) {
 			log.error("createXcVc4", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
 	}
 
 	public static XcEntity createXcVc12(String groupId, String neId, String vc4TtpId, String tug3Id, String tug2Id,
 			String tu12CtpId, String vc12TtpId) throws AdapterException {
 		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC12, groupId, neId,
-					vc4TtpId, tug3Id, tug2Id, tu12CtpId, vc12TtpId);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC12, groupId, neId, vc4TtpId,
+					tug3Id, tug2Id, tu12CtpId, vc12TtpId);
 			InputStream inputStream = process.getInputStream();
 			XcEntity xcEntity = new XcEntity();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -152,13 +152,13 @@ public class CreateXc {
 			br.close();
 
 			if (process.waitFor() != 0) {
-				throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, "create xc failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
 			return xcEntity;
 
 		} catch (Exception e) {
 			log.error("createXcVc12", e);
-			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage());
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
 	}
 
