@@ -114,7 +114,7 @@ public class AdpTpsMgr {
 	}
 
 	public void syncTp(String groupId, String neId, String neDbId) throws AdapterException {
-		List<TpEntity> tpList = GetTp.getTp(Integer.valueOf(groupId), Integer.valueOf(neId));
+		List<TpEntity> tpList = GetTp.getTp(groupId, neId);
 		log.debug("tpList = " + tpList.size() + ", neId = " + neId);
 
 		for (TpEntity tp : tpList) {
@@ -202,11 +202,16 @@ public class AdpTpsMgr {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(String.valueOf(layerRate));
 		pdhPTP.setLayerRates(layerRates);
+		addTps(tps);
+		updateTps(pdhPTP);
+	}
+
+	private void updateTps(AdpTp tp) throws AdapterException {
 		try {
-			tpsDbMgr.addTps(tps);
-			tpsDbMgr.updateTp(pdhPTP);
+			tpsDbMgr.updateTp(tp);
 		} catch (Exception e) {
 			log.error("syncCtp", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
 

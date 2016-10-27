@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.TerminationsApiService;
 import com.nsb.enms.restful.model.adapter.AdpTp;
-import com.nsb.enms.adapter.server.business.sync.TerminateTpMgr;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
 public class TerminationsApiServiceImpl extends TerminationsApiService {

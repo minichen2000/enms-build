@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.business.sync.TerminateTpMgr;
 import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
+import com.nsb.enms.adapter.server.business.tp.TerminateTpMgr;
 import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;

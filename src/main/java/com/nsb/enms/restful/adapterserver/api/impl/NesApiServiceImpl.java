@@ -15,7 +15,7 @@ import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.action.method.ne.SetManagerAddress;
 import com.nsb.enms.adapter.server.action.method.ne.StartSupervision;
-import com.nsb.enms.adapter.server.business.SyncTpThread;
+import com.nsb.enms.adapter.server.business.tp.SyncTpThread;
 import com.nsb.enms.adapter.server.common.MethodOperator;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;

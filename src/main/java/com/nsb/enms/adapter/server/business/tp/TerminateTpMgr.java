@@ -1,24 +1,11 @@
-package com.nsb.enms.adapter.server.business.sync;
+package com.nsb.enms.adapter.server.business.tp;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.action.entity.TpEntity;
-import com.nsb.enms.adapter.server.action.method.tp.GetCtp;
-import com.nsb.enms.adapter.server.action.method.tp.GetTtp;
 import com.nsb.enms.adapter.server.action.method.tp.TerminateTug3ToTu12;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
-import com.nsb.enms.adapter.server.common.utils.GenerateUserLabelUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
-import com.nsb.enms.common.EntityType;
-import com.nsb.enms.common.ErrorCode;
-import com.nsb.enms.common.LayerRate;
-import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class TerminateTpMgr {
 	private final static Logger log = LogManager.getLogger(TerminateTpMgr.class);
