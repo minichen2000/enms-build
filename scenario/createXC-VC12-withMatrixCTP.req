@@ -19,7 +19,7 @@ CMIS_REQUEST = m_action
             (ExplicitTP)  <CHOICE> {1, 
                    <OBJECT_INST> {
                       <LDN> {
-                        <RDN> { <AVA> { 0.0.7.774.127.3.0.7.4, __PARAMS_3__ } }, // vc4TTPId 
+                        <RDN> { <AVA> { 0.0.7.774.0.7.42, __PARAMS_3__ } }, // vc4TTPId 
                         <RDN> { <AVA> { 0.0.7.774.0.7.34, __PARAMS_4__ } }, // tug3Id 
                         <RDN> { <AVA> { 0.0.7.774.0.7.33, __PARAMS_5__ } }, // tug2Id
                         <RDN> { <AVA> { 0.0.7.774.0.7.30, __PARAMS_6__ } } // tu12CTPId 
