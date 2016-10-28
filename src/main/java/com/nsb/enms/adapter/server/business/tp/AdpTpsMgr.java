@@ -49,8 +49,40 @@ public class AdpTpsMgr {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_DSR_2M.toInt()));
+			layerRates.add(String.valueOf(LayerRate.LR_DSR_2M));
 			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, au4CtpId, layerRates);
+
+			tps.add(ctp);
+		}
+
+		tps = addTps(tps);
+
+		return tps;
+	}
+
+	public List<AdpTp> syncTu3Ctp(String groupId, String neId, String vc4TtpId, String au4CtpId, String neDbId)
+			throws AdapterException {
+		List<AdpTp> tps = new ArrayList<AdpTp>();
+		List<TpEntity> tpList = GetCtp.getTu3Ctp(groupId, neId, vc4TtpId);
+		log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
+
+		AdpTp au4Ctp = null;
+		try {
+			au4Ctp = tpsDbMgr.getTpById(au4CtpId);
+		} catch (Exception e) {
+			log.error("getTpById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+		String au4CtpUserLabel = au4Ctp.getUserLabel();
+		for (TpEntity tp : tpList) {
+			log.debug("syncCtp tp = " + tp);
+			String tu3CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
+
+			// TODO 读取映射文件获取层速率
+			List<String> layerRates = new ArrayList<String>();
+			layerRates.add(String.valueOf(LayerRate.LR_DSR_34M));
+			AdpTp ctp = constructTp(tp, neDbId, tu3CtpUserLabel, au4CtpId, layerRates);
 
 			tps.add(ctp);
 		}
@@ -83,7 +115,7 @@ public class AdpTpsMgr {
 
 				// TODO 读取映射文件获取层速率
 				List<String> layerRates = new ArrayList<String>();
-				layerRates.add(String.valueOf(LayerRate.LR_VC4.toInt()));
+				layerRates.add(String.valueOf(LayerRate.LR_VC4));
 				AdpTp ttp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
 				tps.add(ttp);
 				break;
@@ -163,7 +195,7 @@ public class AdpTpsMgr {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_AU4.toInt()));
+			layerRates.add(String.valueOf(LayerRate.LR_AU4));
 
 			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
 			tps.add(newCtp);
@@ -190,7 +222,7 @@ public class AdpTpsMgr {
 
 			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_TUVC12.toInt()));
+			layerRates.add(String.valueOf(LayerRate.LR_TUVC12));
 
 			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
 			tps.add(newCtp);

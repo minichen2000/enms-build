@@ -8,6 +8,8 @@ public class XcParamBean {
 	private String vc4TtpId = StringUtils.EMPTY;
 	private String tug3Id = StringUtils.EMPTY;
 	private String tug2Id = StringUtils.EMPTY;
+	private String tu3CtpId = StringUtils.EMPTY;
+	private String vc3TtpId = StringUtils.EMPTY;
 	private String tu12CtpId = StringUtils.EMPTY;
 	private String vc12TtpId = StringUtils.EMPTY;
 	private boolean isSdhTp = false;
@@ -52,6 +54,22 @@ public class XcParamBean {
 		this.tug2Id = tug2Id;
 	}
 
+	public String getTu3CtpId() {
+		return tu3CtpId;
+	}
+
+	public void setTu3CtpId(String tu3CtpId) {
+		this.tu3CtpId = tu3CtpId;
+	}
+
+	public String getVc3TtpId() {
+		return vc3TtpId;
+	}
+
+	public void setVc3TtpId(String vc3TtpId) {
+		this.vc3TtpId = vc3TtpId;
+	}
+
 	public String getTu12CtpId() {
 		return tu12CtpId;
 	}
@@ -79,7 +97,8 @@ public class XcParamBean {
 	@Override
 	public String toString() {
 		return "XcParamBean [groupId=" + groupId + ", neId=" + neId + ", vc4TtpId=" + vc4TtpId + ", tug3Id=" + tug3Id
-				+ ", tug2Id=" + tug2Id + ", tu12CtpId=" + tu12CtpId + ", vc12TtpId=" + vc12TtpId + ", isSdhTp="
-				+ isSdhTp + "]";
+				+ ", tug2Id=" + tug2Id + ", tu3CtpId=" + tu3CtpId + ", vc3TtpId=" + vc3TtpId + ", tu12CtpId="
+				+ tu12CtpId + ", vc12TtpId=" + vc12TtpId + ", isSdhTp=" + isSdhTp + "]";
 	}
+
 }

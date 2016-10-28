@@ -29,6 +29,10 @@ public class ConfigKey {
 
 	public static final String DEFAULT_CREATE_XC_VC4_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "createXC-VC4-withMatrix.req";
 
+	public static final String CREATE_XC_VC3_REQ = "CREATE_XC_VC3_REQ";
+
+	public static final String DEFAULT_CREATE_XC_VC3_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "createXC-VC3-withMatrix.req";
+
 	public static final String CREATE_XC_VC12_REQ = "CREATE_XC_VC12_REQ";
 
 	public static final String DEFAULT_CREATE_XC_VC12_REQ = DEFAULT_TSTMGR_SCENARIO_DIR

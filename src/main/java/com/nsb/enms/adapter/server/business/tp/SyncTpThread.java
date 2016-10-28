@@ -5,9 +5,6 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
-import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;

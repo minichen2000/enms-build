@@ -49,14 +49,62 @@ public class AdpXcsMgr {
 
 		XcEntity xcEntity = CreateXc.createXcVc12(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 				tpBean.getTug3Id(), tpBean.getTug2Id(), tpBean.getTu12CtpId(), tpBean.getVc12TtpId());
-		AdpXc xc = insertXc2DbByTu12AndVc12(xcEntity, neDbId, atpId, ztpId);
+		AdpXc xc = insertXc2DbByTu12AndVc12(xcEntity.getMoi(), neDbId, atpId, ztpId);
 		return xc;
 	}
 
-	private AdpXc insertXc2DbByTu12AndVc12(XcEntity xcEntity, String neDbId, String atpDbId, String ztpDbId)
+	private AdpXc insertXc2DbByTu12AndVc12(String moi, String neDbId, String atpDbId, String ztpDbId)
 			throws AdapterException {
 		AdpXc xc = new AdpXc();
-		xc.setAid(xcEntity.getMoi());
+		xc.setAid(moi);
+		xc.setImplStatus("");
+		xc.setNeId(neDbId);
+		// xc.setUsedByConnection("0");
+		// TODO 修改该值
+		xc.setLayerrate(String.valueOf(LayerRate.LR_TUVC12.toInt()));
+
+		List<String> atps = new ArrayList<String>();
+		atps.add(atpDbId);
+		xc.setAtps(atps);
+
+		List<String> ztps = new ArrayList<String>();
+		ztps.add(ztpDbId);
+		xc.setZtps(ztps);
+
+		try {
+			xc = xcsDbMgr.createXc(xc);
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return xc;
+	}
+
+	public AdpXc createXcByTu3AndVc3(String neDbId, String atpId, String ztpId) throws AdapterException {
+		log.debug("atpId = {}", atpId);
+		XcParamBean atpBean = getParam(atpId);
+
+		log.debug("ztpId = {}", ztpId);
+		XcParamBean ztpBean = getParam(ztpId);
+
+		XcParamBean tpBean = new XcParamBean();
+		if (atpBean.isSdhTp()) {
+			tpBean = atpBean;
+			tpBean.setVc3TtpId(ztpBean.getVc3TtpId());
+		} else {
+			tpBean = ztpBean;
+			tpBean.setVc3TtpId(atpBean.getVc3TtpId());
+		}
+
+		XcEntity xcEntity = CreateXc.createXcVc3(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
+				tpBean.getTug3Id(), tpBean.getTu3CtpId(), tpBean.getVc3TtpId());
+		AdpXc xc = insertXc2DbByTu3AndVc3(xcEntity.getMoi(), neDbId, atpId, ztpId);
+		return xc;
+	}
+
+	private AdpXc insertXc2DbByTu3AndVc3(String moi, String neDbId, String atpDbId, String ztpDbId)
+			throws AdapterException {
+		AdpXc xc = new AdpXc();
+		xc.setAid(moi);
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
 		// xc.setUsedByConnection("0");
@@ -108,7 +156,7 @@ public class AdpXcsMgr {
 			vc4TtpDbId = ttp.getId();
 		}
 
-		insertXc2DbByAu4AndVc4(xcEntity, neDbId, vc4TtpDbId, au4CtpId);
+		insertXc2DbByAu4AndVc4(xcEntity.getMoi(), neDbId, vc4TtpDbId, au4CtpId);
 
 		return vc4TTPId;
 	}
@@ -124,11 +172,11 @@ public class AdpXcsMgr {
 		return ne;
 	}
 
-	private void insertXc2DbByAu4AndVc4(XcEntity xcEntity, String neDbId, String vc4TtpDbId, String au4CtpId)
+	private void insertXc2DbByAu4AndVc4(String moi, String neDbId, String vc4TtpDbId, String au4CtpId)
 			throws AdapterException {
 		AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 		AdpXc xc = new AdpXc();
-		xc.setAid(xcEntity.getMoi());
+		xc.setAid(moi);
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
 		// TODO 修改该值
@@ -151,14 +199,6 @@ public class AdpXcsMgr {
 	}
 
 	private XcParamBean getParam(String tpId) throws AdapterException {
-		String groupId = StringUtils.EMPTY;
-		String neId = StringUtils.EMPTY;
-		String vc4TtpId = StringUtils.EMPTY;
-		String tug3Id = StringUtils.EMPTY;
-		String tug2Id = StringUtils.EMPTY;
-		String tu12CtpId = StringUtils.EMPTY;
-		String vc12TtpId = StringUtils.EMPTY;
-
 		AdpTp tp = getTpById(tpId);
 
 		String neid = tp.getNeId();
@@ -174,29 +214,58 @@ public class AdpXcsMgr {
 		String neMoi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		String moi = GenerateKeyOnNeUtil.getMoi(tp.getKeyOnNe());
 		XcParamBean bean = new XcParamBean();
+
 		if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
-			bean.setSdhTp(true);
-			groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-			neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-			vc4TtpId = moi.split("/")[2].replaceAll("vc4TTPId=", StringUtils.EMPTY);
-			bean.setVc4TtpId(vc4TtpId);
-			tug3Id = moi.split("/")[3].replaceAll("tug3Id=", StringUtils.EMPTY);
-			bean.setTug3Id(tug3Id);
-			tug2Id = moi.split("/")[4].replaceAll("tug2Id=", StringUtils.EMPTY);
-			bean.setTug2Id(tug2Id);
-			tu12CtpId = moi.split("/")[5].replaceAll("tu12CTPId=", StringUtils.EMPTY);
-			bean.setTu12CtpId(tu12CtpId);
+			constructTu12CtpBean(moi, bean);
 		} else if ("vc12PathTraceTTPBidirectional".equalsIgnoreCase(tpType)) {
-			bean.setSdhTp(false);
-			groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-			neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-			vc12TtpId = moi.split("/")[2].replaceAll("vc12TTPId=", StringUtils.EMPTY);
-			bean.setVc12TtpId(vc12TtpId);
+			constructVc12TtpBean(moi, bean);
+		} else if ("tu3CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
+			constructTu3CtpBean(moi, bean);
+		} else if ("vc3TTPBidirectionalR1".equalsIgnoreCase(tpType)) {
+			constructVc3TtpBean(moi, bean);
+		} else {
+			log.error("there is not a valid tp type:" + tpType);
 		}
 
+		String groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+		String neId = neMoi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
 		bean.setGroupId(groupId);
 		bean.setNeId(neId);
 		return bean;
+	}
+
+	private void constructVc12TtpBean(String moi, XcParamBean bean) {
+		bean.setSdhTp(false);
+		String vc12TtpId = moi.split("/")[2].replaceAll("vc12TTPId=", StringUtils.EMPTY);
+		bean.setVc12TtpId(vc12TtpId);
+	}
+
+	private void constructTu12CtpBean(String moi, XcParamBean bean) {
+		String vc4TtpId = moi.split("/")[2].replaceAll("vc4TTPId=", StringUtils.EMPTY);
+		bean.setVc4TtpId(vc4TtpId);
+		String tug3Id = moi.split("/")[3].replaceAll("tug3Id=", StringUtils.EMPTY);
+		bean.setTug3Id(tug3Id);
+		String tug2Id = moi.split("/")[4].replaceAll("tug2Id=", StringUtils.EMPTY);
+		bean.setTug2Id(tug2Id);
+		String tu12CtpId = moi.split("/")[5].replaceAll("tu12CTPId=", StringUtils.EMPTY);
+		bean.setTu12CtpId(tu12CtpId);
+		bean.setSdhTp(true);
+	}
+
+	private void constructTu3CtpBean(String moi, XcParamBean bean) {
+		String vc4TtpId = moi.split("/")[2].replaceAll("vc4TTPId=", StringUtils.EMPTY);
+		bean.setVc4TtpId(vc4TtpId);
+		String tug3Id = moi.split("/")[3].replaceAll("tug3Id=", StringUtils.EMPTY);
+		bean.setTug3Id(tug3Id);
+		String tu3CtpId = moi.split("/")[4].replaceAll("tu3CTPId=", StringUtils.EMPTY);
+		bean.setTu3CtpId(tu3CtpId);
+		bean.setSdhTp(true);
+	}
+
+	private void constructVc3TtpBean(String moi, XcParamBean bean) {
+		bean.setSdhTp(false);
+		String vc3TtpId = moi.split("/")[2].replaceAll("vc3TTPId=", StringUtils.EMPTY);
+		bean.setVc3TtpId(vc3TtpId);
 	}
 
 	public String[] getNeInfo(String tpId) throws AdapterException {

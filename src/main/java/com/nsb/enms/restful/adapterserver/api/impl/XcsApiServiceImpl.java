@@ -18,6 +18,7 @@ import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
+import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.adapterserver.api.XcsApiService;
 import com.nsb.enms.restful.model.adapter.AdpXc;
@@ -108,7 +109,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 				log.debug("successed to createXcVc4 by ctpId = {}", au4CtpId);
 
 				try {
-					terminateTp(atpTimeSlot, au4CtpId, vc4TTPId);
+					String tug3Id = atpTimeSlot.split("-")[0];
+					terminateTp(LayerRate.LR_TUVC12, au4CtpId, vc4TTPId, tug3Id);
 				} catch (AdapterException e) {
 					log.error("terminate tp occur error", e);
 					return ErrorWrapperUtils.adapterException(e);
@@ -121,36 +123,46 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 		AdpXc xc;
 		try {
-			String neDbId = body.getNeId();
-			xc = adpXcMgr.createXcByTu12AndVc12(neDbId, atpId, ztpId);
+			// TODO 根据时隙传入正确的LayerRate
+			xc = createXc(LayerRate.LR_TUVC12, body.getNeId(), atpId, ztpId);
 		} catch (AdapterException e) {
-			log.error("createXcByTu12AndVc12", e);
 			return ErrorWrapperUtils.adapterException(e);
-
 		}
 		return Response.ok().entity(xc).build();
+	}
+
+	private AdpXc createXc(LayerRate layerRate, String neDbId, String atpId, String ztpId) throws AdapterException {
+		AdpXc xc = null;
+		if (LayerRate.LR_TUVC3 == layerRate) {
+			xc = adpXcMgr.createXcByTu3AndVc3(neDbId, atpId, ztpId);
+		} else if (LayerRate.LR_TUVC12 == layerRate) {
+			xc = adpXcMgr.createXcByTu12AndVc12(neDbId, atpId, ztpId);
+		}
+		return xc;
 	}
 
 	/**
 	 * 执行打散操作
 	 * 
-	 * @param tpTimeSlot
+	 * @param layerRate
 	 * @param au4CtpId
 	 * @param vc4TTPId
+	 * @param tug3Id
 	 * @throws AdapterException
 	 */
-	private void terminateTp(String tpTimeSlot, String au4CtpId, String vc4TTPId) throws AdapterException {
+	private void terminateTp(LayerRate layerRate, String au4CtpId, String vc4TTPId, String tug3Id)
+			throws AdapterException {
 		TerminateTpMgr terminateMgr = new TerminateTpMgr();
 		String[] neInfos = adpXcMgr.getNeInfo(au4CtpId);
 		String groupId = neInfos[0];
 		String neId = neInfos[1];
-		String[] list = tpTimeSlot.split("-");
-		// TODO 根据LayerRate来判断是打散为2M还是34M
-		if (list.length == 3) {
-			terminateMgr.terminateTug3ToTu12(groupId, neId, vc4TTPId, list[0]);
-			new AdpTpsMgr().syncTu12Ctp(groupId, neId, vc4TTPId, au4CtpId, neInfos[2]);
+		String neDbId = neInfos[2];
+		if (LayerRate.LR_TUVC12 == layerRate) {
+			terminateMgr.terminateTug3ToTu12(groupId, neId, vc4TTPId, tug3Id);
+			new AdpTpsMgr().syncTu12Ctp(groupId, neId, vc4TTPId, au4CtpId, neDbId);
 		} else {
-			terminateMgr.terminateTug3ToTu3(groupId, neId, vc4TTPId, list[0]);
+			terminateMgr.terminateTug3ToTu3(groupId, neId, vc4TTPId, tug3Id);
+			new AdpTpsMgr().syncTu3Ctp(groupId, neId, vc4TTPId, au4CtpId, neDbId);
 		}
 	}
 

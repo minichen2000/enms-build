@@ -581,4 +581,76 @@ public class GetCtp {
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
+
+	public static List<TpEntity> getTu3Ctp(String groupId, String neId, String vc4TtpId) throws AdapterException {
+		List<TpEntity> tpList = new LinkedList<TpEntity>();
+
+		try {
+			// modifiableVC4TTPBidirectionalR1 = 0.0.7.774.127.2.0.3.25
+			String objectClass = "0.0.7.774.127.2.0.3.25";
+
+			// vc4TTPId = 0.0.7.774.0.7.42
+			String paramKey = "0.0.7.774.0.7.42";
+			String paramValue = vc4TtpId;
+			String scope = "wholeSubtree";
+
+			String tu3CTPId = "0.0.7.774.0.7.32";
+			String filterParam = tu3CTPId;
+
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
+					paramKey, paramValue, scope, filterParam);
+			InputStream inputStream = process.getInputStream();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (line.contains("GetReply received")) {
+					TpEntity portEntity = new TpEntity();
+					while ((line = br.readLine()) != null) {
+						line = line.trim();
+						if (line.startsWith("managedObjectClass")) {
+							String moc = ParseUtil.parseAttrWithSingleValue(line);
+							portEntity.setMoc(moc);
+							continue;
+						}
+						if (line.startsWith("managedObjectInstance")) {
+							String moi = ParseUtil.parseAttrWithMultiValue(line);
+							portEntity.setMoi(moi);
+							continue;
+						}
+
+						if (line.startsWith("alarmStatus")) {
+							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
+							continue;
+						}
+
+						if (line.startsWith("supportedByObjectList")) {
+							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
+							continue;
+						}
+
+						if (line.startsWith("operationalState")) {
+							portEntity.setOperationalState(ParseUtil.parseAttr(line));
+							continue;
+						}
+
+						if (line.startsWith("-----------------")) {
+							tpList.add(portEntity);
+							break;
+						}
+					}
+				}
+			}
+			br.close();
+
+			if (process.waitFor() != 0) {
+				log.error("Get tu3Ctp failed!!!");
+				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
+			}
+			return tpList;
+		} catch (Exception e) {
+			log.error("getTu3Ctp", e);
+			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
+		}
+	}
 }

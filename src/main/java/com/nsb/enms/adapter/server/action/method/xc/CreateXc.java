@@ -1,6 +1,7 @@
 package com.nsb.enms.adapter.server.action.method.xc;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -23,6 +24,9 @@ public class CreateXc {
 	private static final String SCENARIO_VC4 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC4_REQ,
 			ConfigKey.DEFAULT_CREATE_XC_VC4_REQ);
 
+	private static final String SCENARIO_VC3 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC3_REQ,
+			ConfigKey.DEFAULT_CREATE_XC_VC3_REQ);
+
 	private static final String SCENARIO_VC12 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC12_REQ,
 			ConfigKey.DEFAULT_CREATE_XC_VC12_REQ);
 
@@ -31,57 +35,7 @@ public class CreateXc {
 		try {
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC4, groupId, neId, pTTPId,
 					augId, au4CTPId);
-			InputStream inputStream = process.getInputStream();
-			XcEntity xcEntity = new XcEntity();
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				if (line.indexOf("ActionReply received") >= 0) {
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							xcEntity.setMoc(moc);
-							continue;
-						}
-
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							xcEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("connected pointToPoint")) {
-							log.debug("line = " + line);
-							// connected pointToPoint { fromTp { {
-							// {protectedTTPId=11060101 } }, { {augId=7 } }, {
-							// {au4CTPId=1 } } }, toTp { { {vc4TTPId=11060901 }
-							// } }, xCon { { {fabricId=1 } }, {
-							// {crossConnectionId=6001 } } } }
-
-							line = line.replaceAll(StringUtils.SPACE, StringUtils.EMPTY);
-							line = line.replaceAll("connected pointToPoint", StringUtils.EMPTY);
-							String fromTp = line.substring(line.indexOf("fromTp") + 6, line.indexOf("toTp") - 1);
-							fromTp = ParseUtil.parseMultiValueWithNoBlank(fromTp);
-							log.debug("fromTp=" + fromTp);
-							xcEntity.setFromTermination(fromTp);
-
-							String toTp = line.substring(line.indexOf("toTp") + 4, line.indexOf("xCon") - 1);
-							toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
-							log.debug("toTp=" + toTp);
-
-							xcEntity.setToTermination(toTp);
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							break;
-						}
-					}
-				}
-			}
-			br.close();
+			XcEntity xcEntity = handleInputStream(process);
 
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
@@ -99,57 +53,7 @@ public class CreateXc {
 		try {
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC12, groupId, neId, vc4TtpId,
 					tug3Id, tug2Id, tu12CtpId, vc12TtpId);
-			InputStream inputStream = process.getInputStream();
-			XcEntity xcEntity = new XcEntity();
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				if (line.indexOf("ActionReply received") >= 0) {
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							xcEntity.setMoc(moc);
-							continue;
-						}
-
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							xcEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("connected pointToPoint")) {
-							log.debug("line = " + line);
-							// connected pointToPoint { fromTp { {
-							// {protectedTTPId=11060101 } }, { {augId=7 } }, {
-							// {au4CTPId=1 } } }, toTp { { {vc4TTPId=11060901 }
-							// } }, xCon { { {fabricId=1 } }, {
-							// {crossConnectionId=6001 } } } }
-
-							line = line.replaceAll(StringUtils.SPACE, StringUtils.EMPTY);
-							line = line.replaceAll("connected pointToPoint", StringUtils.EMPTY);
-							String fromTp = line.substring(line.indexOf("fromTp") + 6, line.indexOf("toTp") - 1);
-							fromTp = ParseUtil.parseMultiValueWithNoBlank(fromTp);
-							log.debug("fromTp=" + fromTp);
-							xcEntity.setFromTermination(fromTp);
-
-							String toTp = line.substring(line.indexOf("toTp") + 4, line.indexOf("xCon") - 1);
-							toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
-							log.debug("toTp=" + toTp);
-
-							xcEntity.setToTermination(toTp);
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							break;
-						}
-					}
-				}
-			}
-			br.close();
+			XcEntity xcEntity = handleInputStream(process);
 
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
@@ -160,6 +64,79 @@ public class CreateXc {
 			log.error("createXcVc12", e);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
+	}
+
+	public static XcEntity createXcVc3(String groupId, String neId, String vc4TtpId, String tug3Id, String tu3CtpId,
+			String vc3TtpId) throws AdapterException {
+		try {
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC3, groupId, neId, vc4TtpId,
+					tug3Id, tu3CtpId, vc3TtpId);
+			XcEntity xcEntity = handleInputStream(process);
+
+			if (process.waitFor() != 0) {
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+			}
+			return xcEntity;
+
+		} catch (Exception e) {
+			log.error("createXcVc12", e);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+		}
+	}
+
+	private static XcEntity handleInputStream(Process process) throws IOException {
+		InputStream inputStream = process.getInputStream();
+		XcEntity xcEntity = new XcEntity();
+		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+		String line = null;
+		while ((line = br.readLine()) != null) {
+			if (line.indexOf("ActionReply received") >= 0) {
+				while ((line = br.readLine()) != null) {
+					line = line.trim();
+					if (line.startsWith("managedObjectClass")) {
+						String moc = ParseUtil.parseAttrWithSingleValue(line);
+						xcEntity.setMoc(moc);
+						continue;
+					}
+
+					if (line.startsWith("managedObjectInstance")) {
+						String moi = ParseUtil.parseAttrWithMultiValue(line);
+						xcEntity.setMoi(moi);
+						continue;
+					}
+
+					if (line.startsWith("connected pointToPoint")) {
+						log.debug("line = " + line);
+						// connected pointToPoint { fromTp { {
+						// {protectedTTPId=11060101 } }, { {augId=7 } }, {
+						// {au4CTPId=1 } } }, toTp { { {vc4TTPId=11060901 }
+						// } }, xCon { { {fabricId=1 } }, {
+						// {crossConnectionId=6001 } } } }
+
+						line = line.replaceAll(StringUtils.SPACE, StringUtils.EMPTY);
+						line = line.replaceAll("connected pointToPoint", StringUtils.EMPTY);
+						String fromTp = line.substring(line.indexOf("fromTp") + 6, line.indexOf("toTp") - 1);
+						fromTp = ParseUtil.parseMultiValueWithNoBlank(fromTp);
+						log.debug("fromTp=" + fromTp);
+						xcEntity.setFromTermination(fromTp);
+
+						String toTp = line.substring(line.indexOf("toTp") + 4, line.indexOf("xCon") - 1);
+						toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
+						log.debug("toTp=" + toTp);
+
+						xcEntity.setToTermination(toTp);
+						continue;
+					}
+
+					if (line.startsWith("-----------------")) {
+						break;
+					}
+				}
+			}
+		}
+		br.close();
+		return xcEntity;
 	}
 
 	public static void main(String args[]) {
