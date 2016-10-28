@@ -1,6 +1,7 @@
 package com.nsb.enms.adapter.server.action.method.tp;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
@@ -69,26 +70,7 @@ public class GetCtp {
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			String rsTTPId = "";
-			boolean isOk = false;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("downstreamConnectivityPointer")) {
-							rsTTPId = ParseUtil.parseAttrWithMultiValue(line);
-							rsTTPId = rsTTPId.replaceAll("rsTTPId=", StringUtils.EMPTY);
-							isOk = true;
-							break;
-						}
-					}
-
-					if (isOk) {
-						break;
-					}
-				}
-			}
+			String rsTTPId = handleInputStream(br, "downstreamConnectivityPointer", "rsTTPId=");
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -100,6 +82,30 @@ public class GetCtp {
 			log.error("getRsCtp", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
+	}
+
+	private static String handleInputStream(BufferedReader br, String filter1, String filter2) throws IOException {
+		String line;
+		String tpId = StringUtils.EMPTY;
+		boolean isOk = false;
+		while ((line = br.readLine()) != null) {
+			if (line.contains("GetReply received")) {
+				while ((line = br.readLine()) != null) {
+					line = line.trim();
+					if (line.startsWith(filter1)) {
+						tpId = ParseUtil.parseAttrWithMultiValue(line);
+						tpId = tpId.replaceAll(filter2, StringUtils.EMPTY);
+						isOk = true;
+						break;
+					}
+				}
+
+				if (isOk) {
+					break;
+				}
+			}
+		}
+		return tpId;
 	}
 
 	private static String getMsCtp(String groupId, String neId, String rsTtpId) throws AdapterException {
@@ -119,26 +125,7 @@ public class GetCtp {
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			String msTTPId = "";
-			boolean isOk = false;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("downstreamConnectivityPointer")) {
-							msTTPId = ParseUtil.parseAttrWithMultiValue(line);
-							msTTPId = msTTPId.replaceAll("msTTPId=", StringUtils.EMPTY);
-							isOk = true;
-							break;
-						}
-					}
-
-					if (isOk) {
-						break;
-					}
-				}
-			}
+			String msTTPId = handleInputStream(br, "downstreamConnectivityPointer", "msTTPId=");
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -169,27 +156,7 @@ public class GetCtp {
 			InputStream inputStream = process.getInputStream();
 
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			String protectedTTPId = "";
-			boolean isOk = false;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("downstreamConnectivityPointer=single")) {
-							protectedTTPId = ParseUtil.parseAttrWithMultiValue(line);
-							protectedTTPId = protectedTTPId.replaceAll("protectedTTPId=", StringUtils.EMPTY);
-							isOk = true;
-							break;
-						}
-					}
-
-					if (isOk) {
-						break;
-					}
-				}
-
-			}
+			String protectedTTPId = handleInputStream(br, "downstreamConnectivityPointer=single", "protectedTTPId=");
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -221,48 +188,7 @@ public class GetCtp {
 
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
 					paramKey, paramValue, scope, filterParam);
-			InputStream inputStream = process.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					TpEntity portEntity = new TpEntity();
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							portEntity.setMoc(moc);
-							continue;
-						}
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							portEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
-							continue;
-						}
-
-						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							tpList.add(portEntity);
-							break;
-						}
-					}
-				}
-			}
+			BufferedReader br = handleInputStream(tpList, process);
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -387,48 +313,7 @@ public class GetCtp {
 
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
 					paramKey, paramValue, scope, filterParam);
-			InputStream inputStream = process.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					TpEntity portEntity = new TpEntity();
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							portEntity.setMoc(moc);
-							continue;
-						}
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							portEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
-							continue;
-						}
-
-						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							tpList.add(portEntity);
-							break;
-						}
-					}
-				}
-			}
+			BufferedReader br = handleInputStream(tpList, process);
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -455,48 +340,7 @@ public class GetCtp {
 
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
 					paramKey, paramValue, scope, filterParam);
-			InputStream inputStream = process.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					TpEntity portEntity = new TpEntity();
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							portEntity.setMoc(moc);
-							continue;
-						}
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							portEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
-							continue;
-						}
-
-						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							tpList.add(portEntity);
-							break;
-						}
-					}
-				}
-			}
+			BufferedReader br = handleInputStream(tpList, process);
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -527,48 +371,7 @@ public class GetCtp {
 
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
 					paramKey, paramValue, scope, filterParam);
-			InputStream inputStream = process.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					TpEntity portEntity = new TpEntity();
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							portEntity.setMoc(moc);
-							continue;
-						}
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							portEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
-							continue;
-						}
-
-						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							tpList.add(portEntity);
-							break;
-						}
-					}
-				}
-			}
+			BufferedReader br = handleInputStream(tpList, process);
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -599,48 +402,7 @@ public class GetCtp {
 
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, objectClass, groupId, neId,
 					paramKey, paramValue, scope, filterParam);
-			InputStream inputStream = process.getInputStream();
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (line.contains("GetReply received")) {
-					TpEntity portEntity = new TpEntity();
-					while ((line = br.readLine()) != null) {
-						line = line.trim();
-						if (line.startsWith("managedObjectClass")) {
-							String moc = ParseUtil.parseAttrWithSingleValue(line);
-							portEntity.setMoc(moc);
-							continue;
-						}
-						if (line.startsWith("managedObjectInstance")) {
-							String moi = ParseUtil.parseAttrWithMultiValue(line);
-							portEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("supportedByObjectList")) {
-							portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
-							continue;
-						}
-
-						if (line.startsWith("operationalState")) {
-							portEntity.setOperationalState(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("-----------------")) {
-							tpList.add(portEntity);
-							break;
-						}
-					}
-				}
-			}
+			BufferedReader br = handleInputStream(tpList, process);
 			br.close();
 
 			if (process.waitFor() != 0) {
@@ -652,5 +414,51 @@ public class GetCtp {
 			log.error("getTu3Ctp", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
+	}
+
+	private static BufferedReader handleInputStream(List<TpEntity> tpList, Process process) throws IOException {
+		InputStream inputStream = process.getInputStream();
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+		String line;
+		while ((line = br.readLine()) != null) {
+			if (line.contains("GetReply received")) {
+				TpEntity portEntity = new TpEntity();
+				while ((line = br.readLine()) != null) {
+					line = line.trim();
+					if (line.startsWith("managedObjectClass")) {
+						String moc = ParseUtil.parseAttrWithSingleValue(line);
+						portEntity.setMoc(moc);
+						continue;
+					}
+					if (line.startsWith("managedObjectInstance")) {
+						String moi = ParseUtil.parseAttrWithMultiValue(line);
+						portEntity.setMoi(moi);
+						continue;
+					}
+
+					if (line.startsWith("alarmStatus")) {
+						portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
+						continue;
+					}
+
+					if (line.startsWith("supportedByObjectList")) {
+						portEntity.setSupportedByObjectList(ParseUtil.parseList(line));
+						continue;
+					}
+
+					if (line.startsWith("operationalState")) {
+						portEntity.setOperationalState(ParseUtil.parseAttr(line));
+						continue;
+					}
+
+					if (line.startsWith("-----------------")) {
+						tpList.add(portEntity);
+						break;
+					}
+				}
+			}
+		}
+		return br;
 	}
 }
