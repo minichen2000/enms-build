@@ -77,7 +77,7 @@ public class AdpNesDbMgr {
 		return ne;
 	}
 
-	public Response updateNe(AdpNe body) throws Exception {
+	public void updateNe(AdpNe body) throws Exception {
 		String id = body.getId();
 		AdpNe ne = getNeById(id);
 
@@ -86,15 +86,15 @@ public class AdpNesDbMgr {
 		updateUserLabel(body, id, ne);
 
 		updateQ3Address(body, id, ne);
-		
-		updateOperationalState( body, id, ne );
+
+		updateOperationalState(body, id, ne);
 
 		updateSupervisionState(body, id, ne);
 
 		updateSyncState(body, id, ne);
-		
-		updateCommunicationState( body, id, ne );
-		
+
+		updateCommunicationState(body, id, ne);
+
 		/*
 		 * ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
 		 * Map<String, Object> nonNullAttrs =
@@ -119,7 +119,6 @@ public class AdpNesDbMgr {
 		 * 
 		 * } catch (Exception e) { log.error("updateNe", e); } }
 		 */
-		return Response.ok().build();
 	}
 
 	private void updateOperationalState(AdpNe body, String id, AdpNe ne) {
@@ -180,9 +179,9 @@ public class AdpNesDbMgr {
 		String address = q3Address.getAddress();
 		String osMain = q3Address.getOsMain();
 		String osSpare = q3Address.getOsSpare();
-		String moi = GenerateKeyOnNeUtil.getMoi( ne.getKeyOnNe() );
-		String groupId = moi.split( "/" )[0].split( "=" )[1];
-		String neId = moi.split( "/" )[1].split( "=" )[1];
+		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
+		String groupId = moi.split("/")[0].split("=")[1];
+		String neId = moi.split("/")[1].split("=")[1];
 		if (null == addressesFromDb) {
 			if (StringUtils.isNotEmpty(address)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.address", address));
@@ -192,13 +191,13 @@ public class AdpNesDbMgr {
 			if (StringUtils.isNotEmpty(osMain)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osMain", osMain));
 				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osMain", "String", osMain, null);
-				setOsMainAddress( groupId, neId, osMain );
+				setOsMainAddress(groupId, neId, osMain);
 			}
 
 			if (StringUtils.isNotEmpty(osSpare)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osSpare", osSpare));
 				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osSpare", "String", osSpare, null);
-				setOsSpareAddress( groupId, neId, osSpare );
+				setOsSpareAddress(groupId, neId, osSpare);
 			}
 		} else {
 			String addressFromDb = addressesFromDb.getQ3Address().getAddress();
@@ -212,7 +211,7 @@ public class AdpNesDbMgr {
 			if (StringUtils.isNotEmpty(osMain) && !osMain.equals(osMainFromDb)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osMain", osMain));
 				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osMain", "String", osMain, osMainFromDb);
-				setOsMainAddress( groupId, neId, osMainFromDb );
+				setOsMainAddress(groupId, neId, osMainFromDb);
 			}
 
 			String osSpareFromDb = addressesFromDb.getQ3Address().getOsSpare();
@@ -220,35 +219,26 @@ public class AdpNesDbMgr {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osSpare", osSpare));
 				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osSpare", "String", osSpare,
 						osSpareFromDb);
-				setOsSpareAddress( groupId, neId, osSpareFromDb );
+				setOsSpareAddress(groupId, neId, osSpareFromDb);
 			}
 		}
 	}
-	
-	private void setOsMainAddress(String groupId, String neId, String osMain)
-	{
-	    try
-        {
-            SetManagerAddress.setMainOSAddress( groupId, neId, osMain );
-        }
-        catch( AdapterException e )
-        {
-            log.error( "setMainOSAddress", e );
-        }
+
+	private void setOsMainAddress(String groupId, String neId, String osMain) {
+		try {
+			SetManagerAddress.setMainOSAddress(groupId, neId, osMain);
+		} catch (AdapterException e) {
+			log.error("setMainOSAddress", e);
+		}
 	}
-	
-	
-	private void setOsSpareAddress(String groupId, String neId, String osSpare)
-    {
-        try
-        {
-            SetManagerAddress.setSpareOSAddress( groupId, neId, osSpare );
-        }
-        catch( AdapterException e )
-        {
-            log.error( "setMainOSAddress", e );
-        }
-    }
+
+	private void setOsSpareAddress(String groupId, String neId, String osSpare) {
+		try {
+			SetManagerAddress.setSpareOSAddress(groupId, neId, osSpare);
+		} catch (AdapterException e) {
+			log.error("setMainOSAddress", e);
+		}
+	}
 
 	private void updateSupervisionState(AdpNe body, String id, AdpNe ne) {
 		SupervisionStateEnum supervisionState = body.getSupervisionState();

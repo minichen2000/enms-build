@@ -28,7 +28,7 @@ public class SyncTpThread implements Callable<Object> {
 		// boolean isSuccess;
 		// try
 		// {
-		log.debug("before startSuppervision");
+		// log.debug("before startSuppervision");
 		// NeStateMachineApp.instance().beforeSuperviseNe(id);
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
 				OperationalStateEnum.SYNCHRONIZING.name(), OperationalStateEnum.IDLE.name());

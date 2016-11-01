@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -70,8 +71,8 @@ public class AdpTpsDbMgr {
 	}
 
 	private AdpTp constructTp(Document doc) {
-	    AdpTp tp = gson.fromJson(doc.toJson(), AdpTp.class);
-		//tp.setId(doc.getObjectId("_id").toString());
+		AdpTp tp = gson.fromJson(doc.toJson(), AdpTp.class);
+		// tp.setId(doc.getObjectId("_id").toString());
 		return tp;
 	}
 
@@ -90,7 +91,7 @@ public class AdpTpsDbMgr {
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
-		    AdpTp tp = constructTp(doc);
+			AdpTp tp = constructTp(doc);
 			tpList.add(tp);
 		}
 		return tpList;
@@ -120,7 +121,7 @@ public class AdpTpsDbMgr {
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
-		    AdpTp tp = constructTp(doc);
+			AdpTp tp = constructTp(doc);
 			tpList.add(tp);
 		}
 		return tpList;
@@ -138,8 +139,7 @@ public class AdpTpsDbMgr {
 				} else {
 					Object obj = f.get(body);
 					if (null != obj && !(obj.toString().equalsIgnoreCase("id"))) {
-						dbc.updateOne(new BasicDBObject("id", body.getId()),
-								set(f.getName(), f.get(body).toString()));
+						dbc.updateOne(new BasicDBObject("id", body.getId()), set(f.getName(), f.get(body).toString()));
 					}
 				}
 
@@ -168,7 +168,7 @@ public class AdpTpsDbMgr {
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
-		    AdpTp tp = constructTp(doc);
+			AdpTp tp = constructTp(doc);
 			tpList.add(tp);
 		}
 
@@ -179,18 +179,44 @@ public class AdpTpsDbMgr {
 	}
 
 	public List<AdpTp> getTpsByType(String neid, String tptype) throws Exception {
-		/*Date begin = new Date();
-		log.debug("getTPs, tptype = " + tptype);
+		/*
+		 * Date begin = new Date(); log.debug("getTPs, tptype = " + tptype);
+		 * 
+		 * List<Document> docList = null; if (StringUtils.isEmpty(tptype)) {
+		 * docList = dbc.find().into(new ArrayList<Document>()); } else {
+		 * docList = dbc.find(eq("tpType", tptype)).into(new
+		 * ArrayList<Document>()); }
+		 * 
+		 * if (null == docList || docList.isEmpty()) { log.error(
+		 * "can not find tp, query by tptype = " + tptype); return new
+		 * ArrayList<AdpTp>(); }
+		 * 
+		 * log.debug(docList.size()); for (Document doc : docList) {
+		 * log.debug(doc.toJson()); }
+		 * 
+		 * List<AdpTp> tpList = new ArrayList<AdpTp>(); for (Document doc :
+		 * docList) { AdpTp tp = constructTp(doc); tpList.add(tp); }
+		 * 
+		 * Date end = new Date(); log.debug("getTPsByType cost time = " +
+		 * (end.getTime() - begin.getTime()));
+		 * 
+		 * return tpList;
+		 */
 
 		List<Document> docList = null;
-		if (StringUtils.isEmpty(tptype)) {
-			docList = dbc.find().into(new ArrayList<Document>());
-		} else {
-			docList = dbc.find(eq("tpType", tptype)).into(new ArrayList<Document>());
-		}
+		/*
+		 * if (StringUtils.isEmpty(neid) && StringUtils.isEmpty(tptype)) {
+		 * docList = dbc.find().into(new ArrayList<Document>()); } else if
+		 * (StringUtils.isEmpty(tptype)) { docList = dbc.find(eq("neId",
+		 * neid)).into(new ArrayList<Document>()); } else if
+		 * (StringUtils.isEmpty(neid)) { docList = dbc.find(eq("tpType",
+		 * tptype)).into(new ArrayList<Document>()); } else {
+		 */
+		docList = dbc.find(and(eq("neId", neid), eq("tpType", tptype))).into(new ArrayList<Document>());
+		// }
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by tptype = " + tptype);
+			log.error("can not find tp, query by neid = " + neid + ", tptype = " + tptype);
 			return new ArrayList<AdpTp>();
 		}
 
@@ -201,42 +227,10 @@ public class AdpTpsDbMgr {
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
-		    AdpTp tp = constructTp(doc);
+			AdpTp tp = constructTp(doc);
 			tpList.add(tp);
 		}
-
-		Date end = new Date();
-		log.debug("getTPsByType cost time = " + (end.getTime() - begin.getTime()));
-
-		return tpList;*/
-	    
-	    List<Document> docList = null;
-        /*if (StringUtils.isEmpty(neid) && StringUtils.isEmpty(tptype)) {
-            docList = dbc.find().into(new ArrayList<Document>());
-        } else if (StringUtils.isEmpty(tptype)) {
-            docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
-        } else if (StringUtils.isEmpty(neid)) {
-            docList = dbc.find(eq("tpType", tptype)).into(new ArrayList<Document>());
-        } else {*/
-        docList = dbc.find(and(eq("neId", neid), eq("tpType", tptype))).into(new ArrayList<Document>());
-        //}
-
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find tp, query by neid = " + neid + ", tptype = " + tptype);
-            return new ArrayList<AdpTp>();
-        }
-
-        log.debug(docList.size());
-        for (Document doc : docList) {
-            log.debug(doc.toJson());
-        }
-
-        List<AdpTp> tpList = new ArrayList<AdpTp>();
-        for (Document doc : docList) {
-            AdpTp tp = constructTp(doc);
-            tpList.add(tp);
-        }
-        return tpList;
+		return tpList;
 	}
 
 	public void deleteTpsbyNeId(String neid) throws Exception {
@@ -263,7 +257,7 @@ public class AdpTpsDbMgr {
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
-		    AdpTp tp = constructTp(doc);
+			AdpTp tp = constructTp(doc);
 			tpList.add(tp);
 		}
 
@@ -292,7 +286,7 @@ public class AdpTpsDbMgr {
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
-		    AdpTp tp = constructTp(doc);
+			AdpTp tp = constructTp(doc);
 			tpList.add(tp);
 		}
 
@@ -300,5 +294,58 @@ public class AdpTpsDbMgr {
 		log.debug("getChildrenTPs cost time = " + (end.getTime() - begin.getTime()));
 
 		return tpList;
+	}
+
+	public AdpTp getTpByLayerRateAndTimeSlot(String suffixId, String layerRate) throws Exception {
+		Date begin = new Date();
+		log.debug("getTpByLayerRateAndTimeSlot, suffixId = {}, layerRate = {}", suffixId, layerRate);
+
+		BasicDBObject q = new BasicDBObject();
+		q.put("id", Pattern.compile(""));
+
+		Bson filter = and(q, eq("tpType", layerRate));
+		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by suffixId = {}", suffixId);
+			return new AdpTp();
+		}
+
+		log.debug(docList.size());
+		for (Document doc : docList) {
+			log.debug(doc.toJson());
+		}
+
+		AdpTp tp = constructTp(docList.get(0));
+
+		Date end = new Date();
+		log.debug("getTpByLayerRateAndTimeSlot cost time = " + (end.getTime() - begin.getTime()));
+		return tp;
+	}
+
+	public AdpTp getTpByTimeSlot(String suffixId) throws Exception {
+		Date begin = new Date();
+		log.debug("getTpByTimeSlot, suffixId = {}", suffixId);
+
+		BasicDBObject filter = new BasicDBObject();
+		filter.put("id", Pattern.compile(""));
+
+		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by suffixId = {}", suffixId);
+			return new AdpTp();
+		}
+
+		log.debug(docList.size());
+		for (Document doc : docList) {
+			log.debug(doc.toJson());
+		}
+
+		AdpTp tp = constructTp(docList.get(0));
+
+		Date end = new Date();
+		log.debug("getTpByTimeSlot cost time = " + (end.getTime() - begin.getTime()));
+		return tp;
 	}
 }

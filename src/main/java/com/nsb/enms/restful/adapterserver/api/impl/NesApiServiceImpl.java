@@ -38,7 +38,6 @@ import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
-import com.nsb.enms.restful.model.adapter.AdpErrorInfo;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
@@ -70,7 +69,7 @@ public class NesApiServiceImpl extends NesApiService {
 			String location = body.getLocationName();
 			NeEntity entity = null;
 			try {
-				String id = addresses.getQ3Address().getAddress();
+				String id = addresses.getQ3Address().getAddress().trim();
 				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
@@ -93,14 +92,15 @@ public class NesApiServiceImpl extends NesApiService {
 			if (!isSuccess) {
 				return failSuperviseNeByEMLIM();
 			}
-			String mainOSAddress = addresses.getQ3Address().getOsMain();
-			String spareOSAddress = addresses.getQ3Address().getOsSpare();
 			try {
-				if (mainOSAddress != null && !mainOSAddress.isEmpty())
-					SetManagerAddress.setMainOSAddress(groupId, neId, mainOSAddress);
+				if (StringUtils.isNotEmpty(osMain)) {
+					SetManagerAddress.setMainOSAddress(groupId, neId, osMain.trim());
+				}
 
-				if (spareOSAddress != null && !spareOSAddress.isEmpty())
-					SetManagerAddress.setSpareOSAddress(groupId, neId, spareOSAddress);
+				String spareOSAddress = addresses.getQ3Address().getOsSpare();
+				if (StringUtils.isNotEmpty(spareOSAddress)) {
+					SetManagerAddress.setSpareOSAddress(groupId, neId, spareOSAddress.trim());
+				}
 			} catch (AdapterException e) {
 				log.error("setAddress", e);
 				return failSetManagerAddress();
@@ -119,7 +119,8 @@ public class NesApiServiceImpl extends NesApiService {
 			String id = "";
 			try {
 				id = addresses.getQ3Address().getAddress();
-				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
+				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location,
+						id.trim());
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
 				return ErrorWrapperUtils.adapterException(e);
@@ -158,63 +159,69 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	private Response failCreateNeByEMLIM() {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_CREATE_NE_BY_EMLIM.getErrorCode());
-		errorInfo.setMessage(ErrorCode.FAIL_CREATE_NE_BY_EMLIM.getMessage());
-		return Response.serverError().entity(errorInfo).build();
+		return constructErrorInfo(ErrorCode.FAIL_CREATE_NE_BY_EMLIM);
 	}
 
 	private Response failDbOperation() {
 		return ErrorWrapperUtils.failDbOperation();
 	}
 
+	private Response constructErrorInfo(ErrorCode errorCode) {
+		return ErrorWrapperUtils.constructErrorInfo(errorCode);
+	}
+
 	private Response validateParam(AdpNe body, MethodOperator operate) {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
 		String userLabel = body.getUserLabel();
 		if (!ValidationUtil.isValidUserLabel(userLabel)) {
-			errorInfo.setCode(ErrorCode.FAIL_INVALID_USER_LABEL.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_INVALID_USER_LABEL.getMessage());
-			return Response.serverError().entity(errorInfo).build();
+			return constructErrorInfo(ErrorCode.FAIL_INVALID_USER_LABEL);
 		}
 
 		try {
-			boolean isExisted = nesDbMgr.isUserLabelExisted(body.getId(), userLabel, operate);
-			if (isExisted) {
-				errorInfo.setCode(ErrorCode.FAIL_USER_LABEL_EXISTED.getErrorCode());
-				errorInfo.setMessage(ErrorCode.FAIL_USER_LABEL_EXISTED.getMessage());
-				return Response.serverError().entity(errorInfo).build();
+			if (MethodOperator.ADD == operate) {
+				boolean isExisted = nesDbMgr.isUserLabelExisted(body.getId(), userLabel, operate);
+				if (isExisted) {
+					return constructErrorInfo(ErrorCode.FAIL_USER_LABEL_EXISTED);
+				}
 			}
 		} catch (Exception e) {
-			return Response.serverError().entity(e).build();
+			return failDbOperation();
 		}
 
 		String locationName = body.getLocationName();
 		if (!ValidationUtil.isValidLocationName(locationName)) {
-			errorInfo.setCode(ErrorCode.FAIL_INVALID_LOCATION_NAME.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_INVALID_LOCATION_NAME.getMessage());
-			return Response.serverError().entity(errorInfo).build();
+			return constructErrorInfo(ErrorCode.FAIL_INVALID_LOCATION_NAME);
 		}
 
-		AdpQ3Address q3Address = body.getAddresses().getQ3Address();
-		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
-			errorInfo.setCode(ErrorCode.FAIL_INVALID_Q3_ADDRESS.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_INVALID_Q3_ADDRESS.getMessage());
-			return Response.serverError().entity(errorInfo).build();
-		}
-
-		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
-			errorInfo.setCode(ErrorCode.FAIL_INVALID_Q3_MAIN_ADDRESS.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_INVALID_Q3_MAIN_ADDRESS.getMessage());
-			return Response.serverError().entity(errorInfo).build();
-		}
-
-		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
-			errorInfo.setCode(ErrorCode.FAIL_INVALID_Q3_SPARE_ADDRESS.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_INVALID_Q3_SPARE_ADDRESS.getMessage());
-			return Response.serverError().entity(errorInfo).build();
+		Response response = validateAddress(body.getAddresses(), operate);
+		if (null != response) {
+			return response;
 		}
 
 		// TODO 其他校验条件
+
+		return null;
+
+	}
+
+	private Response validateAddress(AdpAddresses addresses, MethodOperator operate) {
+		if (null == addresses) {
+			if (MethodOperator.ADD == operate) {
+				return constructErrorInfo(ErrorCode.FAIL_INVALID_Q3_ADDRESS);
+			}
+			return null;
+		}
+		AdpQ3Address q3Address = addresses.getQ3Address();
+		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
+			return constructErrorInfo(ErrorCode.FAIL_INVALID_Q3_ADDRESS);
+		}
+
+		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
+			return constructErrorInfo(ErrorCode.FAIL_INVALID_Q3_MAIN_ADDRESS);
+		}
+
+		if (!ValidationUtil.isValidQ3Address(q3Address.getAddress())) {
+			return constructErrorInfo(ErrorCode.FAIL_INVALID_Q3_SPARE_ADDRESS);
+		}
 
 		return null;
 	}
@@ -257,25 +264,15 @@ public class NesApiServiceImpl extends NesApiService {
 
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
-			AdpErrorInfo errorInfo = new AdpErrorInfo();
 			// TODO 确定错误码是否正确
-			errorInfo.setCode(ErrorCode.FAIL_NOT_OPERABLE.getErrorCode());
-			errorInfo.setMessage(ErrorCode.FAIL_NOT_OPERABLE.getMessage());
-			return Response.serverError().build();
+			return constructErrorInfo(ErrorCode.FAIL_NOT_OPERABLE);
 		}
 
 		AdpNe ne = null;
-
 		try {
-			ne = nesDbMgr.getNeById(neid);
-		} catch (Exception e) {
-			log.error("getNeById", e);
-			return failDbOperation();
-		}
-
-		log.debug("ne = " + ne);
-		if (null == ne || StringUtils.isEmpty(ne.getId())) {
-			return failObjNotExist();
+			ne = isNeExisted(neid);
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
 		}
 
 		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
@@ -314,25 +311,32 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().build();
 	}
 
+	private AdpNe isNeExisted(String neid) throws AdapterException {
+		AdpNe ne;
+		try {
+			ne = nesDbMgr.getNeById(neid);
+			log.debug("ne = " + ne);
+			if (null == ne || StringUtils.isEmpty(ne.getId())) {
+				throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+			}
+		} catch (Exception e) {
+			log.error("getNeById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+		return ne;
+	}
+
 	private Response failDeleteNeByEMLIM() {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_DELETE_NE_BY_EMLIM.getErrorCode());
-		errorInfo.setMessage(ErrorCode.FAIL_DELETE_NE_BY_EMLIM.getMessage());
-		return Response.serverError().entity(errorInfo).build();
+		return constructErrorInfo(ErrorCode.FAIL_DELETE_NE_BY_EMLIM);
 	}
 
 	private Response failSetManagerAddress() {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM.getErrorCode());
-		errorInfo.setMessage(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM.getMessage());
-		return Response.serverError().entity(errorInfo).build();
+		return constructErrorInfo(ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM);
 	}
 
 	private Response failObjNotExist() {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode());
-		errorInfo.setMessage(ErrorCode.FAIL_OBJ_NOT_EXIST.getMessage());
-		return Response.serverError().entity(errorInfo).build();
+		return constructErrorInfo(ErrorCode.FAIL_OBJ_NOT_EXIST);
 	}
 
 	private boolean checkBusiness() {
@@ -364,39 +368,41 @@ public class NesApiServiceImpl extends NesApiService {
 		AdpNe ne = null;
 		String id = body.getId();
 		try {
-			ne = nesDbMgr.getNeById(id);
-		} catch (Exception e) {
-			log.error("failed to getNeById, id=" + id, e);
-			return failDbOperation();
-		}
-		if (null == ne || StringUtils.isEmpty(ne.getId())) {
-			return failObjNotExist();
+			ne = isNeExisted(id);
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
 		}
 
 		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
 		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-		OperationalStateEnum operationalState = body.getOperationalState();
-		if (null == operationalState) {
-			return updateNe(body);
-		}
-		switch (operationalState) {
-		case SUPERVISING:
-			return supervising(body, id, groupId, neId);
-		case SYNCHRONIZING:
-			return synchronizing(body, groupId, neId);
-		default:
-			return updateNe(body);
+
+		try {
+			OperationalStateEnum operationalState = body.getOperationalState();
+			if (null == operationalState) {
+				return updateNe(body);
+			}
+			switch (operationalState) {
+			case SUPERVISING:
+				return supervising(body, id, groupId, neId);
+			case SYNCHRONIZING:
+				return synchronizing(body, groupId, neId);
+			default:
+				return updateNe(body);
+			}
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
 		}
 	}
 
-	private Response updateNe(AdpNe body) {
+	private Response updateNe(AdpNe body) throws AdapterException {
 		try {
 			nesDbMgr.updateNe(body);
 		} catch (Exception e) {
 			log.error("updateNe", e);
-			return failDbOperation();
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
+
 		return Response.ok().build();
 	}
 
@@ -409,11 +415,8 @@ public class NesApiServiceImpl extends NesApiService {
 	 * @param neId
 	 * @return
 	 */
-	private Response supervising(AdpNe body, String id, String groupId, String neId) {
-		Response response = updateNe(body);
-		if (Response.Status.OK.getStatusCode() != response.getStatus()) {
-			return response;
-		}
+	private Response supervising(AdpNe body, String id, String groupId, String neId) throws AdapterException {
+		updateNe(body);
 
 		boolean isSuccess = false;
 		try {
@@ -422,17 +425,12 @@ public class NesApiServiceImpl extends NesApiService {
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
-			try {
-				body.setOperationalState(OperationalStateEnum.IDLE);
-				nesDbMgr.updateNe(body);
-			} catch (Exception ex) {
-				log.error("failed to updateNe", ex);
-				return failDbOperation();
-			}
+			body.setOperationalState(OperationalStateEnum.IDLE);
+			updateNe(body);
 		}
 		log.debug("isSuccess = " + isSuccess);
 		if (!isSuccess) {
-			return failSuperviseNeByEMLIM();
+			throw new AdapterException(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM);
 		}
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
@@ -453,11 +451,8 @@ public class NesApiServiceImpl extends NesApiService {
 	 * @param neId
 	 * @return
 	 */
-	private Response synchronizing(AdpNe body, String groupId, String neId) {
-		Response response = updateNe(body);
-		if (Response.Status.OK.getStatusCode() != response.getStatus()) {
-			return response;
-		}
+	private Response synchronizing(AdpNe body, String groupId, String neId) throws AdapterException {
+		updateNe(body);
 
 		try {
 			SyncTpThread thread = new SyncTpThread(groupId, neId, body.getId());
@@ -467,7 +462,7 @@ public class NesApiServiceImpl extends NesApiService {
 			log.error("failed to sync TP", e);
 			if (e instanceof AdapterException) {
 				AdapterException adpExp = (AdapterException) e;
-				return ErrorWrapperUtils.adapterException(adpExp);
+				throw adpExp;
 			}
 			return Response.serverError().entity(e).build();
 		}
@@ -476,25 +471,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	private Response failSuperviseNeByEMLIM() {
-		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM.getErrorCode());
-		errorInfo.setMessage(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM.getMessage());
-		return Response.serverError().entity(errorInfo).build();
-	}
-
-	private Response isNeExisted(AdpNe body) {
-		String id = body.getId();
-		try {
-			AdpNe ne = nesDbMgr.getNeById(id);
-			if (StringUtils.isEmpty(ne.getId())) {
-				return failObjNotExist();
-			}
-		} catch (Exception e) {
-			log.error("failed to getNeById, id=" + id, e);
-			return failDbOperation();
-		}
-
-		return Response.ok().build();
+		return constructErrorInfo(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM);
 	}
 
 	@Override

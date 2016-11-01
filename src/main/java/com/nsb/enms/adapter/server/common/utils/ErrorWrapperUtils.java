@@ -20,4 +20,11 @@ public class ErrorWrapperUtils {
 		errorInfo.setMessage(e.errorReason_);
 		return Response.serverError().entity(errorInfo).build();
 	}
+
+	public static Response constructErrorInfo(ErrorCode errorCode) {
+		AdpErrorInfo errorInfo = new AdpErrorInfo();
+		errorInfo.setCode(errorCode.getErrorCode());
+		errorInfo.setMessage(errorCode.getMessage());
+		return Response.serverError().entity(errorInfo).build();
+	}
 }
