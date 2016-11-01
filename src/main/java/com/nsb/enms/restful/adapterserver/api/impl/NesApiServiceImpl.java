@@ -64,18 +64,17 @@ public class NesApiServiceImpl extends NesApiService {
 			return response;
 		}
 
-		String osMain = body.getAddresses().getQ3Address().getOsMain();
+		AdpAddresses addresses = body.getAddresses();
+		String osMain = addresses.getQ3Address().getOsMain();
 		if (!ADP_ADDRESS.equals(osMain)) {
 			String location = body.getLocationName();
 			NeEntity entity = null;
-			String id = "";
 			try {
-				AdpAddresses address = body.getAddresses();
-				id = address.getQ3Address().getAddress();
+				String id = addresses.getQ3Address().getAddress();
 				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
-				return ErrorWrapperUtils.adapterException( e );
+				return ErrorWrapperUtils.adapterException(e);
 			}
 
 			if (null == entity) {
@@ -94,8 +93,8 @@ public class NesApiServiceImpl extends NesApiService {
 			if (!isSuccess) {
 				return failSuperviseNeByEMLIM();
 			}
-			String mainOSAddress = body.getAddresses().getQ3Address().getOsMain();
-			String spareOSAddress = body.getAddresses().getQ3Address().getOsSpare();
+			String mainOSAddress = addresses.getQ3Address().getOsMain();
+			String spareOSAddress = addresses.getQ3Address().getOsSpare();
 			try {
 				if (mainOSAddress != null && !mainOSAddress.isEmpty())
 					SetManagerAddress.setMainOSAddress(groupId, neId, mainOSAddress);
@@ -111,7 +110,7 @@ public class NesApiServiceImpl extends NesApiService {
 				DeleteNe.deleteNe(groupId, neId);
 			} catch (AdapterException e) {
 				log.error("deleteNe", e);
-				return ErrorWrapperUtils.adapterException( e );
+				return ErrorWrapperUtils.adapterException(e);
 			}
 			return Response.ok().build();
 		} else {
@@ -119,12 +118,11 @@ public class NesApiServiceImpl extends NesApiService {
 			NeEntity entity = null;
 			String id = "";
 			try {
-				AdpAddresses address = body.getAddresses();
-				id = address.getQ3Address().getAddress();
+				id = addresses.getQ3Address().getAddress();
 				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
-				return ErrorWrapperUtils.adapterException( e );
+				return ErrorWrapperUtils.adapterException(e);
 			}
 
 			if (null == entity) {
@@ -295,7 +293,7 @@ public class NesApiServiceImpl extends NesApiService {
 			NotificationSender.instance().sendOdNotif(EntityType.NE, neid);
 		} catch (AdapterException e) {
 			log.error("deleteNe", e);
-			return ErrorWrapperUtils.adapterException( e );
+			return ErrorWrapperUtils.adapterException(e);
 		}
 
 		// delete db record, contains ne and tp
