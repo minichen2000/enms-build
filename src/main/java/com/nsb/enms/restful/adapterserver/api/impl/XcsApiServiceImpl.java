@@ -66,13 +66,17 @@ public class XcsApiServiceImpl extends XcsApiService {
 				au4CtpId = atps.get(0);
 			}
 
+			log.error("xxxxxx===============1=================");
+
 			if (!isValid) {
 				log.error("one of parameter that contains tp and timeSlot may be not a valid value");
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
 			}
-
+			log.error("xxxxxx===============2=================");
 			if (isTpExisted(timeSlot)) {
+				log.error("xxxxxx===============4=================");
 				if (isTpUsedByXc(timeSlot)) {
+					log.error("xxxxxx===============5=================");
 					throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
 				}
 			} else {
@@ -90,9 +94,12 @@ public class XcsApiServiceImpl extends XcsApiService {
 				}
 			}
 
+			log.error("xxxxxx===============3=================");
+
 			// TODO 根据时隙传入正确的LayerRate
 			// xc = createXc(LayerRate.LR_TUVC12, body.getNeId(), atpId, ztpId);
 			AdpXc xc = createXc(LayerRate.LR_TUVC12, body.getNeId(), "", "");
+			log.error("xxxxxx===============6=================");
 			return Response.ok().entity(xc).build();
 		} catch (AdapterException e) {
 			return ErrorWrapperUtils.adapterException(e);
@@ -107,10 +114,10 @@ public class XcsApiServiceImpl extends XcsApiService {
 	private boolean isTimeSlotsEmpty(List<String> tpTimeSlots) {
 		if (null == tpTimeSlots || tpTimeSlots.isEmpty()) {
 			log.error("tpTimeSlots is null or empty");
-			return false;
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	private AdpXc createXc(LayerRate layerRate, String neDbId, String atpId, String ztpId) throws AdapterException {
@@ -157,6 +164,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 				return true;
 			}
 		} catch (Exception e) {
+			log.error("getTpById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return false;
@@ -171,6 +179,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 				return true;
 			}
 		} catch (Exception e) {
+			log.error("getTpById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return false;
@@ -191,6 +200,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		try {
 			tp = tpsDbMgr.getTpById(timeSlot);
 		} catch (Exception e) {
+			log.error("getTpById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 

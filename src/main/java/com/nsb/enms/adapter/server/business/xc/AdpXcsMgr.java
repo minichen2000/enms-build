@@ -27,6 +27,7 @@ public class AdpXcsMgr {
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 	private AdpTpsMgr tpsMgr = new AdpTpsMgr();
+	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
 	public AdpXcsMgr() {
 	}
@@ -144,6 +145,10 @@ public class AdpXcsMgr {
 		log.debug("before createXcVc4");
 		XcEntity xcEntity = CreateXc.createXcVc4(groupId, neId, pTTPId, augId, au4CTPId);
 		String toTp = xcEntity.getToTermination();
+		if (StringUtils.isEmpty(toTp)) {
+			log.error("createXcVc4 ok");
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+		}
 		String vc4TTPId = toTp.replace("vc4TTPId=", StringUtils.EMPTY);
 		log.debug("createXcVc4 ok");
 
@@ -164,7 +169,7 @@ public class AdpXcsMgr {
 	private AdpNe getNeById(String neDbId) throws AdapterException {
 		AdpNe ne = null;
 		try {
-			ne = new AdpNesDbMgr().getNeById(neDbId);
+			ne = nesDbMgr.getNeById(neDbId);
 		} catch (Exception e) {
 			log.error("", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -174,7 +179,6 @@ public class AdpXcsMgr {
 
 	private void insertXc2DbByAu4AndVc4(String moi, String neDbId, String vc4TtpDbId, String au4CtpId)
 			throws AdapterException {
-		AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 		AdpXc xc = new AdpXc();
 		xc.setAid(moi);
 		xc.setImplStatus("");
@@ -204,7 +208,7 @@ public class AdpXcsMgr {
 		String neid = tp.getNeId();
 		AdpNe ne = null;
 		try {
-			ne = new AdpNesDbMgr().getNeById(neid);
+			ne = nesDbMgr.getNeById(neid);
 		} catch (Exception e) {
 			log.error("getNeById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -275,7 +279,7 @@ public class AdpXcsMgr {
 		AdpTp tp = getTpById(tpId);
 
 		String neDbId = tp.getNeId();
-		AdpNe ne = getNeById(neId);
+		AdpNe ne = getNeById(neDbId);
 
 		String neMoi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		groupId = neMoi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);

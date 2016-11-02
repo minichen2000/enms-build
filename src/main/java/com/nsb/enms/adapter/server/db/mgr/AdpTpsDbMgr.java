@@ -45,15 +45,14 @@ public class AdpTpsDbMgr {
 			String gsonTp = gson.toJson(tp);
 			BasicDBObject dbObject = (BasicDBObject) JSON.parse(gsonTp);
 			dbc1.insertOne(dbObject);
-			tp.setId(dbObject.getObjectId("_id").toString());
+//			tp.setId(dbObject.getObjectId("_id").toString());
 		}
 
 		return body;
 	}
 
 	public AdpTp getTpById(String tpid) throws Exception {
-		BasicDBObject query = new BasicDBObject("_id", new ObjectId(tpid));
-		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(eq("id", tpid)).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by tpid = " + tpid);
