@@ -217,6 +217,7 @@ public class AdpXcsMgr {
 		String tpType = tp.getTpType();
 		String neMoi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		String moi = GenerateKeyOnNeUtil.getMoi(tp.getKeyOnNe());
+		log.debug("moi = " + moi);
 		XcParamBean bean = new XcParamBean();
 
 		if ("tu12CTPBidirectionalR1".equalsIgnoreCase(tpType)) {
@@ -240,35 +241,35 @@ public class AdpXcsMgr {
 
 	private void constructVc12TtpBean(String moi, XcParamBean bean) {
 		bean.setSdhTp(false);
-		String vc12TtpId = moi.split("/")[2].replaceAll("vc12TTPId=", StringUtils.EMPTY);
+		String vc12TtpId = moi.split("/")[0].replaceAll("vc12TTPId=", StringUtils.EMPTY);
 		bean.setVc12TtpId(vc12TtpId);
 	}
 
 	private void constructTu12CtpBean(String moi, XcParamBean bean) {
-		String vc4TtpId = moi.split("/")[2].replaceAll("vc4TTPId=", StringUtils.EMPTY);
+		String vc4TtpId = moi.split("/")[0].replaceAll("vc4TTPId=", StringUtils.EMPTY);
 		bean.setVc4TtpId(vc4TtpId);
-		String tug3Id = moi.split("/")[3].replaceAll("tug3Id=", StringUtils.EMPTY);
+		String tug3Id = moi.split("/")[1].replaceAll("tug3Id=", StringUtils.EMPTY);
 		bean.setTug3Id(tug3Id);
-		String tug2Id = moi.split("/")[4].replaceAll("tug2Id=", StringUtils.EMPTY);
+		String tug2Id = moi.split("/")[2].replaceAll("tug2Id=", StringUtils.EMPTY);
 		bean.setTug2Id(tug2Id);
-		String tu12CtpId = moi.split("/")[5].replaceAll("tu12CTPId=", StringUtils.EMPTY);
+		String tu12CtpId = moi.split("/")[3].replaceAll("tu12CTPId=", StringUtils.EMPTY);
 		bean.setTu12CtpId(tu12CtpId);
 		bean.setSdhTp(true);
 	}
 
 	private void constructTu3CtpBean(String moi, XcParamBean bean) {
-		String vc4TtpId = moi.split("/")[2].replaceAll("vc4TTPId=", StringUtils.EMPTY);
+		String vc4TtpId = moi.split("/")[0].replaceAll("vc4TTPId=", StringUtils.EMPTY);
 		bean.setVc4TtpId(vc4TtpId);
-		String tug3Id = moi.split("/")[3].replaceAll("tug3Id=", StringUtils.EMPTY);
+		String tug3Id = moi.split("/")[1].replaceAll("tug3Id=", StringUtils.EMPTY);
 		bean.setTug3Id(tug3Id);
-		String tu3CtpId = moi.split("/")[4].replaceAll("tu3CTPId=", StringUtils.EMPTY);
+		String tu3CtpId = moi.split("/")[2].replaceAll("tu3CTPId=", StringUtils.EMPTY);
 		bean.setTu3CtpId(tu3CtpId);
 		bean.setSdhTp(true);
 	}
 
 	private void constructVc3TtpBean(String moi, XcParamBean bean) {
 		bean.setSdhTp(false);
-		String vc3TtpId = moi.split("/")[2].replaceAll("vc3TTPId=", StringUtils.EMPTY);
+		String vc3TtpId = moi.split("/")[0].replaceAll("vc3TTPId=", StringUtils.EMPTY);
 		bean.setVc3TtpId(vc3TtpId);
 	}
 
