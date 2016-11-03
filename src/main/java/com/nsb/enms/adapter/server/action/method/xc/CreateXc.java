@@ -79,7 +79,7 @@ public class CreateXc {
 			return xcEntity;
 
 		} catch (Exception e) {
-			log.error("createXcVc12", e);
+			log.error("createXcVc3", e);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
 	}
@@ -101,6 +101,7 @@ public class CreateXc {
 					}
 
 					if (line.startsWith("managedObjectInstance")) {
+						log.debug("line = " + line);
 						String moi = ParseUtil.parseAttrWithMultiValue(line);
 						xcEntity.setMoi(moi);
 						continue;
@@ -124,8 +125,15 @@ public class CreateXc {
 						String toTp = line.substring(line.indexOf("toTp") + 4, line.indexOf("xCon") - 1);
 						toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
 						log.debug("toTp=" + toTp);
-
 						xcEntity.setToTermination(toTp);
+
+						String crossConnectionId = line.substring(line.indexOf("{{fabricId=1}},{{") + 17,
+								line.length() - 4);
+						String moi = xcEntity.getMoi();
+						moi = moi + "/" + crossConnectionId;
+						log.debug("moi=" + moi);
+						xcEntity.setMoi(moi);
+
 						continue;
 					}
 
@@ -140,7 +148,7 @@ public class CreateXc {
 	}
 
 	public static void main(String args[]) {
-		String s = "connected pointToPoint { fromTp { {{protectedTTPId=11060101 } },{ {augId=7 } },{ {au4CTPId=1 } } },toTp{{{vc4TTPId=11060901}}},xCon{{{fabricId=1}},{{crossConnectionId=6001}}}}}}";
+		String s = "connected pointToPoint { fromTp { { {vc4TTPId=11060301 } }, { {tug3Id=1 } }, { {tug2Id=2 } }, { {tu12CTPId=1 } } }, toTp { { {vc12TTPId=11195801 } } }, xCon { { {fabricId=1 } }, { {crossConnectionId=72058 } } } }";
 		s = s.replaceAll(" ", "");
 		System.out.println(s);
 
@@ -152,5 +160,8 @@ public class CreateXc {
 		String toTp = s.substring(s.indexOf("toTp") + 4, s.indexOf("xCon") - 1);
 		toTp = ParseUtil.parseMultiValueWithNoBlank(toTp);
 		System.out.println("toTp=" + toTp);
+		System.out.println("s=" + s);
+		String crossConnectionId = s.substring(s.indexOf("{{fabricId=1}},{{") + 17, s.length() - 4);
+		System.out.println(crossConnectionId);
 	}
 }

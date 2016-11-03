@@ -65,11 +65,11 @@ public class XcsApiServiceImpl extends XcsApiService {
 		}
 	}
 
-	private AdpXc createXc(String neId, String au4CtpId, String timeSlot, String tpId, boolean isAtp)
+	private AdpXc handleVc4Tp(String neId, String au4CtpId, String timeSlot, String tpId, boolean isAtp)
 			throws AdapterException {
 		log.error("xxxxxx===============2=================");
 		LayerRate layerRate = getLayerRateByTimeSlot(timeSlot);
-		String vc4TTPId = getVc4TtpId(au4CtpId);
+		String vc4TTPId = getVc4TtpIdFromXcs(au4CtpId);
 		if (StringUtils.isEmpty(vc4TTPId)) {
 			return handleVc4TpIdIsEmpty(neId, au4CtpId, timeSlot, tpId, isAtp, layerRate);
 		} else {
@@ -121,7 +121,12 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String au4CtpId = atps.get(0);
 		String timeSlot = atpTimeSlots.get(0);
 		String ztpId = ztps.get(0);
-		return createXc(neId, au4CtpId, timeSlot, ztpId, false);
+		if (isTpUsedByXc(ztpId)) {
+			log.error("tp was used by XC," + ztpId);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
+		}
+
+		return handleVc4Tp(neId, au4CtpId, timeSlot, ztpId, false);
 	}
 
 	private AdpXc createXcByZtpIsSdh(List<String> ztpTimeSlots, List<String> atps, List<String> ztps, String neId)
@@ -135,7 +140,11 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String au4CtpId = ztps.get(0);
 		String timeSlot = ztpTimeSlots.get(0);
 		String atpId = atps.get(0);
-		return createXc(neId, au4CtpId, timeSlot, atpId, true);
+		if (isTpUsedByXc(atpId)) {
+			log.error("tp was used by XC," + atpId);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
+		}
+		return handleVc4Tp(neId, au4CtpId, timeSlot, atpId, true);
 	}
 
 	private AdpXc createXcByBothTpIsSdh(List<String> atpTimeSlots, List<String> ztpTimeSlots, List<String> atps,
@@ -265,7 +274,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return false;
 	}
 
-	private String getVc4TtpId(String au4CtpId) throws AdapterException {
+	private String getVc4TtpIdFromXcs(String au4CtpId) throws AdapterException {
 		List<AdpXc> xcList = getXcsByTpId(au4CtpId);
 		if (null == xcList || xcList.isEmpty()) {
 			log.error("xcList is null or empty");
