@@ -347,9 +347,10 @@ public class XcsApiServiceImpl extends XcsApiService {
 	@Override
 	public Response deleteXc(String xcid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			xcsDbMgr.deleteXc(xcid);
-		} catch (Exception e) {
+			adpXcMgr.deleteXcById(xcid);
+		} catch (AdapterException e) {
 			log.error("deleteXC", e);
+			return ErrorWrapperUtils.adapterException(e);
 		}
 		return Response.ok().build();
 	}
@@ -389,8 +390,14 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	@Override
-	public Response deleteXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
-		return null;
+	public Response deleteXcsByNeId(String neId, SecurityContext arg1) throws NotFoundException {
+		try {
+			adpXcMgr.deleteXcsByNeId(neId);
+		} catch (AdapterException e) {
+			log.error("deleteXcsByNeId", e);
+			return ErrorWrapperUtils.adapterException(e);
+		}
+		return Response.ok().build();
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
+import com.nsb.enms.adapter.server.action.method.xc.DeleteXc;
 import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
@@ -171,9 +172,15 @@ public class AdpXcsMgr {
 		try {
 			ne = nesDbMgr.getNeById(neDbId);
 		} catch (Exception e) {
-			log.error("", e);
+			log.error("getNeById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
+
+		if (null == ne || StringUtils.isEmpty(ne.getId())) {
+			log.error("can not find ne by id:" + neDbId);
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+
 		return ne;
 	}
 
@@ -297,5 +304,54 @@ public class AdpXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return tp;
+	}
+
+	public void deleteXcById(String xcId) throws AdapterException {
+		AdpXc xc;
+		try {
+			xc = xcsDbMgr.getXcById(xcId);
+		} catch (Exception e) {
+			log.error("getXcById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+		if (null == xc || StringUtils.isEmpty(xc.getId())) {
+			log.error("can not find xc by id:" + xcId);
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+		deleteXc(xc);
+	}
+
+	private void deleteXc(AdpXc xc) throws AdapterException {
+		String aid = xc.getAid();
+		String groupId = aid.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
+		String neId = aid.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+		String corssConnectionId = aid.split("/")[3].replaceAll("crossConnectionId=", StringUtils.EMPTY);
+		DeleteXc.deleteXc(groupId, neId, corssConnectionId);
+
+		try {
+			xcsDbMgr.deleteXc(xc.getId());
+		} catch (Exception e) {
+			log.error("deleteXc", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	public void deleteXcsByNeId(String neId) throws AdapterException {
+		List<AdpXc> xcList;
+		try {
+			xcList = xcsDbMgr.getXcsByNeId(neId);
+		} catch (Exception e) {
+			log.error("getXcsByNeId", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+		if (null == xcList || xcList.isEmpty()) {
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+
+		for (AdpXc xc : xcList) {
+			deleteXc(xc);
+		}
 	}
 }

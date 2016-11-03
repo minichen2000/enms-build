@@ -7,8 +7,6 @@ import static com.mongodb.client.model.Filters.or;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.SecurityContext;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -56,7 +54,7 @@ public class AdpXcsDbMgr {
 
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
 		for (Document doc : docList) {
-		    AdpXc tp = constructXC(doc);
+			AdpXc tp = constructXC(doc);
 			xcList.add(tp);
 		}
 		return xcList;
@@ -82,7 +80,7 @@ public class AdpXcsDbMgr {
 	}
 
 	private AdpXc constructXC(Document doc) {
-	    AdpXc xc = gson.fromJson(doc.toJson(), AdpXc.class);
+		AdpXc xc = gson.fromJson(doc.toJson(), AdpXc.class);
 		xc.setId(doc.getObjectId("_id").toString());
 		return xc;
 	}
@@ -91,7 +89,7 @@ public class AdpXcsDbMgr {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public List<AdpXc> getXcsByNeId(String neId, SecurityContext arg1) throws Exception {
+	public List<AdpXc> getXcsByNeId(String neId) throws Exception {
 		System.out.println("getXcsByNeId, neId = " + neId);
 		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
@@ -106,7 +104,7 @@ public class AdpXcsDbMgr {
 
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
 		for (Document doc : docList) {
-		    AdpXc xc = constructXC(doc);
+			AdpXc xc = constructXC(doc);
 			xcList.add(xc);
 		}
 		return xcList;
