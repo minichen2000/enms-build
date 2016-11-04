@@ -304,11 +304,13 @@ public class XcsApiServiceImpl extends XcsApiService {
 				if ("vc12PathTraceTTPBidirectional".equalsIgnoreCase(tp.getTpType())) {
 					return true;
 				}
+				log.error("tpId is not a VC12 TP" + tpId);
 			}
 			if (layerRate.equalsIgnoreCase(LayerRate.LR_TUVC3.name())) {
 				if ("vc3TTPBidirectionalR1".equalsIgnoreCase(tp.getTpType())) {
 					return true;
 				}
+				log.error("tpId is not a VC3 TP" + tpId);
 			}
 		} catch (Exception e) {
 			log.error("getTpById", e);
