@@ -28,7 +28,6 @@ import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.AlarmSeverity;
