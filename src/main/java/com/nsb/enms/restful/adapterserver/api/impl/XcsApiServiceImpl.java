@@ -40,6 +40,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 			List<String> atps = body.getAtps();
 			List<String> ztps = body.getZtps();
 			isTpsValid(atps, ztps);
+			String layerRate = body.getLayerrate();
+			isLayerRateValid(layerRate);
 
 			List<String> atpTimeSlots = body.getAtpTimeslots();
 			List<String> ztpTimeSlots = body.getZtpTimeslots();
@@ -52,11 +54,11 @@ public class XcsApiServiceImpl extends XcsApiService {
 				log.error("atpTimeSlots and ztpTimeSlots are null or empty");
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
 			} else if (isAtpEmpty) {
-				xc = createXcByZtpIsSdh(ztpTimeSlots, atps, ztps, neId);
+				xc = createXcByZtpIsSdh(ztpTimeSlots, atps, ztps, neId, layerRate);
 			} else if (isZtpEmpty) {
-				xc = createXcByAtpIsSdh(atpTimeSlots, atps, ztps, neId);
+				xc = createXcByAtpIsSdh(atpTimeSlots, atps, ztps, neId, layerRate);
 			} else {
-				xc = createXcByBothTpIsSdh(atpTimeSlots, ztpTimeSlots, atps, ztps);
+				xc = createXcByBothTpIsSdh(atpTimeSlots, ztpTimeSlots, atps, ztps, neId, layerRate);
 			}
 
 			return Response.ok().entity(xc).build();
@@ -94,7 +96,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 		log.error("xxxxxx===============3=================");
 
-		return createXc(layerRate, neId, timeSlotTpId, tpId, isAtp);
+		return createXcByLayerRate(layerRate, neId, timeSlotTpId, tpId, isAtp);
 	}
 
 	private AdpXc handleVc4TpIdIsEmpty(String neId, String au4CtpId, String timeSlot, String tpId, boolean isAtp,
@@ -107,12 +109,12 @@ public class XcsApiServiceImpl extends XcsApiService {
 		terminateTp(layerRate, au4CtpId, vc4TTPId, tug3Id);
 		String timeSlotTpId = getTpIdByTimeSlot(timeSlot, neId, vc4TTPId);
 
-		return createXc(layerRate, neId, timeSlotTpId, tpId, isAtp);
+		return createXcByLayerRate(layerRate, neId, timeSlotTpId, tpId, isAtp);
 	}
 
-	private AdpXc createXcByAtpIsSdh(List<String> atpTimeSlots, List<String> atps, List<String> ztps, String neId)
-			throws AdapterException {
-		boolean isValid = isTimeSlotValid(atpTimeSlots) && isAu4Ctp(atps) && isPdhTtp(ztps);
+	private AdpXc createXcByAtpIsSdh(List<String> atpTimeSlots, List<String> atps, List<String> ztps, String neId,
+			String layerRate) throws AdapterException {
+		boolean isValid = isTimeSlotValid(atpTimeSlots, layerRate) && isAu4Ctp(atps) && isPdhTtp(ztps, layerRate);
 		if (!isValid) {
 			log.error("one of parameter that contains tp and timeSlot may be not a valid value");
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
@@ -129,9 +131,9 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return handleVc4Tp(neId, au4CtpId, timeSlot, ztpId, false);
 	}
 
-	private AdpXc createXcByZtpIsSdh(List<String> ztpTimeSlots, List<String> atps, List<String> ztps, String neId)
-			throws AdapterException {
-		boolean isValid = isTimeSlotValid(ztpTimeSlots) && isAu4Ctp(ztps) && isPdhTtp(atps);
+	private AdpXc createXcByZtpIsSdh(List<String> ztpTimeSlots, List<String> atps, List<String> ztps, String neId,
+			String layerRate) throws AdapterException {
+		boolean isValid = isTimeSlotValid(ztpTimeSlots, layerRate) && isAu4Ctp(ztps) && isPdhTtp(atps, layerRate);
 		if (!isValid) {
 			log.error("one of parameter that contains tp and timeSlot may be not a valid value");
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
@@ -148,17 +150,52 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	private AdpXc createXcByBothTpIsSdh(List<String> atpTimeSlots, List<String> ztpTimeSlots, List<String> atps,
-			List<String> ztps) throws AdapterException {
-		// TODO 需要同时打散两端的tp
-		boolean isValid = isTimeSlotValid(atpTimeSlots) && isAu4Ctp(atps) && isTimeSlotValid(ztpTimeSlots)
-				&& isAu4Ctp(ztps);
+			List<String> ztps, String neId, String layerRate) throws AdapterException {
+		boolean isValid = isTimeSlotValid(atpTimeSlots, layerRate) && isAu4Ctp(atps)
+				&& isTimeSlotValid(ztpTimeSlots, layerRate) && isAu4Ctp(ztps);
 		if (!isValid) {
 			log.error("one of parameter that contains tp and timeSlot may be not a valid value");
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
 		}
 
-		String au4CtpId = atps.get(0);
-		return null;
+		String a_au4CtpId = atps.get(0);
+		String a_timeSlot = atpTimeSlots.get(0);
+		LayerRate a_layerRate = getLayerRateByTimeSlot(a_timeSlot);
+		String atpId = getTpIdByTimeSlot(neId, a_au4CtpId, a_timeSlot, a_layerRate);
+
+		String z_au4CtpId = ztps.get(0);
+		String z_timeSlot = atpTimeSlots.get(0);
+		LayerRate z_layerRate = getLayerRateByTimeSlot(z_timeSlot);
+		String ztpId = getTpIdByTimeSlot(neId, z_au4CtpId, z_timeSlot, z_layerRate);
+
+		return createXcByLayerRate(z_layerRate, neId, atpId, ztpId, false);
+	}
+
+	private String getTpIdByTimeSlot(String neId, String au4CtpId, String timeSlot, LayerRate layerRate)
+			throws AdapterException {
+		String vc4TTPId = getVc4TtpIdFromXcs(au4CtpId);
+		if (StringUtils.isEmpty(vc4TTPId)) {
+			vc4TTPId = adpXcMgr.createXcByAu4AndVc4(au4CtpId);
+			log.debug("successed to createXcVc4 by ctpId = {}", au4CtpId);
+
+			String tug3Id = timeSlot.split("-")[0];
+			terminateTp(layerRate, au4CtpId, vc4TTPId, tug3Id);
+			return getTpIdByTimeSlot(timeSlot, neId, vc4TTPId);
+		} else {
+			String timeSlotTpId = getTpIdByTimeSlot(timeSlot, neId, vc4TTPId);
+			if (!isTpExisted(timeSlotTpId)) {
+				log.error("tp is not existed," + timeSlotTpId);
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
+			}
+
+			// 判断时隙所在的TUG3中的其他TP是否有创建了交叉业务的
+			if (isTpUsedByXc(timeSlotTpId)) {
+				log.error("tp was used by XC," + timeSlotTpId);
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
+			}
+
+			return timeSlotTpId;
+		}
 	}
 
 	private boolean isTu12TimeSlot(String timeSlot) {
@@ -185,7 +222,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 			tpId = neId + ":tu12CTPBidirectionalR1" + ":vc4TTPId=" + vc4TpId + "/tug3Id=" + list[0] + "/tug2Id="
 					+ list[1] + "/tu12CTPId=" + list[2];
 		} else {
-			tpId = neId + ":tu12CTPBidirectionalR1" + ":vc4TTPId=" + vc4TpId + "/tug3Id=" + list[0] + "tu3CTPId=1";
+			tpId = neId + ":tu3CTPBidirectionalR1" + ":vc4TTPId=" + vc4TpId + "/tug3Id=" + list[0] + "/tu3CTPId=1";
 		}
 		return tpId;
 	}
@@ -199,8 +236,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return false;
 	}
 
-	private AdpXc createXc(LayerRate layerRate, String neDbId, String timeSlotTpId, String tpId, boolean isAtp)
-			throws AdapterException {
+	private AdpXc createXcByLayerRate(LayerRate layerRate, String neDbId, String timeSlotTpId, String tpId,
+			boolean isAtp) throws AdapterException {
 		String atpId = StringUtils.EMPTY;
 		String ztpId = StringUtils.EMPTY;
 		if (isAtp) {
@@ -259,13 +296,19 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return false;
 	}
 
-	private boolean isPdhTtp(List<String> tpIds) throws AdapterException {
+	private boolean isPdhTtp(List<String> tpIds, String layerRate) throws AdapterException {
 		String tpId = tpIds.get(0);
 		try {
 			AdpTp tp = tpsDbMgr.getTpById(tpId);
-			if ("vc3TTPBidirectionalR1".equalsIgnoreCase(tp.getTpType())
-					|| "vc12PathTraceTTPBidirectional".equalsIgnoreCase(tp.getTpType())) {
-				return true;
+			if (layerRate.equalsIgnoreCase(LayerRate.LR_TUVC12.name())) {
+				if ("vc12PathTraceTTPBidirectional".equalsIgnoreCase(tp.getTpType())) {
+					return true;
+				}
+			}
+			if (layerRate.equalsIgnoreCase(LayerRate.LR_TUVC3.name())) {
+				if ("vc3TTPBidirectionalR1".equalsIgnoreCase(tp.getTpType())) {
+					return true;
+				}
 			}
 		} catch (Exception e) {
 			log.error("getTpById", e);
@@ -319,6 +362,13 @@ public class XcsApiServiceImpl extends XcsApiService {
 		}
 	}
 
+	private void isLayerRateValid(String layerRate) throws AdapterException {
+		if (StringUtils.isEmpty(layerRate)) {
+			log.error("layerRate is null or empty");
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
+		}
+	}
+
 	private boolean isTpUsedByXc(String tpId) throws AdapterException {
 		List<AdpXc> xcList = getXcsByTpId(tpId);
 		if (null == xcList || xcList.isEmpty()) {
@@ -328,20 +378,23 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return true;
 	}
 
-	private boolean isTimeSlotValid(List<String> timeSlots) {
+	private boolean isTimeSlotValid(List<String> timeSlots, String layerRate) {
 		String timeSlot = timeSlots.get(0);
-		String regex1 = "^[1-3]-[1-7]-[1-3]$";
-		Pattern pattern1 = Pattern.compile(regex1);
-		Matcher matcher1 = pattern1.matcher(timeSlot);
-		boolean result = matcher1.matches();
 
-		if (!result) {
+		if (layerRate.equalsIgnoreCase(LayerRate.LR_TUVC12.name())) {
+			String regex1 = "^[1-3]-[1-7]-[1-3]$";
+			Pattern pattern1 = Pattern.compile(regex1);
+			Matcher matcher1 = pattern1.matcher(timeSlot);
+			return matcher1.matches();
+		}
+		if (layerRate.equalsIgnoreCase(LayerRate.LR_TUVC3.name())) {
 			String regex2 = "^[1-3]-1$";
 			Pattern pattern2 = Pattern.compile(regex2);
 			Matcher matcher2 = pattern2.matcher(timeSlot);
-			result = matcher2.matches();
+			return matcher2.matches();
 		}
-		return result;
+
+		return false;
 	}
 
 	@Override
