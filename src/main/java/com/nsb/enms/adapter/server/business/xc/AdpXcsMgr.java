@@ -147,7 +147,7 @@ public class AdpXcsMgr {
 		XcEntity xcEntity = CreateXc.createXcVc4(groupId, neId, pTTPId, augId, au4CTPId);
 		String toTp = xcEntity.getToTermination();
 		if (StringUtils.isEmpty(toTp)) {
-			log.error("createXcVc4 ok");
+			log.error("failed to createXcVc4, toTp is null or empty");
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
 		String vc4TTPId = toTp.replace("vc4TTPId=", StringUtils.EMPTY);
@@ -304,6 +304,24 @@ public class AdpXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return tp;
+	}
+
+	public String getAu4TpId(String neId, String sdhTpId, Integer au4TpTimeSlot) throws AdapterException {
+		String protectedTTPId = sdhTpId.split("=")[1];
+		String au4TpId = neId + ":au4CTPBidirectionalR1:protectedTTPId=" + protectedTTPId + "/augId=" + au4TpTimeSlot
+				+ "/au4CTPId=1";
+		AdpTp tp = null;
+		try {
+			tp = tpsDbMgr.getTpById(au4TpId);
+		} catch (Exception e) {
+			log.error("getAu4TpById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+		if (null == tp || StringUtils.isEmpty(tp.getId())) {
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+		return tp.getId();
 	}
 
 	public void deleteXcById(String xcId) throws AdapterException {
