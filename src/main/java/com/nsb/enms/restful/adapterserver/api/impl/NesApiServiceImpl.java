@@ -296,6 +296,7 @@ public class NesApiServiceImpl extends NesApiService {
 		// delete db record, contains ne and tp
 		try {
 			nesDbMgr.deleteNe(neid);
+
 			AdpXcsMgr xcsMgr = new AdpXcsMgr();
 			xcsMgr.deleteXcsByNeId(neId);
 
@@ -305,7 +306,9 @@ public class NesApiServiceImpl extends NesApiService {
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
 			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
 		} catch (AdapterException e) {
-			return ErrorWrapperUtils.adapterException(e);
+			if (ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode() != e.errorCode_) {
+				return ErrorWrapperUtils.adapterException(e);
+			}
 		} catch (Exception e) {
 			return failDbOperation();
 		}
