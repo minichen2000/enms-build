@@ -24,43 +24,9 @@ public class SyncTpThread implements Callable<Object> {
 
 	@Override
 	public Object call() throws Exception {
-		// StartSuppervision start = new StartSuppervision();
-		// boolean isSuccess;
-		// try
-		// {
-		// log.debug("before startSuppervision");
-		// NeStateMachineApp.instance().beforeSuperviseNe(id);
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
 				OperationalStateEnum.SYNCHRONIZING.name(), OperationalStateEnum.IDLE.name());
-		// isSuccess = StartSuppervision.startSuppervision( groupId, neId );
-		// log.debug( "isSuccess = " + isSuccess );
-		// if( !isSuccess )
-		// {
-		// return;
-		// }
-		// NeStateMachineApp.instance().afterSuperviseNe(id);
-		// }
-		// catch( AdapterException e )
-		// {
-		// e.printStackTrace();
-		// return;
-		// }
-
-		// NeStateMachineApp.instance().beforeSynchData(id);
-		// try {
 		new AdpTpsMgr().syncTp(groupId, neId, id);
-		// } catch (AdapterException e) {
-		// log.error("sync tp occur error", e);
-		// ErrorWrapperUtils.adapterException(e);
-		// }
-		// NeStateMachineApp.instance().afterSynchData(id);
-
-		// update the value of alignmentStatus for ne to true
-		/*
-		 * AdpNe ne = new AdpNe(); ne.setId( id ); ne.setSynchState(
-		 * SynchStateEnum.SYNCHRONIZED ); ne.setOperationalState(
-		 * OperationalStateEnum.IDLE ); updateNeAttr( ne );
-		 */
 		NeStateMachineApp.instance().afterSynchData(id);
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum",
 				SynchStateEnum.SYNCHRONIZED.name(), SynchStateEnum.UNSYNCHRONIZED.name());
@@ -70,14 +36,4 @@ public class SyncTpThread implements Callable<Object> {
 		log.debug("sync tp end");
 		return null;
 	}
-
-	/**
-	 * update the value of alignmentStatus for ne to true
-	 */
-
-	/*
-	 * private void updateNeAttr( AdpNe ne ) { AdpNesDbMgr nesDbMgr = new
-	 * AdpNesDbMgr(); try { nesDbMgr.updateNe( ne ); } catch( Exception e ) {
-	 * log.error( "updateNeAttr", e ); } }
-	 */
 }
