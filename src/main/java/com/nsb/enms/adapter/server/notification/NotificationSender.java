@@ -1,12 +1,17 @@
 package com.nsb.enms.adapter.server.notification;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.TimeUtil;
+import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.common.AlarmSeverity;
@@ -55,9 +60,12 @@ public class NotificationSender
     {
         EventType eventType = entity.getEventType();
         String eventTime = entity.getEventTime();
-        EntityType objectType = getObjectType( entity.getMoc().getMoc() );
-        String objectID = getObjectId( objectType, entity.getMoi().getMoi() );
-        if (objectID == null)
+        String moc = entity.getMoc().getMoc();
+        String moi = entity.getMoi().getMoi();
+        EntityType objectType = getObjectType( moc );
+        String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe( objectType, moc, moi );
+        String objectID = getObjectId( objectType, keyOnNe, moi );
+        if (StringUtils.isEmpty( objectID ))
         {
             return;
         }
@@ -138,20 +146,26 @@ public class NotificationSender
 
     private EntityType getObjectType( String moc )
     {
-        if( moc.contains( "NetworkElement" )
-                || moc.toLowerCase().contains( "ne" ) )
+        moc = moc.toLowerCase();
+        if( moc.contains( "networkelement" )
+                || moc.contains( "ne" ) )
         {
             return EntityType.NE;
         }
 
-        if( moc.contains( "TTP" ) )
+        if( moc.contains( "ttp" ) )
         {
             return EntityType.TP;
         }
 
-        if( moc.contains( "Equipment" ) )
+        if( moc.contains( "equipment" ) )
         {
             return EntityType.BOARD;
+        }
+        
+        if (moc.contains( "connection" ))
+        {
+            return EntityType.CONNECTION;
         }
 
         return EntityType.NE;
@@ -213,32 +227,54 @@ public class NotificationSender
         }
     }
 
-    private String getObjectId( EntityType objectType, String moi )
+    private String getObjectId( EntityType objectType, String keyOnNe, String moi )
     {
         switch( objectType )
         {
             case NE:
                 AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-                String groupId = moi.split( "/" )[0].split( "=" )[1];
-                String neId = moi.split( "/" )[1].split( "=" )[1];
                 try
                 {
-                    return nesDbMgr.getIdByGroupAndNeId( groupId, neId );
+                    return nesDbMgr.getIdByKeyOnNe( keyOnNe );
                 }
                 catch( Exception e )
                 {
-                    log.error( "getIdByKeOneNe", e );
+                    log.error( "AdpNesDbMgr::getIdByKeOneNe", e );
                     return null;
                 }
             case TP:
-
-                return "";
+                AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
+                try
+                {
+                    return tpsDbMgr.getIdByKeyOnNe( keyOnNe );
+                }
+                catch( Exception e )
+                {
+                    log.error( "AdpTpsDbMgr::getIdByKeOneNe", e );
+                    return null;
+                }
             case BOARD:
-
-                return "";
+                AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
+                try
+                {
+                    return equsDbMgr.getIdByAid( moi );
+                }
+                catch (Exception e) 
+                {
+                    log.error( "AdpEqusDbMgr::getIdByAid", e );
+                    return null;
+                }
             case CONNECTION:
-
-                return "";
+                AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
+                try
+                {
+                    return xcsDbMgr.getIdByAid( moi );
+                }
+                catch (Exception e) 
+                {
+                    log.error( "AdpXcsDbMgr::getIdByAid", e );
+                    return null;
+                }
             default:
                 return null;
         }

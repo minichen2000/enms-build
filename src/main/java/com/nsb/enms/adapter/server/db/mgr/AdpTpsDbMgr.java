@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
@@ -347,4 +346,17 @@ public class AdpTpsDbMgr {
 		log.debug("getTpByTimeSlot cost time = " + (end.getTime() - begin.getTime()));
 		return tp;
 	}
+	
+	public String getIdByKeyOnNe(String keyOnNe) throws Exception {
+        List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
+
+        if (null == docList || docList.isEmpty()) {
+            log.error("can not find tp, query by keyOnNe = " + keyOnNe);
+            return null;
+        }       
+
+        Document doc = docList.get(0);
+        AdpTp tp = constructTp(doc);
+        return tp.getId();
+    }
 }

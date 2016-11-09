@@ -8,10 +8,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
-import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
@@ -29,8 +27,7 @@ public class AdpEqusDbMgr {
 	}
 
 	public AdpEquipment getEquipmentById(String neId) throws Exception {
-		BasicDBObject query = new BasicDBObject("_id", new ObjectId(neId));
-		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find equipment, query by id = {}", neId);
@@ -67,10 +64,22 @@ public class AdpEqusDbMgr {
 		}
 		return equipmentList;
 	}
+	
+	public String getIdByAid(String aid) throws Exception {
+        List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
+
+        if (null == docList || docList.isEmpty()) {
+            log.error("can not find equipment, query by aid = {}", aid);
+            return null;
+        }        
+        Document doc = docList.get(0);
+        AdpEquipment equipment = constructEquipment(doc);
+        return equipment.getId();
+    }
 
 	private AdpEquipment constructEquipment(Document doc) {
 	    AdpEquipment equipment = gson.fromJson(doc.toJson(), AdpEquipment.class);
-		equipment.setId(doc.getObjectId("_id").toString());
+		//equipment.setId(doc.getObjectId("_id").toString());
 		return equipment;
 	}
 }

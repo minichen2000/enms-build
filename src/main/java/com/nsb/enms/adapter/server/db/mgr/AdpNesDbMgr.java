@@ -370,15 +370,14 @@ public class AdpNesDbMgr {
 		return true;
 	}
 
-	public String getIdByGroupAndNeId(String groupId, String neId) throws Exception {
-		List<AdpNe> nes = getNesByGroupId(groupId);
-		for (AdpNe ne : nes) {
-			String keyOnNe = ne.getKeyOnNe();
-			String moi = GenerateKeyOnNeUtil.getMoi(keyOnNe);
-			if (moi.split("/")[1].split("=")[1].equals(neId)) {
-				return ne.getId();
-			}
-		}
-		return null;
+	public String getIdByKeyOnNe(String keyOnNe) throws Exception {
+	    List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
+        if (null == docList || docList.isEmpty()) {
+            log.error("can not find ne, query by keyOnNe = " + keyOnNe);
+            return null;
+        }
+        Document doc = docList.get(0);
+        AdpNe ne = constructNe(doc);
+        return ne.getId();
 	}
 }
