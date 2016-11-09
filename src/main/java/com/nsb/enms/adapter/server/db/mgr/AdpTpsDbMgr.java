@@ -372,7 +372,8 @@ public class AdpTpsDbMgr {
 	public String getTpByParentIdAndLayerRate(String parentId, LayerRate layerRate) throws Exception {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
-		List<Document> docList = dbc.find(and(eq("parentTpId", parentId), in("layerRates", layerRate.toInt())))
+		List<Document> docList = dbc
+				.find(and(eq("parentTpId", parentId), in("layerRates", String.valueOf(layerRate.toInt()))))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {

@@ -138,6 +138,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String au4CtpId = adpXcMgr.getAu4TpId(neId, sdhTpId, timeSlots[0]);
 		log.debug("au4CtpId = " + au4CtpId);
 		String ztpId = adpXcMgr.getPdhSubTp(ztps.get(0), layerRate);
+		log.debug("ztpId = " + ztpId);
 		if (isTpUsedByXc(ztpId)) {
 			log.error("tp was used by XC," + ztpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
@@ -160,6 +161,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		log.debug("au4CtpId = " + au4CtpId);
 
 		String atpId = adpXcMgr.getPdhSubTp(atps.get(0), layerRate);
+		log.debug("atpId = " + atpId);
 		if (isTpUsedByXc(atpId)) {
 			log.error("tp was used by XC," + atpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
@@ -302,17 +304,8 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String tpId = tpIds.get(0);
 		try {
 			AdpTp tp = tpsDbMgr.getTpById(tpId);
-			if (LayerRate.LR_TUVC12 == layerRate) {
-				if ("vc12PathTraceTTPBidirectional".equalsIgnoreCase(tp.getTpType())) {
-					return true;
-				}
-				log.error("tpId is not a VC12 TP" + tpId);
-			}
-			if (LayerRate.LR_TUVC3 == layerRate) {
-				if ("vc3TTPBidirectionalR1".equalsIgnoreCase(tp.getTpType())) {
-					return true;
-				}
-				log.error("tpId is not a VC3 TP" + tpId);
+			if ("pPITTPBidirectionalR1".equalsIgnoreCase(tp.getTpType())) {
+				return true;
 			}
 		} catch (Exception e) {
 			log.error("getTpById", e);
