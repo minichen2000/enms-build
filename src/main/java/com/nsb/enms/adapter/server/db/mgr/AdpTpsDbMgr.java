@@ -2,6 +2,7 @@ package com.nsb.enms.adapter.server.db.mgr;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.set;
 
@@ -24,6 +25,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
+import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class AdpTpsDbMgr {
@@ -44,7 +46,7 @@ public class AdpTpsDbMgr {
 			String gsonTp = gson.toJson(tp);
 			BasicDBObject dbObject = (BasicDBObject) JSON.parse(gsonTp);
 			dbc1.insertOne(dbObject);
-//			tp.setId(dbObject.getObjectId("_id").toString());
+			// tp.setId(dbObject.getObjectId("_id").toString());
 		}
 
 		return body;
@@ -147,6 +149,13 @@ public class AdpTpsDbMgr {
 			}
 		}
 		return true;
+	}
+
+	public void updateTpLayerRate(String tpId, int layerRate) throws Exception {
+		log.debug("layerRate = " + layerRate);
+		List<String> layerRates = new ArrayList<String>();
+		layerRates.add(String.valueOf(layerRate));
+		dbc.updateOne(eq("id", tpId), set("layerRates", layerRates));
 	}
 
 	public List<AdpTp> getTps() throws Exception {
@@ -346,17 +355,32 @@ public class AdpTpsDbMgr {
 		log.debug("getTpByTimeSlot cost time = " + (end.getTime() - begin.getTime()));
 		return tp;
 	}
-	
+
 	public String getIdByKeyOnNe(String keyOnNe) throws Exception {
-        List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
 
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find tp, query by keyOnNe = " + keyOnNe);
-            return null;
-        }       
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by keyOnNe = " + keyOnNe);
+			return null;
+		}
 
-        Document doc = docList.get(0);
-        AdpTp tp = constructTp(doc);
-        return tp.getId();
-    }
+		Document doc = docList.get(0);
+		AdpTp tp = constructTp(doc);
+		return tp.getId();
+	}
+
+	public String getTpByParentIdAndLayerRate(String parentId, LayerRate layerRate) throws Exception {
+		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
+
+		List<Document> docList = dbc.find(and(eq("parentTpId", parentId), in("layerRates", layerRate.toInt())))
+				.into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by parentId = " + parentId);
+			return null;
+		}
+
+		Document doc = docList.get(0);
+		return constructTp(doc).getId();
+	}
 }

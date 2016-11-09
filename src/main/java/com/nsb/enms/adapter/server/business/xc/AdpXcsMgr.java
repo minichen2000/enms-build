@@ -306,6 +306,24 @@ public class AdpXcsMgr {
 		return tp;
 	}
 
+	public String getPdhSubTp(String ptpId, LayerRate layerRate) throws AdapterException {
+		String ctpId;
+		LayerRate subTpLR = LayerRate.LR_DSR_2M;
+		try {
+			if (LayerRate.LR_TUVC12 == layerRate) {
+				subTpLR = LayerRate.LR_DSR_2M;
+			} else if (LayerRate.LR_TUVC3 == layerRate) {
+				subTpLR = LayerRate.LR_DSR_34M;
+			}
+
+			ctpId = tpsDbMgr.getTpByParentIdAndLayerRate(ptpId, subTpLR);
+		} catch (Exception e) {
+			log.error("getPdhSubTp", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return ctpId;
+	}
+
 	public String getAu4TpId(String neId, String sdhTpId, Integer au4TpTimeSlot) throws AdapterException {
 		String protectedTTPId = sdhTpId.split("=")[1];
 		String au4TpId = neId + ":au4CTPBidirectionalR1:protectedTTPId=" + protectedTTPId + "/augId=" + au4TpTimeSlot

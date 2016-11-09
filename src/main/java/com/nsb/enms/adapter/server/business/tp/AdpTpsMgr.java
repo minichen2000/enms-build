@@ -220,9 +220,8 @@ public class AdpTpsMgr {
 		for (TpEntity ctp : ctpList) {
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(ctp);
 
-			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_TUVC12.toInt()));
+			layerRates.add(String.valueOf(pair.getFirst()));
 
 			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
 			tps.add(newCtp);
@@ -236,6 +235,14 @@ public class AdpTpsMgr {
 		pdhPTP.setLayerRates(layerRates);
 		addTps(tps);
 		updateTps(pdhPTP);
+
+		// 更新父TP的layerRate
+		try {
+			tpsDbMgr.updateTpLayerRate(ptpDbId, layerRate);
+		} catch (Exception e) {
+			log.error("getTpById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
 	}
 
 	private void updateTps(AdpTp tp) throws AdapterException {

@@ -137,7 +137,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		Integer[] timeSlots = HexDecConvertUtil.hex2Int(atpTimeSlots.get(0));
 		String au4CtpId = adpXcMgr.getAu4TpId(neId, sdhTpId, timeSlots[0]);
 		log.debug("au4CtpId = " + au4CtpId);
-		String ztpId = ztps.get(0);
+		String ztpId = adpXcMgr.getPdhSubTp(ztps.get(0), layerRate);
 		if (isTpUsedByXc(ztpId)) {
 			log.error("tp was used by XC," + ztpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
@@ -159,7 +159,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String au4CtpId = adpXcMgr.getAu4TpId(neId, sdhTpId, timeSlots[0]);
 		log.debug("au4CtpId = " + au4CtpId);
 
-		String atpId = atps.get(0);
+		String atpId = adpXcMgr.getPdhSubTp(atps.get(0), layerRate);
 		if (isTpUsedByXc(atpId)) {
 			log.error("tp was used by XC," + atpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
