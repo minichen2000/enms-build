@@ -75,7 +75,10 @@ public class AdpTpsDbMgr {
 
 	public List<AdpTp> getTpsByNeId(String neid) throws Exception {
 		log.debug("getTPByNEId, neId = " + neid);
-		List<Document> docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
+		List<Document> docList = dbc
+				.find(and(eq("neId", neid),
+						or(eq("tpType", "labelledOpticalSPITTPBidirectional"), eq("tpType", "pPITTPBidirectionalR1"))))
+				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by neid = " + neid);
 			return new ArrayList<AdpTp>();
