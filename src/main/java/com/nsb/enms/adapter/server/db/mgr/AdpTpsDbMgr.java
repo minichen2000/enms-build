@@ -37,12 +37,17 @@ public class AdpTpsDbMgr {
 
 	public List<AdpTp> addTps(List<AdpTp> body) throws Exception {
 		for (AdpTp tp : body) {
-			String gsonTp = gson.toJson(tp);
-			BasicDBObject dbObject = (BasicDBObject) JSON.parse(gsonTp);
-			dbc1.insertOne(dbObject);
+			addTp(tp);
 		}
 
 		return body;
+	}
+
+	public AdpTp addTp(AdpTp tp) throws Exception {
+		String gsonTp = gson.toJson(tp);
+		BasicDBObject dbObject = (BasicDBObject) JSON.parse(gsonTp);
+		dbc1.insertOne(dbObject);
+		return tp;
 	}
 
 	public AdpTp getTpById(String tpid) throws Exception {

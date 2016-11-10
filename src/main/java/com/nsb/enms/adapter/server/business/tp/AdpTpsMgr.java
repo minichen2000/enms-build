@@ -94,7 +94,12 @@ public class AdpTpsMgr {
 
 	private List<AdpTp> addTps(List<AdpTp> tps) throws AdapterException {
 		try {
-			tps = tpsDbMgr.addTps(tps);
+			for (AdpTp tp : tps) {
+				AdpTp newTp = tpsDbMgr.getTpById(tp.getId());
+				if (null == newTp || StringUtils.isEmpty(newTp.getId())) {
+					tpsDbMgr.addTp(tp);
+				}
+			}
 		} catch (Exception e) {
 			log.error("addTps", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
