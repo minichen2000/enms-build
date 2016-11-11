@@ -141,10 +141,10 @@ public class Main
                 boolean isOk = register.register2Controller();
                 log.debug(
                     "the result of registering to Controller is :" + isOk );
-                if( isOk )
-                {
-                    timer.cancel();
-                }
+				// if( isOk )
+				// {
+				// timer.cancel();
+				// }
             }
         }, 0, period );
     }
