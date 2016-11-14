@@ -2,101 +2,91 @@ package com.nsb.enms.adapter.server.action.entity;
 
 import java.util.List;
 
-public class TpEntity
-{
-    private String moc;
+public class TpEntity {
+	private String moc;
 
-    private String moi;
+	private String moi;
 
-    private String userLabel;
-    
-    private int stmLevel;
+	private String userLabel;
 
-    private String alarmStatus;
+	private int stmLevel;
 
-    private String administrativeState;
+	private String alarmStatus;
 
-    private List<String> supportedByObjectList;
+	private String administrativeState;
 
-    private String operationalState;
+	private List<String> supportedByObjectList;
 
-    public String getMoc()
-    {
-        return moc;
-    }
+	private String operationalState;
 
-    public void setMoc( String moc )
-    {
-        this.moc = moc;
-    }
+	public String getMoc() {
+		return moc;
+	}
 
-    public String getMoi()
-    {
-        return moi;
-    }
+	public void setMoc(String moc) {
+		this.moc = moc;
+	}
 
-    public void setMoi( String moi )
-    {
-        this.moi = moi;
-    }
+	public String getMoi() {
+		return moi;
+	}
 
-    public String getUserLabel()
-    {
-        return userLabel;
-    }
+	public void setMoi(String moi) {
+		this.moi = moi;
+	}
 
-    public void setUserLabel( String userLabel )
-    {
-        this.userLabel = userLabel;
-    }
+	public String getUserLabel() {
+		return userLabel;
+	}
 
-    public int getStmLevel()
-    {
-        return stmLevel;
-    }
+	public void setUserLabel(String userLabel) {
+		this.userLabel = userLabel;
+	}
 
-    public void setStmLevel( int stmLevel )
-    {
-        this.stmLevel = stmLevel;
-    }
+	public int getStmLevel() {
+		return stmLevel;
+	}
 
-    public String getAlarmStatus()
-    {
-        return alarmStatus;
-    }
+	public void setStmLevel(int stmLevel) {
+		this.stmLevel = stmLevel;
+	}
 
-    public void setAlarmStatus( String alarmStatus )
-    {
-        this.alarmStatus = alarmStatus;
-    }
+	public String getAlarmStatus() {
+		return alarmStatus;
+	}
 
-    public String getAdministrativeState()
-    {
-        return administrativeState;
-    }
+	public void setAlarmStatus(String alarmStatus) {
+		this.alarmStatus = alarmStatus;
+	}
 
-    public void setAdministrativeState( String administrativeState )
-    {
-        this.administrativeState = administrativeState;
-    }
+	public String getAdministrativeState() {
+		return administrativeState;
+	}
 
-    public List<String> getSupportedByObjectList()
-    {
-        return supportedByObjectList;
-    }
+	public void setAdministrativeState(String administrativeState) {
+		this.administrativeState = administrativeState;
+	}
 
-    public void setSupportedByObjectList( List<String> supportedByObjectList )
-    {
-        this.supportedByObjectList = supportedByObjectList;
-    }
+	public List<String> getSupportedByObjectList() {
+		return supportedByObjectList;
+	}
 
-    public String getOperationalState()
-    {
-        return operationalState;
-    }
+	public void setSupportedByObjectList(List<String> supportedByObjectList) {
+		this.supportedByObjectList = supportedByObjectList;
+	}
 
-    public void setOperationalState( String operationalState )
-    {
-        this.operationalState = operationalState;
-    }
+	public String getOperationalState() {
+		return operationalState;
+	}
+
+	public void setOperationalState(String operationalState) {
+		this.operationalState = operationalState;
+	}
+
+	@Override
+	public String toString() {
+		return "TpEntity [moc=" + moc + ", moi=" + moi + ", userLabel=" + userLabel + ", stmLevel=" + stmLevel
+				+ ", alarmStatus=" + alarmStatus + ", administrativeState=" + administrativeState
+				+ ", supportedByObjectList=" + supportedByObjectList + ", operationalState=" + operationalState + "]";
+	}
 }

@@ -156,11 +156,15 @@ public class AdpTpsMgr {
 
 		for (TpEntity tp : tpList) {
 			List<AdpTp> tps = new ArrayList<AdpTp>();
-			log.debug("tp = " + tp);
+			log.debug("tp = " + tp.toString());
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
 
 			// TODO 读取映射文件获取层速率
 			LayerRate layerRate = getLayerRate(tp);
+			if (null == layerRate) {
+				log.error("tp's layerRate is null, ignore this tp", tp);
+				continue;
+			}
 			List<String> layerRates = new ArrayList<String>();
 			layerRates.add(String.valueOf(layerRate.toInt()));
 
