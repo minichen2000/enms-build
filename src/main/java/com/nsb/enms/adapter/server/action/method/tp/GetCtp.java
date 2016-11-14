@@ -437,10 +437,10 @@ public class GetCtp {
 						continue;
 					}
 
-					if (line.startsWith("alarmStatus")) {
-						portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-						continue;
-					}
+//					if (line.startsWith("alarmStatus")) {
+//						portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
+//						continue;
+//					}
 
 					if (line.startsWith("supportedByObjectList")) {
 						portEntity.setSupportedByObjectList(ParseUtil.parseList(line));

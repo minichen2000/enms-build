@@ -1,10 +1,16 @@
 package com.nsb.enms.adapter.server.action.entity;
 
+import java.util.List;
+
 public class EquipmentEntity
 {
     private String moc;
 
     private String moi;
+    
+    private List<String> allowedEquipmentTypes;
+    
+    private String specificPhysicalInstance;
 
     private String equipmentActual;
 
@@ -15,8 +21,6 @@ public class EquipmentEntity
     private String availabilityStatus;
 
     private String alarmStatus;
-
-    private String locationName;
 
     private String operationalState;
 
@@ -40,6 +44,26 @@ public class EquipmentEntity
     public void setMoi( String moi )
     {
         this.moi = moi;
+    }
+
+    public List<String> getAllowedEquipmentTypes()
+    {
+        return allowedEquipmentTypes;
+    }
+
+    public void setAllowedEquipmentTypes( List<String> allowedEquipmentTypes )
+    {
+        this.allowedEquipmentTypes = allowedEquipmentTypes;
+    }
+
+    public String getSpecificPhysicalInstance()
+    {
+        return specificPhysicalInstance;
+    }
+
+    public void setSpecificPhysicalInstance( String specificPhysicalInstance )
+    {
+        this.specificPhysicalInstance = specificPhysicalInstance;
     }
 
     public String getEquipmentActual()
@@ -90,16 +114,6 @@ public class EquipmentEntity
     public void setAlarmStatus( String alarmStatus )
     {
         this.alarmStatus = alarmStatus;
-    }
-
-    public String getLocationName()
-    {
-        return locationName;
-    }
-
-    public void setLocationName( String locationName )
-    {
-        this.locationName = locationName;
     }
 
     public String getOperationalState()

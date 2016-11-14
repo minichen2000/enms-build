@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,8 +16,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
+import com.nsb.enms.common.ErrorCode;
 
 public class GetEquipment
 {
@@ -26,14 +27,14 @@ public class GetEquipment
     private static final String SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.GET_EQ_REQ, ConfigKey.DEFAULT_GET_EQ_REQ );
 
-    public static List<EquipmentEntity> getEquipment( int groupId, int neId )
-            throws AdapterException
+    public static List<EquipmentEntity> getEquipment( String groupId,
+            String neId ) throws AdapterException
     {
         try
         {
-            Process process = ExecExternalScript.run(
-                ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
-                String.valueOf( neId ) );
+            log.debug( "------------Start getEquipment-------------------" );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             List<EquipmentEntity> eqList = new LinkedList<EquipmentEntity>();
@@ -67,6 +68,20 @@ public class GetEquipment
                             continue;
                         }
 
+                        if( line.startsWith( "allowedEquipmentType" ) )
+                        {
+                            equipmentEntity.setAllowedEquipmentTypes(
+                                ParseUtil.parseAllowedEquipmentType( line ) );
+                            continue;
+                        }
+
+                        if( line.startsWith( "specificPhysicalInstance" ) )
+                        {
+                            equipmentEntity.setSpecificPhysicalInstance(
+                                ParseUtil.parseAttr1( line ) );
+                            continue;
+                        }
+
                         if( line.startsWith( "equipmentActual" ) )
                         {
                             equipmentEntity.setEquipmentActual(
@@ -90,22 +105,25 @@ public class GetEquipment
 
                         if( line.startsWith( "availabilityStatus" ) )
                         {
-                            equipmentEntity.setAvailabilityStatus(
-                                ParseUtil.parseAttr( line ) );
+                            String availabilityStatus = ParseUtil
+                                    .parseAttrWithSingleValue( line );
+                            if( !StringUtils.isEmpty( availabilityStatus ) )
+                            {
+                                equipmentEntity.setAvailabilityStatus(
+                                    availabilityStatus.split( "\\s*" )[0] );
+                            }
                             continue;
                         }
 
                         if( line.startsWith( "alarmStatus" ) )
                         {
-                            equipmentEntity.setAlarmStatus(
-                                ParseUtil.parseAttr( line ) );
-                            continue;
-                        }
-
-                        if( line.startsWith( "locationName" ) )
-                        {
-                            equipmentEntity.setLocationName(
-                                ParseUtil.parseAttr( line ) );
+                            String alarmStatus = ParseUtil.parseAttr( line );
+                            String[] elements = alarmStatus.split( "_" );
+                            equipmentEntity.setAlarmStatus( elements[0] );
+                            if( elements.length == 2 )
+                            {
+                                equipmentEntity.setAlarmStatus( elements[1] );
+                            }
                             continue;
                         }
 
@@ -133,19 +151,18 @@ public class GetEquipment
             }
             br.close();
 
-            if( process.waitFor() != 0 || eqList.size() < 1 )
+            if( process.waitFor() != 0 )
             {
                 throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Get equipment failed!!!" );
+                        ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
             }
+            log.debug( "------------End getEquipment-------------------" );
             return eqList;
         }
         catch( Exception e )
         {
             log.error( "getEquipment", e );
-            throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+            throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
         }
     }
 }

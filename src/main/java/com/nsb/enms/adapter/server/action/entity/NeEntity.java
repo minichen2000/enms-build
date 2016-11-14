@@ -14,11 +14,11 @@ public class NeEntity
 
     private String locationName;
 
-    private boolean ntpEnabled;
+    //private boolean ntpEnabled;
 
     private String networkAddress;
 
-    private String administrativeState;
+    //private String administrativeState;
 
     public String getMoc()
     {
@@ -80,15 +80,15 @@ public class NeEntity
         this.locationName = locationName;
     }
 
-    public boolean isNtpEnabled()
-    {
-        return ntpEnabled;
-    }
-
-    public void setNtpEnabled( boolean ntpEnabled )
-    {
-        this.ntpEnabled = ntpEnabled;
-    }
+//    public boolean isNtpEnabled()
+//    {
+//        return ntpEnabled;
+//    }
+//
+//    public void setNtpEnabled( boolean ntpEnabled )
+//    {
+//        this.ntpEnabled = ntpEnabled;
+//    }
 
     public String getNetworkAddress()
     {
@@ -100,13 +100,13 @@ public class NeEntity
         this.networkAddress = networkAddress;
     }
 
-    public String getAdministrativeState()
-    {
-        return administrativeState;
-    }
-
-    public void setAdministrativeState( String administrativeState )
-    {
-        this.administrativeState = administrativeState;
-    }    
+//    public String getAdministrativeState()
+//    {
+//        return administrativeState;
+//    }
+//
+//    public void setAdministrativeState( String administrativeState )
+//    {
+//        this.administrativeState = administrativeState;
+//    }    
 }

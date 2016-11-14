@@ -87,12 +87,12 @@ public class GetNe
                             continue;
                         }
 
-                        if( line.startsWith( "ntpEnabled" ) )
-                        {
-                            neEntity.setNtpEnabled(
-                                ParseUtil.parseBooleanAttr( line ) );
-                            continue;
-                        }
+//                        if( line.startsWith( "ntpEnabled" ) )
+//                        {
+//                            neEntity.setNtpEnabled(
+//                                ParseUtil.parseBooleanAttr( line ) );
+//                            continue;
+//                        }
 
                         if( line.startsWith( "networkAddress" ) )
                         {
@@ -101,12 +101,12 @@ public class GetNe
                             continue;
                         }
 
-                        if( line.startsWith( "administrativeState" ) )
-                        {
-                            neEntity.setAdministrativeState(
-                                ParseUtil.parseAttr( line ) );
-                            continue;
-                        }
+//                        if( line.startsWith( "administrativeState" ) )
+//                        {
+//                            neEntity.setAdministrativeState(
+//                                ParseUtil.parseAttr( line ) );
+//                            continue;
+//                        }
 
                         if( line.startsWith( "-----------------" ) )
                         {

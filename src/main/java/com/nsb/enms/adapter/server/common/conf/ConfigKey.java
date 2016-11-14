@@ -16,6 +16,22 @@ public class ConfigKey {
 	public static final String GET_EQ_REQ = "GET_EQ_REQ";
 
 	public static final String DEFAULT_GET_EQ_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncEquipment.req";
+	
+	public static final String GET_RACK_REQ = "GET_RACK_REQ";
+
+    public static final String DEFAULT_GET_RACK_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncRack.req";
+    
+    public static final String GET_SHELF_REQ = "GET_SHELF_REQ";
+
+    public static final String DEFAULT_GET_SHELF_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncShelf.req";
+    
+    public static final String GET_SLOT_REQ = "GET_SLOT_REQ";
+
+    public static final String DEFAULT_GET_SLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSlot.req";
+    
+    public static final String GET_SUBSLOT_REQ = "GET_SUBSLOT_REQ";
+
+    public static final String DEFAULT_GET_SUBSLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSubslot.req";
 
 	public static final String GET_NE_REQ = "GET_NE_REQ";
 
