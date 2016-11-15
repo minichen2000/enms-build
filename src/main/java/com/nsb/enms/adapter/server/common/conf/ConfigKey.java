@@ -32,6 +32,10 @@ public class ConfigKey {
     public static final String GET_SUBSLOT_REQ = "GET_SUBSLOT_REQ";
 
     public static final String DEFAULT_GET_SUBSLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSubslot.req";
+    
+    public static final String GET_TPT_COORDINATOR_REQ = "GET_TPT_COORDINATOR_REQ";
+    
+    public static final String DEFAULT_GET_TPT_COORDINATOR_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncTptCoordinator.req";
 
 	public static final String GET_NE_REQ = "GET_NE_REQ";
 
