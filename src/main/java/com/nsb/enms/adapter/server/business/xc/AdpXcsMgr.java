@@ -109,9 +109,7 @@ public class AdpXcsMgr {
 		xc.setAid(moi);
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
-		// xc.setUsedByConnection("0");
-		// TODO 修改该值
-		xc.setLayerrate(String.valueOf(LayerRate.LR_TUVC12.toInt()));
+		xc.setLayerrate(String.valueOf(LayerRate.LR_TUVC3.toInt()));
 
 		List<String> atps = new ArrayList<String>();
 		atps.add(atpDbId);

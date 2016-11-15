@@ -64,6 +64,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 				xc = createXcByBothTpIsSdh(atpTimeSlots, ztpTimeSlots, atps, ztps, neId, layerRate);
 			}
 
+			log.debug("create xc ok!");
 			return Response.ok().entity(xc).build();
 		} catch (AdapterException e) {
 			return ErrorWrapperUtils.adapterException(e);

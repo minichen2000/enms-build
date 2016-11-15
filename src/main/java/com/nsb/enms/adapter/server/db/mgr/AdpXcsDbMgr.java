@@ -81,7 +81,7 @@ public class AdpXcsDbMgr {
 
 	private AdpXc constructXC(Document doc) {
 		AdpXc xc = gson.fromJson(doc.toJson(), AdpXc.class);
-		// xc.setId(doc.getObjectId("_id").toString());
+		xc.setId(doc.getObjectId("_id").toString());
 		return xc;
 	}
 
