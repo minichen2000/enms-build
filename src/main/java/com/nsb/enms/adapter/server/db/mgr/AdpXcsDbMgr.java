@@ -61,8 +61,8 @@ public class AdpXcsDbMgr {
 	}
 
 	public AdpXc getXcById(String xcid) throws Exception {
-		//BasicDBObject query = new BasicDBObject("_id", new ObjectId(xcid));
-		List<Document> docList = dbc.find(eq( "id", xcid )).into(new ArrayList<Document>());
+		BasicDBObject query = new BasicDBObject("_id", new ObjectId(xcid));
+		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by id = {}", xcid);
@@ -81,7 +81,7 @@ public class AdpXcsDbMgr {
 
 	private AdpXc constructXC(Document doc) {
 		AdpXc xc = gson.fromJson(doc.toJson(), AdpXc.class);
-		//xc.setId(doc.getObjectId("_id").toString());
+		// xc.setId(doc.getObjectId("_id").toString());
 		return xc;
 	}
 
@@ -109,16 +109,16 @@ public class AdpXcsDbMgr {
 		}
 		return xcList;
 	}
-	
+
 	public String getIdByAid(String aid) throws Exception {
-	    List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find xc, query by aid = {}", aid);
-            return null;
-        }
-        
-        Document doc = docList.get(0);
-        AdpXc xc = constructXC(doc);
-        return xc.getId();
-    }
+		List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find xc, query by aid = {}", aid);
+			return null;
+		}
+
+		Document doc = docList.get(0);
+		AdpXc xc = constructXC(doc);
+		return xc.getId();
+	}
 }
