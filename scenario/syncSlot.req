@@ -1,0 +1,29 @@
+CMIS_REQUEST = m_get
+
+  OBJECT_CLASS = 0.4.0.304.0.3.16; //sdhEquipmentR
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+      <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7,  __PARAMS_1__  } },
+        <RDN> { <AVA> { 0.3.0.2.7.13,  __PARAMS_2__ } },
+        <RDN> { <AVA> { 0.0.13.3100.0.7.20,  __PARAMS_3__ } }, //equipmentId
+        <RDN> { <AVA> { 0.0.13.3100.0.7.20,  __PARAMS_4__ } } //equipmentId
+     }
+    }
+  };
+
+  SCOPE = { firstLevelOnly };
+  FILTER  equality ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 0.4.0.304.0.3.16; }; //sdhEquipmentR
+  ID_LIST = {
+		1.3.12.2.1006.54.0.0.7.76, //allowedEquipmentType
+		0.4.0.304.0.7.6, //specificPhysicalInstance
+		0.4.0.304.0.7.4, //equipmentActual
+		0.4.0.304.0.7.5, //equipmentExpected
+		0.0.13.3100.0.7.52, //version	
+		2.9.3.2.7.33, //availabilityStatus
+		0.0.13.3100.0.7.6, //alarmStatus
+		2.9.3.2.7.35, //operationalState
+		2.9.3.2.7.31 //administrativeState
+	};
+		
+END_REQUEST

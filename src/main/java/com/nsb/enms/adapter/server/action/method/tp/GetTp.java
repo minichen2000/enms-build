@@ -58,10 +58,16 @@ public class GetTp {
 							continue;
 						}
 
-						if (line.startsWith("alarmStatus")) {
-							portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-							continue;
-						}
+						/*if (line.startsWith("alarmStatus")) {
+						    String alarmStatus = ParseUtil.parseAttr( line );
+                            String[] elements = alarmStatus.split( "_" );
+                            portEntity.setAlarmStatus( elements[0] );
+                            if( elements.length == 2 )
+                            {
+                                portEntity.setAlarmStatus( elements[1] );
+                            }
+                            continue;
+						}*/
 
 						if (line.startsWith("administrativeState")) {
 							portEntity.setAdministrativeState(ParseUtil.parseAttr(line));
