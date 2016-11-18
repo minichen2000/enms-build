@@ -30,6 +30,12 @@ public class CreateXc {
 	private static final String SCENARIO_VC12 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC12_REQ,
 			ConfigKey.DEFAULT_CREATE_XC_VC12_REQ);
 
+	private static final String SCENARIO_TU12 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_TU12_REQ,
+			ConfigKey.DEFAULT_CREATE_XC_TU12_REQ);
+
+	private static final String SCENARIO_TU3 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_TU3_REQ,
+			ConfigKey.DEFAULT_CREATE_XC_TU3_REQ);
+
 	public static XcEntity createXcVc4(String groupId, String neId, String pTTPId, String augId, String au4CTPId)
 			throws AdapterException {
 		try {
@@ -80,6 +86,42 @@ public class CreateXc {
 
 		} catch (Exception e) {
 			log.error("createXcVc3", e);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+		}
+	}
+
+	public static XcEntity createXcTu12(String groupId, String neId, String vc4TtpId, String tug3Id, String tug2Id,
+			String a_tu12CtpId, String z_tu12CtpId) throws AdapterException {
+		try {
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId, vc4TtpId,
+					tug3Id, tug2Id, a_tu12CtpId, z_tu12CtpId);
+			XcEntity xcEntity = handleInputStream(process);
+
+			if (process.waitFor() != 0) {
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+			}
+			return xcEntity;
+
+		} catch (Exception e) {
+			log.error("createXcTu12", e);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+		}
+	}
+
+	public static XcEntity createXcTu3(String groupId, String neId, String vc4TtpId, String tug3Id, String a_tu3CtpId,
+			String z_tu3CtpId) throws AdapterException {
+		try {
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, vc4TtpId,
+					tug3Id, a_tu3CtpId, z_tu3CtpId);
+			XcEntity xcEntity = handleInputStream(process);
+
+			if (process.waitFor() != 0) {
+				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
+			}
+			return xcEntity;
+
+		} catch (Exception e) {
+			log.error("createXcTu3", e);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 		}
 	}

@@ -16,26 +16,26 @@ public class ConfigKey {
 	public static final String GET_EQ_REQ = "GET_EQ_REQ";
 
 	public static final String DEFAULT_GET_EQ_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncEquipment.req";
-	
+
 	public static final String GET_RACK_REQ = "GET_RACK_REQ";
 
-    public static final String DEFAULT_GET_RACK_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncRack.req";
-    
-    public static final String GET_SHELF_REQ = "GET_SHELF_REQ";
+	public static final String DEFAULT_GET_RACK_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncRack.req";
 
-    public static final String DEFAULT_GET_SHELF_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncShelf.req";
-    
-    public static final String GET_SLOT_REQ = "GET_SLOT_REQ";
+	public static final String GET_SHELF_REQ = "GET_SHELF_REQ";
 
-    public static final String DEFAULT_GET_SLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSlot.req";
-    
-    public static final String GET_SUBSLOT_REQ = "GET_SUBSLOT_REQ";
+	public static final String DEFAULT_GET_SHELF_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncShelf.req";
 
-    public static final String DEFAULT_GET_SUBSLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSubslot.req";
-    
-    public static final String GET_ISA_REQ = "GET_ISA_REQ";
-    
-    public static final String DEFAULT_GET_ISA_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncISA.req";
+	public static final String GET_SLOT_REQ = "GET_SLOT_REQ";
+
+	public static final String DEFAULT_GET_SLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSlot.req";
+
+	public static final String GET_SUBSLOT_REQ = "GET_SUBSLOT_REQ";
+
+	public static final String DEFAULT_GET_SUBSLOT_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncSubslot.req";
+
+	public static final String GET_ISA_REQ = "GET_ISA_REQ";
+
+	public static final String DEFAULT_GET_ISA_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncISA.req";
 
 	public static final String GET_NE_REQ = "GET_NE_REQ";
 
@@ -178,4 +178,14 @@ public class ConfigKey {
 	public static final String MAX_NE_OF_ONE_EMLIM = "MAX_NE_OF_ONE_EMLIM";
 
 	public static final int DEFAULT_MAX_NE_OF_ONE_EMLIM = 200;
+
+	public static final String CREATE_XC_TU12_REQ = "CREATE_XC_TU12_REQ";
+
+	public static final String DEFAULT_CREATE_XC_TU12_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
+			+ "createXC-TU12-withMatrixCTP.req";
+
+	public static final String CREATE_XC_TU3_REQ = "CREATE_XC_TU3_REQ";
+
+	public static final String DEFAULT_CREATE_XC_TU3_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
+			+ "createXC-TU3-withMatrixCTP.req";
 }

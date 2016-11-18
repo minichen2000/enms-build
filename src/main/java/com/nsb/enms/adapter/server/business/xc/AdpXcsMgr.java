@@ -51,34 +51,8 @@ public class AdpXcsMgr {
 
 		XcEntity xcEntity = CreateXc.createXcVc12(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 				tpBean.getTug3Id(), tpBean.getTug2Id(), tpBean.getTu12CtpId(), tpBean.getVc12TtpId());
-		AdpXc xc = insertXc2DbByTu12AndVc12(xcEntity.getMoi(), neDbId, atpId, ztpId);
-		return xc;
-	}
-
-	private AdpXc insertXc2DbByTu12AndVc12(String moi, String neDbId, String atpDbId, String ztpDbId)
-			throws AdapterException {
-		AdpXc xc = new AdpXc();
-		xc.setAid(moi);
-		xc.setImplStatus("");
-		xc.setNeId(neDbId);
-		// xc.setUsedByConnection("0");
-		// TODO 修改该值
-		xc.setLayerrate(String.valueOf(LayerRate.LR_TUVC12.toInt()));
-
-		List<String> atps = new ArrayList<String>();
-		atps.add(atpDbId);
-		xc.setAtps(atps);
-
-		List<String> ztps = new ArrayList<String>();
-		ztps.add(ztpDbId);
-		xc.setZtps(ztps);
-
-		try {
-			xc = xcsDbMgr.createXc(xc);
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return xc;
+		log.debug("createXcByTu12AndVc12 ok");
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TUVC12);
 	}
 
 	public AdpXc createXcByTu3AndVc3(String neDbId, String atpId, String ztpId) throws AdapterException {
@@ -99,32 +73,8 @@ public class AdpXcsMgr {
 
 		XcEntity xcEntity = CreateXc.createXcVc3(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 				tpBean.getTug3Id(), tpBean.getTu3CtpId(), tpBean.getVc3TtpId());
-		AdpXc xc = insertXc2DbByTu3AndVc3(xcEntity.getMoi(), neDbId, atpId, ztpId);
-		return xc;
-	}
-
-	private AdpXc insertXc2DbByTu3AndVc3(String moi, String neDbId, String atpDbId, String ztpDbId)
-			throws AdapterException {
-		AdpXc xc = new AdpXc();
-		xc.setAid(moi);
-		xc.setImplStatus("");
-		xc.setNeId(neDbId);
-		xc.setLayerrate(String.valueOf(LayerRate.LR_TUVC3.toInt()));
-
-		List<String> atps = new ArrayList<String>();
-		atps.add(atpDbId);
-		xc.setAtps(atps);
-
-		List<String> ztps = new ArrayList<String>();
-		ztps.add(ztpDbId);
-		xc.setZtps(ztps);
-
-		try {
-			xc = xcsDbMgr.createXc(xc);
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return xc;
+		log.debug("createXcByTu3AndVc3 ok");
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TUVC3);
 	}
 
 	public String createXcByAu4AndVc4(String au4CtpId) throws AdapterException {
@@ -160,7 +110,7 @@ public class AdpXcsMgr {
 			vc4TtpDbId = ttp.getId();
 		}
 
-		insertXc2DbByAu4AndVc4(xcEntity.getMoi(), neDbId, vc4TtpDbId, au4CtpId);
+		insertXc2Db(xcEntity.getMoi(), neDbId, au4CtpId, vc4TtpDbId, LayerRate.LR_VC4);
 
 		return vc4TTPId;
 	}
@@ -180,31 +130,6 @@ public class AdpXcsMgr {
 		}
 
 		return ne;
-	}
-
-	private void insertXc2DbByAu4AndVc4(String moi, String neDbId, String vc4TtpDbId, String au4CtpId)
-			throws AdapterException {
-		AdpXc xc = new AdpXc();
-		xc.setAid(moi);
-		xc.setImplStatus("");
-		xc.setNeId(neDbId);
-		// TODO 修改该值
-		xc.setLayerrate(String.valueOf(LayerRate.LR_VC4.toInt()));
-
-		List<String> atps = new ArrayList<String>();
-		atps.add(au4CtpId);
-		xc.setAtps(atps);
-
-		List<String> ztps = new ArrayList<String>();
-		ztps.add(vc4TtpDbId);
-		xc.setZtps(ztps);
-
-		try {
-			xcsDbMgr.createXc(xc);
-		} catch (Exception e) {
-			log.error("createXc", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
 	}
 
 	private XcParamBean getParam(String tpId) throws AdapterException {
@@ -387,5 +312,55 @@ public class AdpXcsMgr {
 		for (AdpXc xc : xcList) {
 			deleteXc(xc);
 		}
+	}
+
+	public AdpXc createXcByTu12AndTu12(String neDbId, String atpId, String ztpId) throws AdapterException {
+		log.debug("atpId = {}", atpId);
+		XcParamBean atpBean = getParam(atpId);
+
+		log.debug("ztpId = {}", ztpId);
+		XcParamBean ztpBean = getParam(ztpId);
+
+		XcEntity xcEntity = CreateXc.createXcTu12(atpBean.getGroupId(), atpBean.getNeId(), atpBean.getVc4TtpId(),
+				atpBean.getTug3Id(), atpBean.getTug2Id(), atpBean.getTu12CtpId(), ztpBean.getTu12CtpId());
+		log.debug("createXcByTu12AndTu12 ok");
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TU12);
+	}
+
+	public AdpXc createXcByTu3AndTu3(String neDbId, String atpId, String ztpId) throws AdapterException {
+		log.debug("atpId = {}", atpId);
+		XcParamBean atpBean = getParam(atpId);
+
+		log.debug("ztpId = {}", ztpId);
+		XcParamBean ztpBean = getParam(ztpId);
+
+		XcEntity xcEntity = CreateXc.createXcTu3(atpBean.getGroupId(), atpBean.getNeId(), atpBean.getVc4TtpId(),
+				atpBean.getTug3Id(), atpBean.getTu3CtpId(), ztpBean.getTu3CtpId());
+		log.debug("createXcByTu3AndTu3 ok");
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TU3);
+	}
+
+	private AdpXc insertXc2Db(String moi, String neDbId, String atpDbId, String ztpDbId, LayerRate layerRate)
+			throws AdapterException {
+		AdpXc xc = new AdpXc();
+		xc.setAid(moi);
+		xc.setImplStatus("");
+		xc.setNeId(neDbId);
+		xc.setLayerrate(String.valueOf(layerRate.toInt()));
+
+		List<String> atps = new ArrayList<String>();
+		atps.add(atpDbId);
+		xc.setAtps(atps);
+
+		List<String> ztps = new ArrayList<String>();
+		ztps.add(ztpDbId);
+		xc.setZtps(ztps);
+
+		try {
+			xc = xcsDbMgr.createXc(xc);
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return xc;
 	}
 }
