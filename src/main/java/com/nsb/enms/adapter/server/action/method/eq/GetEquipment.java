@@ -27,21 +27,21 @@ public class GetEquipment
     private static final Logger log = LogManager
             .getLogger( GetEquipment.class );
 
-    private static final String GET_TPT_COORDINATOR_SCENARIO = ConfLoader
-            .getInstance().getConf( ConfigKey.GET_TPT_COORDINATOR_REQ,
-                ConfigKey.DEFAULT_GET_TPT_COORDINATOR_REQ );
+    private static final String GET_ISA_SCENARIO = ConfLoader
+            .getInstance().getConf( ConfigKey.GET_ISA_REQ,
+                ConfigKey.DEFAULT_GET_ISA_REQ );
 
     private static final String GET_EQ_SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.GET_EQ_REQ, ConfigKey.DEFAULT_GET_EQ_REQ );
 
-    public static List<TptCoordinatorEntity> getTptCoordinators( String groupId,
+    public static List<TptCoordinatorEntity> getISAs( String groupId,
             String neId ) throws AdapterException
     {
         try
         {
             log.debug( "--------------Start getCardIpAddress--------------" );
             Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
-                GET_TPT_COORDINATOR_SCENARIO, groupId, neId );
+                GET_ISA_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             List<TptCoordinatorEntity> tptCorrdinatorList = new LinkedList<TptCoordinatorEntity>();

@@ -9,23 +9,8 @@ CMIS_REQUEST = m_get
   }
   };
   SCOPE = { firstLevelOnly };
-//  FILTER_OR  {
-//	present 0.0.7.774.0.7.18, //opticalSPITTPId
-//	present 0.0.7.774.0.7.7, //electricalSPITTPId
-//	present 0.4.0.371.0.7.1, //pPITTPId
-//	present 1.3.12.2.1006.54.0.0.7.373 //gMAUTTPId
-//  };
 
   FILTER  equality ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 1.3.12.2.1006.54.0.0.3.114; }; //tptCoordinator
-
-//  FILTER  subsetOf ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 0.0.13.3100.0.3.8; }; //terminationPoint
-
-//  FILTER_OR  {
-//	equality ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 0.0.7.774.0.3.10; }, //electricalSPITTPBidirectional
-//	equality ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 0.0.7.774.0.3.28; }, //opticalSPITTPBidirectional
-//	equality ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 0.4.0.371.0.3.1; }, //pPITTPBidirectional
-//	equality ATTR = {2.9.3.2.7.65 , OBJECT_CLASS = 1.3.12.2.1006.54.0.0.3.193; } //gMAUTTPBidirectional
-//  };
 
   END_REQUEST
 
