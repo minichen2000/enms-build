@@ -35,8 +35,8 @@ public class SyncEquipmentThread implements Callable<Object>
     public Object call() throws Exception
     {
         List<TptCoordinatorEntity> tptCoordinatorList = GetEquipment
-                .getCardIpAddress( groupId, neId );
-        List<EquipmentEntity> equList = GetEquipment.getEquipment( groupId,
+                .getTptCoordinators( groupId, neId );
+        List<EquipmentEntity> equList = GetEquipment.getEquipments( groupId,
             neId );
         log.debug( "equList=" + equList.size() + ", neId=" + neId );
         for( EquipmentEntity equ : equList )

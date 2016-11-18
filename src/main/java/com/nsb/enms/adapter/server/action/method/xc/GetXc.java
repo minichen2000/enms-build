@@ -24,7 +24,7 @@ public class GetXc {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_XC_REQ,
 			ConfigKey.DEFAULT_XC_GET_REQ);
 
-	public static List<XcEntity> getXc(int groupId, int neId) throws AdapterException {
+	public static List<XcEntity> getXcs(int groupId, int neId) throws AdapterException {
 		try {
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, String.valueOf(groupId),
 					String.valueOf(neId));

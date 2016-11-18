@@ -24,7 +24,7 @@ public class GetTp {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_PORT_REQ,
 			ConfigKey.DEFAULT_GET_PORT_REQ);
 
-	public static List<TpEntity> getTp(String groupId, String neId) throws AdapterException {
+	public static List<TpEntity> getTps(String groupId, String neId) throws AdapterException {
 		try {
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId);
 			InputStream inputStream = process.getInputStream();

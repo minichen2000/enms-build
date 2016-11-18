@@ -34,7 +34,7 @@ public class GetEquipment
     private static final String GET_EQ_SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.GET_EQ_REQ, ConfigKey.DEFAULT_GET_EQ_REQ );
 
-    public static List<TptCoordinatorEntity> getCardIpAddress( String groupId,
+    public static List<TptCoordinatorEntity> getTptCoordinators( String groupId,
             String neId ) throws AdapterException
     {
         try
@@ -133,7 +133,7 @@ public class GetEquipment
         }
     }
 
-    public static List<EquipmentEntity> getEquipment( String groupId,
+    public static List<EquipmentEntity> getEquipments( String groupId,
             String neId ) throws AdapterException
     {
         try

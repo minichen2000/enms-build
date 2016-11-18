@@ -24,7 +24,7 @@ public class GetTtp {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_T_PORT_REQ,
 			ConfigKey.DEFAULT_GET_T_PORT_REQ);
 
-	public static List<TpEntity> getVc4Ttp(String groupId, String neId) throws AdapterException {
+	public static List<TpEntity> getVc4Ttps(String groupId, String neId) throws AdapterException {
 		List<TpEntity> tpList = new ArrayList<TpEntity>();
 
 		try {

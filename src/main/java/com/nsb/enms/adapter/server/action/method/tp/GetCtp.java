@@ -28,7 +28,7 @@ public class GetCtp {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_CONNECTION_PORT_REQ,
 			ConfigKey.DEFAULT_GET_CONNECTION_PORT_REQ);
 
-	public static List<TpEntity> getSdhCtp(String groupId, String neId, String tpId) throws AdapterException {
+	public static List<TpEntity> getSdhCtps(String groupId, String neId, String tpId) throws AdapterException {
 		log.debug("tpId = " + tpId);
 
 		String rsTTPId = getRsCtp(groupId, neId, tpId);
@@ -49,7 +49,7 @@ public class GetCtp {
 		if (StringUtils.isEmpty(protectedTTPId)) {
 			return null;
 		}
-		List<TpEntity> ctpList = getAu4Ctp(groupId, neId, protectedTTPId);
+		List<TpEntity> ctpList = getAu4Ctps(groupId, neId, protectedTTPId);
 		return ctpList;
 	}
 
@@ -170,7 +170,7 @@ public class GetCtp {
 		}
 	}
 
-	private static List<TpEntity> getAu4Ctp(String groupId, String neId, String protectedTtpId)
+	private static List<TpEntity> getAu4Ctps(String groupId, String neId, String protectedTtpId)
 			throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 
@@ -219,14 +219,14 @@ public class GetCtp {
 		List<TpEntity> tpList = null;
 		Pair<Integer, List<TpEntity>> pair2 = new Pair<Integer, List<TpEntity>>();
 		if (moc.startsWith("e1")) {
-			tpList = getVc12Ttp(groupId, neId, ttpId);
+			tpList = getVc12Ttps(groupId, neId, ttpId);
 			pair2.setFirst(LayerRate.LR_DSR_2M.toInt());
 			pair2.setSecond(tpList);
 			return pair2;
 		}
 
 		if (moc.startsWith("e3")) {
-			tpList = getVc3Ttp(groupId, neId, ttpId);
+			tpList = getVc3Ttps(groupId, neId, ttpId);
 			pair2.setFirst(LayerRate.LR_DSR_34M.toInt());
 			pair2.setSecond(tpList);
 			return pair2;
@@ -299,7 +299,7 @@ public class GetCtp {
 		}
 	}
 
-	private static List<TpEntity> getVc12Ttp(String groupId, String neId, String tpId) throws AdapterException {
+	private static List<TpEntity> getVc12Ttps(String groupId, String neId, String tpId) throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 		try {
 			// vc12PathTraceTTPBidirectional = 0.0.7.774.127.7.0.3.10
@@ -327,7 +327,7 @@ public class GetCtp {
 		}
 	}
 
-	private static List<TpEntity> getVc3Ttp(String groupId, String neId, String tpId) throws AdapterException {
+	private static List<TpEntity> getVc3Ttps(String groupId, String neId, String tpId) throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 		try {
 			String objectClass = "0.0.7.774.0.3.101";
@@ -354,7 +354,7 @@ public class GetCtp {
 		}
 	}
 
-	public static List<TpEntity> getTu12Ctp(String groupId, String neId, String vc4TtpId) throws AdapterException {
+	public static List<TpEntity> getTu12Ctps(String groupId, String neId, String vc4TtpId) throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 
 		try {
@@ -385,7 +385,7 @@ public class GetCtp {
 		}
 	}
 
-	public static List<TpEntity> getTu3Ctp(String groupId, String neId, String vc4TtpId) throws AdapterException {
+	public static List<TpEntity> getTu3Ctps(String groupId, String neId, String vc4TtpId) throws AdapterException {
 		List<TpEntity> tpList = new LinkedList<TpEntity>();
 
 		try {

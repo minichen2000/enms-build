@@ -31,7 +31,7 @@ public class AdpTpsMgr {
 	public List<AdpTp> syncTu12Ctp(String groupId, String neId, String vc4TtpId, String au4CtpId, String neDbId)
 			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetCtp.getTu12Ctp(groupId, neId, vc4TtpId);
+		List<TpEntity> tpList = GetCtp.getTu12Ctps(groupId, neId, vc4TtpId);
 		log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
 
 		AdpTp au4Ctp = null;
@@ -63,7 +63,7 @@ public class AdpTpsMgr {
 	public List<AdpTp> syncTu3Ctp(String groupId, String neId, String vc4TtpId, String au4CtpId, String neDbId)
 			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetCtp.getTu3Ctp(groupId, neId, vc4TtpId);
+		List<TpEntity> tpList = GetCtp.getTu3Ctps(groupId, neId, vc4TtpId);
 		log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
 
 		AdpTp au4Ctp = null;
@@ -109,7 +109,7 @@ public class AdpTpsMgr {
 
 	public List<AdpTp> syncTtp(String groupId, String neId, String vc4TtpId, String neDbId) throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetTtp.getVc4Ttp(groupId, neId);
+		List<TpEntity> tpList = GetTtp.getVc4Ttps(groupId, neId);
 		log.debug("syncTtp tpList = {}, groupId = {}, neId = {}", tpList.size(), groupId, neId);
 
 		for (TpEntity tp : tpList) {
@@ -151,7 +151,7 @@ public class AdpTpsMgr {
 	}
 
 	public void syncTp(String groupId, String neId, String neDbId) throws AdapterException {
-		List<TpEntity> tpList = GetTp.getTp(groupId, neId);
+		List<TpEntity> tpList = GetTp.getTps(groupId, neId);
 		log.debug("tpList = " + tpList.size() + ", neId = " + neId);
 
 		for (TpEntity tp : tpList) {
@@ -191,7 +191,7 @@ public class AdpTpsMgr {
 
 	private void syncSdhCtp(String groupId, String neId, String moi, String ptpId, String ptpDbId, String neDbId)
 			throws AdapterException {
-		List<TpEntity> ctpList = GetCtp.getSdhCtp(groupId, neId, ptpId);
+		List<TpEntity> ctpList = GetCtp.getSdhCtps(groupId, neId, ptpId);
 
 		if (null == ctpList || ctpList.isEmpty()) {
 			log.error("ctpList is null or empty");
