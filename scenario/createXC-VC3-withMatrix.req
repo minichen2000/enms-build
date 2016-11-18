@@ -21,7 +21,7 @@ CMIS_REQUEST = m_action
                       <LDN> {
                         <RDN> { <AVA> { 0.0.7.774.0.7.42, __PARAMS_3__ } }, // vc4TTPId 
                         <RDN> { <AVA> { 0.0.7.774.0.7.34, __PARAMS_4__ } }, // tug3Id 
-                        <RDN> { <AVA> { 0.0.7.774.0.7.32, __PARAMS_5__ } } // tu3CTPId 
+                        <RDN> { <AVA> { 0.0.7.774.0.7.32, __PARAMS_5__ } }  // tu3CTPId 
                       }
                    }                                    
             }, //fromTp
