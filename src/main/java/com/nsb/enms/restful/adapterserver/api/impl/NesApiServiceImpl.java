@@ -145,12 +145,12 @@ public class NesApiServiceImpl extends NesApiService {
 
 			String eventTime = TimeUtil.getLocalTmfTime();
 			String occureTime = eventTime;
-			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.ALM_COMMUNICATION,
+			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
 					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-					ErrorCode.ALM_NE_NOT_SUPERVISED.getMessage());
-			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.ALM_COMMUNICATION,
+					ErrorCode.ALM_NE_NOT_SUPERVISED.getDescription());
+			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
 					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-					ErrorCode.ALM_NE_MISALIGNMENT.getMessage());
+					ErrorCode.ALM_NE_MISALIGNMENT.getDescription());
 
 			log.debug("adapter----------------addNe----------end");
 
@@ -197,7 +197,7 @@ public class NesApiServiceImpl extends NesApiService {
 			return response;
 		}
 
-		// TODO 其他校验条件
+		// TODO 鍏朵粬鏍￠獙鏉′欢
 
 		return null;
 
@@ -264,7 +264,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
-			// TODO 确定错误码是否正确
+			// TODO 纭畾閿欒鐮佹槸鍚︽纭�
 			return constructErrorInfo(ErrorCode.FAIL_NOT_OPERABLE);
 		}
 
@@ -306,7 +306,7 @@ public class NesApiServiceImpl extends NesApiService {
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
 			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
 		} catch (AdapterException e) {
-			if (ErrorCode.FAIL_OBJ_NOT_EXIST.getErrorCode() != e.errorCode_) {
+			if (ErrorCode.FAIL_OBJ_NOT_EXIST.getCode() != e.errorCode_) {
 				return ErrorWrapperUtils.adapterException(e);
 			}
 		} catch (Exception e) {
@@ -412,7 +412,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	/**
-	 * 监管网元
+	 * 鐩戠缃戝厓
 	 * 
 	 * @param body
 	 * @param id
@@ -449,7 +449,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	/**
-	 * 同步TP
+	 * 鍚屾TP
 	 * 
 	 * @param body
 	 * @param groupId

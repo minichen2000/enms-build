@@ -175,27 +175,27 @@ public class NotificationSender
     {
         if( "equipmentAlarm".equals( type ) )
         {
-            return AlarmType.ALM_EQUIPMENT;
+            return AlarmType.EQUIPMENT;
         }
         else if( "communicationsAlarm".equals( type ) )
         {
-            return AlarmType.ALM_COMMUNICATION;
+            return AlarmType.COMMUNICATION;
         }
         else if( "environmentalAlarm".equals( type ) )
         {
-            return AlarmType.ALM_ENVIRONMENT;
+            return AlarmType.ENVIRONMENT;
         }
         else if( "processingErrorAlarm".equals( type ) )
         {
-            return AlarmType.ALM_PROCESSING_ERROR;
+            return AlarmType.PROCESSING_ERROR;
         }
         else if( "qualityofServiceAlarm".equals( type ) )
         {
-            return AlarmType.ALM_QoS;
+            return AlarmType.QoS;
         }
         else
         {
-            return AlarmType.ALM_NONE;
+            return AlarmType.NONE;
         }
     }
     

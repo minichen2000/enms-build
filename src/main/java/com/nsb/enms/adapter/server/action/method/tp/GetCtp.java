@@ -220,14 +220,14 @@ public class GetCtp {
 		Pair<Integer, List<TpEntity>> pair2 = new Pair<Integer, List<TpEntity>>();
 		if (moc.startsWith("e1")) {
 			tpList = getVc12Ttps(groupId, neId, ttpId);
-			pair2.setFirst(LayerRate.LR_DSR_2M.toInt());
+			pair2.setFirst(LayerRate.DSR_2M.getCode());
 			pair2.setSecond(tpList);
 			return pair2;
 		}
 
 		if (moc.startsWith("e3")) {
 			tpList = getVc3Ttps(groupId, neId, ttpId);
-			pair2.setFirst(LayerRate.LR_DSR_34M.toInt());
+			pair2.setFirst(LayerRate.DSR_34M.getCode());
 			pair2.setSecond(tpList);
 			return pair2;
 		}

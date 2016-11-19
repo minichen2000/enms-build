@@ -47,9 +47,9 @@ public class AdpTpsMgr {
 			log.debug("syncCtp tp = " + tp);
 			String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-			// TODO 读取映射文件获取层速率
+			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_DSR_2M.toInt()));
+			layerRates.add(String.valueOf(LayerRate.DSR_2M.getCode()));
 			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, au4CtpId, layerRates);
 
 			tps.add(ctp);
@@ -79,9 +79,9 @@ public class AdpTpsMgr {
 			log.debug("syncCtp tp = " + tp);
 			String tu3CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-			// TODO 读取映射文件获取层速率
+			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_DSR_34M));
+			layerRates.add(String.valueOf(LayerRate.DSR_34M));
 			AdpTp ctp = constructTp(tp, neDbId, tu3CtpUserLabel, au4CtpId, layerRates);
 
 			tps.add(ctp);
@@ -118,9 +118,9 @@ public class AdpTpsMgr {
 			if (moi.endsWith(vc4TtpId)) {
 				String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-				// TODO 读取映射文件获取层速率
+				// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
 				List<String> layerRates = new ArrayList<String>();
-				layerRates.add(String.valueOf(LayerRate.LR_VC4.toInt()));
+				layerRates.add(String.valueOf(LayerRate.VC4.getCode()));
 				AdpTp ttp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
 				tps.add(ttp);
 				break;
@@ -159,14 +159,14 @@ public class AdpTpsMgr {
 			log.debug("tp = " + tp.toString());
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-			// TODO 读取映射文件获取层速率
+			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
 			LayerRate layerRate = getLayerRate(tp);
 			if (null == layerRate) {
 				log.error("tp's layerRate is null, ignore this tp", tp);
 				continue;
 			}
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(layerRate.toInt()));
+			layerRates.add(String.valueOf(layerRate.getCode()));
 
 			AdpTp newTp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
 			tps.add(newTp);
@@ -202,9 +202,9 @@ public class AdpTpsMgr {
 		for (TpEntity ctp : ctpList) {
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(ctp);
 
-			// TODO 读取映射文件获取层速率
+			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
 			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.LR_AU4.toInt()));
+			layerRates.add(String.valueOf(LayerRate.AU4.getCode()));
 
 			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
 			tps.add(newCtp);
@@ -245,7 +245,7 @@ public class AdpTpsMgr {
 		addTps(tps);
 		updateTps(pdhPTP);
 
-		// 更新父TP的layerRate
+		// 鏇存柊鐖禩P鐨刲ayerRate
 		try {
 			tpsDbMgr.updateTpLayerRate(ptpDbId, layerRate);
 		} catch (Exception e) {
@@ -269,20 +269,20 @@ public class AdpTpsMgr {
 			int stmLevel = tp.getStmLevel();
 			switch (stmLevel) {
 			case 1:
-				return LayerRate.LR_STM1;
+				return LayerRate.STM1;
 			case 4:
-				return LayerRate.LR_STM4;
+				return LayerRate.STM4;
 			case 16:
-				return LayerRate.LR_STM16;
+				return LayerRate.STM16;
 			case 64:
-				return LayerRate.LR_STM64;
+				return LayerRate.STM64;
 			case 256:
-				return LayerRate.LR_STM256;
+				return LayerRate.STM256;
 			default:
 				return null;
 			}
 		} else if (moc.contains("pPITTP")) {
-			return LayerRate.LR_ELECTRICAL;
+			return LayerRate.ELECTRICAL;
 		}
 		return null;
 	}

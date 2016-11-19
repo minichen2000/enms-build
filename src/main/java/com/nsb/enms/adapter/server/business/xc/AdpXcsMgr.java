@@ -52,7 +52,7 @@ public class AdpXcsMgr {
 		XcEntity xcEntity = CreateXc.createXcVc12(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 				tpBean.getTug3Id(), tpBean.getTug2Id(), tpBean.getTu12CtpId(), tpBean.getVc12TtpId());
 		log.debug("createXcByTu12AndVc12 ok");
-		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TUVC12);
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.VC12);
 	}
 
 	public AdpXc createXcByTu3AndVc3(String neDbId, String atpId, String ztpId) throws AdapterException {
@@ -74,7 +74,7 @@ public class AdpXcsMgr {
 		XcEntity xcEntity = CreateXc.createXcVc3(tpBean.getGroupId(), tpBean.getNeId(), tpBean.getVc4TtpId(),
 				tpBean.getTug3Id(), tpBean.getTu3CtpId(), tpBean.getVc3TtpId());
 		log.debug("createXcByTu3AndVc3 ok");
-		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TUVC3);
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.VC3);
 	}
 
 	public String createXcByAu4AndVc4(String au4CtpId) throws AdapterException {
@@ -110,7 +110,7 @@ public class AdpXcsMgr {
 			vc4TtpDbId = ttp.getId();
 		}
 
-		insertXc2Db(xcEntity.getMoi(), neDbId, au4CtpId, vc4TtpDbId, LayerRate.LR_VC4);
+		insertXc2Db(xcEntity.getMoi(), neDbId, au4CtpId, vc4TtpDbId, LayerRate.VC4);
 
 		return vc4TTPId;
 	}
@@ -231,12 +231,12 @@ public class AdpXcsMgr {
 
 	public String getPdhSubTp(String ptpId, LayerRate layerRate) throws AdapterException {
 		String ctpId;
-		LayerRate subTpLR = LayerRate.LR_DSR_2M;
+		LayerRate subTpLR = LayerRate.DSR_2M;
 		try {
-			if (LayerRate.LR_TUVC12 == layerRate) {
-				subTpLR = LayerRate.LR_DSR_2M;
-			} else if (LayerRate.LR_TUVC3 == layerRate) {
-				subTpLR = LayerRate.LR_DSR_34M;
+			if (LayerRate.VC12 == layerRate) {
+				subTpLR = LayerRate.DSR_2M;
+			} else if (LayerRate.VC3 == layerRate) {
+				subTpLR = LayerRate.DSR_34M;
 			}
 
 			ctpId = tpsDbMgr.getTpByParentIdAndLayerRate(ptpId, subTpLR);
@@ -324,7 +324,7 @@ public class AdpXcsMgr {
 		XcEntity xcEntity = CreateXc.createXcTu12(atpBean.getGroupId(), atpBean.getNeId(), atpBean.getVc4TtpId(),
 				atpBean.getTug3Id(), atpBean.getTug2Id(), atpBean.getTu12CtpId(), ztpBean.getTu12CtpId());
 		log.debug("createXcByTu12AndTu12 ok");
-		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TU12);
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.TU12);
 	}
 
 	public AdpXc createXcByTu3AndTu3(String neDbId, String atpId, String ztpId) throws AdapterException {
@@ -337,7 +337,7 @@ public class AdpXcsMgr {
 		XcEntity xcEntity = CreateXc.createXcTu3(atpBean.getGroupId(), atpBean.getNeId(), atpBean.getVc4TtpId(),
 				atpBean.getTug3Id(), atpBean.getTu3CtpId(), ztpBean.getTu3CtpId());
 		log.debug("createXcByTu3AndTu3 ok");
-		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.LR_TU3);
+		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.TU3);
 	}
 
 	private AdpXc insertXc2Db(String moi, String neDbId, String atpDbId, String ztpDbId, LayerRate layerRate)
@@ -346,7 +346,7 @@ public class AdpXcsMgr {
 		xc.setAid(moi);
 		xc.setImplStatus("");
 		xc.setNeId(neDbId);
-		xc.setLayerrate(String.valueOf(layerRate.toInt()));
+		xc.setLayerrate(String.valueOf(layerRate.getCode()));
 
 		List<String> atps = new ArrayList<String>();
 		atps.add(atpDbId);

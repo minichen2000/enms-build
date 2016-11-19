@@ -95,31 +95,31 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	private LayerRate convertLayerRate(String layerRate) {
-		if ("LR_TUVC12".equalsIgnoreCase(layerRate)) {
-			return LayerRate.LR_TUVC12;
+		if ("VC12".equalsIgnoreCase(layerRate)) {
+			return LayerRate.VC12;
 		}
-		if ("LR_TUVC3".equalsIgnoreCase(layerRate)) {
-			return LayerRate.LR_TUVC3;
+		if ("VC3".equalsIgnoreCase(layerRate)) {
+			return LayerRate.VC3;
 		}
-		if ("LR_TU12".equalsIgnoreCase(layerRate)) {
-			return LayerRate.LR_TU12;
+		if ("TU12".equalsIgnoreCase(layerRate)) {
+			return LayerRate.TU12;
 		}
-		if ("LR_TU3".equalsIgnoreCase(layerRate)) {
-			return LayerRate.LR_TU3;
+		if ("TU3".equalsIgnoreCase(layerRate)) {
+			return LayerRate.TU3;
 		}
 		return null;
 	}
 
 	private String handleVc4TpIdExisted(String neId, Integer[] timeSlots, LayerRate layerRate, String vc4TTPId)
 			throws AdapterException {
-		// TODO 判断传入的时隙是否空闲
+		// TODO 鍒ゆ柇浼犲叆鐨勬椂闅欐槸鍚︾┖闂�
 		String timeSlotTpId = constructTpIdByTimeSlot(layerRate, timeSlots, neId, vc4TTPId);
 		if (!isTpExisted(timeSlotTpId)) {
 			log.error("tp is not existed," + timeSlotTpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
 
-		// 判断时隙所在的TUG3中的其他TP是否有创建了交叉业务的
+		// 鍒ゆ柇鏃堕殭鎵�鍦ㄧ殑TUG3涓殑鍏朵粬TP鏄惁鏈夊垱寤轰簡浜ゅ弶涓氬姟鐨�
 		if (isTpUsedByXc(timeSlotTpId)) {
 			log.error("tp was used by XC," + timeSlotTpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
@@ -213,10 +213,10 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	private String constructTpIdByTimeSlot(LayerRate layerRate, Integer[] timeSlots, String neId, String vc4TpId) {
 		String tpId = StringUtils.EMPTY;
-		if (LayerRate.LR_TUVC12 == layerRate || LayerRate.LR_TU12 == layerRate) {
+		if (LayerRate.VC12 == layerRate || LayerRate.TU12 == layerRate) {
 			tpId = neId + ":tu12CTPBidirectionalR1" + ":vc4TTPId=" + vc4TpId + "/tug3Id=" + timeSlots[1] + "/tug2Id="
 					+ timeSlots[2] + "/tu12CTPId=" + timeSlots[3];
-		} else if (LayerRate.LR_TUVC3 == layerRate || LayerRate.LR_TU3 == layerRate) {
+		} else if (LayerRate.VC3 == layerRate || LayerRate.TU3 == layerRate) {
 			tpId = neId + ":tu3CTPBidirectionalR1" + ":vc4TTPId=" + vc4TpId + "/tug3Id=" + timeSlots[1] + "/tu3CTPId=1";
 		}
 		return tpId;
@@ -249,20 +249,20 @@ public class XcsApiServiceImpl extends XcsApiService {
 	private AdpXc createXcByLayerRate(LayerRate layerRate, String neDbId, String atpId, String ztpId)
 			throws AdapterException {
 		AdpXc xc = null;
-		if (LayerRate.LR_TUVC3 == layerRate) {
+		if (LayerRate.VC3 == layerRate) {
 			xc = adpXcMgr.createXcByTu3AndVc3(neDbId, atpId, ztpId);
-		} else if (LayerRate.LR_TUVC12 == layerRate) {
+		} else if (LayerRate.VC12 == layerRate) {
 			xc = adpXcMgr.createXcByTu12AndVc12(neDbId, atpId, ztpId);
-		} else if (LayerRate.LR_TU12 == layerRate) {
+		} else if (LayerRate.TU12 == layerRate) {
 			xc = adpXcMgr.createXcByTu12AndTu12(neDbId, atpId, ztpId);
-		} else if (LayerRate.LR_TU3 == layerRate) {
+		} else if (LayerRate.TU3 == layerRate) {
 			xc = adpXcMgr.createXcByTu3AndTu3(neDbId, atpId, ztpId);
 		}
 		return xc;
 	}
 
 	/**
-	 * 执行打散操作
+	 * 鎵ц鎵撴暎鎿嶄綔
 	 * 
 	 * @param layerRate
 	 * @param au4CtpId
@@ -278,7 +278,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String neDbId = neInfos[2];
 		TerminateTpMgr terminateMgr = new TerminateTpMgr();
 		AdpTpsMgr adpTpsMgr = new AdpTpsMgr();
-		if (LayerRate.LR_TUVC12 == layerRate || LayerRate.LR_TU12 == layerRate) {
+		if (LayerRate.VC12 == layerRate || LayerRate.TU12 == layerRate) {
 			terminateMgr.terminateTug3ToTu12(groupId, neId, vc4TTPId, tug3Id);
 			adpTpsMgr.syncTu12Ctp(groupId, neId, vc4TTPId, au4CtpId, neDbId);
 		} else {
@@ -376,13 +376,13 @@ public class XcsApiServiceImpl extends XcsApiService {
 		Integer[] timeSlotList = HexDecConvertUtil.hex2Int(timeSlots.get(0));
 		String timeSlotStr = String.valueOf(timeSlotList[1]) + timeSlotList[2] + timeSlotList[3];
 
-		if (LayerRate.LR_TUVC12 == layerRate) {
+		if (LayerRate.VC12 == layerRate) {
 			String regex1 = "^[1-3][1-7][1-3]$";
 			Pattern pattern1 = Pattern.compile(regex1);
 			Matcher matcher1 = pattern1.matcher(timeSlotStr);
 			return matcher1.matches();
 		}
-		if (LayerRate.LR_TUVC3 == layerRate) {
+		if (LayerRate.VC3 == layerRate) {
 			String regex2 = "^[1-3]10$";
 			Pattern pattern2 = Pattern.compile(regex2);
 			Matcher matcher2 = pattern2.matcher(timeSlotStr);

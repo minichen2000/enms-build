@@ -340,7 +340,7 @@ public class AdpTpsDbMgr {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
 		List<Document> docList = dbc
-				.find(and(eq("parentTpId", parentId), in("layerRates", String.valueOf(layerRate.toInt()))))
+				.find(and(eq("parentTpId", parentId), in("layerRates", String.valueOf(layerRate.getCode()))))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {

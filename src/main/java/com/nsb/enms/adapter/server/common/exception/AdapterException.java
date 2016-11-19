@@ -25,14 +25,14 @@ public class AdapterException extends Exception
     {
         super( errorCode.name() );
         type_ = type;
-        errorCode_ = errorCode.getErrorCode();
+        errorCode_ = errorCode.getCode();
         errorReason_ = errorCode.name();
     }
     
     public AdapterException( ErrorCode errorCode )
     {
         super( errorCode.name() );
-        errorCode_ = errorCode.getErrorCode();
+        errorCode_ = errorCode.getCode();
         errorReason_ = errorCode.name();
     }
 
