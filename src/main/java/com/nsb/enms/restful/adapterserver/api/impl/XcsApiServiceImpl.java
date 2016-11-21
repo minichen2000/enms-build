@@ -387,20 +387,20 @@ public class XcsApiServiceImpl extends XcsApiService {
 		Integer[] timeSlotList = HexDecConvertUtil.hex2Int(timeSlots.get(0));
 		String timeSlotStr = String.valueOf(timeSlotList[1]) + timeSlotList[2] + timeSlotList[3];
 
-		if (LayerRate.VC12 == layerRate) {
+		if (LayerRate.VC12 == layerRate || LayerRate.TU12 == layerRate) {
 			String regex1 = "^[1-3][1-7][1-3]$";
 			Pattern pattern1 = Pattern.compile(regex1);
 			Matcher matcher1 = pattern1.matcher(timeSlotStr);
 			return matcher1.matches();
 		}
-		if (LayerRate.VC3 == layerRate) {
+		if (LayerRate.VC3 == layerRate || LayerRate.TU3 == layerRate) {
 			String regex2 = "^[1-3]10$";
 			Pattern pattern2 = Pattern.compile(regex2);
 			Matcher matcher2 = pattern2.matcher(timeSlotStr);
 			return matcher2.matches();
 		}
 
-		log.error("timeSlot is invalid, " + timeSlotStr);
+		log.error("timeSlot is invalid, " + timeSlotStr + ", layerRate = " + layerRate);
 
 		return false;
 	}
