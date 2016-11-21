@@ -72,7 +72,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	private String getTimeSlotTpByVc4Tp(String neId, String au4CtpId, Integer[] timeSlots, LayerRate layerRate)
 			throws AdapterException {
-		log.error("===============getTimeSlotTpByVc4Tp=================");
+		log.debug("===============getTimeSlotTpByVc4Tp=================");
 		String vc4TTPId = getVc4TtpIdFromXcs(au4CtpId);
 		if (StringUtils.isEmpty(vc4TTPId)) {
 			return handleVc4TpIdIsEmpty(neId, au4CtpId, timeSlots, layerRate);
@@ -83,14 +83,14 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	private AdpXc createXcBySdhAndPdh(String neId, String au4CtpId, Integer[] timeSlots, String tpId, boolean isAtp,
 			LayerRate layerRate) throws AdapterException {
-		log.error("===============createXcBySdhAndPdh=================");
+		log.debug("===============createXcBySdhAndPdh=================");
 		String timeSlotTpId = getTimeSlotTpByVc4Tp(neId, au4CtpId, timeSlots, layerRate);
 		return createXcByLayerRate(layerRate, neId, timeSlotTpId, tpId, isAtp);
 	}
 
 	private AdpXc createXcByBothSdh(String neId, String atpId, String ztpId, LayerRate layerRate)
 			throws AdapterException {
-		log.error("===============createXcByBothSdh=================");
+		log.debug("===============createXcByBothSdh=================");
 		return createXcByLayerRate(layerRate, neId, atpId, ztpId);
 	}
 
@@ -155,6 +155,12 @@ public class XcsApiServiceImpl extends XcsApiService {
 		log.debug("au4CtpId = " + au4CtpId);
 		String ztpId = adpXcMgr.getPdhSubTp(ztps.get(0), layerRate);
 		log.debug("ztpId = " + ztpId);
+
+		if (StringUtils.isEmpty(ztpId)) {
+			log.error("can not find pdh sub tp by tpId = " + ztps.get(0) + " and layerRate = " + layerRate);
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+
 		if (isTpUsedByXc(ztpId)) {
 			log.error("tp was used by XC," + ztpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
@@ -178,6 +184,11 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 		String atpId = adpXcMgr.getPdhSubTp(atps.get(0), layerRate);
 		log.debug("atpId = " + atpId);
+		if (StringUtils.isEmpty(atpId)) {
+			log.error("can not find pdh sub tp by tpId = " + atps.get(0) + " and layerRate = " + layerRate);
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+
 		if (isTpUsedByXc(atpId)) {
 			log.error("tp was used by XC," + atpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
