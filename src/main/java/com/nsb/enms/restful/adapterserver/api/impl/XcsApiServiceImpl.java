@@ -158,7 +158,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 		if (StringUtils.isEmpty(ztpId)) {
 			log.error("can not find pdh sub tp by tpId = " + ztps.get(0) + " and layerRate = " + layerRate);
-			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
 
 		if (isTpUsedByXc(ztpId)) {
@@ -186,7 +186,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 		log.debug("atpId = " + atpId);
 		if (StringUtils.isEmpty(atpId)) {
 			log.error("can not find pdh sub tp by tpId = " + atps.get(0) + " and layerRate = " + layerRate);
-			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
 
 		if (isTpUsedByXc(atpId)) {
