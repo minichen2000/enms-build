@@ -112,14 +112,14 @@ public class XcsApiServiceImpl extends XcsApiService {
 
 	private String handleVc4TpIdExisted(String neId, Integer[] timeSlots, LayerRate layerRate, String vc4TTPId)
 			throws AdapterException {
-		// TODO 鍒ゆ柇浼犲叆鐨勬椂闅欐槸鍚︾┖闂�
+		// TODO 判断传入的时隙是否空闲
 		String timeSlotTpId = constructTpIdByTimeSlot(layerRate, timeSlots, neId, vc4TTPId);
 		if (!isTpExisted(timeSlotTpId)) {
 			log.error("tp is not existed," + timeSlotTpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
 
-		// 鍒ゆ柇鏃堕殭鎵�鍦ㄧ殑TUG3涓殑鍏朵粬TP鏄惁鏈夊垱寤轰簡浜ゅ弶涓氬姟鐨�
+		// 判断时隙所在的TUG3中的其他TP是否有创建了交叉业务的
 		if (isTpUsedByXc(timeSlotTpId)) {
 			log.error("tp was used by XC," + timeSlotTpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
@@ -262,7 +262,7 @@ public class XcsApiServiceImpl extends XcsApiService {
 	}
 
 	/**
-	 * 鎵ц鎵撴暎鎿嶄綔
+	 * 执行打散操作
 	 * 
 	 * @param layerRate
 	 * @param au4CtpId
