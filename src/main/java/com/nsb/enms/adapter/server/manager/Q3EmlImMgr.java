@@ -69,7 +69,7 @@ public class Q3EmlImMgr {
 			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.toString());
 		}
 
-		// adapter琚惎鍔ㄥ悗锛岄渶瑕佷笉鏂湴杩炴帴emlim杩涚▼锛屼粎姝よ�屽凡(姣忛殧3绉掕繛涓�娆★紝鍗佹澶辫触锛岄��鍑�)
+		// adapter被启动后，需要不断地连接emlim进程，仅此而已(每隔3秒连一次，十次失败，退出)
 		CheckQ3EmlImApp.check(groupId);
 
 		Timer timer = new Timer();
