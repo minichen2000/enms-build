@@ -214,10 +214,10 @@ public class XcsApiServiceImpl extends XcsApiService {
 		String atpId = getTimeSlotTpByVc4Tp(neId, a_au4CtpId, a_timeSlots, layerRate);
 
 		Integer[] z_timeSlots = HexDecConvertUtil.hex2Int(ztpTimeSlots.get(0));
-		String z_au4CtpId = adpXcMgr.getAu4TpId(neId, atp, z_timeSlots[0]);
+		String z_au4CtpId = adpXcMgr.getAu4TpId(neId, ztp, z_timeSlots[0]);
 		log.debug("z_au4CtpId = " + z_au4CtpId);
 
-		String ztpId = getTimeSlotTpByVc4Tp(neId, a_au4CtpId, z_timeSlots, layerRate);
+		String ztpId = getTimeSlotTpByVc4Tp(neId, z_au4CtpId, z_timeSlots, layerRate);
 
 		return createXcByBothSdh(neId, atpId, ztpId, layerRate);
 	}
