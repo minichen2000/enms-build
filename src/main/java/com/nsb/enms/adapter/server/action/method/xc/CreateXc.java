@@ -90,11 +90,12 @@ public class CreateXc {
 		}
 	}
 
-	public static XcEntity createXcTu12(String groupId, String neId, String vc4TtpId, String tug3Id, String tug2Id,
-			String a_tu12CtpId, String z_tu12CtpId) throws AdapterException {
+	public static XcEntity createXcTu12(String groupId, String neId, String a_vc4TtpId, String a_tug3Id,
+			String a_tug2Id, String a_tu12CtpId, String z_vc4TtpId, String z_tug3Id, String z_tug2Id,
+			String z_tu12CtpId) throws AdapterException {
 		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId, vc4TtpId,
-					tug3Id, tug2Id, a_tu12CtpId, z_tu12CtpId);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId,
+					a_vc4TtpId, a_tug3Id, a_tug2Id, a_tu12CtpId, z_vc4TtpId, z_tug3Id, z_tug2Id, z_tu12CtpId);
 			XcEntity xcEntity = handleInputStream(process);
 
 			if (process.waitFor() != 0) {
@@ -108,11 +109,11 @@ public class CreateXc {
 		}
 	}
 
-	public static XcEntity createXcTu3(String groupId, String neId, String vc4TtpId, String tug3Id, String a_tu3CtpId,
-			String z_tu3CtpId) throws AdapterException {
+	public static XcEntity createXcTu3(String groupId, String neId, String a_vc4TtpId, String a_tug3Id,
+			String a_tu3CtpId, String z_vc4TtpId, String z_tug3Id, String z_tu3CtpId) throws AdapterException {
 		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, vc4TtpId,
-					tug3Id, a_tu3CtpId, z_tu3CtpId);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, a_vc4TtpId,
+					a_tug3Id, a_tu3CtpId, z_vc4TtpId, z_tug3Id, z_tu3CtpId);
 			XcEntity xcEntity = handleInputStream(process);
 
 			if (process.waitFor() != 0) {

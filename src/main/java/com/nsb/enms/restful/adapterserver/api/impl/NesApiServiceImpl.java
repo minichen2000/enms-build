@@ -30,6 +30,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
+import com.nsb.enms.common.AlarmCode;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
@@ -145,12 +146,12 @@ public class NesApiServiceImpl extends NesApiService {
 
 			String eventTime = TimeUtil.getLocalTmfTime();
 			String occureTime = eventTime;
-			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
+			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
 					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-					ErrorCode.ALM_NE_NOT_SUPERVISED.getDescription());
-			NotificationSender.instance().sendAlarm(ErrorCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
+					AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
+			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
 					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-					ErrorCode.ALM_NE_MISALIGNMENT.getDescription());
+					AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
 
 			log.debug("adapter----------------addNe----------end");
 

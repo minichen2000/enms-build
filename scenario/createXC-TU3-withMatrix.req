@@ -28,10 +28,12 @@ CMIS_REQUEST = m_action
             (ExplicitTP)  <CHOICE> {1, 
                    <OBJECT_INST> {
                       <LDN> {
-                        <RDN> { <AVA> { 0.0.7.774.0.7.32, __PARAMS_6__ } } // tu3CTPId 
+                        <RDN> { <AVA> { 0.0.7.774.0.7.42, __PARAMS_6__ } }, // vc4TTPId 
+                        <RDN> { <AVA> { 0.0.7.774.0.7.34, __PARAMS_7__ } }, // tug3Id 
+                        <RDN> { <AVA> { 0.0.7.774.0.7.32, __PARAMS_8__ } } // tu3CTPId 
                       }
                    }                                    
-            } //toTpPool 
+            } //toTp 
           }
         }
       },

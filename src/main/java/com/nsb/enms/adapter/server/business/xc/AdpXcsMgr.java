@@ -322,7 +322,8 @@ public class AdpXcsMgr {
 		XcParamBean ztpBean = getParam(ztpId);
 
 		XcEntity xcEntity = CreateXc.createXcTu12(atpBean.getGroupId(), atpBean.getNeId(), atpBean.getVc4TtpId(),
-				atpBean.getTug3Id(), atpBean.getTug2Id(), atpBean.getTu12CtpId(), ztpBean.getTu12CtpId());
+				atpBean.getTug3Id(), atpBean.getTug2Id(), atpBean.getTu12CtpId(), ztpBean.getVc4TtpId(),
+				ztpBean.getTug3Id(), ztpBean.getTug2Id(), ztpBean.getTu12CtpId());
 		log.debug("createXcByTu12AndTu12 ok");
 		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.TU12);
 	}
@@ -335,7 +336,8 @@ public class AdpXcsMgr {
 		XcParamBean ztpBean = getParam(ztpId);
 
 		XcEntity xcEntity = CreateXc.createXcTu3(atpBean.getGroupId(), atpBean.getNeId(), atpBean.getVc4TtpId(),
-				atpBean.getTug3Id(), atpBean.getTu3CtpId(), ztpBean.getTu3CtpId());
+				atpBean.getTug3Id(), atpBean.getTu3CtpId(), ztpBean.getVc4TtpId(), ztpBean.getTug3Id(),
+				ztpBean.getTu3CtpId());
 		log.debug("createXcByTu3AndTu3 ok");
 		return insertXc2Db(xcEntity.getMoi(), neDbId, atpId, ztpId, LayerRate.TU3);
 	}
