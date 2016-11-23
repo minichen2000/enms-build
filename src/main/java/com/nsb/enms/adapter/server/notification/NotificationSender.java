@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.notification;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +17,7 @@ import com.nsb.enms.common.AlarmCode;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
+import com.nsb.enms.common.ValueType;
 import com.nsb.enms.common.enms_mq.EnmsPubFactory;
 import com.nsb.enms.common.enms_mq.EnmsPublisher;
 import com.nsb.enms.restful.model.notif.Alarm;
@@ -51,13 +51,13 @@ public class NotificationSender {
 
 	public void send(NotificationEntity entity) {
 		EventType eventType = entity.getEventType();
-		String eventTime = entity.getEventTime();
+		Long eventTime = TimeUtil.getTime(entity.getEventTime());
 		String moc = entity.getMoc().getMoc();
 		String moi = entity.getMoi().getMoi();
 		EntityType objectType = getObjectType(moc);
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(objectType, moc, moi);
-		String objectID = getObjectId(objectType, keyOnNe, moi);
-		if (StringUtils.isEmpty(objectID)) {
+		Integer objectID = Integer.valueOf(getObjectId(objectType, keyOnNe, moi));
+		if (null == objectID) {
 			return;
 		}
 
@@ -73,16 +73,16 @@ public class NotificationSender {
 		case ATTRIBUTE_VALUE_CHANGE:
 		case STATE_CHANGE:
 			AvcBody avc = publisher.createAvcBody(eventTime, objectType, objectID,
-					entity.getDefinition().getAttributeID(), "String", entity.getDefinition().getNewAttributeValue(),
-					entity.getDefinition().getOldAttributeValue());
+					entity.getDefinition().getAttributeID(), ValueType.STRING.getCode(),
+					entity.getDefinition().getNewAttributeValue(), entity.getDefinition().getOldAttributeValue());
 			send(avc);
 			break;
 		case ALARM:
 			AlarmType alarmType = getAlarmType(entity.getAttributeInfo().get("alarmType"));
 			AlarmSeverity alarmSeverity = getAlarmSeverity(entity.getAttributeInfo().get("perceivedSeverity"));
 			String probableCause = entity.getAttributeInfo().get("probableCause");
-			Alarm alarm = publisher.createAlarm(AlarmCode.ALM_NE_OUT_OF_MNGT, alarmType, alarmSeverity, eventTime, "",
-					"", probableCause, objectType, objectID, "", "", "");
+			Alarm alarm = publisher.createAlarm(AlarmCode.ALM_NE_OUT_OF_MNGT, alarmType, alarmSeverity, eventTime, null,
+					null, probableCause, objectType, objectID, null, null, "");
 			send(alarm);
 			break;
 		default:
@@ -94,30 +94,30 @@ public class NotificationSender {
 		publisher.sendMessage(object);
 	}
 
-	public void sendAvcNotif(EntityType objectType, String objectID, String key, String valueType, String value,
+	public void sendAvcNotif(EntityType objectType, Integer objectID, String key, Integer valueType, String value,
 			String oldValue) {
-		String eventTime = TimeUtil.getLocalTmfTime();
+		Long eventTime = TimeUtil.getLocalTmfTime();
 
 		AvcBody avc = publisher.createAvcBody(eventTime, objectType, objectID, key, valueType, value, oldValue);
 
 		send(avc);
 	}
 
-	public void sendOcNotif(EntityType objectType, String objectID) {
-		String eventTime = TimeUtil.getLocalTmfTime();
+	public void sendOcNotif(EntityType objectType, Integer objectID) {
+		Long eventTime = TimeUtil.getLocalTmfTime();
 		OcBody oc = publisher.createOcBody(eventTime, objectType, objectID);
 		send(oc);
 	}
 
-	public void sendOdNotif(EntityType objectType, String objectID) {
-		String eventTime = TimeUtil.getLocalTmfTime();
+	public void sendOdNotif(EntityType objectType, Integer objectID) {
+		Long eventTime = TimeUtil.getLocalTmfTime();
 		OdBody od = publisher.createOdBody(eventTime, objectType, objectID);
 		send(od);
 	}
 
-	public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType, AlarmSeverity severity, String eventTime,
-			String occureTime, String clearTime, String probableCause, EntityType objectType, String objectId,
-			String ackStatus, String ackTime, String description) {
+	public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType, AlarmSeverity severity, Long eventTime,
+			Long occureTime, Long clearTime, String probableCause, EntityType objectType, Integer objectId,
+			Integer ackStatus, Long ackTime, String description) {
 		Alarm alarm = publisher.createAlarm(alarmCode, alarmType, severity, eventTime, occureTime, clearTime,
 				probableCause, objectType, objectId, ackStatus, ackTime, description);
 		send(alarm);

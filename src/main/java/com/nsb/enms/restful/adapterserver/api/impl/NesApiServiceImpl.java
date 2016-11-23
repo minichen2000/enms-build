@@ -35,6 +35,7 @@ import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.common.ValueType;
 import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
@@ -142,16 +143,16 @@ public class NesApiServiceImpl extends NesApiService {
 				return failDbOperation();
 			}
 
-			NotificationSender.instance().sendOcNotif(EntityType.NE, ne.getId());
+			NotificationSender.instance().sendOcNotif(EntityType.NE, Integer.valueOf(ne.getId()));
 
-			String eventTime = TimeUtil.getLocalTmfTime();
-			String occureTime = eventTime;
+			Long eventTime = TimeUtil.getLocalTmfTime();
+			Long occureTime = eventTime;
 			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
-					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-					AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
+					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id), null,
+					null, AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
 			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-					AlarmSeverity.MAJOR, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-					AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id), null,
+					null, AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
 
 			log.debug("adapter----------------addNe----------end");
 
@@ -288,7 +289,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 		try {
 			DeleteNe.deleteNe(groupId, neId);
-			NotificationSender.instance().sendOdNotif(EntityType.NE, neid);
+			NotificationSender.instance().sendOdNotif(EntityType.NE, Integer.valueOf(neid));
 		} catch (AdapterException e) {
 			log.error("deleteNe", e);
 			return ErrorWrapperUtils.adapterException(e);
@@ -425,9 +426,10 @@ public class NesApiServiceImpl extends NesApiService {
 		updateNe(body);
 
 		boolean isSuccess = false;
+		int valueType = ValueType.ENUM.getCode();
 		try {
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState", "enum",
-					OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(body.getId()), "operationalState",
+					valueType, OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
@@ -440,11 +442,12 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", "enum",
+		Integer int_id = Integer.valueOf(id);
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "supervsionState", valueType,
 				SupervisionStateEnum.SUPERVISED.name(), SupervisionStateEnum.UNSUPERVISED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "communicationState", valueType,
 				CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
 				OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
 		return Response.ok().build();
 	}

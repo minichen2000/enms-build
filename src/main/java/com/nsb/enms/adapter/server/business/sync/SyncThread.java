@@ -10,6 +10,7 @@ import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;
+import com.nsb.enms.common.ValueType;
 import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
 import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
 
@@ -26,14 +27,16 @@ public class SyncThread implements Callable<Object> {
 
 	@Override
 	public Object call() throws Exception {
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
+		int valueType = ValueType.ENUM.getCode();
+		Integer int_id = Integer.valueOf(id);
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
 				OperationalStateEnum.SYNCHRONIZING.name(), OperationalStateEnum.IDLE.name());
 		new AdpTpsMgr().syncTp(groupId, neId, id);
 		new AdpEqusMgr().syncEquip(groupId, neId, id);
 		NeStateMachineApp.instance().afterSynchData(id);
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "synchState", valueType,
 				SynchStateEnum.SYNCHRONIZED.name(), SynchStateEnum.UNSYNCHRONIZED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
 				OperationalStateEnum.IDLE.name(), OperationalStateEnum.SYNCHRONIZING.name());
 
 		log.debug("------------ sync end -------------");

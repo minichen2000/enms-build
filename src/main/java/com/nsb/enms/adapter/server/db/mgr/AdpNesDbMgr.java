@@ -29,6 +29,7 @@ import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.EntityType;
+import com.nsb.enms.common.ValueType;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
@@ -129,7 +130,8 @@ public class AdpNesDbMgr {
 		}
 		String value = operationalState.name();
 		dbc.updateOne(new BasicDBObject("id", id), set("operationalState", value));
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", "enum", value,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(id), "operationalState",
+				ValueType.ENUM.getCode(), value,
 				(operationalStateFromDb == null ? null : operationalStateFromDb.name()));
 	}
 
@@ -141,7 +143,8 @@ public class AdpNesDbMgr {
 		}
 		String value = communicationState.name();
 		dbc.updateOne(new BasicDBObject("id", id), set("communicationState", value));
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", "enum", value,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(id), "communicationState",
+				ValueType.ENUM.getCode(), value,
 				(communicationStateFromDb == null ? null : communicationStateFromDb.name()));
 	}
 
@@ -149,8 +152,8 @@ public class AdpNesDbMgr {
 		String userLabel = body.getUserLabel();
 		if (userLabel != null && !userLabel.equals(ne.getUserLabel())) {
 			dbc.updateOne(new BasicDBObject("id", id), set("userLabel", userLabel));
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "userLabel", "String", body.getUserLabel(),
-					ne.getUserLabel());
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(id), "userLabel",
+					ValueType.STRING.getCode(), body.getUserLabel(), ne.getUserLabel());
 		}
 	}
 
@@ -158,8 +161,8 @@ public class AdpNesDbMgr {
 		String locationName = body.getLocationName();
 		if (locationName != null && !locationName.equals(ne.getLocationName())) {
 			dbc.updateOne(new BasicDBObject("id", id), set("locationName", locationName));
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "locationName", "String",
-					body.getLocationName(), ne.getLocationName());
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(id), "locationName",
+					ValueType.STRING.getCode(), body.getLocationName(), ne.getLocationName());
 		}
 	}
 
@@ -182,42 +185,45 @@ public class AdpNesDbMgr {
 		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		String groupId = moi.split("/")[0].split("=")[1];
 		String neId = moi.split("/")[1].split("=")[1];
+		Integer int_id = Integer.valueOf(id);
+		Integer valueType = ValueType.STRING.getCode();
 		if (null == addressesFromDb) {
 			if (StringUtils.isNotEmpty(address)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.address", address));
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "address", "String", address, null);
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "address", valueType, address, null);
 			}
 
 			if (StringUtils.isNotEmpty(osMain)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osMain", osMain));
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osMain", "String", osMain, null);
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "osMain", valueType, osMain, null);
 				setOsMainAddress(groupId, neId, osMain);
 			}
 
 			if (StringUtils.isNotEmpty(osSpare)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osSpare", osSpare));
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osSpare", "String", osSpare, null);
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "osSpare", valueType, osSpare, null);
 				setOsSpareAddress(groupId, neId, osSpare);
 			}
 		} else {
 			String addressFromDb = addressesFromDb.getQ3Address().getAddress();
 			if (StringUtils.isNotEmpty(address) && !address.equals(addressFromDb)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.address", address));
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "address", "String", address,
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "address", valueType, address,
 						addressFromDb);
 			}
 
 			String osMainFromDb = addressesFromDb.getQ3Address().getOsMain();
 			if (StringUtils.isNotEmpty(osMain) && !osMain.equals(osMainFromDb)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osMain", osMain));
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osMain", "String", osMain, osMainFromDb);
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "osMain", valueType, osMain,
+						osMainFromDb);
 				setOsMainAddress(groupId, neId, osMainFromDb);
 			}
 
 			String osSpareFromDb = addressesFromDb.getQ3Address().getOsSpare();
 			if (StringUtils.isNotEmpty(osSpare) && !osSpare.equals(osSpareFromDb)) {
 				dbc.updateOne(new BasicDBObject("id", id), set("addresses.q3Address.osSpare", osSpare));
-				NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "osSpare", "String", osSpare,
+				NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "osSpare", valueType, osSpare,
 						osSpareFromDb);
 				setOsSpareAddress(groupId, neId, osSpareFromDb);
 			}
@@ -248,7 +254,8 @@ public class AdpNesDbMgr {
 		}
 		String value = supervisionState.name();
 		dbc.updateOne(new BasicDBObject("id", id), set("supervisionState", value));
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervisionState", "String", value,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(id), "supervisionState",
+				ValueType.STRING.getCode(), value,
 				(supervisionStateFromDb == null ? null : supervisionStateFromDb.name()));
 	}
 
@@ -260,8 +267,8 @@ public class AdpNesDbMgr {
 		}
 		String value = synchState.name();
 		dbc.updateOne(new BasicDBObject("id", id), set("synchState", value));
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "synchState", "enum", value,
-				(synchStateFromDb == null ? null : synchStateFromDb.name()));
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(id), "synchState",
+				ValueType.ENUM.getCode(), value, (synchStateFromDb == null ? null : synchStateFromDb.name()));
 	}
 
 	/*
@@ -371,13 +378,13 @@ public class AdpNesDbMgr {
 	}
 
 	public String getIdByKeyOnNe(String keyOnNe) throws Exception {
-	    List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find ne, query by keyOnNe = " + keyOnNe);
-            return null;
-        }
-        Document doc = docList.get(0);
-        AdpNe ne = constructNe(doc);
-        return ne.getId();
+		List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find ne, query by keyOnNe = " + keyOnNe);
+			return null;
+		}
+		Document doc = docList.get(0);
+		AdpNe ne = constructNe(doc);
+		return ne.getId();
 	}
 }

@@ -149,11 +149,11 @@ public class Q3EmlImMgr {
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
 							.fire(NeEvent.E_REACHABLE_2_UNREACHABLE, callBack);
 
-					String eventTime = TimeUtil.getLocalTmfTime();
-					String occureTime = eventTime;
+					Long eventTime = TimeUtil.getLocalTmfTime();
+					Long occureTime = eventTime;
 					NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-							AlarmSeverity.CRITICAL, eventTime, occureTime, "", "", EntityType.NE, id, "", "",
-							AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+							AlarmSeverity.CRITICAL, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id),
+							null, null, AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
 				}
 			}
 		} catch (Exception e) {
