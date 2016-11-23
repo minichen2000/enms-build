@@ -1,6 +1,7 @@
 package com.nsb.enms.adapter.server.common.utils;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -46,6 +47,15 @@ public class TimeUtil {
 	}
 
 	public static Long getTime(String time) {
-		return new Date().getTime();
+		Date date = null;
+		try {
+			date = LABEL_TMF_FORMAT.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		if (null == date) {
+			return new Date().getTime();
+		}
+		return date.getTime();
 	}
 }
