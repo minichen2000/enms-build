@@ -198,7 +198,7 @@ public class NesApiServiceImpl extends NesApiService {
 			return response;
 		}
 
-		// TODO 鍏朵粬鏍￠獙鏉′欢
+		// TODO 其他校验条件
 
 		return null;
 
@@ -265,7 +265,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
-			// TODO 纭畾閿欒鐮佹槸鍚︽纭�
+			// TODO 确定错误码是否正确
 			return constructErrorInfo(ErrorCode.FAIL_NOT_OPERABLE);
 		}
 
@@ -413,7 +413,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	/**
-	 * 鐩戠缃戝厓
+	 * 监管网元
 	 * 
 	 * @param body
 	 * @param id
@@ -450,7 +450,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	/**
-	 * 鍚屾TP
+	 * 同步TP
 	 * 
 	 * @param body
 	 * @param groupId
