@@ -2,137 +2,123 @@ package com.nsb.enms.adapter.server.action.entity;
 
 import java.util.List;
 
-public class EquipmentEntity
-{
-    private String moc;
+public class EquipmentEntity {
+	private String moc;
 
-    private String moi;
-    
-    private List<String> allowedEquipmentTypes;
-    
-    private String specificPhysicalInstance;
+	private String moi;
 
-    private String equipmentActual;
+	private List<String> allowedEquipmentTypes;
 
-    private String equipmentExpected;
+	private String specificPhysicalInstance;
 
-    private String version;
+	private String equipmentActual;
 
-    private String availabilityStatus;
+	private String equipmentExpected;
 
-    private String alarmStatus;
+	private String version;
 
-    private String operationalState;
+	private String availabilityStatus;
 
-    private String administrativeState;
+	private String alarmStatus;
 
-    public String getMoc()
-    {
-        return moc;
-    }
+	private String operationalState;
 
-    public void setMoc( String moc )
-    {
-        this.moc = moc;
-    }
+	private String administrativeState;
 
-    public String getMoi()
-    {
-        return moi;
-    }
+	public String getMoc() {
+		return moc;
+	}
 
-    public void setMoi( String moi )
-    {
-        this.moi = moi;
-    }
+	public void setMoc(String moc) {
+		this.moc = moc;
+	}
 
-    public List<String> getAllowedEquipmentTypes()
-    {
-        return allowedEquipmentTypes;
-    }
+	public String getMoi() {
+		return moi;
+	}
 
-    public void setAllowedEquipmentTypes( List<String> allowedEquipmentTypes )
-    {
-        this.allowedEquipmentTypes = allowedEquipmentTypes;
-    }
+	public void setMoi(String moi) {
+		this.moi = moi;
+	}
 
-    public String getSpecificPhysicalInstance()
-    {
-        return specificPhysicalInstance;
-    }
+	public List<String> getAllowedEquipmentTypes() {
+		return allowedEquipmentTypes;
+	}
 
-    public void setSpecificPhysicalInstance( String specificPhysicalInstance )
-    {
-        this.specificPhysicalInstance = specificPhysicalInstance;
-    }
+	public void setAllowedEquipmentTypes(List<String> allowedEquipmentTypes) {
+		this.allowedEquipmentTypes = allowedEquipmentTypes;
+	}
 
-    public String getEquipmentActual()
-    {
-        return equipmentActual;
-    }
+	public String getSpecificPhysicalInstance() {
+		return specificPhysicalInstance;
+	}
 
-    public void setEquipmentActual( String equipmentActual )
-    {
-        this.equipmentActual = equipmentActual;
-    }
+	public void setSpecificPhysicalInstance(String specificPhysicalInstance) {
+		this.specificPhysicalInstance = specificPhysicalInstance;
+	}
 
-    public String getEquipmentExpected()
-    {
-        return equipmentExpected;
-    }
+	public String getEquipmentActual() {
+		return equipmentActual;
+	}
 
-    public void setEquipmentExpected( String equipmentExpected )
-    {
-        this.equipmentExpected = equipmentExpected;
-    }
+	public void setEquipmentActual(String equipmentActual) {
+		this.equipmentActual = equipmentActual;
+	}
 
-    public String getVersion()
-    {
-        return version;
-    }
+	public String getEquipmentExpected() {
+		return equipmentExpected;
+	}
 
-    public void setVersion( String version )
-    {
-        this.version = version;
-    }
+	public void setEquipmentExpected(String equipmentExpected) {
+		this.equipmentExpected = equipmentExpected;
+	}
 
-    public String getAvailabilityStatus()
-    {
-        return availabilityStatus;
-    }
+	public String getVersion() {
+		return version;
+	}
 
-    public void setAvailabilityStatus( String availabilityStatus )
-    {
-        this.availabilityStatus = availabilityStatus;
-    }
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
-    public String getAlarmStatus()
-    {
-        return alarmStatus;
-    }
+	public String getAvailabilityStatus() {
+		return availabilityStatus;
+	}
 
-    public void setAlarmStatus( String alarmStatus )
-    {
-        this.alarmStatus = alarmStatus;
-    }
+	public void setAvailabilityStatus(String availabilityStatus) {
+		this.availabilityStatus = availabilityStatus;
+	}
 
-    public String getOperationalState()
-    {
-        return operationalState;
-    }
+	public String getAlarmStatus() {
+		return alarmStatus;
+	}
 
-    public void setOperationalState( String operationalState )
-    {
-        this.operationalState = operationalState;
-    }
+	public void setAlarmStatus(String alarmStatus) {
+		this.alarmStatus = alarmStatus;
+	}
 
-    public String getAdministrativeState()
-    {
-        return administrativeState;
-    }
+	public String getOperationalState() {
+		return operationalState;
+	}
 
-    public void setAdministrativeState( String administrativeState )
-    {
-        this.administrativeState = administrativeState;
-    }
+	public void setOperationalState(String operationalState) {
+		this.operationalState = operationalState;
+	}
+
+	public String getAdministrativeState() {
+		return administrativeState;
+	}
+
+	public void setAdministrativeState(String administrativeState) {
+		this.administrativeState = administrativeState;
+	}
+
+	@Override
+	public String toString() {
+		return "EquipmentEntity [moc=" + moc + ", moi=" + moi + ", allowedEquipmentTypes=" + allowedEquipmentTypes
+				+ ", specificPhysicalInstance=" + specificPhysicalInstance + ", equipmentActual=" + equipmentActual
+				+ ", equipmentExpected=" + equipmentExpected + ", version=" + version + ", availabilityStatus="
+				+ availabilityStatus + ", alarmStatus=" + alarmStatus + ", operationalState=" + operationalState
+				+ ", administrativeState=" + administrativeState + "]";
+	}
 }

@@ -26,9 +26,16 @@ public class AdpEqusMgr {
 
 	public void syncEquip(String groupId, String neId, String id) throws AdapterException {
 		List<TptCoordinatorEntity> tptCoordinatorList = GetEquipment.getISAs(groupId, neId);
+		if (null != tptCoordinatorList && !tptCoordinatorList.isEmpty()) {
+			for (TptCoordinatorEntity entity : tptCoordinatorList) {
+				log.debug(entity);
+			}
+		}
+
 		List<EquipmentEntity> equList = GetEquipment.getEquipments(groupId, neId);
 		log.debug("equList=" + equList.size() + ", neId=" + neId);
 		for (EquipmentEntity equ : equList) {
+			log.debug(equ);
 			AdpEquipment newEqu = constructEquip(equ, equList, tptCoordinatorList, id);
 			AdpEquipment adpEqu;
 			try {
@@ -62,7 +69,7 @@ public class AdpEqusMgr {
 		adpEqu.setNativeName("");
 
 		for (int i = tptCoordinatorList.size() - 1; i >= 0; i--) {
-			if (moc.equals(tptCoordinatorList.get(i).getEquMoi())) {
+			if (moi.equals(tptCoordinatorList.get(i).getEquMoi())) {
 				// adpEqu.setAddresses( null );
 				tptCoordinatorList.remove(i);
 				break;
