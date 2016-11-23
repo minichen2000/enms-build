@@ -47,7 +47,7 @@ public class AdpTpsMgr {
 			log.debug("syncCtp tp = " + tp);
 			String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
+			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
 			layerRates.add(String.valueOf(LayerRate.DSR_2M.getCode()));
 			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, au4CtpId, layerRates);
@@ -79,7 +79,7 @@ public class AdpTpsMgr {
 			log.debug("syncCtp tp = " + tp);
 			String tu3CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
+			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
 			layerRates.add(String.valueOf(LayerRate.DSR_34M));
 			AdpTp ctp = constructTp(tp, neDbId, tu3CtpUserLabel, au4CtpId, layerRates);
@@ -118,7 +118,7 @@ public class AdpTpsMgr {
 			if (moi.endsWith(vc4TtpId)) {
 				String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-				// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
+				// TODO 读取映射文件获取层速率
 				List<String> layerRates = new ArrayList<String>();
 				layerRates.add(String.valueOf(LayerRate.VC4.getCode()));
 				AdpTp ttp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
@@ -159,7 +159,7 @@ public class AdpTpsMgr {
 			log.debug("tp = " + tp.toString());
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
 
-			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
+			// TODO 读取映射文件获取层速率
 			LayerRate layerRate = getLayerRate(tp);
 			if (null == layerRate) {
 				log.error("tp's layerRate is null, ignore this tp", tp);
@@ -202,7 +202,7 @@ public class AdpTpsMgr {
 		for (TpEntity ctp : ctpList) {
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(ctp);
 
-			// TODO 璇诲彇鏄犲皠鏂囦欢鑾峰彇灞傞�熺巼
+			// TODO 读取映射文件获取层速率
 			List<String> layerRates = new ArrayList<String>();
 			layerRates.add(String.valueOf(LayerRate.AU4.getCode()));
 
@@ -245,7 +245,7 @@ public class AdpTpsMgr {
 		addTps(tps);
 		updateTps(pdhPTP);
 
-		// 鏇存柊鐖禩P鐨刲ayerRate
+		// 读取映射文件获取层速率
 		try {
 			tpsDbMgr.updateTpLayerRate(ptpDbId, layerRate);
 		} catch (Exception e) {
