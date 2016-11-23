@@ -16,6 +16,7 @@ import com.nsb.enms.adapter.server.action.method.ne.CreateNe;
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.action.method.ne.SetManagerAddress;
 import com.nsb.enms.adapter.server.action.method.ne.StartSupervision;
+import com.nsb.enms.adapter.server.business.sync.SyncThread;
 import com.nsb.enms.adapter.server.business.tp.SyncTpThread;
 import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
 import com.nsb.enms.adapter.server.common.MethodOperator;
@@ -461,7 +462,7 @@ public class NesApiServiceImpl extends NesApiService {
 		updateNe(body);
 
 		try {
-			SyncTpThread thread = new SyncTpThread(groupId, neId, body.getId());
+			SyncThread thread = new SyncThread(groupId, neId, body.getId());
 			FutureTask<Object> ft = new FutureTask<Object>(thread);
 			new Thread(ft).start();
 		} catch (Exception e) {

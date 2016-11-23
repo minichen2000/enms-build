@@ -187,6 +187,7 @@ public class AdpTpsMgr {
 				return;
 			}
 		}
+		log.debug("sync tp end");
 	}
 
 	private void syncSdhCtp(String groupId, String neId, String moi, String ptpId, String ptpDbId, String neDbId)
