@@ -1,0 +1,19 @@
+CMIS_REQUEST = m_action
+  OBJECT_CLASS = 1.3.12.2.1006.54.0.0.3.114;    //tptCoordinator
+  OBJECT_INSTANCE = {
+    <OBJECT_INST> {
+        <FDN> {
+        <RDN> { <AVA> { 0.3.0.2.7.7, __PARAMS_1__ } }, //neGroupId
+        <RDN> { <AVA> { 0.3.0.2.7.13, __PARAMS_2__ } }, //networkElementId
+        <RDN> { <AVA> { 1.3.12.2.1006.54.0.0.7.176, __PARAMS_3__} } //tptCoordinatorId
+      }
+    }
+  };
+SCOPE = { baseObject };
+ACTION_TYPE = 1.3.12.2.1006.54.0.0.9.39; //deleteServerTp
+ACTION_INFO = (DeleteServerTpInformation) <SEQUENCE_OF> {
+	(DeleteServerTpInformationChoice) <CHOICE> {1,
+		(Position) <INTEGER> __PARAMS_4__
+	}
+};
+END_REQUEST
