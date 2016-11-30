@@ -1,3 +1,4 @@
+
 package com.nsb.enms.adapter.server.business.tp;
 
 import java.util.concurrent.Callable;
@@ -9,15 +10,15 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ValueType;
-import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
+import com.nsb.enms.state.OperationalState;
 
 public class SyncTpThread implements Callable<Object> {
 	private final static Logger log = LogManager.getLogger(SyncTpThread.class);
 
-	private String groupId, neId, id;
+	private String groupId, neId;
+	private Integer id;
 
-	public SyncTpThread(String groupId, String neId, String id) {
+	public SyncTpThread(String groupId, String neId, Integer id) {
 		this.groupId = groupId;
 		this.neId = neId;
 		this.id = id;
@@ -28,13 +29,11 @@ public class SyncTpThread implements Callable<Object> {
 		int int_id = Integer.valueOf(id);
 		int valueType = ValueType.ENUM.getCode();
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
-				OperationalStateEnum.SYNCHRONIZING.name(), OperationalStateEnum.IDLE.name());
+				OperationalState.DOING.name(), OperationalState.IDLE.name());
 		new AdpTpsMgr().syncTp(groupId, neId, id);
 		NeStateMachineApp.instance().afterSynchData(id);
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "synchState", valueType,
-				SynchStateEnum.SYNCHRONIZED.name(), SynchStateEnum.UNSYNCHRONIZED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
-				OperationalStateEnum.IDLE.name(), OperationalStateEnum.SYNCHRONIZING.name());
+				OperationalState.IDLE.name(), OperationalState.DOING.name());
 
 		log.debug("sync tp end");
 		return null;
