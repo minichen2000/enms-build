@@ -23,7 +23,7 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
-import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
+import com.nsb.enms.adapter.server.common.utils.KeyValuePairUtil;
 import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
@@ -40,13 +40,14 @@ import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
+import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.OperationalStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.SupervisionStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNe.SynchStateEnum;
-import com.nsb.enms.restful.model.adapter.AdpNeExtraInfo;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
+import com.nsb.enms.restful.model.adapter.AdpTp;
+import com.nsb.enms.state.AlignmentState;
+import com.nsb.enms.state.CommunicationState;
+import com.nsb.enms.state.OperationalState;
+import com.nsb.enms.state.SupervisionState;
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
 public class NesApiServiceImpl extends NesApiService {
@@ -68,11 +69,12 @@ public class NesApiServiceImpl extends NesApiService {
 		AdpAddresses addresses = body.getAddresses();
 		String osMain = addresses.getQ3Address().getOsMain();
 		if (!ADP_ADDRESS.equals(osMain)) {
-			String location = body.getLocationName();
+			String location = getLocationName();
 			NeEntity entity = null;
 			try {
 				String id = addresses.getQ3Address().getAddress().trim();
-				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location, id);
+				entity = CreateNe.createNe(body.getNeRelease(), String.valueOf(body.getNeType()), body.getUserLabel(),
+						location, id);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
 				return ErrorWrapperUtils.adapterException(e);
@@ -116,13 +118,13 @@ public class NesApiServiceImpl extends NesApiService {
 			}
 			return Response.ok().build();
 		} else {
-			String location = body.getLocationName();
+			String location = getLocationName();
 			NeEntity entity = null;
 			String id = "";
 			try {
 				id = addresses.getQ3Address().getAddress();
-				entity = CreateNe.createNe(body.getVersion(), body.getNeType(), body.getUserLabel(), location,
-						id.trim());
+				entity = CreateNe.createNe(body.getNeRelease(), String.valueOf(body.getNeType()), body.getUserLabel(),
+						location, id.trim());
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
 				return ErrorWrapperUtils.adapterException(e);
@@ -134,7 +136,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 			log.debug(entity);
 
-			AdpNe ne = constructNe(entity, id);
+			AdpNe ne = constructNe(entity, body.getId(), body.getNeType());
 
 			try {
 				ne = nesDbMgr.addNe(ne);
@@ -189,7 +191,7 @@ public class NesApiServiceImpl extends NesApiService {
 			return failDbOperation();
 		}
 
-		String locationName = body.getLocationName();
+		String locationName = getLocationName();
 		if (!ValidationUtil.isValidLocationName(locationName)) {
 			return constructErrorInfo(ErrorCode.FAIL_INVALID_LOCATION_NAME);
 		}
@@ -228,12 +230,11 @@ public class NesApiServiceImpl extends NesApiService {
 		return null;
 	}
 
-	private AdpNe constructNe(NeEntity entity, String id) {
+	private AdpNe constructNe(NeEntity entity, Integer id, String neType) {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setKeyOnNe(GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.NE, entity.getMoc(), entity.getMoi()));
 		ne.setUserLabel(entity.getUserLabel());
-		ne.setVersion(entity.getNeRelease());
+		ne.setNeRelease(entity.getNeRelease());
 
 		AdpAddresses address = new AdpAddresses();
 		AdpQ3Address q3Address = new AdpQ3Address();
@@ -243,27 +244,54 @@ public class NesApiServiceImpl extends NesApiService {
 		address.setSnmpAddress(null);
 		ne.setAddresses(address);
 
-		ne.setNeType(entity.getNeType());
-		ne.setOperationalState(OperationalStateEnum.IDLE);
-		ne.setCommunicationState(CommunicationStateEnum.UNREACHABLE);
-		ne.setSynchState(SynchStateEnum.UNSYNCHRONIZED);
-		ne.setSupervisionState(SupervisionStateEnum.UNSUPERVISED);
-		ne.setLocationName(entity.getLocationName());
-		String[] groupNeId = entity.getMoi().split("/");
-		StringBuilder neUsmParameter = new StringBuilder();
-		neUsmParameter.append("NE_TYPE=").append(entity.getNeType()).append("&NE_RELEASE=")
-				.append(entity.getNeRelease()).append("&GROUP_ID=").append(groupNeId[0].split("=")[1]).append("&NE_ID=")
-				.append(groupNeId[1].split("=")[1]).append("&NAMESERVERFILE_URL=").append(NAMESERVERFILE_URL);
-		AdpNeExtraInfo neExtraInfo = new AdpNeExtraInfo();
-		neExtraInfo.setNeUsmParameter(neUsmParameter.toString());
-		ne.setExtraInfo(neExtraInfo);
+		ne.setNeType(neType);
+		ne.setOperationalState(OperationalState.IDLE.getCode());
+		ne.setCommunicationState(CommunicationState.DISCONNECTED.getCode());
+		ne.setAlignmentState(AlignmentState.MISALIGNED.getCode());
+		ne.setSupervisionState(SupervisionState.NOSUPERVISED.getCode());
+
+		List<AdpKVPair> params = constructParams(entity);
+		ne.setParams(params);
 		return ne;
+	}
+
+	private List<AdpKVPair> constructParams(NeEntity entity) {
+		String[] groupNeId = entity.getMoi().split("/");
+
+		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
+		AdpKVPair neTypePair = new AdpKVPair();
+		neTypePair.setKey("NE_TYPE");
+		neTypePair.setValue(entity.getNeType());
+		params.add(neTypePair);
+
+		AdpKVPair neReleasePair = new AdpKVPair();
+		neReleasePair.setKey("NE_RELEASE");
+		neReleasePair.setValue(entity.getNeRelease());
+		params.add(neReleasePair);
+
+		AdpKVPair groupIdPair = new AdpKVPair();
+		groupIdPair.setKey("GROUP_ID");
+		groupIdPair.setValue(groupNeId[0].split("=")[1]);
+		params.add(groupIdPair);
+
+		AdpKVPair neIdPair = new AdpKVPair();
+		neIdPair.setKey("NE_ID");
+		neIdPair.setValue(groupNeId[1].split("=")[1]);
+		params.add(neIdPair);
+
+		AdpKVPair nameServerUrlPair = new AdpKVPair();
+		nameServerUrlPair.setKey("NAMESERVERFILE_URL");
+		nameServerUrlPair.setValue(NAMESERVERFILE_URL);
+		params.add(nameServerUrlPair);
+
+		return params;
 	}
 
 	@Override
 	public Response deleteNe(String neid, SecurityContext securityContext) throws NotFoundException {
 		log.debug("adapter------deleteNE");
 
+		Integer id = Integer.valueOf(neid);
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
 			// TODO 确定错误码是否正确
@@ -272,24 +300,21 @@ public class NesApiServiceImpl extends NesApiService {
 
 		AdpNe ne = null;
 		try {
-			ne = isNeExisted(neid);
+			ne = isNeExisted(id);
 		} catch (AdapterException e) {
 			return ErrorWrapperUtils.adapterException(e);
 		}
 
-		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
-		if (StringUtils.isEmpty(moi)) {
-			return failObjNotExist();
-		}
-
-		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
+		List<AdpKVPair> pairs = ne.getParams();
+		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
+		String groupId = groupAndNeId[0];
+		String neId = groupAndNeId[1];
 
 		log.debug("groupId = " + groupId + ", neId = " + neId);
 
 		try {
 			DeleteNe.deleteNe(groupId, neId);
-			NotificationSender.instance().sendOdNotif(EntityType.NE, Integer.valueOf(neid));
+			NotificationSender.instance().sendOdNotif(EntityType.NE, id);
 		} catch (AdapterException e) {
 			log.error("deleteNe", e);
 			return ErrorWrapperUtils.adapterException(e);
@@ -297,7 +322,7 @@ public class NesApiServiceImpl extends NesApiService {
 
 		// delete db record, contains ne and tp
 		try {
-			nesDbMgr.deleteNe(neid);
+			nesDbMgr.deleteNe(id);
 
 			AdpXcsMgr xcsMgr = new AdpXcsMgr();
 			xcsMgr.deleteXcsByNeId(neId);
@@ -318,12 +343,12 @@ public class NesApiServiceImpl extends NesApiService {
 		return Response.ok().build();
 	}
 
-	private AdpNe isNeExisted(String neid) throws AdapterException {
+	private AdpNe isNeExisted(Integer neid) throws AdapterException {
 		AdpNe ne;
 		try {
 			ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
-			if (null == ne || StringUtils.isEmpty(ne.getId())) {
+			if (null == ne || ne.getId() < 0) {
 				throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 			}
 		} catch (Exception e) {
@@ -332,10 +357,6 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 
 		return ne;
-	}
-
-	private Response failDeleteNeByEMLIM() {
-		return constructErrorInfo(ErrorCode.FAIL_DELETE_NE_BY_EMLIM);
 	}
 
 	private Response failSetManagerAddress() {
@@ -354,8 +375,8 @@ public class NesApiServiceImpl extends NesApiService {
 	public Response getNeById(String neid, SecurityContext securityContext) throws NotFoundException {
 		AdpNe ne = new AdpNe();
 		try {
-			ne = nesDbMgr.getNeById(neid);
-			if (StringUtils.isEmpty(ne.getId())) {
+			ne = nesDbMgr.getNeById(Integer.valueOf(neid));
+			if (ne.getId() < 0) {
 				return failObjNotExist();
 			}
 		} catch (Exception e) {
@@ -367,39 +388,43 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response updateNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
-		Response response = validateParam(body, MethodOperator.UPDATE);
-		if (null != response) {
-			return response;
-		}
-
-		AdpNe ne = null;
-		String id = body.getId();
-		try {
-			ne = isNeExisted(id);
-		} catch (AdapterException e) {
-			return ErrorWrapperUtils.adapterException(e);
-		}
-
-		String moi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
-		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
-		String neId = moi.split("/")[1].replaceAll("networkElementId=", StringUtils.EMPTY);
-
-		try {
-			OperationalStateEnum operationalState = body.getOperationalState();
-			if (null == operationalState) {
-				return updateNe(body);
-			}
-			switch (operationalState) {
-			case SUPERVISING:
-				return supervising(body, id, groupId, neId);
-			case SYNCHRONIZING:
-				return synchronizing(body, groupId, neId);
-			default:
-				return updateNe(body);
-			}
-		} catch (AdapterException e) {
-			return ErrorWrapperUtils.adapterException(e);
-		}
+		// Response response = validateParam(body, MethodOperator.UPDATE);
+		// if (null != response) {
+		// return response;
+		// }
+		//
+		// AdpNe ne = null;
+		// Integer id = body.getId();
+		// try {
+		// ne = isNeExisted(id);
+		// } catch (AdapterException e) {
+		// return ErrorWrapperUtils.adapterException(e);
+		// }
+		//
+		// List<AdpKVPair> pairs = ne.getParams();
+		// String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
+		// String groupId = groupAndNeId[0];
+		// String neId = groupAndNeId[1];
+		//
+		// try {
+		// Integer operationalState = body.getOperationalState();
+		// if (null == operationalState) {
+		// return updateNe(body);
+		// }
+		// if (body.getSupervisionState()) {
+		// }
+		// switch (operationalState) {
+		// case SUPERVISING:
+		// return supervising(body, groupId, neId);
+		// case SYNCHRONIZING:
+		// return synchronizing(body, groupId, neId);
+		// default:
+		// return updateNe(body);
+		// }
+		// } catch (AdapterException e) {
+		// return ErrorWrapperUtils.adapterException(e);
+		// }
+		return null;
 	}
 
 	private Response updateNe(AdpNe body) throws AdapterException {
@@ -417,38 +442,37 @@ public class NesApiServiceImpl extends NesApiService {
 	 * 监管网元
 	 * 
 	 * @param body
-	 * @param id
 	 * @param groupId
 	 * @param neId
 	 * @return
 	 */
-	private Response supervising(AdpNe body, String id, String groupId, String neId) throws AdapterException {
+	private Response supervising(AdpNe body, String groupId, String neId) throws AdapterException {
 		updateNe(body);
 
 		boolean isSuccess = false;
 		int valueType = ValueType.ENUM.getCode();
 		try {
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(body.getId()), "operationalState",
-					valueType, OperationalStateEnum.SUPERVISING.name(), OperationalStateEnum.IDLE.name());
+					valueType, OperationalState.DOING.name(), OperationalState.IDLE.name());
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
-			body.setOperationalState(OperationalStateEnum.IDLE);
+			body.setOperationalState(OperationalState.IDLE.getCode());
 			updateNe(body);
 		}
 		log.debug("isSuccess = " + isSuccess);
 		if (!isSuccess) {
 			throw new AdapterException(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM);
 		}
+		Integer id = body.getId();
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
-		Integer int_id = Integer.valueOf(id);
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "supervsionState", valueType,
-				SupervisionStateEnum.SUPERVISED.name(), SupervisionStateEnum.UNSUPERVISED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "communicationState", valueType,
-				CommunicationStateEnum.UNREACHABLE.name(), CommunicationStateEnum.REACHABLE.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
-				OperationalStateEnum.IDLE.name(), OperationalStateEnum.SUPERVISING.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", valueType,
+				SupervisionState.SUPERVISED.name(), SupervisionState.NOSUPERVISED.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", valueType,
+				CommunicationState.DISCONNECTED.name(), CommunicationState.CONNECTED.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", valueType,
+				OperationalState.IDLE.name(), OperationalState.DOING.name());
 		return Response.ok().build();
 	}
 
@@ -494,5 +518,102 @@ public class NesApiServiceImpl extends NesApiService {
 			return failDbOperation();
 		}
 		return Response.ok().entity(nes).build();
+	}
+
+	@Override
+	public Response addTps(String neid, List<AdpTp> tps, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getChildrenTps(String neid, String tpid, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getNeTps(String neid, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getTpById(String neid, String tpid, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getTpsByLayerRate(String neid, String layerrate, SecurityContext securityContext)
+			throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getTpsByType(String neid, String tptype, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response updateTp(String neid, AdpTp tp, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	private String getLocationName() {
+		String id = ConfLoader.getInstance().getConf(ConfigKey.ADP_ID, "adapter_" + System.currentTimeMillis());
+		return id;
+	}
+
+	@Override
+	public Response deleteXc(String neid, String xcid, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getEquipmentById(String neid, String eqid, SecurityContext securityContext)
+			throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response getXcById(String neid, String xcid, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response startAlignment(String neid, SecurityContext securityContext) throws NotFoundException {
+		AdpNe ne;
+		try {
+			ne = isNeExisted(Integer.valueOf(neid));
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
+		}
+
+		List<AdpKVPair> pairs = ne.getParams();
+		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
+		String groupId = groupAndNeId[0];
+		String neId = groupAndNeId[1];
+		try {
+			return synchronizing(ne, groupId, neId);
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
+		}
+	}
+
+	@Override
+	public Response startSupervision(String neid, SecurityContext securityContext) throws NotFoundException {
+		AdpNe ne;
+		try {
+			ne = isNeExisted(Integer.valueOf(neid));
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
+		}
+
+		List<AdpKVPair> pairs = ne.getParams();
+		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
+		String groupId = groupAndNeId[0];
+		String neId = groupAndNeId[1];
+		try {
+			return supervising(ne, groupId, neId);
+		} catch (AdapterException e) {
+			return ErrorWrapperUtils.adapterException(e);
+		}
 	}
 }
