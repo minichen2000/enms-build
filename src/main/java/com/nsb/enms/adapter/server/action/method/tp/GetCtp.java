@@ -20,6 +20,7 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
+import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.common.utils.Pair;
 
 public class GetCtp {
@@ -203,7 +204,7 @@ public class GetCtp {
 		}
 	}
 
-	public static Pair<String, List<TpEntity>> getPdhCtp(String groupId, String neId, String tpId)
+	public static Pair<List<String>, List<TpEntity>> getPdhCtp(String groupId, String neId, String tpId)
 			throws AdapterException {
 		log.debug("tpId = " + tpId);
 
@@ -217,17 +218,17 @@ public class GetCtp {
 			return null;
 		}
 		List<TpEntity> tpList = null;
-		Pair<String, List<TpEntity>> pair2 = new Pair<String, List<TpEntity>>();
+		Pair<List<String>, List<TpEntity>> pair2 = new Pair<List<String>, List<TpEntity>>();
 		if (moc.startsWith("e1")) {
 			tpList = getVc12Ttps(groupId, neId, ttpId);
-			pair2.setFirst(LayerRate.DSR_2M.name());
+			pair2.setFirst(ManagedObjectType.E1_PHYSICAL.getLayerRates());
 			pair2.setSecond(tpList);
 			return pair2;
 		}
 
 		if (moc.startsWith("e3")) {
 			tpList = getVc3Ttps(groupId, neId, ttpId);
-			pair2.setFirst(LayerRate.DSR_34M.name());
+			pair2.setFirst(ManagedObjectType.E3_PHYSICAL.getLayerRates());
 			pair2.setSecond(tpList);
 			return pair2;
 		}
@@ -437,10 +438,10 @@ public class GetCtp {
 						continue;
 					}
 
-//					if (line.startsWith("alarmStatus")) {
-//						portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
-//						continue;
-//					}
+					// if (line.startsWith("alarmStatus")) {
+					// portEntity.setAlarmStatus(ParseUtil.parseAttr(line));
+					// continue;
+					// }
 
 					if (line.startsWith("supportedByObjectList")) {
 						portEntity.setSupportedByObjectList(ParseUtil.parseList(line));

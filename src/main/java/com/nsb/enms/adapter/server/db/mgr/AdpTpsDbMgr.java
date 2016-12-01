@@ -151,10 +151,7 @@ public class AdpTpsDbMgr {
 		return true;
 	}
 
-	public void updateTpLayerRate(Integer tpId, String layerRate) throws Exception {
-		log.debug("layerRate = " + layerRate);
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(layerRate);
+	public void updateTpLayerRate(Integer tpId, List<String> layerRates) throws Exception {
 		dbc.updateOne(eq("id", tpId), set("layerRates", layerRates));
 	}
 
