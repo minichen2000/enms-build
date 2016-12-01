@@ -73,7 +73,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public List<AdpTp> getTpsByNeId(String neid) throws Exception {
+	public List<AdpTp> getTpsByNeId(Integer neid) throws Exception {
 		log.debug("getTPByNEId, neId = " + neid);
 		List<Document> docList = dbc
 				.find(and(eq("neId", neid),
@@ -97,13 +97,13 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public List<AdpTp> getTpsByLayerRate(String neid, String layerrate) throws Exception {
+	public List<AdpTp> getTpsByLayerRate(Integer neid, String layerrate) throws Exception {
 		List<Document> docList = null;
-		if (StringUtils.isEmpty(neid) && StringUtils.isEmpty(layerrate)) {
+		if ((null == neid || neid < 0) && StringUtils.isEmpty(layerrate)) {
 			docList = dbc.find().into(new ArrayList<Document>());
 		} else if (StringUtils.isEmpty(layerrate)) {
 			docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
-		} else if (StringUtils.isEmpty(neid)) {
+		} else if (null == neid || neid < 0) {
 			docList = dbc.find(eq("layerRate", layerrate)).into(new ArrayList<Document>());
 		} else {
 			docList = dbc.find(and(eq("neId", neid), eq("layerRate", layerrate))).into(new ArrayList<Document>());
@@ -185,7 +185,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public List<AdpTp> getTpsByType(String neid, String tptype) throws Exception {
+	public List<AdpTp> getTpsByType(Integer neid, String tptype) throws Exception {
 		List<Document> docList = null;
 		docList = dbc.find(and(eq("neId", neid), eq("tpType", tptype))).into(new ArrayList<Document>());
 
@@ -207,11 +207,11 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public void deleteTpsbyNeId(int neid) throws Exception {
+	public void deleteTpsbyNeId(Integer neid) throws Exception {
 		dbc.deleteMany(new Document("neId", neid));
 	}
 
-	public List<AdpTp> getCtpsByTpId(String neid, String ptpid) throws Exception {
+	public List<AdpTp> getCtpsByTpId(Integer neid, String ptpid) throws Exception {
 		Date begin = new Date();
 		log.debug("getCTPsByTP, neid = {}, ptpid = {}", neid, ptpid);
 
@@ -241,7 +241,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public List<AdpTp> getChildrenTps(String tpid) throws Exception {
+	public List<AdpTp> getChildrenTps(Integer tpid) throws Exception {
 		Date begin = new Date();
 		log.debug("getCTPsByTP, tpid = {}", tpid);
 
@@ -336,11 +336,10 @@ public class AdpTpsDbMgr {
 		return tp.getId();
 	}
 
-	public Integer getTpByParentIdAndLayerRate(String parentId, LayerRate layerRate) throws Exception {
+	public Integer getTpByParentIdAndLayerRate(Integer parentId, LayerRate layerRate) throws Exception {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
-		List<Document> docList = dbc
-				.find(and(eq("parentTpId", parentId), in("layerRates", layerRate.name())))
+		List<Document> docList = dbc.find(and(eq("parentTpId", parentId), in("layerRates", layerRate.name())))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
