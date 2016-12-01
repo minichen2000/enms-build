@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
-import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
@@ -14,17 +13,11 @@ import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.alarm.NMSAlarm;
-import com.nsb.enms.common.AlarmCode;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
-import com.nsb.enms.common.ValueType;
 import com.nsb.enms.common.enms_mq.EnmsPubFactory;
 import com.nsb.enms.common.enms_mq.EnmsPublisher;
-import com.nsb.enms.restful.model.notif.Alarm;
-import com.nsb.enms.restful.model.notif.AvcBody;
-import com.nsb.enms.restful.model.notif.OcBody;
-import com.nsb.enms.restful.model.notif.OdBody;
 
 public class NotificationSender {
 	private static NotificationSender inst_ = null;
@@ -52,7 +45,7 @@ public class NotificationSender {
 
 	public void send(NotificationEntity entity) {
 		EventType eventType = entity.getEventType();
-		Long eventTime = TimeUtil.getTime(entity.getEventTime());
+		//Long eventTime = TimeUtil.getTime(entity.getEventTime());
 		String moc = entity.getMoc().getMoc();
 		String moi = entity.getMoi().getMoi();
 		EntityType objectType = getObjectType(moc);
@@ -64,35 +57,26 @@ public class NotificationSender {
 
 		switch (eventType) {
 		case OBJECT_CREATION:
-			OcBody ocBody = publisher.createOcBody(eventTime, objectType, objectID);
-			send(ocBody);
+			publisher.sendOC(objectType, objectID);
 			break;
 		case OBJECT_DELETION:
-			OdBody odBody = publisher.createOdBody(eventTime, objectType, objectID);
-			send(odBody);
+			publisher.sendOD(objectType, objectID);
 			break;
 		case ATTRIBUTE_VALUE_CHANGE:
 		case STATE_CHANGE:
-			AvcBody avc = publisher.createAvcBody(eventTime, objectType, objectID,
-					entity.getDefinition().getAttributeID(), ValueType.STRING.getCode(),
-					entity.getDefinition().getNewAttributeValue(), entity.getDefinition().getOldAttributeValue());
-			send(avc);
+			publisher.sendAVC( objectType, objectID, entity.getDefinition().getAttributeID(), entity.getDefinition().getNewAttributeValue(), entity.getDefinition().getOldAttributeValue() );
 			break;
 		case ALARM:
-			AlarmType alarmType = getAlarmType(entity.getAttributeInfo().get("alarmType"));
-			AlarmSeverity alarmSeverity = getAlarmSeverity(entity.getAttributeInfo().get("perceivedSeverity"));
-			String probableCause = entity.getAttributeInfo().get("probableCause");
-			Alarm alarm = publisher.createAlarm(AlarmCode.ALM_NE_OUT_OF_MNGT, alarmType, alarmSeverity, eventTime, null,
-					null, probableCause, objectType, objectID, null, null, "");
-			send(alarm);
+//			AlarmType alarmType = getAlarmType(entity.getAttributeInfo().get("alarmType"));
+//			AlarmSeverity alarmSeverity = getAlarmSeverity(entity.getAttributeInfo().get("perceivedSeverity"));
+//			String probableCause = entity.getAttributeInfo().get("probableCause");
+//			Alarm alarm = publisher.createAlarm(AlarmCode.ALM_NE_OUT_OF_MNGT, alarmType, alarmSeverity, eventTime, null,
+//					null, probableCause, objectType, objectID, null, null, "");
+//			publisher.sendAlarm( new AlarmNEMisalignment(objectID) );
 			break;
 		default:
 			break;
 		}
-	}
-
-	private void send(Object object) {
-		publisher.sendMessage(object);
 	}
 
 	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, String value,
@@ -101,15 +85,11 @@ public class NotificationSender {
 	}
 
 	public void sendOcNotif(EntityType objectType, Integer objectID) {
-		Long eventTime = TimeUtil.getLocalTmfTime();
-		OcBody oc = publisher.createOcBody(eventTime, objectType, objectID);
-		send(oc);
+		publisher.sendOC(objectType, objectID);
 	}
 
 	public void sendOdNotif(EntityType objectType, Integer objectID) {
-		Long eventTime = TimeUtil.getLocalTmfTime();
-		OdBody od = publisher.createOdBody(eventTime, objectType, objectID);
-		send(od);
+		publisher.sendOD(objectType, objectID);
 	}
 
 //	public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType, AlarmSeverity severity, Long eventTime,
