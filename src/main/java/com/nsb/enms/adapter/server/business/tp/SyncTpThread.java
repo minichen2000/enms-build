@@ -26,13 +26,12 @@ public class SyncTpThread implements Callable<Object> {
 
 	@Override
 	public Object call() throws Exception {
-		int int_id = Integer.valueOf(id);
 		int valueType = ValueType.ENUM.getCode();
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", valueType,
 				OperationalState.DOING.name(), OperationalState.IDLE.name());
 		new AdpTpsMgr().syncTp(groupId, neId, id);
 		NeStateMachineApp.instance().afterSynchData(id);
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, int_id, "operationalState", valueType,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", valueType,
 				OperationalState.IDLE.name(), OperationalState.DOING.name());
 
 		log.debug("sync tp end");
