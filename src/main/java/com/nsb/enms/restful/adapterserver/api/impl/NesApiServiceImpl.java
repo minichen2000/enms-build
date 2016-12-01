@@ -143,16 +143,20 @@ public class NesApiServiceImpl extends NesApiService {
 
 			NotificationSender.instance().sendOcNotif(EntityType.NE, ne.getId());
 
-//			Long eventTime = TimeUtil.getLocalTmfTime();
-//			Long occureTime = eventTime;
-//			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
-//					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
-//					AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
-//			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-//					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
-//					AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
-			NotificationSender.instance().sendAlarm( new AlarmNENotSupervised( body.getId() ) );
-			NotificationSender.instance().sendAlarm( new AlarmNEMisalignment( body.getId() ) );
+			// Long eventTime = TimeUtil.getLocalTmfTime();
+			// Long occureTime = eventTime;
+			// NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED,
+			// AlarmType.COMMUNICATION,
+			// AlarmSeverity.MAJOR, eventTime, occureTime, null, "",
+			// EntityType.NE, ne.getId(), null, null,
+			// AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
+			// NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT,
+			// AlarmType.COMMUNICATION,
+			// AlarmSeverity.MAJOR, eventTime, occureTime, null, "",
+			// EntityType.NE, ne.getId(), null, null,
+			// AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+			NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(body.getId()));
+			NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(body.getId()));
 
 			log.debug("adapter----------------addNe----------end");
 
@@ -243,10 +247,10 @@ public class NesApiServiceImpl extends NesApiService {
 		ne.setAddresses(address);
 
 		ne.setNeType(neType);
-		ne.setOperationalState(OperationalState.IDLE.getStringCode());
-		ne.setCommunicationState(CommunicationState.DISCONNECTED.getStringCode());
-		ne.setAlignmentState(AlignmentState.MISALIGNED.getStringCode());
-		ne.setSupervisionState(SupervisionState.NOSUPERVISED.getStringCode());
+		ne.setOperationalState(OperationalState.IDLE.name());
+		ne.setCommunicationState(CommunicationState.DISCONNECTED.name());
+		ne.setAlignmentState(AlignmentState.MISALIGNED.name());
+		ne.setSupervisionState(SupervisionState.NOSUPERVISED.name());
 
 		List<AdpKVPair> params = constructParams(entity);
 		ne.setParams(params);
@@ -326,12 +330,12 @@ public class NesApiServiceImpl extends NesApiService {
 			xcsMgr.deleteXcsByNeId(neId);
 
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
-			tpsDbMgr.deleteTpsbyNeId(Integer.valueOf( neId ));
+			tpsDbMgr.deleteTpsbyNeId(Integer.valueOf(neId));
 
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
-			equipmentsDbMgr.deleteEquipmentsByNeId(Integer.valueOf( neId ));
+			equipmentsDbMgr.deleteEquipmentsByNeId(Integer.valueOf(neId));
 		} catch (AdapterException e) {
-			if (!StringUtils.equals( ErrorCode.FAIL_OBJ_NOT_EXIST.name(), e.errorCode_ )) {
+			if (ErrorCode.FAIL_OBJ_NOT_EXIST != e.errorCode) {
 				return ErrorWrapperUtils.adapterException(e);
 			}
 		} catch (Exception e) {
@@ -454,7 +458,7 @@ public class NesApiServiceImpl extends NesApiService {
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
-			body.setOperationalState(OperationalState.IDLE.getStringCode());
+			body.setOperationalState(OperationalState.IDLE.name());
 			updateNe(body);
 		}
 		log.debug("isSuccess = " + isSuccess);
@@ -468,8 +472,8 @@ public class NesApiServiceImpl extends NesApiService {
 				SupervisionState.SUPERVISED.name(), SupervisionState.NOSUPERVISED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState",
 				CommunicationState.DISCONNECTED.name(), CommunicationState.CONNECTED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState",
-				OperationalState.IDLE.name(), OperationalState.DOING.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", OperationalState.IDLE.name(),
+				OperationalState.DOING.name());
 		return Response.ok().build();
 	}
 
