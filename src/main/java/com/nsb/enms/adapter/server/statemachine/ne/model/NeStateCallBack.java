@@ -5,6 +5,7 @@ import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.state.AlignmentState;
 import com.nsb.enms.state.CommunicationState;
 import com.nsb.enms.state.MaintenanceState;
 import com.nsb.enms.state.OperationalState;
@@ -18,6 +19,8 @@ public class NeStateCallBack {
 	private OperationalState operationalState;
 
 	private SupervisionState supervisionState;
+	
+	private AlignmentState alignmentState;
 
 	private Integer id;
 
@@ -50,6 +53,13 @@ public class NeStateCallBack {
 		ne.setSupervisionState(supervisionState.getCode());
 		updateNe(ne);
 	}
+	
+	public void tellMe(AlignmentState alignmentState) throws AdapterException {
+        AdpNe ne = new AdpNe();
+        ne.setId(id);
+        ne.setSupervisionState(alignmentState.getCode());
+        updateNe(ne);
+    }
 
 	private void updateNe(AdpNe ne) throws AdapterException {
 		try {
@@ -98,4 +108,14 @@ public class NeStateCallBack {
 	public void setMaintenanceState(MaintenanceState maintenanceState) {
 		this.maintenanceState = maintenanceState;
 	}
+
+    public AlignmentState getAlignmentState()
+    {
+        return alignmentState;
+    }
+
+    public void setAlignmentState( AlignmentState alignmentState )
+    {
+        this.alignmentState = alignmentState;
+    }
 }

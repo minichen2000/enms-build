@@ -36,7 +36,7 @@ public class AdpEqusDbMgr {
         return body;
     }
 	
-	public void deleteEquipmentsByNeId(String neId) throws Exception {
+	public void deleteEquipmentsByNeId(int neId) throws Exception {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
@@ -79,7 +79,7 @@ public class AdpEqusDbMgr {
 		return equipmentList;
 	}
 	
-	public String getIdByAid(String aid) throws Exception {
+	public Integer getIdByAid(String aid) throws Exception {
         List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
 
         if (null == docList || docList.isEmpty()) {

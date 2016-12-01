@@ -207,7 +207,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public void deleteTpsbyNeId(String neid) throws Exception {
+	public void deleteTpsbyNeId(int neid) throws Exception {
 		dbc.deleteMany(new Document("neId", neid));
 	}
 

@@ -85,7 +85,7 @@ public class AdpXcsDbMgr {
 		return xc;
 	}
 
-	public void deleteXcsByNeId(String neId) throws Exception {
+	public void deleteXcsByNeId(int neId) throws Exception {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
@@ -110,7 +110,7 @@ public class AdpXcsDbMgr {
 		return xcList;
 	}
 
-	public String getIdByAid(String aid) throws Exception {
+	public Integer getIdByAid(String aid) throws Exception {
 		List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by aid = {}", aid);

@@ -15,7 +15,6 @@ import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
@@ -25,13 +24,10 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
-import com.nsb.enms.common.AlarmCode;
-import com.nsb.enms.common.AlarmSeverity;
-import com.nsb.enms.common.AlarmType;
-import com.nsb.enms.common.EntityType;
+import com.nsb.enms.alarm.AlarmNEOutOfMngt;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.AdpNe.CommunicationStateEnum;
+import com.nsb.enms.state.CommunicationState;
 
 public class Q3EmlImMgr {
 	private static final Logger log = LogManager.getLogger(Q3EmlImMgr.class);
@@ -141,19 +137,20 @@ public class Q3EmlImMgr {
 			List<AdpNe> neList = nesDbMgr.getNesByGroupId(String.valueOf(groupId));
 			for (AdpNe ne : neList) {
 				NeStateCallBack callBack = new NeStateCallBack();
-				String id = ne.getId();
+				int id = ne.getId();
 				callBack.setId(id);
-				if (ne.getCommunicationState() == CommunicationStateEnum.REACHABLE) {
+				if (ne.getCommunicationState() == CommunicationState.CONNECTED.getCode()) {
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
-							.setCurrentState(ne.getCommunicationState());
+							.setCurrentState(CommunicationState.CONNECTED);
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
 							.fire(NeEvent.E_REACHABLE_2_UNREACHABLE, callBack);
 
-					Long eventTime = TimeUtil.getLocalTmfTime();
-					Long occureTime = eventTime;
-					NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-							AlarmSeverity.CRITICAL, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id),
-							null, null, AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+//					Long eventTime = TimeUtil.getLocalTmfTime();
+//					Long occureTime = eventTime;
+//					NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
+//							AlarmSeverity.CRITICAL, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id),
+//							null, null, AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+					NotificationSender.instance().sendAlarm( new AlarmNEOutOfMngt( id ) );
 				}
 			}
 		} catch (Exception e) {

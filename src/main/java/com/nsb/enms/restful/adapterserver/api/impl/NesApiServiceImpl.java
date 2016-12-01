@@ -30,6 +30,8 @@ import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
+import com.nsb.enms.alarm.AlarmNEMisalignment;
+import com.nsb.enms.alarm.AlarmNENotSupervised;
 import com.nsb.enms.common.AlarmCode;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
@@ -146,14 +148,16 @@ public class NesApiServiceImpl extends NesApiService {
 
 			NotificationSender.instance().sendOcNotif(EntityType.NE, ne.getId());
 
-			Long eventTime = TimeUtil.getLocalTmfTime();
-			Long occureTime = eventTime;
-			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
-					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
-					AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
-			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
-					AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+//			Long eventTime = TimeUtil.getLocalTmfTime();
+//			Long occureTime = eventTime;
+//			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
+//					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
+//					AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
+//			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
+//					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
+//					AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+			NotificationSender.instance().sendAlarm( new AlarmNENotSupervised( body.getId() ) );
+			NotificationSender.instance().sendAlarm( new AlarmNEMisalignment( body.getId() ) );
 
 			log.debug("adapter----------------addNe----------end");
 
@@ -327,10 +331,10 @@ public class NesApiServiceImpl extends NesApiService {
 			xcsMgr.deleteXcsByNeId(neId);
 
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
-			tpsDbMgr.deleteTpsbyNeId(neId);
+			tpsDbMgr.deleteTpsbyNeId(Integer.valueOf( neId ));
 
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
-			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
+			equipmentsDbMgr.deleteEquipmentsByNeId(Integer.valueOf( neId ));
 		} catch (AdapterException e) {
 			if (ErrorCode.FAIL_OBJ_NOT_EXIST.getCode() != e.errorCode_) {
 				return ErrorWrapperUtils.adapterException(e);
@@ -449,10 +453,9 @@ public class NesApiServiceImpl extends NesApiService {
 		updateNe(body);
 
 		boolean isSuccess = false;
-		int valueType = ValueType.ENUM.getCode();
 		try {
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-					valueType, OperationalState.DOING.name(), OperationalState.IDLE.name());
+					OperationalState.DOING.name(), OperationalState.IDLE.name());
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
@@ -466,11 +469,11 @@ public class NesApiServiceImpl extends NesApiService {
 		Integer id = body.getId();
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState", valueType,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState",
 				SupervisionState.SUPERVISED.name(), SupervisionState.NOSUPERVISED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState", valueType,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState",
 				CommunicationState.DISCONNECTED.name(), CommunicationState.CONNECTED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", valueType,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState",
 				OperationalState.IDLE.name(), OperationalState.DOING.name());
 		return Response.ok().build();
 	}

@@ -63,10 +63,19 @@ public class AdpEqusMgr {
 		String moi = equ.getMoi();
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.BOARD, moc, moi);
 		adpEqu.setId(id + ":" + keyOnNe);
-		adpEqu.setAid(moi);
-		adpEqu.setNeId(id);
-		adpEqu.setUserLabel("");
-		adpEqu.setNativeName("");
+		adpEqu.setNeId(  );
+		adpEqu.setPosition( "" );
+		adpEqu.setType(  );
+		adpEqu.setExpectedType( equ.getEquipmentExpected() );
+		adpEqu.setActualType( equ.getEquipmentActual() );
+		adpEqu.setKeyOnNe( keyOnNe );
+		adpEqu.setUnitPartNumber( "" );
+		adpEqu.setSoftwarePartNumber( "" );
+		adpEqu.setSerialNumber( "" );
+		adpEqu.setSlotState( "" );
+		adpEqu.setAlarmState(  );
+		adpEqu.setMaintenanceState(  );
+		
 
 		for (int i = tptCoordinatorList.size() - 1; i >= 0; i--) {
 			if (moi.equals(tptCoordinatorList.get(i).getEquMoi())) {

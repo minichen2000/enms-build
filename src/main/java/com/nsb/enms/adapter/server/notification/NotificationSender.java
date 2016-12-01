@@ -13,6 +13,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.alarm.NMSAlarm;
 import com.nsb.enms.common.AlarmCode;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;
@@ -94,9 +95,9 @@ public class NotificationSender {
 		publisher.sendMessage(object);
 	}
 
-	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, Integer valueType, String value,
+	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, String value,
 			String oldValue) {
-		publisher.sendAVC(entityType, objectID, key, valueType, value, oldValue);
+		publisher.sendAVC(entityType, objectID, key, value, oldValue);
 	}
 
 	public void sendOcNotif(EntityType objectType, Integer objectID) {
@@ -111,12 +112,17 @@ public class NotificationSender {
 		send(od);
 	}
 
-	public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType, AlarmSeverity severity, Long eventTime,
-			Long occureTime, Long clearTime, String probableCause, EntityType objectType, Integer objectId,
-			Integer ackStatus, Long ackTime, String description) {
-		Alarm alarm = publisher.createAlarm(alarmCode, alarmType, severity, eventTime, occureTime, clearTime,
-				probableCause, objectType, objectId, ackStatus, ackTime, description);
-		send(alarm);
+//	public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType, AlarmSeverity severity, Long eventTime,
+//			Long occureTime, Long clearTime, String probableCause, EntityType objectType, Integer objectId,
+//			Integer ackStatus, Long ackTime, String description) {
+//		Alarm alarm = publisher.createAlarm(alarmCode, alarmType, severity, eventTime, occureTime, clearTime,
+//				probableCause, objectType, objectId, ackStatus, ackTime, description);
+//		send(alarm);
+//	}
+	
+	public void sendAlarm(NMSAlarm alarm)
+	{
+	    publisher.sendAlarm( alarm );
 	}
 
 	private EntityType getObjectType(String moc) {
