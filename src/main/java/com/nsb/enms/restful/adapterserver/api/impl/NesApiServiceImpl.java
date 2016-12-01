@@ -72,9 +72,9 @@ public class NesApiServiceImpl extends NesApiService {
 			String location = getLocationName();
 			NeEntity entity = null;
 			try {
-				String id = addresses.getQ3Address().getAddress().trim();
-				entity = CreateNe.createNe(body.getNeRelease(), String.valueOf(body.getNeType()), body.getUserLabel(),
-						location, id);
+				String q3Address = addresses.getQ3Address().getAddress().trim();
+				entity = CreateNe.createNe(body.getNeRelease(), body.getNeType(), body.getUserLabel(), location,
+						q3Address);
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
 				return ErrorWrapperUtils.adapterException(e);
@@ -120,11 +120,10 @@ public class NesApiServiceImpl extends NesApiService {
 		} else {
 			String location = getLocationName();
 			NeEntity entity = null;
-			String id = "";
 			try {
-				id = addresses.getQ3Address().getAddress();
-				entity = CreateNe.createNe(body.getNeRelease(), String.valueOf(body.getNeType()), body.getUserLabel(),
-						location, id.trim());
+				String q3Address = addresses.getQ3Address().getAddress();
+				entity = CreateNe.createNe(body.getNeRelease(), body.getNeType(), body.getUserLabel(), location,
+						q3Address.trim());
 			} catch (AdapterException e) {
 				log.error("create ne occur error", e);
 				return ErrorWrapperUtils.adapterException(e);
@@ -145,16 +144,16 @@ public class NesApiServiceImpl extends NesApiService {
 				return failDbOperation();
 			}
 
-			NotificationSender.instance().sendOcNotif(EntityType.NE, Integer.valueOf(ne.getId()));
+			NotificationSender.instance().sendOcNotif(EntityType.NE, ne.getId());
 
 			Long eventTime = TimeUtil.getLocalTmfTime();
 			Long occureTime = eventTime;
 			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_NOT_SUPERVISED, AlarmType.COMMUNICATION,
-					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id), null,
-					null, AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
+					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
+					AlarmCode.ALM_NE_NOT_SUPERVISED.getDescription());
 			NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id), null,
-					null, AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+					AlarmSeverity.MAJOR, eventTime, occureTime, null, "", EntityType.NE, ne.getId(), null, null,
+					AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
 
 			log.debug("adapter----------------addNe----------end");
 
@@ -452,7 +451,7 @@ public class NesApiServiceImpl extends NesApiService {
 		boolean isSuccess = false;
 		int valueType = ValueType.ENUM.getCode();
 		try {
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, Integer.valueOf(body.getId()), "operationalState",
+			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
 					valueType, OperationalState.DOING.name(), OperationalState.IDLE.name());
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
