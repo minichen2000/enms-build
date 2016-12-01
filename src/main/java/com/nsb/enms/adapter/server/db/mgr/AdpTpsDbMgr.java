@@ -151,10 +151,10 @@ public class AdpTpsDbMgr {
 		return true;
 	}
 
-	public void updateTpLayerRate(Integer tpId, int layerRate) throws Exception {
+	public void updateTpLayerRate(Integer tpId, String layerRate) throws Exception {
 		log.debug("layerRate = " + layerRate);
 		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(String.valueOf(layerRate));
+		layerRates.add(layerRate);
 		dbc.updateOne(eq("id", tpId), set("layerRates", layerRates));
 	}
 
@@ -340,7 +340,7 @@ public class AdpTpsDbMgr {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
 		List<Document> docList = dbc
-				.find(and(eq("parentTpId", parentId), in("layerRates", String.valueOf(layerRate.getCode()))))
+				.find(and(eq("parentTpId", parentId), in("layerRates", layerRate.name())))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {

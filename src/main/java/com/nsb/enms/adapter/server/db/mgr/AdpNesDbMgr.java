@@ -132,10 +132,10 @@ public class AdpNesDbMgr
 
     private void updateOperationalState( AdpNe body, Integer id, AdpNe ne )
     {
-        Integer operationalState = body.getOperationalState();
-        Integer operationalStateFromDb = ne.getOperationalState();
+        String operationalState = body.getOperationalState();
+        String operationalStateFromDb = ne.getOperationalState();
         if( operationalState == null
-                || operationalState == operationalStateFromDb )
+                || StringUtils.equals( operationalStateFromDb, operationalState ) )
         {
             return;
         }
@@ -149,10 +149,10 @@ public class AdpNesDbMgr
 
     private void updateCommunicationState( AdpNe body, Integer id, AdpNe ne )
     {
-        Integer communicationState = body.getCommunicationState();
-        Integer communicationStateFromDb = ne.getCommunicationState();
+        String communicationState = body.getCommunicationState();
+        String communicationStateFromDb = ne.getCommunicationState();
         if( communicationState == null
-                || communicationState == communicationStateFromDb )
+                || StringUtils.equals( communicationState, communicationStateFromDb ) )
         {
             return;
         }
@@ -303,10 +303,10 @@ public class AdpNesDbMgr
 
     private void updateSupervisionState( AdpNe body, Integer id, AdpNe ne )
     {
-        Integer supervisionState = body.getSupervisionState();
-        Integer supervisionStateFromDb = ne.getSupervisionState();
+        String supervisionState = body.getSupervisionState();
+        String supervisionStateFromDb = ne.getSupervisionState();
         if( null == supervisionState
-                || supervisionState == supervisionStateFromDb )
+                || StringUtils.equals( supervisionState, supervisionStateFromDb ) )
         {
             return;
         }

@@ -9,7 +9,7 @@ import com.nsb.enms.restful.model.adapter.AdpErrorInfo;
 public class ErrorWrapperUtils {
 	public static Response failDbOperation() {
 		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(ErrorCode.FAIL_DB_OPERATION.getCode());
+		errorInfo.setCode(ErrorCode.FAIL_DB_OPERATION.name());
 		errorInfo.setMessage(ErrorCode.FAIL_DB_OPERATION.getDescription());
 		return Response.serverError().entity(errorInfo).build();
 	}
@@ -23,7 +23,7 @@ public class ErrorWrapperUtils {
 
 	public static Response constructErrorInfo(ErrorCode errorCode) {
 		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(errorCode.getCode());
+		errorInfo.setCode(errorCode.name());
 		errorInfo.setMessage(errorCode.getDescription());
 		return Response.serverError().entity(errorInfo).build();
 	}

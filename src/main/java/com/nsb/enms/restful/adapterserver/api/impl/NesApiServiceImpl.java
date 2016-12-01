@@ -24,7 +24,6 @@ import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.common.utils.KeyValuePairUtil;
-import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
@@ -32,12 +31,8 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.alarm.AlarmNEMisalignment;
 import com.nsb.enms.alarm.AlarmNENotSupervised;
-import com.nsb.enms.common.AlarmCode;
-import com.nsb.enms.common.AlarmSeverity;
-import com.nsb.enms.common.AlarmType;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
-import com.nsb.enms.common.ValueType;
 import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
@@ -248,10 +243,10 @@ public class NesApiServiceImpl extends NesApiService {
 		ne.setAddresses(address);
 
 		ne.setNeType(neType);
-		ne.setOperationalState(OperationalState.IDLE.getCode());
-		ne.setCommunicationState(CommunicationState.DISCONNECTED.getCode());
-		ne.setAlignmentState(AlignmentState.MISALIGNED.getCode());
-		ne.setSupervisionState(SupervisionState.NOSUPERVISED.getCode());
+		ne.setOperationalState(OperationalState.IDLE.getStringCode());
+		ne.setCommunicationState(CommunicationState.DISCONNECTED.getStringCode());
+		ne.setAlignmentState(AlignmentState.MISALIGNED.getStringCode());
+		ne.setSupervisionState(SupervisionState.NOSUPERVISED.getStringCode());
 
 		List<AdpKVPair> params = constructParams(entity);
 		ne.setParams(params);
@@ -336,7 +331,7 @@ public class NesApiServiceImpl extends NesApiService {
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
 			equipmentsDbMgr.deleteEquipmentsByNeId(Integer.valueOf( neId ));
 		} catch (AdapterException e) {
-			if (ErrorCode.FAIL_OBJ_NOT_EXIST.getCode() != e.errorCode_) {
+			if (!StringUtils.equals( ErrorCode.FAIL_OBJ_NOT_EXIST.name(), e.errorCode_ )) {
 				return ErrorWrapperUtils.adapterException(e);
 			}
 		} catch (Exception e) {
@@ -459,7 +454,7 @@ public class NesApiServiceImpl extends NesApiService {
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
-			body.setOperationalState(OperationalState.IDLE.getCode());
+			body.setOperationalState(OperationalState.IDLE.getStringCode());
 			updateNe(body);
 		}
 		log.debug("isSuccess = " + isSuccess);

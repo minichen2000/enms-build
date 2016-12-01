@@ -31,7 +31,7 @@ public class TpsApiServiceImpl extends TpsApiService {
 	public Response getTpById(String tpid, SecurityContext securityContext) throws NotFoundException {
 	    AdpTp tp = new AdpTp();
 		try {
-			tp = tpsDbMgr.getTpById(tpid);
+			tp = tpsDbMgr.getTpById(Integer.valueOf( tpid ));
 		} catch (Exception e) {
 			log.error("getTPById", e);
 			return Response.serverError().entity(e).build();

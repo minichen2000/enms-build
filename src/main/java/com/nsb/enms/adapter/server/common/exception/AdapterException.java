@@ -25,20 +25,20 @@ public class AdapterException extends Exception
     {
         super( errorCode.name() );
         type_ = type;
-        errorCode_ = errorCode.getCode();
-        errorReason_ = errorCode.name();
+        errorCode_ = errorCode.name();
+        errorReason_ = errorCode.getDescription();
     }
     
     public AdapterException( ErrorCode errorCode )
     {
         super( errorCode.name() );
-        errorCode_ = errorCode.getCode();
-        errorReason_ = errorCode.name();
+        errorCode_ = errorCode.name();
+        errorReason_ = errorCode.getDescription();
     }
 
     public AdapterExceptionType type_;
 
     public String errorReason_;
     
-    public int errorCode_;
+    public String errorCode_;
 }

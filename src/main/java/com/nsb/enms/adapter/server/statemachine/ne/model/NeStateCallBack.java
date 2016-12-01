@@ -29,35 +29,35 @@ public class NeStateCallBack {
 	public void tellMe(CommunicationState communicationState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setCommunicationState(communicationState.getCode());
+		ne.setCommunicationState(communicationState.getStringCode());
 		updateNe(ne);
 	}
 
 	public void tellMe(MaintenanceState maintenanceState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setMaintenanceState(maintenanceState.getCode());
+		ne.setMaintenanceState(maintenanceState.getStringCode());
 		updateNe(ne);
 	}
 
 	public void tellMe(OperationalState operationalState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setOperationalState(operationalState.getCode());
+		ne.setOperationalState(operationalState.getStringCode());
 		updateNe(ne);
 	}
 
 	public void tellMe(SupervisionState supervisionState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setSupervisionState(supervisionState.getCode());
+		ne.setSupervisionState(supervisionState.getStringCode());
 		updateNe(ne);
 	}
 	
 	public void tellMe(AlignmentState alignmentState) throws AdapterException {
         AdpNe ne = new AdpNe();
         ne.setId(id);
-        ne.setSupervisionState(alignmentState.getCode());
+        ne.setSupervisionState(alignmentState.getStringCode());
         updateNe(ne);
     }
 

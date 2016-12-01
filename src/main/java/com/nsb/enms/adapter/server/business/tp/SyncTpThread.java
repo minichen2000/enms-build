@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;
-import com.nsb.enms.common.ValueType;
 import com.nsb.enms.state.OperationalState;
 
 public class SyncTpThread implements Callable<Object> {
@@ -26,12 +25,12 @@ public class SyncTpThread implements Callable<Object> {
 
 	@Override
 	public Object call() throws Exception {
-		int valueType = ValueType.ENUM.getCode();
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", valueType,
+		//int valueType = ValueType.ENUM.getCode();
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState",
 				OperationalState.DOING.name(), OperationalState.IDLE.name());
 		new AdpTpsMgr().syncTp(groupId, neId, id);
 		NeStateMachineApp.instance().afterSynchData(id);
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", valueType,
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState",
 				OperationalState.IDLE.name(), OperationalState.DOING.name());
 
 		log.debug("sync tp end");

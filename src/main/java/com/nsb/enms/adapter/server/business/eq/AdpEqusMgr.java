@@ -13,6 +13,7 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.common.EntityType;
+import com.nsb.enms.common.EquType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.model.adapter.AdpEquipment;
 
@@ -24,7 +25,7 @@ public class AdpEqusMgr {
 	public AdpEqusMgr() {
 	}
 
-	public void syncEquip(String groupId, String neId, Integer id) throws AdapterException {
+	public void syncEquip(String groupId, String neId, int id) throws AdapterException {
 		List<TptCoordinatorEntity> tptCoordinatorList = GetEquipment.getISAs(groupId, neId);
 		if (null != tptCoordinatorList && !tptCoordinatorList.isEmpty()) {
 			for (TptCoordinatorEntity entity : tptCoordinatorList) {
@@ -44,7 +45,7 @@ public class AdpEqusMgr {
 				log.error("getEquipmentById:", e);
 				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 			}
-			if (null == adpEqu || StringUtils.isEmpty(adpEqu.getId())) {
+			if (null == adpEqu || adpEqu.getId() == null) {
 				try {
 					equsDbMgr.addEquipment(newEqu);
 				} catch (Exception e) {
@@ -57,24 +58,25 @@ public class AdpEqusMgr {
 	}
 
 	private AdpEquipment constructEquip(EquipmentEntity equ, List<EquipmentEntity> equList,
-			List<TptCoordinatorEntity> tptCoordinatorList, String id) {
+			List<TptCoordinatorEntity> tptCoordinatorList, int id) {
 		AdpEquipment adpEqu = new AdpEquipment();
 		String moc = equ.getMoc();
 		String moi = equ.getMoi();
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.BOARD, moc, moi);
-		adpEqu.setId(id + ":" + keyOnNe);
-		adpEqu.setNeId(  );
+		adpEqu.setId( );
+		adpEqu.setNeId( id );
 		adpEqu.setPosition( "" );
-		adpEqu.setType(  );
+		String type = getType( moi );
+		adpEqu.setType( type );
 		adpEqu.setExpectedType( equ.getEquipmentExpected() );
 		adpEqu.setActualType( equ.getEquipmentActual() );
 		adpEqu.setKeyOnNe( keyOnNe );
-		adpEqu.setUnitPartNumber( "" );
-		adpEqu.setSoftwarePartNumber( "" );
-		adpEqu.setSerialNumber( "" );
-		adpEqu.setSlotState( "" );
-		adpEqu.setAlarmState(  );
-		adpEqu.setMaintenanceState(  );
+		adpEqu.setUnitPartNumber(  );
+		adpEqu.setSoftwarePartNumber(  );
+		adpEqu.setSerialNumber(  );
+		adpEqu.setSlotState(  );
+		adpEqu.setAlarmState( equ.getAlarmStatus() );
+		adpEqu.setMaintenanceState( );
 		
 
 		for (int i = tptCoordinatorList.size() - 1; i >= 0; i--) {
@@ -93,5 +95,21 @@ public class AdpEqusMgr {
 			}
 		}
 		return adpEqu;
+	}
+	
+	private String getType(String moi)
+	{
+	    String[] elements = moi.split( "/" );
+	    switch( elements.length )
+        {
+            case 4:
+                return EquType.shelf.name();
+            case 5:
+                return EquType.slot.name();
+            case 6:
+                return EquType.subslot.name();
+            default:
+                return EquType.unknow.name();
+        }
 	}
 }

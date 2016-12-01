@@ -40,7 +40,7 @@ public class AdpEqusDbMgr {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public AdpEquipment getEquipmentById(String id) throws Exception {
+	public AdpEquipment getEquipmentById(int id) throws Exception {
 		List<Document> docList = dbc.find(eq("id", id)).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {

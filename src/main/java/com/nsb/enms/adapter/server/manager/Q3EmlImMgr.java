@@ -139,7 +139,7 @@ public class Q3EmlImMgr {
 				NeStateCallBack callBack = new NeStateCallBack();
 				int id = ne.getId();
 				callBack.setId(id);
-				if (ne.getCommunicationState() == CommunicationState.CONNECTED.getCode()) {
+				if (StringUtils.equals( ne.getCommunicationState(), CommunicationState.CONNECTED.name() ) ) {
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
 							.setCurrentState(CommunicationState.CONNECTED);
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
