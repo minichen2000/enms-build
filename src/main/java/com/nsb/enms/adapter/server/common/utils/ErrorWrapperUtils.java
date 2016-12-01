@@ -16,7 +16,7 @@ public class ErrorWrapperUtils {
 
 	public static Response adapterException(AdapterException e) {
 		AdpErrorInfo errorInfo = new AdpErrorInfo();
-		errorInfo.setCode(e.errorCode_);
+		errorInfo.setCode(e.errorCode.name());
 		errorInfo.setMessage(e.errorReason_);
 		return Response.serverError().entity(errorInfo).build();
 	}
