@@ -50,7 +50,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public AdpTp getTpById(String tpid) throws Exception {
+	public AdpTp getTpById(Integer tpid) throws Exception {
 		List<Document> docList = dbc.find(eq("id", tpid)).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -151,7 +151,7 @@ public class AdpTpsDbMgr {
 		return true;
 	}
 
-	public void updateTpLayerRate(String tpId, int layerRate) throws Exception {
+	public void updateTpLayerRate(Integer tpId, int layerRate) throws Exception {
 		log.debug("layerRate = " + layerRate);
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(String.valueOf(layerRate));
@@ -323,7 +323,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public String getIdByKeyOnNe(String keyOnNe) throws Exception {
+	public Integer getIdByKeyOnNe(String keyOnNe) throws Exception {
 		List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -336,7 +336,7 @@ public class AdpTpsDbMgr {
 		return tp.getId();
 	}
 
-	public String getTpByParentIdAndLayerRate(String parentId, LayerRate layerRate) throws Exception {
+	public Integer getTpByParentIdAndLayerRate(String parentId, LayerRate layerRate) throws Exception {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
 		List<Document> docList = dbc

@@ -5,142 +5,97 @@ import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.model.adapter.AdpNe;
+import com.nsb.enms.state.CommunicationState;
+import com.nsb.enms.state.MaintenanceState;
+import com.nsb.enms.state.OperationalState;
+import com.nsb.enms.state.SupervisionState;
 
-public class NeStateCallBack
-{
-    private Boolean maintenanceState;
+public class NeStateCallBack {
+	private MaintenanceState maintenanceState;
 
-    private AdpNe.CommunicationStateEnum communicationState;
+	private CommunicationState communicationState;
 
-    private AdpNe.OperationalStateEnum operationalState;
+	private OperationalState operationalState;
 
-    private AdpNe.SupervisionStateEnum supervisionState;
+	private SupervisionState supervisionState;
 
-    private AdpNe.SynchStateEnum synchState;
+	private Integer id;
 
-    private String id;
+	private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
-    private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+	public void tellMe(CommunicationState communicationState) throws AdapterException {
+		AdpNe ne = new AdpNe();
+		ne.setId(id);
+		ne.setCommunicationState(communicationState.getCode());
+		updateNe(ne);
+	}
 
-    public void tellMe( AdpNe.CommunicationStateEnum communicationState )
-            throws AdapterException
-    {
-        AdpNe ne = new AdpNe();
-        ne.setId( id );
-        ne.setCommunicationState( communicationState );
-        updateNe( ne );
-    }
+	public void tellMe(MaintenanceState maintenanceState) throws AdapterException {
+		AdpNe ne = new AdpNe();
+		ne.setId(id);
+		ne.setMaintenanceState(maintenanceState.getCode());
+		updateNe(ne);
+	}
 
-    public void tellMe( Boolean maintenanceState )
-            throws AdapterException
-    {
-        AdpNe ne = new AdpNe();
-        ne.setId( id );
-        ne.setMaintenanceState( maintenanceState );
-        updateNe( ne );
-    }
+	public void tellMe(OperationalState operationalState) throws AdapterException {
+		AdpNe ne = new AdpNe();
+		ne.setId(id);
+		ne.setOperationalState(operationalState.getCode());
+		updateNe(ne);
+	}
 
-    public void tellMe( AdpNe.OperationalStateEnum operationalState )
-            throws AdapterException
-    {
-        AdpNe ne = new AdpNe();
-        ne.setId( id );
-        ne.setOperationalState( operationalState );
-        updateNe( ne );
-    }
+	public void tellMe(SupervisionState supervisionState) throws AdapterException {
+		AdpNe ne = new AdpNe();
+		ne.setId(id);
+		ne.setSupervisionState(supervisionState.getCode());
+		updateNe(ne);
+	}
 
-    public void tellMe( AdpNe.SupervisionStateEnum supervisionState )
-            throws AdapterException
-    {
-        AdpNe ne = new AdpNe();
-        ne.setId( id );
-        ne.setSupervisionState( supervisionState );
-        updateNe( ne );
-    }
+	private void updateNe(AdpNe ne) throws AdapterException {
+		try {
+			nesDbMgr.updateNe(ne);
+		} catch (Exception e) {
+			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
 
-    public void tellMe( AdpNe.SynchStateEnum synchState )
-            throws AdapterException
-    {
-        AdpNe ne = new AdpNe();
-        ne.setId( id );
-        ne.setSynchState( synchState );
-        updateNe( ne );
-    }
+	public CommunicationState getCommunicationState() {
+		return communicationState;
+	}
 
-    private void updateNe( AdpNe ne ) throws AdapterException
-    {
-        try
-        {
-            nesDbMgr.updateNe( ne );
-        }
-        catch( Exception e )
-        {
-            throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                    ErrorCode.FAIL_DB_OPERATION );
-        }
-    }
+	public void setCommunicationState(CommunicationState communicationState) {
+		this.communicationState = communicationState;
+	}
 
-    public String getId()
-    {
-        return id;
-    }
+	public OperationalState getOperationalState() {
+		return operationalState;
+	}
 
-    public void setId( String id )
-    {
-        this.id = id;
-    }
+	public void setOperationalState(OperationalState operationalState) {
+		this.operationalState = operationalState;
+	}
 
-    public AdpNe.CommunicationStateEnum getCommunicationState()
-    {
-        return communicationState;
-    }
+	public SupervisionState getSupervisionState() {
+		return supervisionState;
+	}
 
-    public void setCommunicationState(
-            AdpNe.CommunicationStateEnum communicationState )
-    {
-        this.communicationState = communicationState;
-    }
+	public void setSupervisionState(SupervisionState supervisionState) {
+		this.supervisionState = supervisionState;
+	}
 
-    public Boolean getMaintenanceState()
-    {
-        return maintenanceState;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setMaintenanceState( Boolean maintenanceState )
-    {
-        this.maintenanceState = maintenanceState;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public AdpNe.OperationalStateEnum getOperationalState()
-    {
-        return operationalState;
-    }
+	public MaintenanceState getMaintenanceState() {
+		return maintenanceState;
+	}
 
-    public void setOperationalState(
-            AdpNe.OperationalStateEnum operationalState )
-    {
-        this.operationalState = operationalState;
-    }
-
-    public AdpNe.SupervisionStateEnum getSupervisionState()
-    {
-        return supervisionState;
-    }
-
-    public void setSupervisionState(
-            AdpNe.SupervisionStateEnum supervisionState )
-    {
-        this.supervisionState = supervisionState;
-    }
-
-    public AdpNe.SynchStateEnum getSynchState()
-    {
-        return synchState;
-    }
-
-    public void setSynchState( AdpNe.SynchStateEnum synchState )
-    {
-        this.synchState = synchState;
-    }
+	public void setMaintenanceState(MaintenanceState maintenanceState) {
+		this.maintenanceState = maintenanceState;
+	}
 }

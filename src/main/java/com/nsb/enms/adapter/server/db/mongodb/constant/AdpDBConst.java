@@ -16,4 +16,6 @@ public class AdpDBConst {
 	public final static String DB_NAME_XC = "Adp_Xc";
 
 	public final static String DB_NAME_MAXNEID = "MaxNeId";
+
+	public final static String DB_NAME_SEQUENCE = "Adp_Sequence";
 }

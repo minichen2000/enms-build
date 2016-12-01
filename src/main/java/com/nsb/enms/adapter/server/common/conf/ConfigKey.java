@@ -188,4 +188,20 @@ public class ConfigKey {
 
 	public static final String DEFAULT_CREATE_XC_TU3_REQ = DEFAULT_TSTMGR_SCENARIO_DIR
 			+ "createXC-TU3-withMatrixCTP.req";
+
+	public static final String CREATE_ISA_PORT_VC12 = "CREATE_ISA_PORT_VC12";
+
+	public static final String DEFAULT_CREATE_ISA_PORT_VC12 = DEFAULT_TSTMGR_SCENARIO_DIR + "createISAPort-vc12.req";
+
+	public static final String CREATE_ISA_PORT_VC12X = "CREATE_ISA_PORT_VC12X";
+
+	public static final String DEFAULT_CREATE_ISA_PORT_VC12X = DEFAULT_TSTMGR_SCENARIO_DIR + "createISAPort-vc12x.req";
+
+	public static final String CREATE_ISA_PORT_VCX = "CREATE_ISA_PORT_VCX";
+
+	public static final String DEFAULT_CREATE_ISA_PORT_VCX = DEFAULT_TSTMGR_SCENARIO_DIR + "createISAPort-vcx.req";
+
+	public static final String DELETE_ISA_PORT = "DELETE_ISA_PORT";
+
+	public static final String DEFAULT_DELETE_ISA_PORT = DEFAULT_TSTMGR_SCENARIO_DIR + "deleteISAPort.req";
 }

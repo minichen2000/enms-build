@@ -18,6 +18,7 @@ import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
+import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
@@ -28,10 +29,10 @@ public class AdpTpsMgr {
 	public AdpTpsMgr() {
 	}
 
-	public List<AdpTp> syncTu12Ctp(String groupId, String neId, String vc4TtpId, String au4CtpId, String neDbId)
+	public List<AdpTp> syncTu12Ctp(String groupId, String neId, Integer vc4TtpId, Integer au4CtpId, Integer neDbId)
 			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetCtp.getTu12Ctps(groupId, neId, vc4TtpId);
+		List<TpEntity> tpList = GetCtp.getTu12Ctps(groupId, neId, String.valueOf(vc4TtpId));
 		log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
 
 		AdpTp au4Ctp = null;
@@ -48,9 +49,8 @@ public class AdpTpsMgr {
 			String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
 
 			// TODO 读取映射文件获取层速率
-			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.DSR_2M.getCode()));
-			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, au4CtpId, layerRates);
+			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, String.valueOf(LayerRate.DSR_2M.getCode()),
+					TpType.CTP.getCode(), 0, au4CtpId);
 
 			tps.add(ctp);
 		}
@@ -60,10 +60,10 @@ public class AdpTpsMgr {
 		return tps;
 	}
 
-	public List<AdpTp> syncTu3Ctp(String groupId, String neId, String vc4TtpId, String au4CtpId, String neDbId)
+	public List<AdpTp> syncTu3Ctp(String groupId, String neId, Integer vc4TtpId, Integer au4CtpId, Integer neDbId)
 			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetCtp.getTu3Ctps(groupId, neId, vc4TtpId);
+		List<TpEntity> tpList = GetCtp.getTu3Ctps(groupId, neId, String.valueOf(vc4TtpId));
 		log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
 
 		AdpTp au4Ctp = null;
@@ -96,7 +96,7 @@ public class AdpTpsMgr {
 		try {
 			for (AdpTp tp : tps) {
 				AdpTp newTp = tpsDbMgr.getTpById(tp.getId());
-				if (null == newTp || StringUtils.isEmpty(newTp.getId())) {
+				if (null == newTp || newTp.getId() < 0) {
 					tpsDbMgr.addTp(tp);
 				}
 			}
@@ -119,9 +119,8 @@ public class AdpTpsMgr {
 				String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
 
 				// TODO 读取映射文件获取层速率
-				List<String> layerRates = new ArrayList<String>();
-				layerRates.add(String.valueOf(LayerRate.VC4.getCode()));
-				AdpTp ttp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
+				AdpTp ttp = constructTp(tp, neDbId, userLabel, String.valueOf(LayerRate.VC4.getCode(),),
+						StringUtils.EMPTY);
 				tps.add(ttp);
 				break;
 			}
@@ -132,25 +131,25 @@ public class AdpTpsMgr {
 		return tps;
 	}
 
-	private AdpTp constructTp(TpEntity tp, String neDbId, String userLabel, String parentTpId,
-			List<String> layerRates) {
+	private AdpTp constructTp(TpEntity tp, Integer neDbId, String userLabel, String layerRates, Integer tpType,
+			Integer ptpId, Integer parentTpId) {
 		AdpTp adpTp = new AdpTp();
 		adpTp.setNeId(neDbId);
 		String moc = tp.getMoc();
-		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.TP, moc, tp.getMoi());
-		adpTp.setId(neDbId + ":" + keyOnNe);
-		adpTp.setKeyOnNe(keyOnNe);
-		adpTp.setAdminState(tp.getAdministrativeState());
-		adpTp.setOperationalState(tp.getOperationalState());
+		// TODO 设置id
+		adpTp.setId(neDbId);
+		adpTp.setNeId(neDbId);
 		adpTp.setUserLabel(userLabel);
-		adpTp.setNativeName(userLabel);
-		adpTp.setTpType(moc);
-		adpTp.setParentTpId(parentTpId);
 		adpTp.setLayerRates(layerRates);
+		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.TP, moc, tp.getMoi());
+		adpTp.setKeyOnNe(keyOnNe);
+		adpTp.setTpType(tpType);
+		adpTp.setPtpID(ptpId);
+		adpTp.setParentTpID(parentTpId);
 		return adpTp;
 	}
 
-	public void syncTp(String groupId, String neId, String neDbId) throws AdapterException {
+	public void syncTp(String groupId, String neId, Integer neDbId) throws AdapterException {
 		List<TpEntity> tpList = GetTp.getTps(groupId, neId);
 		log.debug("tpList = " + tpList.size() + ", neId = " + neId);
 
@@ -165,10 +164,9 @@ public class AdpTpsMgr {
 				log.error("tp's layerRate is null, ignore this tp", tp);
 				continue;
 			}
-			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(layerRate.getCode()));
 
-			AdpTp newTp = constructTp(tp, neDbId, userLabel, StringUtils.EMPTY, layerRates);
+			AdpTp newTp = constructTp(tp, neDbId, userLabel, String.valueOf(layerRate.getCode()), TpType.PTP.getCode(),
+					null, null);
 			tps.add(newTp);
 			tps = addTps(tps);
 
@@ -177,7 +175,7 @@ public class AdpTpsMgr {
 			log.debug("tpId = " + tpId);
 			String ptpId = tpId.split("=")[1];
 			log.debug("ptpId = " + ptpId);
-			String ptpDbId = tps.get(0).getId();
+			Integer ptpDbId = tps.get(0).getId();
 			if (tpId.startsWith("opticalSPI")) {
 				syncSdhCtp(groupId, neId, moi, ptpId, ptpDbId, neDbId);
 			} else if (tpId.startsWith("pPI")) {
@@ -190,7 +188,7 @@ public class AdpTpsMgr {
 		log.debug("sync tp end");
 	}
 
-	private void syncSdhCtp(String groupId, String neId, String moi, String ptpId, String ptpDbId, String neDbId)
+	private void syncSdhCtp(String groupId, String neId, String moi, String ptpId, Integer ptpDbId, Integer neDbId)
 			throws AdapterException {
 		List<TpEntity> ctpList = GetCtp.getSdhCtps(groupId, neId, ptpId);
 
@@ -204,17 +202,15 @@ public class AdpTpsMgr {
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(ctp);
 
 			// TODO 读取映射文件获取层速率
-			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(LayerRate.AU4.getCode()));
-
-			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
+			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, String.valueOf(LayerRate.AU4.getCode()),
+					TpType.CTP.getCode(), ptpDbId, ptpDbId);
 			tps.add(newCtp);
 		}
 
 		addTps(tps);
 	}
 
-	private void syncPdhCtp(String groupId, String neId, String moi, String ptpId, String ptpDbId, String neDbId)
+	private void syncPdhCtp(String groupId, String neId, String moi, String ptpId, Integer ptpDbId, Integer neDbId)
 			throws AdapterException {
 		Pair<Integer, List<TpEntity>> pair = GetCtp.getPdhCtp(groupId, neId, ptpId);
 		if (null == pair) {
@@ -229,20 +225,15 @@ public class AdpTpsMgr {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
 		for (TpEntity ctp : ctpList) {
 			String userLabel = GenerateUserLabelUtil.generateTpUserLabel(ctp);
-
-			List<String> layerRates = new ArrayList<String>();
-			layerRates.add(String.valueOf(pair.getFirst()));
-
-			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, ptpDbId, layerRates);
+			AdpTp newCtp = constructTp(ctp, neDbId, userLabel, String.valueOf(pair.getFirst()), TpType.CTP.getCode(),
+					ptpDbId, ptpDbId);
 			tps.add(newCtp);
 		}
 
 		AdpTp pdhPTP = new AdpTp();
 		pdhPTP.setId(ptpDbId);
 		int layerRate = pair.getFirst();
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(String.valueOf(layerRate));
-		pdhPTP.setLayerRates(layerRates);
+		pdhPTP.setLayerRates(String.valueOf(layerRate));
 		addTps(tps);
 		updateTps(pdhPTP);
 

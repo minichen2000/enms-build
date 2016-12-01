@@ -80,7 +80,7 @@ public class AdpXcsMgr {
 	public String createXcByAu4AndVc4(String au4CtpId) throws AdapterException {
 		AdpTp tp = getTpById(au4CtpId);
 
-		String neDbId = tp.getNeId();
+		Integer neDbId = tp.getNeId();
 		AdpNe ne = getNeById(neDbId);
 
 		String neMoi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
@@ -115,7 +115,7 @@ public class AdpXcsMgr {
 		return vc4TTPId;
 	}
 
-	private AdpNe getNeById(String neDbId) throws AdapterException {
+	private AdpNe getNeById(Integer neDbId) throws AdapterException {
 		AdpNe ne = null;
 		try {
 			ne = nesDbMgr.getNeById(neDbId);
@@ -124,7 +124,7 @@ public class AdpXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		if (null == ne || StringUtils.isEmpty(ne.getId())) {
+		if (null == ne || ne.getId() < 0) {
 			log.error("can not find ne by id:" + neDbId);
 			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 		}
@@ -135,7 +135,7 @@ public class AdpXcsMgr {
 	private XcParamBean getParam(String tpId) throws AdapterException {
 		AdpTp tp = getTpById(tpId);
 
-		String neid = tp.getNeId();
+		Integer neid = tp.getNeId();
 		AdpNe ne = null;
 		try {
 			ne = nesDbMgr.getNeById(neid);
@@ -144,7 +144,7 @@ public class AdpXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		String tpType = tp.getTpType();
+		Integer tpType = tp.getTpType();
 		String neMoi = GenerateKeyOnNeUtil.getMoi(ne.getKeyOnNe());
 		String moi = GenerateKeyOnNeUtil.getMoi(tp.getKeyOnNe());
 		log.debug("moi = " + moi);

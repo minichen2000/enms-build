@@ -56,7 +56,7 @@ public class NotificationSender {
 		String moi = entity.getMoi().getMoi();
 		EntityType objectType = getObjectType(moc);
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(objectType, moc, moi);
-		Integer objectID = Integer.valueOf(getObjectId(objectType, keyOnNe, moi));
+		Integer objectID = getObjectId(objectType, keyOnNe, moi);
 		if (null == objectID) {
 			return;
 		}
@@ -94,13 +94,9 @@ public class NotificationSender {
 		publisher.sendMessage(object);
 	}
 
-	public void sendAvcNotif(EntityType objectType, Integer objectID, String key, Integer valueType, String value,
+	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, Integer valueType, String value,
 			String oldValue) {
-		Long eventTime = TimeUtil.getLocalTmfTime();
-
-		AvcBody avc = publisher.createAvcBody(eventTime, objectType, objectID, key, valueType, value, oldValue);
-
-		send(avc);
+		publisher.sendAVC(entityType, objectID, key, valueType, value, oldValue);
 	}
 
 	public void sendOcNotif(EntityType objectType, Integer objectID) {
@@ -176,7 +172,7 @@ public class NotificationSender {
 		}
 	}
 
-	private String getObjectId(EntityType objectType, String keyOnNe, String moi) {
+	private Integer getObjectId(EntityType objectType, String keyOnNe, String moi) {
 		switch (objectType) {
 		case NE:
 			AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();

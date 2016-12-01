@@ -24,7 +24,7 @@ public class AdpEqusMgr {
 	public AdpEqusMgr() {
 	}
 
-	public void syncEquip(String groupId, String neId, String id) throws AdapterException {
+	public void syncEquip(String groupId, String neId, Integer id) throws AdapterException {
 		List<TptCoordinatorEntity> tptCoordinatorList = GetEquipment.getISAs(groupId, neId);
 		if (null != tptCoordinatorList && !tptCoordinatorList.isEmpty()) {
 			for (TptCoordinatorEntity entity : tptCoordinatorList) {
