@@ -16,6 +16,7 @@ public class AdpSeqDbMgr {
 	private static final String NE = "ne";
 	private static final String TP = "tp";
 	private static final String XC = "xc";
+	private static final String BORAD = "board";
 
 	public static synchronized Integer getMaxNeId() throws Exception {
 		return getMaxIdByType(NE);
@@ -28,6 +29,10 @@ public class AdpSeqDbMgr {
 	public static synchronized Integer getMaxXcId() throws Exception {
 		return getMaxIdByType(XC);
 	}
+	
+	public static synchronized Integer getMaxEquipmentId() throws Exception {
+        return getMaxIdByType(BORAD);
+    }
 
 	private static Integer getMaxIdByType(String type) throws Exception {
 		Document doc = dbc.findOneAndUpdate(dbc.find().first(), new Document("$inc", new Document(type, 1)));

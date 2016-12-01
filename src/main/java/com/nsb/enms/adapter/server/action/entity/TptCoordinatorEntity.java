@@ -10,6 +10,14 @@ public class TptCoordinatorEntity {
 	private String ipAddress;
 
 	private String ipMask;
+	
+	private String maxPosition;
+	
+	private String maxVc4nv;
+	
+	private String maxVc3nv;
+	
+	private String maxVc12nv;
 
 	public String getMoc() {
 		return moc;
@@ -50,10 +58,44 @@ public class TptCoordinatorEntity {
 	public void setIpMask(String ipMask) {
 		this.ipMask = ipMask;
 	}
+	
+	public String getMaxPosition()
+    {
+        return maxPosition;
+    }
 
-	@Override
-	public String toString() {
-		return "TptCoordinatorEntity [moc=" + moc + ", moi=" + moi + ", equMoi=" + equMoi + ", ipAddress=" + ipAddress
-				+ ", ipMask=" + ipMask + "]";
-	}
+    public void setMaxPosition( String maxPosition )
+    {
+        this.maxPosition = maxPosition;
+    }
+
+    public String getMaxVc4nv()
+    {
+        return maxVc4nv;
+    }
+
+    public void setMaxVc4nv( String maxVc4nv )
+    {
+        this.maxVc4nv = maxVc4nv;
+    }
+
+    public String getMaxVc3nv()
+    {
+        return maxVc3nv;
+    }
+
+    public void setMaxVc3nv( String maxVc3nv )
+    {
+        this.maxVc3nv = maxVc3nv;
+    }
+
+    public String getMaxVc12nv()
+    {
+        return maxVc12nv;
+    }
+
+    public void setMaxVc12nv( String maxVc12nv )
+    {
+        this.maxVc12nv = maxVc12nv;
+    }
 }

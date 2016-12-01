@@ -139,5 +139,13 @@ public class ParseUtil
 
         System.out.println( parseAttrWithSingleValue(
             "availabilityStatus= { notInstalled } ," ) );
+        
+        Pattern pattern = Pattern
+                .compile( "objectClass\\s*\\{\\s*(vc.*?)\\s*\\},\\s*concatenationLevel\\s*onlyMaxLevelGiven\\s*(\\d+)\\s*\\}" );
+        Matcher match = pattern.matcher( "dataTPList= { { objectClass { vc4XVirtualTTPBidirectional }, concatenationLevel onlyMaxLevelGiven 1 }, { objectClass { vc12XVirtualTTPBidirectional }, concatenationLevel onlyMaxLevelGiven 50 }, { objectClass { vc3XVirtualTTPBidirectional }, concatenationLevel onlyMaxLevelGiven 3 }, { objectClass { vc12TTPBidirectionalR1 }, concatenationLevel onlyMaxLevelGiven 1 }, { objectClass { vc3TTPBidirectionalR1 }, concatenationLevel onlyMaxLevelGiven 1 }, { objectClass { vc4TTPBidirectionalR1 }, concatenationLevel onlyMaxLevelGiven 1 } } ," );
+        while (match.find())
+        {
+            System.out.println( match.group( 1 ) + "=" + match.group( 2 ) );
+        }
     }
 }
