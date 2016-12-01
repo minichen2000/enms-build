@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
-import com.nsb.enms.adapter.server.business.tp.TerminateTpMgr;
 import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
@@ -23,18 +22,15 @@ import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.utils.HexDecConvertUtil;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
-import com.nsb.enms.restful.adapterserver.api.XcsApiService;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-08-31T16:19:02.183+08:00")
-public class XcsApiServiceImpl extends XcsApiService {
+public class XcsApiServiceImpl  {
 	private final static Logger log = LogManager.getLogger(XcsApiServiceImpl.class);
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 	private AdpXcsMgr adpXcMgr = new AdpXcsMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
-	@Override
 	public Response createXc(AdpXc body, SecurityContext securityContext) throws NotFoundException {
 		try {
 			List<String> atps = body.getAtps();
@@ -405,7 +401,6 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return false;
 	}
 
-	@Override
 	public Response deleteXc(String xcid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			adpXcMgr.deleteXcById(xcid);
@@ -416,7 +411,6 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return Response.ok().build();
 	}
 
-	@Override
 	public Response findXcs(String tpid, SecurityContext securityContext) throws NotFoundException {
 		List<AdpXc> xcList;
 		try {
@@ -439,7 +433,6 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return xcList;
 	}
 
-	@Override
 	public Response getXcById(String xcid, SecurityContext securityContext) throws NotFoundException {
 		AdpXc xc = new AdpXc();
 		try {
@@ -450,7 +443,6 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return Response.ok().entity(xc).build();
 	}
 
-	@Override
 	public Response deleteXcsByNeId(String neId, SecurityContext arg1) throws NotFoundException {
 		try {
 			adpXcMgr.deleteXcsByNeId(neId);
@@ -461,7 +453,6 @@ public class XcsApiServiceImpl extends XcsApiService {
 		return Response.ok().build();
 	}
 
-	@Override
 	public Response getXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
 		return null;
 	}

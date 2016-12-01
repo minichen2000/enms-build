@@ -13,25 +13,24 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.restful.adapterserver.api.ApiResponseMessage;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
-import com.nsb.enms.restful.adapterserver.api.TpsApiService;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-@javax.annotation.Generated(value = "class io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2016-07-29T17:16:31.406+08:00")
-public class TpsApiServiceImpl extends TpsApiService {
+public class TpsApiServiceImpl {
 	private final static Logger log = LogManager.getLogger(TpsApiServiceImpl.class);
 
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
-/*	@Override
-	public Response addTps(List<AdpTp> body, SecurityContext securityContext) throws NotFoundException {
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
-	}*/
+	/*
+	 * @Override public Response addTps(List<AdpTp> body, SecurityContext
+	 * securityContext) throws NotFoundException { return
+	 * Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK,
+	 * "magic!")).build(); }
+	 */
 
-	@Override
 	public Response getTpById(String tpid, SecurityContext securityContext) throws NotFoundException {
-	    AdpTp tp = new AdpTp();
+		AdpTp tp = new AdpTp();
 		try {
-			tp = tpsDbMgr.getTpById(Integer.valueOf( tpid ));
+			tp = tpsDbMgr.getTpById(Integer.valueOf(tpid));
 		} catch (Exception e) {
 			log.error("getTPById", e);
 			return Response.serverError().entity(e).build();
@@ -39,7 +38,6 @@ public class TpsApiServiceImpl extends TpsApiService {
 		return Response.ok().entity(tp).build();
 	}
 
-	@Override
 	public Response getTpsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
 		System.out.println("getTPByNEId, neId = " + neid);
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -52,7 +50,6 @@ public class TpsApiServiceImpl extends TpsApiService {
 		return Response.ok().entity(tpList).build();
 	}
 
-	@Override
 	public Response getTpsByLayerRate(String neid, String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -65,29 +62,23 @@ public class TpsApiServiceImpl extends TpsApiService {
 		return Response.ok().entity(tpList).build();
 	}
 
-	@Override
 	public Response updateTp(AdpTp body, SecurityContext securityContext) throws NotFoundException {
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
 	}
 
-	/*@Override
-	public Response getTps(SecurityContext securityContext) throws NotFoundException {
-		Date begin = new Date();
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
-		try {
-			tpList = tpsDbMgr.getTps();
-		} catch (Exception e) {
-			log.error("getTPs", e);
-			return Response.serverError().entity(e).build();
-		}
+	/*
+	 * @Override public Response getTps(SecurityContext securityContext) throws
+	 * NotFoundException { Date begin = new Date(); List<AdpTp> tpList = new
+	 * ArrayList<AdpTp>(); try { tpList = tpsDbMgr.getTps(); } catch (Exception
+	 * e) { log.error("getTPs", e); return
+	 * Response.serverError().entity(e).build(); }
+	 * 
+	 * Date end = new Date(); log.debug("adapter.getTPs cost time = " +
+	 * (end.getTime() - begin.getTime()));
+	 * 
+	 * return Response.ok().entity(tpList).build(); }
+	 */
 
-		Date end = new Date();
-		log.debug("adapter.getTPs cost time = " + (end.getTime() - begin.getTime()));
-
-		return Response.ok().entity(tpList).build();
-	}*/
-
-	@Override
 	public Response getTpsByType(String neid, String tptype, SecurityContext securityContext) throws NotFoundException {
 		Date begin = new Date();
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -104,27 +95,23 @@ public class TpsApiServiceImpl extends TpsApiService {
 		return Response.ok().entity(tpList).build();
 	}
 
-/*	@Override
-	public Response getCtpsByTpId(String neid, String ptpid, SecurityContext securityContext) throws NotFoundException {
+	/*
+	 * @Override public Response getCtpsByTpId(String neid, String ptpid,
+	 * SecurityContext securityContext) throws NotFoundException { try {
+	 * tpsDbMgr.getCtpsByTpId(neid, ptpid); } catch (Exception e) {
+	 * log.error("getCTPsByTP", e); return
+	 * Response.serverError().entity(e).build(); } return null; }
+	 */
+
+	public Response getChildrenTps(String tpid, SecurityContext securityContext) throws NotFoundException {
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpsDbMgr.getCtpsByTpId(neid, ptpid);
+			tpList = tpsDbMgr.getChildrenTps(tpid);
 		} catch (Exception e) {
-			log.error("getCTPsByTP", e);
+			log.error("getChildrenTps", e);
 			return Response.serverError().entity(e).build();
 		}
-		return null;
-	}*/
-
-	@Override
-	public Response getChildrenTps(String tpid, SecurityContext securityContext) throws NotFoundException {
-	    List<AdpTp> tpList = new ArrayList<AdpTp>();
-        try {
-            tpList = tpsDbMgr.getChildrenTps(tpid);
-        } catch (Exception e) {
-            log.error("getChildrenTps", e);
-            return Response.serverError().entity(e).build();
-        }
-        return Response.ok().entity(tpList).build();
+		return Response.ok().entity(tpList).build();
 	}
 
 }
