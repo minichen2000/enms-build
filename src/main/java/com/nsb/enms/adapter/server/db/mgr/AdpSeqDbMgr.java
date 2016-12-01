@@ -17,15 +17,15 @@ public class AdpSeqDbMgr {
 	private static final String TP = "tp";
 	private static final String XC = "xc";
 
-	public static Integer getMaxNeId() throws Exception {
+	public static synchronized Integer getMaxNeId() throws Exception {
 		return getMaxIdByType(NE);
 	}
 
-	public static Integer getMaxTpId() throws Exception {
+	public static synchronized Integer getMaxTpId() throws Exception {
 		return getMaxIdByType(TP);
 	}
 
-	public static Integer getMaxXcId() throws Exception {
+	public static synchronized Integer getMaxXcId() throws Exception {
 		return getMaxIdByType(XC);
 	}
 
