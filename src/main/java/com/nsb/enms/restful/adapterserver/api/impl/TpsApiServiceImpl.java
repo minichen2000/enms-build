@@ -42,7 +42,7 @@ public class TpsApiServiceImpl {
 		System.out.println("getTPByNEId, neId = " + neid);
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getTpsByNeId(neid);
+			tpList = tpsDbMgr.getTpsByNeId(Integer.valueOf( neid ));
 		} catch (Exception e) {
 			log.error("getTPByNEId", e);
 			return Response.serverError().entity(e).build();
@@ -54,7 +54,7 @@ public class TpsApiServiceImpl {
 			throws NotFoundException {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getTpsByLayerRate(neid, layerrate);
+			tpList = tpsDbMgr.getTpsByLayerRate(Integer.valueOf( neid ), layerrate);
 		} catch (Exception e) {
 			log.error("getTPsByLayerrate", e);
 			return Response.serverError().entity(e).build();
@@ -83,7 +83,7 @@ public class TpsApiServiceImpl {
 		Date begin = new Date();
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getTpsByType(neid, tptype);
+			tpList = tpsDbMgr.getTpsByType(Integer.valueOf( neid ), tptype);
 		} catch (Exception e) {
 			log.error("getTPsByType", e);
 			return Response.serverError().entity(e).build();
@@ -106,7 +106,7 @@ public class TpsApiServiceImpl {
 	public Response getChildrenTps(String tpid, SecurityContext securityContext) throws NotFoundException {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getChildrenTps(tpid);
+			tpList = tpsDbMgr.getChildrenTps(Integer.valueOf( tpid ));
 		} catch (Exception e) {
 			log.error("getChildrenTps", e);
 			return Response.serverError().entity(e).build();

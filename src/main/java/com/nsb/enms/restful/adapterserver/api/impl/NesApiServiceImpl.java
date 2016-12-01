@@ -37,10 +37,12 @@ import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
+import com.nsb.enms.restful.model.adapter.AdpEquipment;
 import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 import com.nsb.enms.restful.model.adapter.AdpTp;
+import com.nsb.enms.restful.model.adapter.AdpXc;
 import com.nsb.enms.state.AlignmentState;
 import com.nsb.enms.state.CommunicationState;
 import com.nsb.enms.state.OperationalState;
@@ -51,6 +53,7 @@ public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+	private AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
 
 	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
 
@@ -617,4 +620,45 @@ public class NesApiServiceImpl extends NesApiService {
 			return ErrorWrapperUtils.adapterException(e);
 		}
 	}
+
+    @Override
+    public Response createXc( String neid, AdpXc xc,
+            SecurityContext securityContext ) throws NotFoundException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response deleteXcsByNeId( String neid,
+            SecurityContext securityContext ) throws NotFoundException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Response getEquipmentsByNeId( String neid,
+            SecurityContext securityContext ) throws NotFoundException
+    {
+        List<AdpEquipment> equipments = new ArrayList<AdpEquipment>();
+        try {
+            equipments = equsDbMgr.getEquipmentsByNeId( neid );
+            if (equipments.isEmpty()) {
+                return failObjNotExist();
+            }
+        } catch (Exception e) {
+            log.error("getEquipmentsByNeId", e);
+            return failDbOperation();
+        }
+        return Response.ok().entity(equipments).build();
+    }
+
+    @Override
+    public Response getXcsByNeId( String neid, SecurityContext securityContext )
+            throws NotFoundException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

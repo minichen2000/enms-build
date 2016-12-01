@@ -47,7 +47,7 @@ public class AdpTpsMgr {
 		for (TpEntity tp : tpList) {
 			log.debug("syncTu12Ctp tp = " + tp);
 			String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
-			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, ManagedObjectType.TU12.getLayerRates(),
+			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, ManagedObjectType.VC12.getLayerRates(),
 					TpType.CTP.name(), ptpDbId, au4CtpId);
 
 			tps.add(ctp);
@@ -76,7 +76,7 @@ public class AdpTpsMgr {
 		for (TpEntity tp : tpList) {
 			log.debug("syncTu3Ctp tp = " + tp);
 			String tu3CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
-			AdpTp ctp = constructTp(tp, neDbId, tu3CtpUserLabel, ManagedObjectType.TU3.getLayerRates(),
+			AdpTp ctp = constructTp(tp, neDbId, tu3CtpUserLabel, ManagedObjectType.VC3.getLayerRates(),
 					TpType.CTP.name(), ptpDbId, au4CtpId);
 
 			tps.add(ctp);
