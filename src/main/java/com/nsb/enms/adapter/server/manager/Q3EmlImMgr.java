@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
+import com.nsb.enms.adapter.server.alarm.AlarmNEOutOfMngt;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
@@ -24,7 +25,6 @@ import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
-import com.nsb.enms.alarm.AlarmNEOutOfMngt;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.state.CommunicationState;
@@ -139,18 +139,21 @@ public class Q3EmlImMgr {
 				NeStateCallBack callBack = new NeStateCallBack();
 				int id = ne.getId();
 				callBack.setId(id);
-				if (StringUtils.equals( ne.getCommunicationState(), CommunicationState.CONNECTED.name() ) ) {
+				if (StringUtils.equals(ne.getCommunicationState(), CommunicationState.CONNECTED.name())) {
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
 							.setCurrentState(CommunicationState.CONNECTED);
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()
 							.fire(NeEvent.E_REACHABLE_2_UNREACHABLE, callBack);
 
-//					Long eventTime = TimeUtil.getLocalTmfTime();
-//					Long occureTime = eventTime;
-//					NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT, AlarmType.COMMUNICATION,
-//							AlarmSeverity.CRITICAL, eventTime, occureTime, null, "", EntityType.NE, Integer.valueOf(id),
-//							null, null, AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
-					NotificationSender.instance().sendAlarm( new AlarmNEOutOfMngt( id ) );
+					// Long eventTime = TimeUtil.getLocalTmfTime();
+					// Long occureTime = eventTime;
+					// NotificationSender.instance().sendAlarm(AlarmCode.ALM_NE_MISALIGNMENT,
+					// AlarmType.COMMUNICATION,
+					// AlarmSeverity.CRITICAL, eventTime, occureTime, null, "",
+					// EntityType.NE, Integer.valueOf(id),
+					// null, null,
+					// AlarmCode.ALM_NE_MISALIGNMENT.getDescription());
+					NotificationSender.instance().sendAlarm(new AlarmNEOutOfMngt(id));
 				}
 			}
 		} catch (Exception e) {
