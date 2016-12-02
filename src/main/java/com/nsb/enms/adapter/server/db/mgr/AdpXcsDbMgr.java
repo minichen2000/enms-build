@@ -32,15 +32,14 @@ public class AdpXcsDbMgr {
 		String json = gson.toJson(body);
 		BasicDBObject dbObject = (BasicDBObject) JSON.parse(json);
 		dbc1.insertOne(dbObject);
-		body.setId(dbObject.getObjectId("_id").toString());
 		return body;
 	}
 
-	public void deleteXc(String xcid) throws Exception {
-		dbc.deleteOne(new BasicDBObject("_id", new ObjectId(xcid)));
+	public void deleteXc(Integer xcid) throws Exception {
+		dbc.deleteOne(new Document("id", xcid));
 	}
 
-	public List<AdpXc> findXcsByTpId(String tpid) throws Exception {
+	public List<AdpXc> findXcsByTpId(Integer tpid) throws Exception {
 		List<Document> docList = dbc.find(or(in("atps", tpid), in("ztps", tpid))).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by tpid = {}", tpid);
@@ -81,7 +80,6 @@ public class AdpXcsDbMgr {
 
 	private AdpXc constructXC(Document doc) {
 		AdpXc xc = gson.fromJson(doc.toJson(), AdpXc.class);
-		xc.setId(doc.getObjectId("_id").toString());
 		return xc;
 	}
 

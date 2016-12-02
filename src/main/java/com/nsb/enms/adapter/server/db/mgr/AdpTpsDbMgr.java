@@ -26,6 +26,7 @@ import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.common.LayerRate;
+import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class AdpTpsDbMgr {
@@ -68,6 +69,43 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
+	public AdpTp getTpById(Integer neId, Integer tpid) throws Exception {
+		List<Document> docList = dbc.find(and(eq("neId", neId), eq("id", tpid))).into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by tpid = " + tpid);
+			return new AdpTp();
+		}
+
+		log.debug(docList.size());
+		for (Document doc : docList) {
+			log.debug(doc.toJson());
+		}
+
+		Document doc = docList.get(0);
+		AdpTp tp = constructTp(doc);
+		return tp;
+	}
+
+	public AdpTp getTpByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+		List<Document> docList = dbc.find(and(eq("neId", neId), eq("keyOnNe", keyOnNe)))
+				.into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by keyOnNe = " + keyOnNe);
+			return new AdpTp();
+		}
+
+		log.debug(docList.size());
+		for (Document doc : docList) {
+			log.debug(doc.toJson());
+		}
+
+		Document doc = docList.get(0);
+		AdpTp tp = constructTp(doc);
+		return tp;
+	}
+
 	private AdpTp constructTp(Document doc) {
 		AdpTp tp = gson.fromJson(doc.toJson(), AdpTp.class);
 		return tp;
@@ -77,7 +115,9 @@ public class AdpTpsDbMgr {
 		log.debug("getTPByNEId, neId = " + neid);
 		List<Document> docList = dbc
 				.find(and(eq("neId", neid),
-						or(eq("tpType", "labelledOpticalSPITTPBidirectional"), eq("tpType", "pPITTPBidirectionalR1"))))
+						in("layerRates", ManagedObjectType.STM1_OPTICAL, ManagedObjectType.STM4_OPTICAL,
+								ManagedObjectType.STM16_OPTICAL, ManagedObjectType.STM64_OPTICAL,
+								ManagedObjectType.STM256_OPTICAL, ManagedObjectType.STM1_ELECTRICAL)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by neid = " + neid);
@@ -97,6 +137,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
+	// TODO layerRate在数据库中保存的是List，这里传入的String，这个方法是有问题的
 	public List<AdpTp> getTpsByLayerRate(Integer neid, String layerrate) throws Exception {
 		List<Document> docList = null;
 		if ((null == neid || neid < 0) && StringUtils.isEmpty(layerrate)) {
@@ -240,13 +281,45 @@ public class AdpTpsDbMgr {
 
 	public List<AdpTp> getChildrenTps(Integer tpid) throws Exception {
 		Date begin = new Date();
-		log.debug("getCTPsByTP, tpid = {}", tpid);
+		log.debug("getChildrenTps, tpid = {}", tpid);
 
 		Bson filter = and(eq("parentTpId", tpid), eq("tpType", "tu12CTPBidirectionalR1"));
 		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find children tps, query by tpid = {}", tpid);
+			return new ArrayList<AdpTp>();
+		}
+
+		log.debug(docList.size());
+		for (Document doc : docList) {
+			log.debug(doc.toJson());
+		}
+
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		for (Document doc : docList) {
+			AdpTp tp = constructTp(doc);
+			tpList.add(tp);
+		}
+
+		Date end = new Date();
+		log.debug("getChildrenTPs cost time = " + (end.getTime() - begin.getTime()));
+
+		return tpList;
+	}
+
+	public List<AdpTp> getChildrenTps(Integer neId, Integer tpId) throws Exception {
+		Date begin = new Date();
+		log.debug("getChildrenTps, neId = {}, tpid = {}", neId, tpId);
+
+		@SuppressWarnings("unchecked")
+		Bson filter = and(eq("neId", neId), eq("parentTpID", tpId),
+				in("layerRates", ManagedObjectType.VC12.getLayerRates(), ManagedObjectType.TU12.getLayerRates(),
+						ManagedObjectType.VC3.getLayerRates(), ManagedObjectType.TU3.getLayerRates()));
+		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find children tps, query by tpid = {}", tpId);
 			return new ArrayList<AdpTp>();
 		}
 
@@ -333,10 +406,10 @@ public class AdpTpsDbMgr {
 		return tp.getId();
 	}
 
-	public Integer getTpByParentIdAndLayerRate(Integer parentId, LayerRate layerRate) throws Exception {
+	public AdpTp getTpByParentIdAndLayerRate(Integer parentId, List<String> layerRates) throws Exception {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
-		List<Document> docList = dbc.find(and(eq("parentTpId", parentId), in("layerRates", layerRate.name())))
+		List<Document> docList = dbc.find(and(eq("parentTpId", parentId), eq("layerRates", layerRates)))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -345,6 +418,21 @@ public class AdpTpsDbMgr {
 		}
 
 		Document doc = docList.get(0);
-		return constructTp(doc).getId();
+		return constructTp(doc);
+	}
+
+	public AdpTp getTpByIdAndLayerRate(Integer tpId, List<String> layerRates) throws Exception {
+		log.debug("getTpByIdAndLayerRate, tpId = {}", tpId);
+
+		List<Document> docList = dbc.find(and(eq("id", tpId), eq("layerRates", layerRates)))
+				.into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find tp, query by tpId = " + tpId);
+			return null;
+		}
+
+		Document doc = docList.get(0);
+		return constructTp(doc);
 	}
 }

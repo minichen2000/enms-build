@@ -29,26 +29,18 @@ public class AdpTpsMgr {
 	public AdpTpsMgr() {
 	}
 
-	public List<AdpTp> syncTu12Ctp(String groupId, String neId, Integer vc4TtpId, Integer au4CtpId, Integer neDbId,
-			Integer ptpDbId) throws AdapterException {
+	public List<AdpTp> syncTu12Ctp(String groupId, Integer neId, String vc4TtpId, AdpTp au4Ctp, Integer ptpDbId)
+			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetCtp.getTu12Ctps(groupId, neId, String.valueOf(vc4TtpId));
+		List<TpEntity> tpList = GetCtp.getTu12Ctps(groupId, String.valueOf(neId), vc4TtpId);
 		log.debug("syncTu12Ctp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
-
-		AdpTp au4Ctp = null;
-		try {
-			au4Ctp = tpsDbMgr.getTpById(au4CtpId);
-		} catch (Exception e) {
-			log.error("getTpById", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
 
 		String au4CtpUserLabel = au4Ctp.getUserLabel();
 		for (TpEntity tp : tpList) {
 			log.debug("syncTu12Ctp tp = " + tp);
 			String tu12CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
-			AdpTp ctp = constructTp(tp, neDbId, tu12CtpUserLabel, ManagedObjectType.VC12.getLayerRates(),
-					TpType.CTP.name(), ptpDbId, au4CtpId);
+			AdpTp ctp = constructTp(tp, neId, tu12CtpUserLabel, ManagedObjectType.TU12.getLayerRates(),
+					TpType.CTP.name(), ptpDbId, au4Ctp.getId());
 
 			tps.add(ctp);
 		}
@@ -58,26 +50,18 @@ public class AdpTpsMgr {
 		return tps;
 	}
 
-	public List<AdpTp> syncTu3Ctp(String groupId, String neId, Integer vc4TtpId, Integer au4CtpId, Integer neDbId,
-			Integer ptpDbId) throws AdapterException {
+	public List<AdpTp> syncTu3Ctp(String groupId, Integer neId, String vc4TtpId, AdpTp au4Ctp, Integer ptpDbId)
+			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetCtp.getTu3Ctps(groupId, neId, String.valueOf(vc4TtpId));
+		List<TpEntity> tpList = GetCtp.getTu3Ctps(groupId, String.valueOf(neId), vc4TtpId);
 		log.debug("syncCtp tpList = {}, neId = {}, vc4TtpId = {}", tpList.size(), neId, vc4TtpId);
-
-		AdpTp au4Ctp = null;
-		try {
-			au4Ctp = tpsDbMgr.getTpById(au4CtpId);
-		} catch (Exception e) {
-			log.error("getTpById", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
 
 		String au4CtpUserLabel = au4Ctp.getUserLabel();
 		for (TpEntity tp : tpList) {
 			log.debug("syncTu3Ctp tp = " + tp);
 			String tu3CtpUserLabel = au4CtpUserLabel + GenerateUserLabelUtil.generateTpUserLabel(tp);
-			AdpTp ctp = constructTp(tp, neDbId, tu3CtpUserLabel, ManagedObjectType.VC3.getLayerRates(),
-					TpType.CTP.name(), ptpDbId, au4CtpId);
+			AdpTp ctp = constructTp(tp, neId, tu3CtpUserLabel, ManagedObjectType.TU3.getLayerRates(), TpType.CTP.name(),
+					ptpDbId, au4Ctp.getId());
 
 			tps.add(ctp);
 		}
@@ -102,10 +86,9 @@ public class AdpTpsMgr {
 		return tps;
 	}
 
-	public List<AdpTp> syncTtp(String groupId, String neId, String vc4TtpId, Integer neDbId, Integer ptpDbId)
-			throws AdapterException {
+	public List<AdpTp> syncTtp(String groupId, Integer neId, String vc4TtpId, Integer ptpDbId) throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
-		List<TpEntity> tpList = GetTtp.getVc4Ttps(groupId, neId);
+		List<TpEntity> tpList = GetTtp.getVc4Ttps(groupId, String.valueOf(neId));
 		log.debug("syncTtp tpList = {}, groupId = {}, neId = {}", tpList.size(), groupId, neId);
 
 		for (TpEntity tp : tpList) {
@@ -113,7 +96,7 @@ public class AdpTpsMgr {
 			String moi = tp.getMoi();
 			if (moi.endsWith(vc4TtpId)) {
 				String userLabel = GenerateUserLabelUtil.generateTpUserLabel(tp);
-				AdpTp ttp = constructTp(tp, neDbId, userLabel, ManagedObjectType.VC4.getLayerRates(), TpType.CTP.name(),
+				AdpTp ttp = constructTp(tp, neId, userLabel, ManagedObjectType.VC4.getLayerRates(), TpType.CTP.name(),
 						ptpDbId, ptpDbId);
 				tps.add(ttp);
 				break;

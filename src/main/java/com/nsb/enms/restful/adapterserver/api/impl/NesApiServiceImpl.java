@@ -1,6 +1,7 @@
 package com.nsb.enms.restful.adapterserver.api.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.FutureTask;
 
@@ -53,7 +54,9 @@ public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
+	private AdpXcsServiceImpl xcsService = new AdpXcsServiceImpl();
 
 	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
 
@@ -531,28 +534,70 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getChildrenTps(String neid, String tpid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		try {
+			tpList = tpsDbMgr.getChildrenTps(Integer.valueOf(neid), Integer.valueOf(tpid));
+		} catch (Exception e) {
+			log.error("getChildrenTps", e);
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
 	public Response getNeTps(String neid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		System.out.println("getNeTps, neId = " + neid);
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		try {
+			tpList = tpsDbMgr.getTpsByNeId(Integer.valueOf(neid));
+		} catch (Exception e) {
+			log.error("getTPByNEId", e);
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
 	public Response getTpById(String neid, String tpid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		System.out.println("getTpById, neId = " + neid);
+		AdpTp tp;
+		try {
+			tp = tpsDbMgr.getTpById(Integer.valueOf(neid), Integer.valueOf(tpid));
+		} catch (Exception e) {
+			log.error("getTPByNEId", e);
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(tp).build();
 	}
 
 	@Override
 	public Response getTpsByLayerRate(String neid, String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
-		return null;
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		try {
+			tpList = tpsDbMgr.getTpsByLayerRate(Integer.valueOf(neid), layerrate);
+		} catch (Exception e) {
+			log.error("getTPsByLayerrate", e);
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
 	public Response getTpsByType(String neid, String tptype, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		Date begin = new Date();
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		try {
+			tpList = tpsDbMgr.getTpsByType(Integer.valueOf(neid), tptype);
+		} catch (Exception e) {
+			log.error("getTPsByType", e);
+			return Response.serverError().entity(e).build();
+		}
+
+		Date end = new Date();
+		log.debug("adapter.getTPsByType cost time = " + (end.getTime() - begin.getTime()));
+
+		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
@@ -621,44 +666,35 @@ public class NesApiServiceImpl extends NesApiService {
 		}
 	}
 
-    @Override
-    public Response createXc( String neid, AdpXc xc,
-            SecurityContext securityContext ) throws NotFoundException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Response createXc(String neid, AdpXc xc, SecurityContext securityContext) throws NotFoundException {
+		return xcsService.createXc(neid, xc);
+	}
 
-    @Override
-    public Response deleteXcsByNeId( String neid,
-            SecurityContext securityContext ) throws NotFoundException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Response deleteXcsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Response getEquipmentsByNeId( String neid,
-            SecurityContext securityContext ) throws NotFoundException
-    {
-        List<AdpEquipment> equipments = new ArrayList<AdpEquipment>();
-        try {
-            equipments = equsDbMgr.getEquipmentsByNeId( neid );
-            if (equipments.isEmpty()) {
-                return failObjNotExist();
-            }
-        } catch (Exception e) {
-            log.error("getEquipmentsByNeId", e);
-            return failDbOperation();
-        }
-        return Response.ok().entity(equipments).build();
-    }
+	@Override
+	public Response getEquipmentsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
+		List<AdpEquipment> equipments = new ArrayList<AdpEquipment>();
+		try {
+			equipments = equsDbMgr.getEquipmentsByNeId(neid);
+			if (equipments.isEmpty()) {
+				return failObjNotExist();
+			}
+		} catch (Exception e) {
+			log.error("getEquipmentsByNeId", e);
+			return failDbOperation();
+		}
+		return Response.ok().entity(equipments).build();
+	}
 
-    @Override
-    public Response getXcsByNeId( String neid, SecurityContext securityContext )
-            throws NotFoundException
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Response getXcsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
