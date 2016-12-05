@@ -19,7 +19,7 @@ public class NeStateCallBack {
 	private OperationalState operationalState;
 
 	private SupervisionState supervisionState;
-	
+
 	private AlignmentState alignmentState;
 
 	private Integer id;
@@ -29,7 +29,7 @@ public class NeStateCallBack {
 	public void tellMe(CommunicationState communicationState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setCommunicationState(communicationState.getStringCode());
+		ne.setCommunicationState(communicationState.name());
 		updateNe(ne);
 	}
 
@@ -43,23 +43,23 @@ public class NeStateCallBack {
 	public void tellMe(OperationalState operationalState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setOperationalState(operationalState.getStringCode());
+		ne.setOperationalState(operationalState.name());
 		updateNe(ne);
 	}
 
 	public void tellMe(SupervisionState supervisionState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setSupervisionState(supervisionState.getStringCode());
+		ne.setSupervisionState(supervisionState.name());
 		updateNe(ne);
 	}
-	
+
 	public void tellMe(AlignmentState alignmentState) throws AdapterException {
-        AdpNe ne = new AdpNe();
-        ne.setId(id);
-        ne.setSupervisionState(alignmentState.getStringCode());
-        updateNe(ne);
-    }
+		AdpNe ne = new AdpNe();
+		ne.setId(id);
+		ne.setSupervisionState(alignmentState.name());
+		updateNe(ne);
+	}
 
 	private void updateNe(AdpNe ne) throws AdapterException {
 		try {
@@ -109,13 +109,11 @@ public class NeStateCallBack {
 		this.maintenanceState = maintenanceState;
 	}
 
-    public AlignmentState getAlignmentState()
-    {
-        return alignmentState;
-    }
+	public AlignmentState getAlignmentState() {
+		return alignmentState;
+	}
 
-    public void setAlignmentState( AlignmentState alignmentState )
-    {
-        this.alignmentState = alignmentState;
-    }
+	public void setAlignmentState(AlignmentState alignmentState) {
+		this.alignmentState = alignmentState;
+	}
 }

@@ -26,16 +26,16 @@ public class AdpEqusDbMgr {
 	private Gson gson = new Gson();
 
 	public AdpEquipment addEquipment(AdpEquipment body) throws Exception {
-        log.debug("body=" + body);
-        String equipment = gson.toJson(body);
-        log.debug("equipment=" + equipment);
+		log.debug("body=" + body);
+		String equipment = gson.toJson(body);
+		log.debug("equipment=" + equipment);
 
-        BasicDBObject dbObject = (BasicDBObject) JSON.parse(equipment);
-        dbc1.insertOne(dbObject);
+		BasicDBObject dbObject = (BasicDBObject) JSON.parse(equipment);
+		dbc1.insertOne(dbObject);
 
-        return body;
-    }
-	
+		return body;
+	}
+
 	public void deleteEquipmentsByNeId(int neId) throws Exception {
 		dbc.deleteMany(new Document("neId", neId));
 	}
@@ -58,7 +58,7 @@ public class AdpEqusDbMgr {
 		return equipment;
 	}
 
-	public List<AdpEquipment> getEquipmentsByNeId(String neId) throws Exception {
+	public List<AdpEquipment> getEquipmentsByNeId(Integer neId) throws Exception {
 		System.out.println("getEquipmentsByNeId, neId = " + neId);
 		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
@@ -73,26 +73,26 @@ public class AdpEqusDbMgr {
 
 		List<AdpEquipment> equipmentList = new ArrayList<AdpEquipment>();
 		for (Document doc : docList) {
-		    AdpEquipment equipment = constructEquipment(doc);
+			AdpEquipment equipment = constructEquipment(doc);
 			equipmentList.add(equipment);
 		}
 		return equipmentList;
 	}
-	
-	public Integer getIdByAid(String aid) throws Exception {
-        List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
 
-        if (null == docList || docList.isEmpty()) {
-            log.error("can not find equipment, query by aid = {}", aid);
-            return null;
-        }        
-        Document doc = docList.get(0);
-        AdpEquipment equipment = constructEquipment(doc);
-        return equipment.getId();
-    }
+	public Integer getIdByAid(String aid) throws Exception {
+		List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find equipment, query by aid = {}", aid);
+			return null;
+		}
+		Document doc = docList.get(0);
+		AdpEquipment equipment = constructEquipment(doc);
+		return equipment.getId();
+	}
 
 	private AdpEquipment constructEquipment(Document doc) {
-	    AdpEquipment equipment = gson.fromJson(doc.toJson(), AdpEquipment.class);
+		AdpEquipment equipment = gson.fromJson(doc.toJson(), AdpEquipment.class);
 		return equipment;
 	}
 }

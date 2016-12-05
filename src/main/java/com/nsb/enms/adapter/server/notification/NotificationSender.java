@@ -187,7 +187,7 @@ public class NotificationSender {
 		case CONNECTION:
 			AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 			try {
-				return xcsDbMgr.getIdByAid(moi);
+				return xcsDbMgr.getIdByKeyOnNe(keyOnNe);
 			} catch (Exception e) {
 				log.error("AdpXcsDbMgr::getIdByAid", e);
 				return null;

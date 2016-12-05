@@ -126,10 +126,10 @@ public class AdpXcsDbMgr {
 		return xcList;
 	}
 
-	public Integer getIdByAid(String aid) throws Exception {
-		List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
+	public Integer getIdByKeyOnNe(String keyOnNe) throws Exception {
+		List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find xc, query by aid = {}", aid);
+			log.error("can not find xc, query by keyOnNe = {}", keyOnNe);
 			return null;
 		}
 
