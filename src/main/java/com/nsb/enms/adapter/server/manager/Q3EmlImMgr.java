@@ -27,7 +27,7 @@ import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.state.CommunicationState;
+import com.nsb.enms.common.CommunicationState;
 
 public class Q3EmlImMgr {
 	private static final Logger log = LogManager.getLogger(Q3EmlImMgr.class);

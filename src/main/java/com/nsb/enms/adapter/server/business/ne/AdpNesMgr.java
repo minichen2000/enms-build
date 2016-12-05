@@ -34,10 +34,10 @@ import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
-import com.nsb.enms.state.AlignmentState;
-import com.nsb.enms.state.CommunicationState;
-import com.nsb.enms.state.OperationalState;
-import com.nsb.enms.state.SupervisionState;
+import com.nsb.enms.common.AlignmentState;
+import com.nsb.enms.common.CommunicationState;
+import com.nsb.enms.common.OperationState;
+import com.nsb.enms.common.SupervisionState;
 
 public class AdpNesMgr {
 	private final static Logger log = LogManager.getLogger(AdpNesMgr.class);
@@ -188,10 +188,10 @@ public class AdpNesMgr {
 		ne.setAddresses(address);
 
 		ne.setNeType(neType);
-		ne.setOperationalState(OperationalState.IDLE.name());
+		ne.setOperationalState(OperationState.IDLE.name());
 		ne.setCommunicationState(CommunicationState.DISCONNECTED.name());
 		ne.setAlignmentState(AlignmentState.MISALIGNED.name());
-		ne.setSupervisionState(SupervisionState.NOSUPERVISED.name());
+		ne.setSupervisionState(SupervisionState.NOT_SUPERVISED.name());
 
 		List<AdpKVPair> params = constructParams(entity);
 		ne.setParams(params);
@@ -321,11 +321,11 @@ public class AdpNesMgr {
 		boolean isSuccess = false;
 		try {
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-					OperationalState.DOING.name(), OperationalState.IDLE.name());
+					OperationState.SYNCING.name(), OperationState.IDLE.name());
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);
-			body.setOperationalState(OperationalState.IDLE.name());
+			body.setOperationalState(OperationState.IDLE.name());
 			updateNe(body);
 		}
 		log.debug("isSuccess = " + isSuccess);
@@ -336,11 +336,11 @@ public class AdpNesMgr {
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState",
-				SupervisionState.SUPERVISED.name(), SupervisionState.NOSUPERVISED.name());
+				SupervisionState.SUPERVISED.name(), SupervisionState.NOT_SUPERVISED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState",
 				CommunicationState.DISCONNECTED.name(), CommunicationState.CONNECTED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", OperationalState.IDLE.name(),
-				OperationalState.DOING.name());
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", OperationState.IDLE.name(),
+				OperationState.SYNCING.name());
 	}
 
 	public void startAlignment(Integer neid) throws AdapterException {

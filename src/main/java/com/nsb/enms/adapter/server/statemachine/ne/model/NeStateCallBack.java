@@ -5,18 +5,18 @@ import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.state.AlignmentState;
-import com.nsb.enms.state.CommunicationState;
-import com.nsb.enms.state.MaintenanceState;
-import com.nsb.enms.state.OperationalState;
-import com.nsb.enms.state.SupervisionState;
+import com.nsb.enms.common.AlignmentState;
+import com.nsb.enms.common.CommunicationState;
+import com.nsb.enms.common.MaintenanceState;
+import com.nsb.enms.common.OperationState;
+import com.nsb.enms.common.SupervisionState;
 
 public class NeStateCallBack {
 	private MaintenanceState maintenanceState;
 
 	private CommunicationState communicationState;
 
-	private OperationalState operationalState;
+	private OperationState operationState;
 
 	private SupervisionState supervisionState;
 
@@ -36,11 +36,11 @@ public class NeStateCallBack {
 	public void tellMe(MaintenanceState maintenanceState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setMaintenanceState(maintenanceState.getStringCode());
+		ne.setMaintenanceState(maintenanceState.name());
 		updateNe(ne);
 	}
 
-	public void tellMe(OperationalState operationalState) throws AdapterException {
+	public void tellMe(OperationState operationalState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
 		ne.setOperationalState(operationalState.name());
@@ -77,12 +77,12 @@ public class NeStateCallBack {
 		this.communicationState = communicationState;
 	}
 
-	public OperationalState getOperationalState() {
-		return operationalState;
+	public OperationState getOperationState() {
+		return operationState;
 	}
 
-	public void setOperationalState(OperationalState operationalState) {
-		this.operationalState = operationalState;
+	public void setOperationState(OperationState operationalState) {
+		this.operationState = operationalState;
 	}
 
 	public SupervisionState getSupervisionState() {

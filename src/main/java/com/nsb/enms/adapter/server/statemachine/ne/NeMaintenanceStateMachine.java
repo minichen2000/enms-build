@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
-import com.nsb.enms.state.CommunicationState;
+import com.nsb.enms.common.CommunicationState;
 import com.nsb.enms.statemachine.annotation.StateMachineParameters;
 
 @StateMachineParameters(stateType = Boolean.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)

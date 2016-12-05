@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
-import com.nsb.enms.state.AlignmentState;
+import com.nsb.enms.common.AlignmentState;
 import com.nsb.enms.statemachine.annotation.StateMachineParameters;
 
 @StateMachineParameters(stateType = AlignmentState.class, eventType = NeEvent.class, contextType = NeStateCallBack.class)
