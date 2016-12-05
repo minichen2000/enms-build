@@ -13,6 +13,7 @@ import com.nsb.enms.adapter.server.action.method.xc.CreateXc;
 import com.nsb.enms.adapter.server.action.method.xc.DeleteXc;
 import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
 import com.nsb.enms.adapter.server.common.utils.LayerRatesUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
@@ -265,6 +266,22 @@ public class AdpXcsMgr {
 		deleteXc(xc);
 	}
 
+	public void deleteXcById(Integer neId, Integer xcId) throws AdapterException {
+		AdpXc xc;
+		try {
+			xc = xcsDbMgr.getXcById(neId, xcId);
+		} catch (Exception e) {
+			log.error("getXcById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+		if (null == xc || xc.getId() < 0) {
+			log.error("can not find xc by id:" + xcId);
+			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
+		}
+		deleteXc(xc);
+	}
+
 	private void deleteXc(AdpXc xc) throws AdapterException {
 		String moi = GenerateKeyOnNeUtil.getMoi(xc.getKeyOnNe());
 		String groupId = moi.split("/")[0].replaceAll("neGroupId=", StringUtils.EMPTY);
@@ -280,7 +297,7 @@ public class AdpXcsMgr {
 		}
 	}
 
-	public void deleteXcsByNeId(String neId) throws AdapterException {
+	public void deleteXcsByNeId(Integer neId) throws AdapterException {
 		List<AdpXc> xcList;
 		try {
 			xcList = xcsDbMgr.getXcsByNeId(neId);
@@ -346,5 +363,9 @@ public class AdpXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return xc;
+	}
+
+	public AdpXc createXc(Integer neId, AdpXc body) throws AdapterException {
+		return new AdpCreateXcsMgr().createXc(neId, body);
 	}
 }

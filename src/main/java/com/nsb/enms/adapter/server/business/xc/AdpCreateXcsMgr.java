@@ -1,12 +1,9 @@
-package com.nsb.enms.restful.adapterserver.api.impl;
+package com.nsb.enms.adapter.server.business.xc;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,9 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
 import com.nsb.enms.adapter.server.business.tp.TerminateTpMgr;
-import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
 import com.nsb.enms.adapter.server.common.utils.LayerRatesUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
@@ -24,48 +19,43 @@ import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.common.utils.HexDecConvertUtil;
-import com.nsb.enms.restful.adapterserver.api.NotFoundException;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
-public class AdpXcsServiceImpl {
-	private final static Logger log = LogManager.getLogger(AdpXcsServiceImpl.class);
+public class AdpCreateXcsMgr {
+	private final static Logger log = LogManager.getLogger(AdpCreateXcsMgr.class);
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 	private AdpXcsMgr adpXcMgr = new AdpXcsMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
-	public Response createXc(Integer neId, AdpXc body) {
-		try {
-			List<Integer> atps = body.getAEndPoints();
-			List<Integer> ztps = body.getZEndPoints();
-			isTpsValid(atps, ztps);
-			List<String> layerrates = body.getLayerrate();
-			isLayerRateValid(layerrates);
+	public AdpXc createXc(Integer neId, AdpXc body) throws AdapterException {
+		List<Integer> atps = body.getAEndPoints();
+		List<Integer> ztps = body.getZEndPoints();
+		isTpsValid(atps, ztps);
+		List<String> layerrates = body.getLayerrate();
+		isLayerRateValid(layerrates);
 
-			List<Integer> atpTimeSlots = body.getAtpTimeslots();
-			List<Integer> ztpTimeSlots = body.getZtpTimeslots();
-			boolean isAtpEmpty = isTimeSlotsEmpty(atpTimeSlots);
-			boolean isZtpEmpty = isTimeSlotsEmpty(ztpTimeSlots);
+		List<Integer> atpTimeSlots = body.getAtpTimeslots();
+		List<Integer> ztpTimeSlots = body.getZtpTimeslots();
+		boolean isAtpEmpty = isTimeSlotsEmpty(atpTimeSlots);
+		boolean isZtpEmpty = isTimeSlotsEmpty(ztpTimeSlots);
 
-			LayerRate layerRate = convertLayerRate(layerrates);
+		LayerRate layerRate = convertLayerRate(layerrates);
 
-			AdpXc xc = null;
-			if (isAtpEmpty && isZtpEmpty) {
-				log.error("atpTimeSlots and ztpTimeSlots are null or empty");
-				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
-			} else if (isAtpEmpty) {
-				xc = createXcByZtpIsSdh(ztpTimeSlots, atps, ztps, neId, layerRate);
-			} else if (isZtpEmpty) {
-				xc = createXcByAtpIsSdh(atpTimeSlots, atps, ztps, neId, layerRate);
-			} else {
-				xc = createXcByBothTpIsSdh(atpTimeSlots, ztpTimeSlots, atps, ztps, neId, layerRate);
-			}
-
-			log.debug("create xc ok!");
-			return Response.ok().entity(xc).build();
-		} catch (AdapterException e) {
-			return ErrorWrapperUtils.adapterException(e);
+		AdpXc xc = null;
+		if (isAtpEmpty && isZtpEmpty) {
+			log.error("atpTimeSlots and ztpTimeSlots are null or empty");
+			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
+		} else if (isAtpEmpty) {
+			xc = createXcByZtpIsSdh(ztpTimeSlots, atps, ztps, neId, layerRate);
+		} else if (isZtpEmpty) {
+			xc = createXcByAtpIsSdh(atpTimeSlots, atps, ztps, neId, layerRate);
+		} else {
+			xc = createXcByBothTpIsSdh(atpTimeSlots, ztpTimeSlots, atps, ztps, neId, layerRate);
 		}
+
+		log.debug("create xc ok!");
+		return xc;
 	}
 
 	private AdpTp getTimeSlotTpByVc4Tp(Integer neId, Integer ptpId, AdpTp au4Ctp, Integer[] timeSlots,
@@ -438,27 +428,6 @@ public class AdpXcsServiceImpl {
 		return false;
 	}
 
-	public Response deleteXc(String xcid, SecurityContext securityContext) throws NotFoundException {
-		try {
-			adpXcMgr.deleteXcById(xcid);
-		} catch (AdapterException e) {
-			log.error("deleteXC", e);
-			return ErrorWrapperUtils.adapterException(e);
-		}
-		return Response.ok().build();
-	}
-
-	public Response findXcs(Integer tpid, SecurityContext securityContext) throws NotFoundException {
-		List<AdpXc> xcList;
-		try {
-			xcList = getXcsByTpId(tpid);
-		} catch (AdapterException e) {
-			log.error("getXcsByTpId", e);
-			return ErrorWrapperUtils.adapterException(e);
-		}
-		return Response.ok().entity(xcList).build();
-	}
-
 	private List<AdpXc> getXcsByTpId(Integer tpid) throws AdapterException {
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
 		try {
@@ -468,29 +437,5 @@ public class AdpXcsServiceImpl {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return xcList;
-	}
-
-	public Response getXcById(String xcid, SecurityContext securityContext) throws NotFoundException {
-		AdpXc xc = new AdpXc();
-		try {
-			xc = xcsDbMgr.getXcById(xcid);
-		} catch (Exception e) {
-			log.error("getXCById", e);
-		}
-		return Response.ok().entity(xc).build();
-	}
-
-	public Response deleteXcsByNeId(String neId, SecurityContext arg1) throws NotFoundException {
-		try {
-			adpXcMgr.deleteXcsByNeId(neId);
-		} catch (AdapterException e) {
-			log.error("deleteXcsByNeId", e);
-			return ErrorWrapperUtils.adapterException(e);
-		}
-		return Response.ok().build();
-	}
-
-	public Response getXcsByNeId(String arg0, SecurityContext arg1) throws NotFoundException {
-		return null;
 	}
 }

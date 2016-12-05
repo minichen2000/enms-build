@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.db.mgr;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.or;
@@ -10,7 +11,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
@@ -60,8 +60,26 @@ public class AdpXcsDbMgr {
 	}
 
 	public AdpXc getXcById(String xcid) throws Exception {
-		BasicDBObject query = new BasicDBObject("_id", new ObjectId(xcid));
+		Document query = new Document("id", xcid);
 		List<Document> docList = dbc.find(query).into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find xc, query by id = {}", xcid);
+			return new AdpXc();
+		}
+
+		log.debug(docList.size());
+		for (Document doc : docList) {
+			log.debug(doc.toJson());
+		}
+
+		Document doc = docList.get(0);
+		AdpXc xc = constructXC(doc);
+		return xc;
+	}
+
+	public AdpXc getXcById(Integer neid, Integer xcid) throws Exception {
+		List<Document> docList = dbc.find(and(eq("neId", neid), eq("id", xcid))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by id = {}", xcid);
@@ -87,7 +105,7 @@ public class AdpXcsDbMgr {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public List<AdpXc> getXcsByNeId(String neId) throws Exception {
+	public List<AdpXc> getXcsByNeId(Integer neId) throws Exception {
 		System.out.println("getXcsByNeId, neId = " + neId);
 		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {

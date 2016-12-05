@@ -28,6 +28,7 @@ import com.nsb.enms.adapter.server.common.utils.KeyValuePairUtil;
 import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.alarm.AlarmNEMisalignment;
@@ -56,7 +57,8 @@ public class NesApiServiceImpl extends NesApiService {
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
-	private AdpXcsServiceImpl xcsService = new AdpXcsServiceImpl();
+	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
+	private AdpXcsMgr adpXcMgr = new AdpXcsMgr();
 
 	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
 
@@ -333,7 +335,7 @@ public class NesApiServiceImpl extends NesApiService {
 			nesDbMgr.deleteNe(id);
 
 			AdpXcsMgr xcsMgr = new AdpXcsMgr();
-			xcsMgr.deleteXcsByNeId(neId);
+			xcsMgr.deleteXcsByNeId(Integer.valueOf(neId));
 
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 			tpsDbMgr.deleteTpsbyNeId(Integer.valueOf(neId));
@@ -612,7 +614,13 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response deleteXc(String neid, String xcid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		try {
+			adpXcMgr.deleteXcById(Integer.valueOf(neid), Integer.valueOf(xcid));
+		} catch (AdapterException e) {
+			log.error("deleteXC", e);
+			return ErrorWrapperUtils.adapterException(e);
+		}
+		return Response.ok().build();
 	}
 
 	@Override
@@ -623,7 +631,13 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getXcById(String neid, String xcid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		AdpXc xc = new AdpXc();
+		try {
+			xc = xcsDbMgr.getXcById(Integer.valueOf(neid), Integer.valueOf(xcid));
+		} catch (Exception e) {
+			log.error("getXCById", e);
+		}
+		return Response.ok().entity(xc).build();
 	}
 
 	@Override
@@ -668,13 +682,25 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response createXc(String neid, AdpXc xc, SecurityContext securityContext) throws NotFoundException {
-		return xcsService.createXc(neid, xc);
+		AdpXc newXc = null;
+		try {
+			newXc = adpXcMgr.createXc(Integer.valueOf(neid), xc);
+		} catch (AdapterException e) {
+			log.error("createXc", e);
+			return ErrorWrapperUtils.adapterException(e);
+		}
+		return Response.ok().entity(newXc).build();
 	}
 
 	@Override
 	public Response deleteXcsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			adpXcMgr.deleteXcsByNeId(Integer.valueOf(neid));
+		} catch (AdapterException e) {
+			log.error("deleteXcsByNeId", e);
+			return ErrorWrapperUtils.adapterException(e);
+		}
+		return Response.ok().build();
 	}
 
 	@Override
