@@ -720,7 +720,16 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getXcsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		List<AdpXc> xcs = null;
+		try {
+			xcs = xcsDbMgr.getXcsByNeId(Integer.valueOf(neid));
+		} catch (NumberFormatException e) {
+			log.error("getXcsByNeId", e);
+			return Response.serverError().entity("invalid number format").build();
+		} catch (Exception e) {
+			log.error("getXcsByNeId", e);
+			return ErrorWrapperUtils.failDbOperation();
+		}
+		return Response.ok().entity(xcs).build();
 	}
 }
