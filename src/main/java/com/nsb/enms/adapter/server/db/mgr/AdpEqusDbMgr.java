@@ -1,6 +1,7 @@
 package com.nsb.enms.adapter.server.db.mgr;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.and;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,12 +41,12 @@ public class AdpEqusDbMgr {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public AdpEquipment getEquipmentById(int id) throws Exception {
-		List<Document> docList = dbc.find(eq("id", id)).into(new ArrayList<Document>());
+	public AdpEquipment getEquipmentById(int neid, int eqid) throws Exception {
+		List<Document> docList = dbc.find(and(eq("id", eqid), eq("neId", neid))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find equipment, query by id = {}", id);
-			return null;
+			log.error("can not find equipment, query by id = " + eqid + " and neId = " + neid);
+			return new AdpEquipment();
 		}
 
 		log.debug(docList.size());

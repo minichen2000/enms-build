@@ -203,13 +203,10 @@ public class NesApiServiceImpl extends NesApiService {
 			throws NotFoundException {
 	    AdpEquipment equipment = null;
         try {
-            equipment = equsDbMgr.getEquipmentById(neid);
-            if (equipment == null) {
-                return failObjNotExist();
-            }
+            equipment = equsDbMgr.getEquipmentById(neid, eqid);            
         } catch (Exception e) {
             log.error("getEquipmentById", e);
-            return failDbOperation();
+            return Response.serverError().entity( e ).build();
         }
         return Response.ok().entity(equipment).build();
 	}
