@@ -17,7 +17,6 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.common.ErrorCode;
-import com.nsb.enms.common.utils.Pair;
 
 public class CreateNe
 {
@@ -37,25 +36,26 @@ public class CreateNe
     private static Pattern pattern = Pattern
             .compile( "\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+" );
 
-    public static NeEntity createNe( String neRelease, String neType,
+    public static NeEntity createNe( Integer id, String neRelease, String neType,
             String userLabel, String locationName, String neAddress )
             throws AdapterException
     {
-        Pair<Integer, Integer> groupNeId = Q3EmlImMgr.instance().getGroupNeId();
-        int groupId = groupNeId.getFirst();
-        int neId = groupNeId.getSecond();
-        log.debug( "The groupId = " + groupId + ", neId = " + neId );
+        //Pair<Integer, Integer> groupNeId = Q3EmlImMgr.instance().getGroupNeId();
+        //int groupId = groupNeId.getFirst();
+        //int neId = groupNeId.getSecond();
+        int groupId = Q3EmlImMgr.instance().getGroupId(id);
+        log.debug( "The groupId = " + groupId + ", neId = " + id );
         boolean flag = false;
-        flag = createNe( groupId, neId, neRelease, neType, userLabel,
+        flag = createNe( groupId, id, neRelease, neType, userLabel,
             locationName );
         if( flag )
         {
-            flag = setNeAddress( groupId, neId, neAddress );
+            flag = setNeAddress( groupId, id, neAddress );
         }
 
         if( flag )
         {
-            return GetNe.getNe( groupId, neId );
+            return GetNe.getNe( groupId, id );
         }
         return null;
     }

@@ -42,7 +42,7 @@ public class AdpEqusDbMgr {
 	}
 
 	public AdpEquipment getEquipmentById(int neid, int eqid) throws Exception {
-		List<Document> docList = dbc.find(and(eq("id", eqid), eq("neId", neid))).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(and(eq("neId", neid), eq("id", eqid))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find equipment, query by id = " + eqid + " and neId = " + neid);
@@ -80,11 +80,11 @@ public class AdpEqusDbMgr {
 		return equipmentList;
 	}
 
-	public Integer getIdByAid(String aid) throws Exception {
-		List<Document> docList = dbc.find(eq("aid", aid)).into(new ArrayList<Document>());
+	public Integer getIdByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+		List<Document> docList = dbc.find(and(eq("keyOnNe", keyOnNe), eq( "neId", neId ))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find equipment, query by aid = {}", aid);
+			log.error("can not find equipment, query by keyOnNe = " + keyOnNe + " and neId = " + neId);
 			return null;
 		}
 		Document doc = docList.get(0);

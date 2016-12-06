@@ -58,7 +58,7 @@ public class AdpNesMgr {
 			String location = getLocationName();
 			NeEntity entity = null;
 			String q3Address = addresses.getQ3Address().getAddress().trim();
-			entity = CreateNe.createNe(body.getNeRelease(), body.getNeType(), body.getUserLabel(), location, q3Address);
+			entity = CreateNe.createNe(body.getId(), body.getNeRelease(), body.getNeType(), body.getUserLabel(), location, q3Address);
 
 			if (null == entity) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_NE_BY_EMLIM);
@@ -93,7 +93,7 @@ public class AdpNesMgr {
 			String location = getLocationName();
 			NeEntity entity = null;
 			String q3Address = addresses.getQ3Address().getAddress();
-			entity = CreateNe.createNe(body.getNeRelease(), body.getNeType(), body.getUserLabel(), location,
+			entity = CreateNe.createNe(body.getId(), body.getNeRelease(), body.getNeType(), body.getUserLabel(), location,
 					q3Address.trim());
 
 			if (null == entity) {

@@ -29,6 +29,7 @@ import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
+import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 
@@ -311,21 +312,31 @@ public class AdpNesDbMgr {
 
 	public List<AdpNe> getNesByGroupId(String groupId) throws Exception {
 		List<AdpNe> nes = getNes();
-		// for (int i = nes.size() - 1; i >= 0; i--) {
-		// String moi = nes.get(i).getKeyOnNe();
-		// if (!moi.split("/")[0].split("=")[1].equals(groupId)) {
-		// nes.remove(i);
-		// }
-		// }
+		for (int i = nes.size() - 1; i >= 0; i--) 
+		{
+		    List<AdpKVPair> params = nes.get( i ).getParams();
+		    String dbGroupId= "";
+		    for (AdpKVPair param : params)
+		    {
+		        if (param.getKey().equals( "GROUP_ID" ))
+		        {
+		            dbGroupId = param.getValue();
+		            break;
+		        }
+		    }
+		    if (!dbGroupId.equals(groupId)) {
+		        nes.remove(i);
+		    }
+		}
 		return nes;
 	}
 
 	public List<Integer> getNeIdsByGroupId(String groupId) throws Exception {
 		List<AdpNe> nes = getNesByGroupId(groupId);
 		List<Integer> neIdList = new ArrayList<Integer>();
-		// for (AdpNe ne : nes) {
-		// neIdList.add(Integer.parseInt(ne.getKeyOnNe().split("/")[1].split("=")[1]));
-		// }
+		for (AdpNe ne : nes) {
+		    neIdList.add( ne.getId() );
+		}
 		return neIdList;
 	}
 

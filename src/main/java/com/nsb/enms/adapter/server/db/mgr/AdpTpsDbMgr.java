@@ -25,7 +25,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.db.mongodb.mgr.AdpMongoDBMgr;
-import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
@@ -393,11 +392,11 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public Integer getIdByKeyOnNe(String keyOnNe) throws Exception {
-		List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
+	public Integer getIdByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+		List<Document> docList = dbc.find(and(eq("keyOnNe", keyOnNe), eq("neId", neId))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by keyOnNe = " + keyOnNe);
+			log.error("can not find tp, query by keyOnNe = " + keyOnNe + " and neId = " + neId);
 			return null;
 		}
 

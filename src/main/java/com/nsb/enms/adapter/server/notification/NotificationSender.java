@@ -48,9 +48,10 @@ public class NotificationSender {
 		//Long eventTime = TimeUtil.getTime(entity.getEventTime());
 		String moc = entity.getMoc().getMoc();
 		String moi = entity.getMoi().getMoi();
+		Integer neId = Integer.valueOf( moi.split( "/" )[1].split( "=" )[1] );
 		EntityType objectType = getObjectType(moc);
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(objectType, moc, moi);
-		Integer objectID = getObjectId(objectType, keyOnNe, moi);
+		Integer objectID = getObjectId(objectType, neId, keyOnNe);
 		if (null == objectID) {
 			return;
 		}
@@ -158,7 +159,7 @@ public class NotificationSender {
 		}
 	}
 
-	private Integer getObjectId(EntityType objectType, String keyOnNe, String moi) {
+	private Integer getObjectId(EntityType objectType, int neId, String keyOnNe) {
 		switch (objectType) {
 		case NE:
 			AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
@@ -171,7 +172,7 @@ public class NotificationSender {
 		case TP:
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 			try {
-				return tpsDbMgr.getIdByKeyOnNe(keyOnNe);
+				return tpsDbMgr.getIdByKeyOnNe(neId, keyOnNe);
 			} catch (Exception e) {
 				log.error("AdpTpsDbMgr::getIdByKeOneNe", e);
 				return null;
@@ -179,17 +180,17 @@ public class NotificationSender {
 		case BOARD:
 			AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
 			try {
-				return equsDbMgr.getIdByAid(moi);
+				return equsDbMgr.getIdByKeyOnNe(neId, keyOnNe);
 			} catch (Exception e) {
-				log.error("AdpEqusDbMgr::getIdByAid", e);
+				log.error("AdpEqusDbMgr::getIdByKeyOnNe", e);
 				return null;
 			}
 		case CONNECTION:
 			AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 			try {
-				return xcsDbMgr.getIdByKeyOnNe(keyOnNe);
+				return xcsDbMgr.getIdByKeyOnNe(neId, keyOnNe);
 			} catch (Exception e) {
-				log.error("AdpXcsDbMgr::getIdByAid", e);
+				log.error("AdpXcsDbMgr::getIdByKeyOnNe", e);
 				return null;
 			}
 		default:
