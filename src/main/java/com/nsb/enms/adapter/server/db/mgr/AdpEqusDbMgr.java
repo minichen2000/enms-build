@@ -45,7 +45,7 @@ public class AdpEqusDbMgr {
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find equipment, query by id = {}", id);
-			return new AdpEquipment();
+			return null;
 		}
 
 		log.debug(docList.size());

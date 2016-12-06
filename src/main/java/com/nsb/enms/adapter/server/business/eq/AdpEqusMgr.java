@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mozilla.javascript.ast.ThrowStatement;
 
 import com.nsb.enms.adapter.server.action.entity.EquipmentEntity;
 import com.nsb.enms.adapter.server.action.entity.TptCoordinatorEntity;
@@ -73,20 +72,38 @@ public class AdpEqusMgr {
 	private AdpEquipment constructEquip(EquipmentEntity equ, List<EquipmentEntity> equList,
 			List<TptCoordinatorEntity> tptCoordinatorList, int id) {
 		AdpEquipment adpEqu = new AdpEquipment();
+		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
 		String moc = equ.getMoc();
 		String moi = equ.getMoi();
+		String expectedType = equ.getEquipmentExpected();
+		String actualType = equ.getEquipmentActual();
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(EntityType.BOARD, moc, moi);
 		adpEqu.setId(equ.getId());
 		adpEqu.setNeId(id);
-		adpEqu.setPosition("");
+		String position = getPosition(moi);
+		adpEqu.setPosition(position);
 		String type = getType(moi);
 		adpEqu.setType(type);
-		adpEqu.setExpectedType(equ.getEquipmentExpected());
-		adpEqu.setActualType(equ.getEquipmentActual());
+		adpEqu.setExpectedType(expectedType);
+		adpEqu.setActualType(actualType);
 		adpEqu.setKeyOnNe(keyOnNe);
-		adpEqu.setAlarmState(equ.getAlarmStatus());
+		//adpEqu.setAlarmState(equ.getAlarmStatus());
+		if (!StringUtils.isEmpty( actualType ))
+		{
+		    AdpKVPair param1 = new AdpKVPair();
+            param1.setKey("unitPartNumber");
+            param1.setValue("");
+            params.add(param1);
+            AdpKVPair param2 = new AdpKVPair();
+            param2.setKey("softwarePartNumber");
+            param2.setValue("");
+            params.add(param2);
+            AdpKVPair param3 = new AdpKVPair();
+            param3.setKey("serialNumber");
+            param3.setValue("");
+            params.add(param3);
+		}
 
-		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
 		for (int i = tptCoordinatorList.size() - 1; i >= 0; i--) {
 			TptCoordinatorEntity tptCoordinatorEntity = tptCoordinatorList.get(i);
 			if (moi.equals(tptCoordinatorEntity.getEquMoi())) {
@@ -139,6 +156,8 @@ public class AdpEqusMgr {
 	private String getType(String moi) {
 		String[] elements = moi.split("/");
 		switch (elements.length) {
+		case 3:
+		    return EquType.rack.name();
 		case 4:
 			return EquType.shelf.name();
 		case 5:
@@ -146,7 +165,18 @@ public class AdpEqusMgr {
 		case 6:
 			return EquType.subslot.name();
 		default:
-			return EquType.unknow.name();
+			return null;
 		}
+	}
+	
+	private String getPosition(String moi)
+	{
+	    StringBuilder position = new StringBuilder("");
+	    String[] elements = moi.split( "/" );
+	    for (int i = 2; i < elements.length; i++)
+	    {
+	        position.append( elements[i].split( "=" )[1] ).append( "/" );
+	    }
+	    return position.substring( 0, position.length() - 1 );
 	}
 }

@@ -201,7 +201,17 @@ public class NesApiServiceImpl extends NesApiService {
 	@Override
 	public Response getEquipmentById(Integer neid, Integer eqid, SecurityContext securityContext)
 			throws NotFoundException {
-		return null;
+	    AdpEquipment equipment = null;
+        try {
+            equipment = equsDbMgr.getEquipmentById(neid);
+            if (equipment == null) {
+                return failObjNotExist();
+            }
+        } catch (Exception e) {
+            log.error("getEquipmentById", e);
+            return failDbOperation();
+        }
+        return Response.ok().entity(equipment).build();
 	}
 
 	@Override
