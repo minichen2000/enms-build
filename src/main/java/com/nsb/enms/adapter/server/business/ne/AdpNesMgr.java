@@ -111,9 +111,10 @@ public class AdpNesMgr {
 				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 			}
 
-			NotificationSender.instance().sendOcNotif(EntityType.NE, ne.getId());
-			NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(body.getId()));
-			NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(body.getId()));
+			Integer id = ne.getId();
+			NotificationSender.instance().sendOcNotif(EntityType.NE, id);
+			NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(id));
+			NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
 
 			log.debug("adapter----------------addNe----------end");
 
@@ -122,20 +123,27 @@ public class AdpNesMgr {
 	}
 
 	private void validateParam(AdpNe body, MethodOperator operate) throws AdapterException {
+		Integer id = body.getId();
+		if (null == id || id < 0) {
+			throw new AdapterException(ErrorCode.FAIL_INVALID_ID);
+		}
+
 		String userLabel = body.getUserLabel();
 		if (!ValidationUtil.isValidUserLabel(userLabel)) {
 			throw new AdapterException(ErrorCode.FAIL_INVALID_USER_LABEL);
 		}
 
-		try {
-			if (MethodOperator.ADD == operate) {
-				boolean isExisted = nesDbMgr.isUserLabelExisted(body.getId(), userLabel, operate);
-				if (isExisted) {
-					throw new AdapterException(ErrorCode.FAIL_USER_LABEL_EXISTED);
-				}
+		if (MethodOperator.ADD == operate) {
+			boolean isExisted = false;
+			try {
+				isExisted = nesDbMgr.isUserLabelExisted(id, userLabel, operate);
+			} catch (Exception e) {
+				log.error("isUserLabelExisted", e);
+				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 			}
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+			if (isExisted) {
+				throw new AdapterException(ErrorCode.FAIL_USER_LABEL_EXISTED);
+			}
 		}
 
 		String locationName = getLocationName();
