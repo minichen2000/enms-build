@@ -126,15 +126,15 @@ public class AdpEqusMgr
         {
             AdpKVPair unitPartNumberPair = new AdpKVPair();
             unitPartNumberPair.setKey( "unitPartNumber" );
-            unitPartNumberPair.setValue( "" );
+            unitPartNumberPair.setValue( equ.getUnitPartNumber() );
             params.add( unitPartNumberPair );
             AdpKVPair softwarePartNumberPair = new AdpKVPair();
             softwarePartNumberPair.setKey( "softwarePartNumber" );
-            softwarePartNumberPair.setValue( "" );
+            softwarePartNumberPair.setValue( equ.getSoftwarePartNumber() );
             params.add( softwarePartNumberPair );
             AdpKVPair serialNumberPair = new AdpKVPair();
             serialNumberPair.setKey( "serialNumber" );
-            serialNumberPair.setValue( "" );
+            serialNumberPair.setValue( equ.getSerialNumber() );
             params.add( serialNumberPair );
         }
 

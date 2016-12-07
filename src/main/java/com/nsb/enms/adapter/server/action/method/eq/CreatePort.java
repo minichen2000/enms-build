@@ -143,7 +143,7 @@ public class CreatePort {
 						}
 
 						if (line.startsWith("specificPhysicalInstance")) {
-							equipmentEntity.setSpecificPhysicalInstance(ParseUtil.parseAttr1(line));
+							//equipmentEntity.setSpecificPhysicalInstance(ParseUtil.parseAttr1(line));
 							continue;
 						}
 

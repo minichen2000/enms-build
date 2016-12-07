@@ -11,7 +11,11 @@ public class EquipmentEntity {
 
 	private List<String> allowedEquipmentTypes;
 
-	private String specificPhysicalInstance;
+	private String unitPartNumber;
+	
+	private String softwarePartNumber;
+	
+	private String serialNumber;
 
 	private String equipmentActual;
 
@@ -61,15 +65,37 @@ public class EquipmentEntity {
 		this.allowedEquipmentTypes = allowedEquipmentTypes;
 	}
 
-	public String getSpecificPhysicalInstance() {
-		return specificPhysicalInstance;
-	}
+	public String getUnitPartNumber()
+    {
+        return unitPartNumber;
+    }
 
-	public void setSpecificPhysicalInstance(String specificPhysicalInstance) {
-		this.specificPhysicalInstance = specificPhysicalInstance;
-	}
+    public void setUnitPartNumber( String unitPartNumber )
+    {
+        this.unitPartNumber = unitPartNumber;
+    }
 
-	public String getEquipmentActual() {
+    public String getSoftwarePartNumber()
+    {
+        return softwarePartNumber;
+    }
+
+    public void setSoftwarePartNumber( String softwarePartNumber )
+    {
+        this.softwarePartNumber = softwarePartNumber;
+    }
+
+    public String getSerialNumber()
+    {
+        return serialNumber;
+    }
+
+    public void setSerialNumber( String serialNumber )
+    {
+        this.serialNumber = serialNumber;
+    }
+
+    public String getEquipmentActual() {
 		return equipmentActual;
 	}
 
@@ -123,14 +149,5 @@ public class EquipmentEntity {
 
 	public void setAdministrativeState(String administrativeState) {
 		this.administrativeState = administrativeState;
-	}
-
-	@Override
-	public String toString() {
-		return "EquipmentEntity [moc=" + moc + ", moi=" + moi + ", allowedEquipmentTypes=" + allowedEquipmentTypes
-				+ ", specificPhysicalInstance=" + specificPhysicalInstance + ", equipmentActual=" + equipmentActual
-				+ ", equipmentExpected=" + equipmentExpected + ", version=" + version + ", availabilityStatus="
-				+ availabilityStatus + ", alarmStatus=" + alarmStatus + ", operationalState=" + operationalState
-				+ ", administrativeState=" + administrativeState + "]";
 	}
 }

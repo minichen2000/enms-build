@@ -3,6 +3,7 @@ package com.nsb.enms.adapter.server.action.method.eq;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -231,22 +232,66 @@ public class GetEquipment
 
                         if( line.startsWith( "specificPhysicalInstance" ) )
                         {
-                            equipmentEntity.setSpecificPhysicalInstance(
-                                ParseUtil.parseAttr1( line ) );
-                            continue;
+                            String instance = ParseUtil.parseAttr1( line );
+                            Pattern pattern = Pattern
+                                    .compile( "(\\w+\\-?\\s*\\w+\\s*\\w*)" );
+                            List<String> params = new ArrayList<String>();
+                            Matcher match = pattern.matcher( instance );
+                            while( match.find() )
+                            {
+                                params.add( match.group( 1 ) );
+                            }
+
+                            if( params.size() == 2 )
+                            {
+                                equipmentEntity.setSoftwarePartNumber(
+                                    params.get( 1 ) );
+                                continue;
+                            }
+
+                            if( params.size() == 3 )
+                            {
+                                equipmentEntity
+                                        .setUnitPartNumber( params.get( 1 ) );
+                                String[] elements = params.get( 2 )
+                                        .split( "\\s+" );
+                                if( elements.length == 1 )
+                                {
+                                    equipmentEntity
+                                            .setSerialNumber( elements[0] );
+                                }
+                                else if( elements.length == 3 )
+                                {
+                                    equipmentEntity
+                                            .setSerialNumber( elements[1] );
+                                }
+                                continue;
+                            }
                         }
 
                         if( line.startsWith( "equipmentActual" ) )
                         {
-                            equipmentEntity.setEquipmentActual(
-                                ParseUtil.parseAttr1( line ) );
+                            String equipmentActual = ParseUtil
+                                    .parseAttr1( line );
+                            if( !StringUtils.isEmpty( equipmentActual )
+                                    && !"NULL".equals( equipmentActual ) )
+                            {
+                                equipmentEntity
+                                        .setEquipmentActual( equipmentActual );
+                            }
                             continue;
                         }
 
                         if( line.startsWith( "equipmentExpected" ) )
                         {
-                            equipmentEntity.setEquipmentExpected(
-                                ParseUtil.parseAttr1( line ) );
+                            String equipmentExpected = ParseUtil
+                                    .parseAttr1( line );
+                            if( !StringUtils.isEmpty( equipmentExpected )
+                                    && !"NULL".equals( equipmentExpected ) )
+                            {
+                                equipmentEntity.setEquipmentActual(
+                                    equipmentExpected );
+                            }
                             continue;
                         }
 
