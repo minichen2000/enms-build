@@ -98,7 +98,7 @@ public class NeStateMachineApp {
 		ne.setId(id);
 		neSupervisionStateMachine.setCurrentState(SupervisionState.NOT_SUPERVISED);
 		neCommunicationStateMachine.setCurrentState(CommunicationState.DISCONNECTED);
-		neOperationalStateMachine.setCurrentState(OperationState.SYNCING);
+		neOperationalStateMachine.setCurrentState(OperationState.SUPERVISING);
 		neSupervisionStateMachine.fire(NeEvent.E_UNSUPERVISIED_2_SUPERVISIED, ne);
 		neCommunicationStateMachine.fire(NeEvent.E_UNREACHABLE_2_REACHABLE, ne);
 		neOperationalStateMachine.fire(NeEvent.E_SUPERVISING_2_IDLE, ne);

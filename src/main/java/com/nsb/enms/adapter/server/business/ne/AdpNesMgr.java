@@ -329,7 +329,7 @@ public class AdpNesMgr {
 		boolean isSuccess = false;
 		try {
 			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-					OperationState.SYNCING.name(), OperationState.IDLE.name());
+					OperationState.SUPERVISING.name(), OperationState.IDLE.name());
 			isSuccess = StartSupervision.startSupervision(groupId, neId);
 		} catch (Exception e) {
 			log.error("failed to supervision ne", e);

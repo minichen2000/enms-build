@@ -10,7 +10,6 @@ import com.nsb.enms.adapter.server.business.tp.AdpTpsMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;
-import com.nsb.enms.common.AlignmentState;
 import com.nsb.enms.common.OperationState;
 
 public class SyncThread implements Callable<Object> {
@@ -32,10 +31,12 @@ public class SyncThread implements Callable<Object> {
 		new AdpTpsMgr().syncTp(groupId, neId, id);
 		new AdpEqusMgr().syncEquip(groupId, neId, id);
 		NeStateMachineApp.instance().afterSynchData(id);
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "alignmentState", AlignmentState.ALIGNED.name(),
-				AlignmentState.MISALIGNED.name());
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", OperationState.IDLE.name(),
-				OperationState.SYNCING.name());
+		// NotificationSender.instance().sendAvcNotif(EntityType.NE, id,
+		// "alignmentState", AlignmentState.ALIGNED.name(),
+		// AlignmentState.MISALIGNED.name());
+		// NotificationSender.instance().sendAvcNotif(EntityType.NE, id,
+		// "operationalState", OperationState.IDLE.name(),
+		// OperationState.SYNCING.name());
 
 		log.debug("------------ sync end -------------");
 		return null;

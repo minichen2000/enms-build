@@ -251,7 +251,7 @@ public class AdpNesDbMgr {
 	private void updateAlignmentState(AdpNe body, Integer id, AdpNe ne) {
 		String alignmentState = body.getAlignmentState();
 		String alignmentStateFromDb = ne.getAlignmentState();
-		if (StringUtils.equals(alignmentState, alignmentStateFromDb)) {
+		if (null == alignmentState || StringUtils.equals(alignmentState, alignmentStateFromDb)) {
 			return;
 		}
 		dbc.updateOne(new BasicDBObject("id", id), set("alignmentState", alignmentState));
@@ -312,21 +312,18 @@ public class AdpNesDbMgr {
 
 	public List<AdpNe> getNesByGroupId(String groupId) throws Exception {
 		List<AdpNe> nes = getNes();
-		for (int i = nes.size() - 1; i >= 0; i--) 
-		{
-		    List<AdpKVPair> params = nes.get( i ).getParams();
-		    String dbGroupId= "";
-		    for (AdpKVPair param : params)
-		    {
-		        if (param.getKey().equals( "GROUP_ID" ))
-		        {
-		            dbGroupId = param.getValue();
-		            break;
-		        }
-		    }
-		    if (!dbGroupId.equals(groupId)) {
-		        nes.remove(i);
-		    }
+		for (int i = nes.size() - 1; i >= 0; i--) {
+			List<AdpKVPair> params = nes.get(i).getParams();
+			String dbGroupId = "";
+			for (AdpKVPair param : params) {
+				if (param.getKey().equals("GROUP_ID")) {
+					dbGroupId = param.getValue();
+					break;
+				}
+			}
+			if (!dbGroupId.equals(groupId)) {
+				nes.remove(i);
+			}
 		}
 		return nes;
 	}
@@ -335,7 +332,7 @@ public class AdpNesDbMgr {
 		List<AdpNe> nes = getNesByGroupId(groupId);
 		List<Integer> neIdList = new ArrayList<Integer>();
 		for (AdpNe ne : nes) {
-		    neIdList.add( ne.getId() );
+			neIdList.add(ne.getId());
 		}
 		return neIdList;
 	}

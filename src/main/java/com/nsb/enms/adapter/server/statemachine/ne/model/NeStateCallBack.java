@@ -1,5 +1,8 @@
 package com.nsb.enms.adapter.server.statemachine.ne.model;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
@@ -12,14 +15,12 @@ import com.nsb.enms.common.OperationState;
 import com.nsb.enms.common.SupervisionState;
 
 public class NeStateCallBack {
+	private final static Logger log = LogManager.getLogger(NeStateCallBack.class);
+
 	private MaintenanceState maintenanceState;
-
 	private CommunicationState communicationState;
-
 	private OperationState operationState;
-
 	private SupervisionState supervisionState;
-
 	private AlignmentState alignmentState;
 
 	private Integer id;
@@ -57,7 +58,7 @@ public class NeStateCallBack {
 	public void tellMe(AlignmentState alignmentState) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
-		ne.setSupervisionState(alignmentState.name());
+		ne.setAlignmentState(alignmentState.name());
 		updateNe(ne);
 	}
 
@@ -65,6 +66,7 @@ public class NeStateCallBack {
 		try {
 			nesDbMgr.updateNe(ne);
 		} catch (Exception e) {
+			log.error("updateNe", e);
 			throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR, ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
