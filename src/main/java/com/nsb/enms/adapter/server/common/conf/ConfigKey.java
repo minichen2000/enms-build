@@ -8,6 +8,10 @@ public class ConfigKey {
 	public static final String DEFAULT_TSTMGR_SCRIPT_DIR = "/opt/nms/EML_1/TSTMGR/script/";
 
 	public static final String DEFAULT_TSTMGR_SCENARIO_DIR = "/opt/nms/EML_1/TSTMGR/scenario/";
+	
+	public static final String RI_FILE_PATH = "RI_FILE_PATH";
+
+    public static final String DEFAULT_RI_FILE_PATH = "/opt/nms/EML_1/data/ri/";
 
 	public static final String TSTMGR_SCRIPT = "TSTMGR_SCRIPT";
 
@@ -36,6 +40,10 @@ public class ConfigKey {
 	public static final String GET_ISA_REQ = "GET_ISA_REQ";
 
 	public static final String DEFAULT_GET_ISA_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "syncISA.req";
+	
+	public static final String GET_RI_REQ = "GET_RI_REQ";
+
+	public static final String DEFAULT_GET_RI_REQ = DEFAULT_TSTMGR_SCENARIO_DIR + "uploadRITmpl.req";
 
 	public static final String GET_NE_REQ = "GET_NE_REQ";
 

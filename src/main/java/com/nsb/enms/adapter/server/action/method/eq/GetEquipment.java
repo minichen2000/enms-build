@@ -1,11 +1,15 @@
 package com.nsb.enms.adapter.server.action.method.eq;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,17 +26,110 @@ import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.restful.model.adapter.AdpKVPair;
 
 public class GetEquipment
 {
     private static final Logger log = LogManager
             .getLogger( GetEquipment.class );
 
+    private static final String RI_FILE_PATH = ConfLoader.getInstance()
+            .getConf( ConfigKey.RI_FILE_PATH, ConfigKey.DEFAULT_RI_FILE_PATH );
+
+    private static final String GET_RI_SCENARIO = ConfLoader.getInstance()
+            .getConf( ConfigKey.GET_RI_REQ, ConfigKey.DEFAULT_GET_RI_REQ );
+
     private static final String GET_ISA_SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.GET_ISA_REQ, ConfigKey.DEFAULT_GET_ISA_REQ );
 
     private static final String GET_EQ_SCENARIO = ConfLoader.getInstance()
             .getConf( ConfigKey.GET_EQ_REQ, ConfigKey.DEFAULT_GET_EQ_REQ );
+
+    public static Map<String, List<AdpKVPair>> getRIs( String groupId,
+            String neId ) throws AdapterException
+    {
+        Map<String, List<AdpKVPair>> map = new HashMap<String, List<AdpKVPair>>();
+        try
+        {
+            log.debug( "--------------Start getRIs--------------" );
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+                GET_RI_SCENARIO, groupId, neId );
+
+            InputStream inputStream = process.getInputStream();
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader( inputStream ) );
+
+            String line = null;
+            boolean flag = false;
+            while( (line = br.readLine()) != null )
+            {
+                if( line.indexOf( "ActionReply received" ) >= 0 )
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            br.close();
+
+            if( process.waitFor() != 0 && flag == false )
+            {
+                throw new AdapterException(
+                        ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
+            }
+            File file = new File(
+                    RI_FILE_PATH + "/" + groupId + "_" + neId + ".ri" );
+
+            br = new BufferedReader( new FileReader( file ) );
+            List<AdpKVPair> pairList = null;
+            while( (line = br.readLine()) != null )
+            {
+                line = line.trim();
+                if (line.startsWith( "USER LABEL" ))
+                {
+                    pairList = new ArrayList<AdpKVPair>();
+                    String key = line.split( ":" )[1].trim();
+                    key = key.substring( key.indexOf( "/" ) );
+                    map.put( key, pairList );
+                    continue;
+                }
+                
+                if (line.startsWith( "Unit part number" ))
+                {
+                    AdpKVPair pair = new AdpKVPair();
+                    pair.setKey( "unitPartNumber" );
+                    pair.setValue( line.split( ":" )[1].trim() );
+                    pairList.add( pair );
+                    continue;
+                }
+                
+                if (line.startsWith( "Software part number" ))
+                {
+                    AdpKVPair pair = new AdpKVPair();
+                    pair.setKey( "softwarePartNumber" );
+                    pair.setValue( line.split( ":" )[1].trim() );
+                    pairList.add( pair );
+                    continue;
+                }
+                
+                if (line.startsWith( "Serial number" ))
+                {
+                    AdpKVPair pair = new AdpKVPair();
+                    pair.setKey( "serialNumber" );
+                    pair.setValue( line.split( ":" )[1].trim() );
+                    pairList.add( pair );
+                    continue;
+                }
+            }
+            br.close();
+            log.debug( "--------------End getRIs--------------" );
+            return map;
+        }
+        catch( Exception e )
+        {
+            log.error( "getRIs", e );
+            throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
+        }
+    }
 
     public static List<TptCoordinatorEntity> getISAs( String groupId,
             String neId ) throws AdapterException

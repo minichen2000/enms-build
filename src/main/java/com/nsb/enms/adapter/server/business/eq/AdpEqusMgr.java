@@ -2,6 +2,7 @@ package com.nsb.enms.adapter.server.business.eq;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +34,8 @@ public class AdpEqusMgr
     public void syncEquip( String groupId, String neId, int id )
             throws AdapterException
     {
+        Map<String, List<AdpKVPair>> map = GetEquipment.getRIs( groupId, neId );
+
         List<TptCoordinatorEntity> tptCoordinatorList = GetEquipment
                 .getISAs( groupId, neId );
         if( null != tptCoordinatorList && !tptCoordinatorList.isEmpty() )
@@ -63,7 +66,7 @@ public class AdpEqusMgr
         {
             log.debug( equ );
             AdpEquipment newEqu = constructEquip( equ, equList,
-                tptCoordinatorList, id );
+                tptCoordinatorList, map, id );
             try
             {
                 equsDbMgr.addEquipment( newEqu );
@@ -73,36 +76,25 @@ public class AdpEqusMgr
                 log.error( "addEquipment:", e );
                 throw new AdapterException( ErrorCode.FAIL_DB_OPERATION );
             }
-            
-            /*AdpEquipment adpEqu;
-            try
-            {
-                adpEqu = equsDbMgr.getEquipmentById( Integer.valueOf( neId ), newEqu.getId() );
-            }
-            catch( Exception e )
-            {
-                log.error( "getEquipmentById:", e );
-                throw new AdapterException( ErrorCode.FAIL_DB_OPERATION );
-            }
-            if( null == adpEqu || adpEqu.getId() == null )
-            {
-                try
-                {
-                    equsDbMgr.addEquipment( newEqu );
-                }
-                catch( Exception e )
-                {
-                    log.error( "addEquipment:", e );
-                    throw new AdapterException( ErrorCode.FAIL_DB_OPERATION );
-                }
-            }*/
+
+            /*
+             * AdpEquipment adpEqu; try { adpEqu = equsDbMgr.getEquipmentById(
+             * Integer.valueOf( neId ), newEqu.getId() ); } catch( Exception e )
+             * { log.error( "getEquipmentById:", e ); throw new
+             * AdapterException( ErrorCode.FAIL_DB_OPERATION ); } if( null ==
+             * adpEqu || adpEqu.getId() == null ) { try {
+             * equsDbMgr.addEquipment( newEqu ); } catch( Exception e ) {
+             * log.error( "addEquipment:", e ); throw new AdapterException(
+             * ErrorCode.FAIL_DB_OPERATION ); } }
+             */
         }
         log.debug( "sync equipment end" );
     }
-    
+
     private AdpEquipment constructEquip( EquipmentEntity equ,
             List<EquipmentEntity> equList,
-            List<TptCoordinatorEntity> tptCoordinatorList, int id )
+            List<TptCoordinatorEntity> tptCoordinatorList,
+            Map<String, List<AdpKVPair>> map, int id )
     {
         AdpEquipment adpEqu = new AdpEquipment();
         List<AdpKVPair> params = new ArrayList<AdpKVPair>();
@@ -124,18 +116,25 @@ public class AdpEqusMgr
         // adpEqu.setAlarmState(equ.getAlarmStatus());
         if( !StringUtils.isEmpty( actualType ) )
         {
-            AdpKVPair unitPartNumberPair = new AdpKVPair();
-            unitPartNumberPair.setKey( "unitPartNumber" );
-            unitPartNumberPair.setValue( equ.getUnitPartNumber() );
-            params.add( unitPartNumberPair );
-            AdpKVPair softwarePartNumberPair = new AdpKVPair();
-            softwarePartNumberPair.setKey( "softwarePartNumber" );
-            softwarePartNumberPair.setValue( equ.getSoftwarePartNumber() );
-            params.add( softwarePartNumberPair );
-            AdpKVPair serialNumberPair = new AdpKVPair();
-            serialNumberPair.setKey( "serialNumber" );
-            serialNumberPair.setValue( equ.getSerialNumber() );
-            params.add( serialNumberPair );
+            String key = getKey( moi );
+            List<AdpKVPair> pairList = map.get( key );
+            if (pairList != null)
+            {
+                params.addAll( pairList );
+            }
+            
+            // AdpKVPair unitPartNumberPair = new AdpKVPair();
+            // unitPartNumberPair.setKey( "unitPartNumber" );
+            // unitPartNumberPair.setValue( equ.getUnitPartNumber() );
+            // params.add( unitPartNumberPair );
+            // AdpKVPair softwarePartNumberPair = new AdpKVPair();
+            // softwarePartNumberPair.setKey( "softwarePartNumber" );
+            // softwarePartNumberPair.setValue( equ.getSoftwarePartNumber() );
+            // params.add( softwarePartNumberPair );
+            // AdpKVPair serialNumberPair = new AdpKVPair();
+            // serialNumberPair.setKey( "serialNumber" );
+            // serialNumberPair.setValue( equ.getSerialNumber() );
+            // params.add( serialNumberPair );
         }
 
         for( int i = tptCoordinatorList.size() - 1; i >= 0; i-- )
@@ -148,32 +147,35 @@ public class AdpEqusMgr
                 {
                     AdpKVPair ipAddressPair = new AdpKVPair();
                     ipAddressPair.setKey( "ipAddress" );
-                    ipAddressPair.setValue( tptCoordinatorEntity.getIpAddress() );
+                    ipAddressPair
+                            .setValue( tptCoordinatorEntity.getIpAddress() );
                     params.add( ipAddressPair );
-                    
+
                     AdpKVPair ipMaskPair = new AdpKVPair();
                     ipMaskPair.setKey( "ipMask" );
                     ipMaskPair.setValue( tptCoordinatorEntity.getIpMask() );
                     params.add( ipMaskPair );
-                    
+
                     AdpKVPair maxPositionPair = new AdpKVPair();
                     maxPositionPair.setKey( "maxPosition" );
-                    maxPositionPair.setValue( tptCoordinatorEntity.getMaxPosition() );
+                    maxPositionPair
+                            .setValue( tptCoordinatorEntity.getMaxPosition() );
                     params.add( maxPositionPair );
-                    
+
                     AdpKVPair maxVc4nvPair = new AdpKVPair();
                     maxVc4nvPair.setKey( "maxVc4nv" );
                     maxVc4nvPair.setValue( tptCoordinatorEntity.getMaxVc4nv() );
                     params.add( maxVc4nvPair );
-                    
+
                     AdpKVPair maxVc3nvPair = new AdpKVPair();
                     maxVc3nvPair.setKey( "maxVc3nv" );
                     maxVc3nvPair.setValue( tptCoordinatorEntity.getMaxVc3nv() );
                     params.add( maxVc3nvPair );
-                    
+
                     AdpKVPair maxVc12nvPair = new AdpKVPair();
                     maxVc12nvPair.setKey( "maxVc12nv" );
-                    maxVc12nvPair.setValue( tptCoordinatorEntity.getMaxVc12nv() );
+                    maxVc12nvPair
+                            .setValue( tptCoordinatorEntity.getMaxVc12nv() );
                     params.add( maxVc12nvPair );
 
                 }
@@ -225,5 +227,37 @@ public class AdpEqusMgr
             position.append( elements[i].split( "=" )[1] ).append( "/" );
         }
         return position.substring( 0, position.length() - 1 );
+    }
+
+    private String getKey( String moi )
+    {
+        String[] elements = moi.split( "/" );
+        if( elements.length == 5 )
+        {
+            String rack = addPrefix( elements[2] );
+            String shelf = elements[3];
+            String slot = addPrefix( elements[4] );
+            return "r" + rack + "sr" + shelf + "/board#" + slot;
+        }
+
+        if( elements.length == 6 )
+        {
+            String rack = addPrefix( elements[2] );
+            String shelf = elements[3];
+            String slot = addPrefix( elements[4] );
+            String subslot = addPrefix( elements[5] );
+            return "r" + rack + "sr" + shelf + "sl" + slot + "/daughter#"
+                    + subslot;
+        }
+        return "";
+    }
+
+    private String addPrefix( String value )
+    {
+        if( value.length() == 1 )
+        {
+            return "0" + value;
+        }
+        return value;
     }
 }
