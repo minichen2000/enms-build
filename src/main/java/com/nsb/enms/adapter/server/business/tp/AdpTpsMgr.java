@@ -75,7 +75,7 @@ public class AdpTpsMgr {
 		try {
 			for (AdpTp tp : tps) {
 				AdpTp newTp = tpsDbMgr.getTpById(tp.getId());
-				if (null == newTp || newTp.getId() < 0) {
+				if (null == newTp || newTp.getId() == null) {
 					tpsDbMgr.addTp(tp);
 				}
 			}

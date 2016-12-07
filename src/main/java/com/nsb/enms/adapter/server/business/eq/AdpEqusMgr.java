@@ -36,6 +36,18 @@ public class AdpEqusMgr
     {
         Map<String, List<AdpKVPair>> map = GetEquipment.getRIs( groupId, neId );
 
+        if( null != map && !map.isEmpty() )
+        {
+            for( String key : map.keySet() )
+            {
+                log.debug( "key is " + key );
+                for( AdpKVPair pair : map.get( key ) )
+                {
+                    log.debug( pair.getKey() + ":" + pair.getValue() );
+                }
+            }
+        }
+
         List<TptCoordinatorEntity> tptCoordinatorList = GetEquipment
                 .getISAs( groupId, neId );
         if( null != tptCoordinatorList && !tptCoordinatorList.isEmpty() )
@@ -118,11 +130,11 @@ public class AdpEqusMgr
         {
             String key = getKey( moi );
             List<AdpKVPair> pairList = map.get( key );
-            if (pairList != null)
+            if( pairList != null )
             {
                 params.addAll( pairList );
             }
-            
+
             // AdpKVPair unitPartNumberPair = new AdpKVPair();
             // unitPartNumberPair.setKey( "unitPartNumber" );
             // unitPartNumberPair.setValue( equ.getUnitPartNumber() );
@@ -232,6 +244,12 @@ public class AdpEqusMgr
     private String getKey( String moi )
     {
         String[] elements = moi.split( "/" );
+
+        for( int i = 0; i < elements.length; i++ )
+        {
+            elements[i] = elements[i].split( "=" )[1];
+        }
+
         if( elements.length == 5 )
         {
             String rack = addPrefix( elements[2] );

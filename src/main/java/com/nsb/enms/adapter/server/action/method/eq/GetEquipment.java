@@ -88,7 +88,7 @@ public class GetEquipment
                 {
                     pairList = new ArrayList<AdpKVPair>();
                     String key = line.split( ":" )[1].trim();
-                    key = key.substring( key.indexOf( "/" ) );
+                    key = key.substring( key.indexOf( "/" ) + 1 );
                     map.put( key, pairList );
                     continue;
                 }
@@ -386,7 +386,7 @@ public class GetEquipment
                             if( !StringUtils.isEmpty( equipmentExpected )
                                     && !"NULL".equals( equipmentExpected ) )
                             {
-                                equipmentEntity.setEquipmentActual(
+                                equipmentEntity.setEquipmentExpected(
                                     equipmentExpected );
                             }
                             continue;
