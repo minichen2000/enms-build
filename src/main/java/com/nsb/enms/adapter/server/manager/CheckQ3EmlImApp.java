@@ -74,6 +74,7 @@ public class CheckQ3EmlImApp
                 if( line.contains( "GetReply received" ) )
                 {
                     flag = true;
+                    break;
                 }
             }
 

@@ -23,8 +23,9 @@ public class Q3EmlImListener extends TimerTask
         boolean flag = CheckQ3EmlImApp.checkQ3EmlIm( groupId );
         if (!flag)
         {
-            log.debug( "Connect to emlim_" + groupId + " failed!!!" );
+            log.debug( "Connect to emlim_" + groupId + " failed, start to check it loop." );
             CheckQ3EmlImApp.check( groupId );
         }
+        log.debug( "Connect to emlim_" + groupId + " success, no action need." );
     }
 }
