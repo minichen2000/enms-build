@@ -20,6 +20,8 @@ public class ExecExternalScript
     private static final Logger log = LogManager
             .getLogger( ExecExternalScript.class );
 
+    private static final Object obj = new Object();
+
     private static String tstmgrScript = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT, ConfigKey.DEFAULT_TSTMGR_SCRIPT );
 
@@ -76,11 +78,13 @@ public class ExecExternalScript
         }
 
         System.arraycopy( params, 0, cmdArray, 1, params.length );
-        log.debug( "exec:" + Arrays.asList( cmdArray ) );
-
         try
         {
-            return Runtime.getRuntime().exec( cmdArray, null, fileDir );
+            synchronized( obj )
+            {
+                log.debug( "exec:" + Arrays.asList( cmdArray ) );
+                return Runtime.getRuntime().exec( cmdArray, null, fileDir );
+            }
         }
         catch( IOException e )
         {
