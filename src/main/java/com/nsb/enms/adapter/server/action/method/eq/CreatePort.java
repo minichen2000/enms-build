@@ -35,10 +35,9 @@ public class CreatePort {
 
 	public static List<TptCoordinatorEntity> createISAPortVC12(String groupId, String neId, String tptCoordinatorId,
 			String position) throws AdapterException {
-	    Process process = null;
 		try {
 			log.debug("--------------Start createISAPortVC12--------------");
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, CREATE_ISA_PORT_VC12, groupId, neId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, CREATE_ISA_PORT_VC12, groupId, neId,
 					tptCoordinatorId, position);
 
 			InputStream inputStream = process.getInputStream();
@@ -96,28 +95,21 @@ public class CreatePort {
 			br.close();
 
 			if (process.waitFor() != 0) {
-			    ExecExternalScript.destroyProcess(process);
 				throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM);
 			}
-			ExecExternalScript.destroyProcess(process);
 			log.debug("--------------End createISAPortVC12--------------");
 			return tptCorrdinatorList;
 		} catch (Exception e) {
 			log.error("createISAPortVC12", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM);
-		} finally 
-		{
-		    if (process != null)
-		        ExecExternalScript.destroyProcess( process );
-        }
+		}
 	}
 
 	public static List<EquipmentEntity> createISAPortVC12x(String groupId, String neId, String tptCoordinatorId,
 			String position) throws AdapterException {
-	    Process process = null;
 		try {
 			log.debug("------------Start createISAPortVC12x-------------------");
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, CREATE_ISA_PORT_VC12X, groupId, neId);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, CREATE_ISA_PORT_VC12X, groupId, neId);
 
 			InputStream inputStream = process.getInputStream();
 			List<EquipmentEntity> eqList = new LinkedList<EquipmentEntity>();
@@ -160,19 +152,14 @@ public class CreatePort {
 		} catch (Exception e) {
 			log.error("createISAPortVC12x", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM);
-		} finally
-		{
-		    if (process != null)
-		        ExecExternalScript.destroyProcess( process );
 		}
 	}
 
 	public static List<TptCoordinatorEntity> createISAPortVCx(String groupId, String neId, String tptCoordinatorId,
 			String position, String objClass, String vcxNum) throws AdapterException {
-	    Process process = null;
+	    log.debug("--------------Start createISAPortVCx--------------");
 	    try {
-			log.debug("--------------Start createISAPortVCx--------------");
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, CREATE_ISA_PORT_VCX, groupId, neId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, CREATE_ISA_PORT_VCX, groupId, neId,
 					tptCoordinatorId, position, objClass, vcxNum);
 
 			InputStream inputStream = process.getInputStream();
@@ -238,12 +225,6 @@ public class CreatePort {
 		} catch (Exception e) {
 			log.error("createISAPortVCx", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM);
-		} finally
-	    {
-		    if (process != null)
-		    {
-		        ExecExternalScript.destroyProcess( process );
-		    }
-	    }
+		}
 	}
 }

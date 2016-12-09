@@ -22,9 +22,8 @@ public class DeleteXc {
 
 	public static void deleteXc(String groupId, String neId, String corssConnectionId) throws AdapterException {
 	    log.debug( "------------Start deleteXc-------------------" );
-	    Process process = null;
 	    try {
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId,
 					corssConnectionId);
 			InputStream inputStream = process.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -37,7 +36,6 @@ public class DeleteXc {
 				}
 				if (line.indexOf("Ok") >= 0) {
 					flag = true;
-					break;
 				}
 			}
 			br.close();
@@ -50,10 +48,6 @@ public class DeleteXc {
 		} catch (Exception e) {
 			log.error("deleteXc", e);
 			throw new AdapterException(ErrorCode.FAIL_DELETE_XC_BY_EMLIM);
-		} finally
-	    {
-		    if (process != null)
-		        ExecExternalScript.destroyProcess( process );
-	    }
+		}
 	}
 }

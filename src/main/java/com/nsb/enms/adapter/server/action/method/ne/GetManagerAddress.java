@@ -28,10 +28,9 @@ public class GetManagerAddress
             int neId ) throws AdapterException
     {
         log.debug( "------------Start getManagerAddress-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run(
+            Process process = ExecExternalScript.run(
                 ExternalScriptType.TSTMGR, SCENARIO, String.valueOf( groupId ),
                 String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();
@@ -83,11 +82,6 @@ public class GetManagerAddress
             log.error( "getManagerAddress", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
-        }
-        finally
-        {
-            if (process != null)
-                ExecExternalScript.destroyProcess( process );
         }
     }
 }

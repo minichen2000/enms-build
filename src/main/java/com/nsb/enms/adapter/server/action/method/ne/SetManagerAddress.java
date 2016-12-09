@@ -31,10 +31,9 @@ public class SetManagerAddress
             String mainOSAddress ) throws AdapterException
     {
         log.debug( "------------Start setMainOSAddress-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 setMainOSAddressScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -47,7 +46,6 @@ public class SetManagerAddress
                 if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
-                    break;
                 }
             }
             br.close();
@@ -64,11 +62,6 @@ public class SetManagerAddress
             throw new AdapterException(
                     ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
         }
-        finally
-        {
-            if( process != null )
-                ExecExternalScript.destroyProcess( process );
-        }
         log.debug( "------------End setMainOSAddress-------------------" );
     }
 
@@ -76,10 +69,9 @@ public class SetManagerAddress
             String spareOSAddress ) throws AdapterException
     {
         log.debug( "------------Start setSpareOSAddress-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 setSpareOSAddressScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -92,7 +84,6 @@ public class SetManagerAddress
                 if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
-                    break;
                 }
             }
             br.close();
@@ -108,11 +99,6 @@ public class SetManagerAddress
             log.error( "setSpareOSAddress", e );
             throw new AdapterException(
                     ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
-        }
-        finally
-        {
-            if( process != null )
-                ExecExternalScript.destroyProcess( process );
         }
         log.debug( "------------End setSpareOSAddress-------------------" );
     }

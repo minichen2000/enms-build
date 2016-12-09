@@ -26,9 +26,8 @@ public class GetTp {
 
 	public static List<TpEntity> getTps(String groupId, String neId) throws AdapterException {
 	    log.debug( "------------Start getTps-------------------" );
-	    Process process = null;
 	    try {
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId);
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId);
 			InputStream inputStream = process.getInputStream();
 			List<TpEntity> tpList = new LinkedList<TpEntity>();
 
@@ -104,9 +103,6 @@ public class GetTp {
 		} catch (Exception e) {
 			log.error("getTps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
-		} finally {
-		    if (process != null)
-		        ExecExternalScript.destroyProcess( process );
 		}
 	}
 }

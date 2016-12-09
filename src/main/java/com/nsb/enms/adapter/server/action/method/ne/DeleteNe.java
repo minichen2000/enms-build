@@ -37,10 +37,9 @@ public class DeleteNe
             throws AdapterException
     {
         log.debug( "------------Start stopSupervision-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 stopSupervisionScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -63,10 +62,6 @@ public class DeleteNe
             throw new AdapterException(
                     ErrorCode.FAIL_UNSUPERVISE_NE_BY_EMLIM );
         }
-        finally {
-            if (process != null)
-                ExecExternalScript.destroyProcess( process );
-        }
         log.debug( "------------End stopSupervision-------------------" );
     }
 
@@ -74,10 +69,9 @@ public class DeleteNe
             throws AdapterException
     {
         log.debug( "------------Start removeNe-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 deleteNeScenario, groupId, neId );
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -89,7 +83,6 @@ public class DeleteNe
                 if( line.contains( "DeleteReply received" ) )
                 {
                     flag = true;
-                    break;
                 }
             }
             br.close();
@@ -104,10 +97,6 @@ public class DeleteNe
         {
             log.error( "removeNe", e );
             throw new AdapterException( ErrorCode.FAIL_DELETE_NE_BY_EMLIM );
-        }
-        finally {
-            if (process != null)
-                ExecExternalScript.destroyProcess( process );
         }
         log.debug( "------------End removeNe-------------------" );
     }

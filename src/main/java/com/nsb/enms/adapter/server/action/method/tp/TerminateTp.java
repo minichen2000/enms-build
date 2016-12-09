@@ -37,9 +37,8 @@ public class TerminateTp {
 			throws AdapterException {
 	    log.debug( "------------Start terminateTug3ToTu12-------------------" );
 	    boolean isOk = false;
-		Process process = null;
 		try {
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId, vc4TTPId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId, vc4TTPId,
 					tug3Id);
 			InputStream inputStream = process.getInputStream();
 
@@ -49,7 +48,6 @@ public class TerminateTp {
 				if (line.contains(" ActionReply received")) {
 					log.info("successed to terminateTug3ToTu12, vc4TTPId={}, tug3Id={}", vc4TTPId, tug3Id);
 					isOk = true;
-					break;
 				}
 			}
 			br.close();
@@ -62,19 +60,15 @@ public class TerminateTp {
 		} catch (Exception e) {
 			log.error("terminateTug3ToTu12", e);
 			throw new AdapterException(ErrorCode.FAIL_TERMINATE_TP_BY_EMLIM);
-		} finally {
-            if (process != null)
-                ExecExternalScript.destroyProcess( process );
-        }
+		}
 	}
 
 	public static boolean terminateTug3ToTu3(String groupId, String neId, String vc4TTPId, String tug3Id)
 			throws AdapterException {
 	    log.debug( "------------Start terminateTug3ToTu3-------------------" );
 	    boolean isOk = false;
-		Process process = null;
 		try {
-			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, vc4TTPId,
+			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, vc4TTPId,
 					tug3Id);
 			InputStream inputStream = process.getInputStream();
 
@@ -84,7 +78,6 @@ public class TerminateTp {
 				if (line.contains(" ActionReply received")) {
 					log.info("successed to terminateTug3ToTu3, vc4TTPId={}, tug3Id={}", vc4TTPId, tug3Id);
 					isOk = true;
-					break;
 				}
 			}
 			br.close();
@@ -98,9 +91,6 @@ public class TerminateTp {
 		} catch (Exception e) {
 			log.error("terminateTug3ToTu3", e);
 			throw new AdapterException(ErrorCode.FAIL_TERMINATE_TP_BY_EMLIM);
-		} finally {
-            if (process != null)
-                ExecExternalScript.destroyProcess( process );
-        }
+		}
 	}
 }

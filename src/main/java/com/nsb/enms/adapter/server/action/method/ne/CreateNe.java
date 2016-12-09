@@ -55,10 +55,9 @@ public class CreateNe
             throws AdapterException
     {
         log.debug( "------------Start createNe-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 createNeScenario, String.valueOf( groupId ),
                 String.valueOf( neId ), neRelease, neType, userLabel,
                 locationName );
@@ -73,7 +72,6 @@ public class CreateNe
                 if( line.contains( "CreateReply received" ) )
                 {
                     flag = true;
-                    break;
                 }
             }
             br.close();
@@ -89,12 +87,6 @@ public class CreateNe
             log.error( "createNe", e );
             throw new AdapterException(
                 ErrorCode.FAIL_CREATE_NE_BY_EMLIM );
-        } finally
-        {
-            if (process != null)
-            {
-                ExecExternalScript.destroyProcess( process );
-            }
         }
         log.debug( "------------End createNe-------------------" );
     }
@@ -103,7 +95,6 @@ public class CreateNe
             String neAddress ) throws AdapterException
     {
         log.debug( "------------Start setNeAddress-------------------" );
-        Process process = null;
         try
         {
             String scenario = setNeAddressScenario;
@@ -111,7 +102,7 @@ public class CreateNe
             {
                 scenario = setNeIsaAddressScenario;
             }
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 scenario, String.valueOf( groupId ), String.valueOf( neId ),
                 neAddress );
             InputStream inputStream = process.getInputStream();
@@ -124,7 +115,6 @@ public class CreateNe
                 if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
-                    break;
                 }
             }
             br.close();
@@ -140,10 +130,6 @@ public class CreateNe
             log.error( "setNeAddress", e );
             throw new AdapterException(
                     ErrorCode.FAIL_SET_NE_ADDRESS_BY_EMLIM );
-        }
-        finally {
-            if (process != null)
-                ExecExternalScript.destroyProcess( process );
         }
         log.debug( "------------End setNeAddress-------------------" );
     }

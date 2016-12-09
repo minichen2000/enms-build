@@ -35,10 +35,9 @@ public class StartSupervision
         while( count < MAX_COUNT )
         {
             log.debug( "------------Start startSupervision-------------------" );
-            Process process = null;
             try
             {
-                process = ExecExternalScript.run(
+                Process process = ExecExternalScript.run(
                     ExternalScriptType.TSTMGR, startSupervisionScenario,
                     groupId, neId );
                 InputStream inputStream = process.getInputStream();
@@ -51,7 +50,6 @@ public class StartSupervision
                     if( line.contains( "ActionReply received" ) )
                     {
                         flag = true;
-                        break;
                     }
                 }
                 br.close();
@@ -74,10 +72,6 @@ public class StartSupervision
                 log.error( "startSupervision", e );
                 throw new AdapterException(
                         ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM );
-            }
-            finally {
-                if (process != null)
-                    ExecExternalScript.destroyProcess( process );
             }
         }
         return false;

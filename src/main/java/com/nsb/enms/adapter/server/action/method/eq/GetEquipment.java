@@ -50,10 +50,9 @@ public class GetEquipment
     {
         log.debug( "--------------Start getRIs--------------" );
         Map<String, List<AdpKVPair>> map = new HashMap<String, List<AdpKVPair>>();
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_RI_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -66,7 +65,6 @@ public class GetEquipment
                 if( line.contains( "ActionReply received" ) )
                 {
                     flag = true;
-                    break;
                 }
             }
             br.close();
@@ -129,21 +127,15 @@ public class GetEquipment
             log.error( "getRIs", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
         }
-        finally
-        {
-            if( process != null )
-                ExecExternalScript.destroyProcess( process );
-        }
     }
 
     public static List<TptCoordinatorEntity> getISAs( String groupId,
             String neId ) throws AdapterException
     {
         log.debug( "--------------Start getCardIpAddress--------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_ISA_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -281,21 +273,15 @@ public class GetEquipment
             log.error( "getCardIpAddress", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
         }
-        finally
-        {
-            if( process != null )
-                ExecExternalScript.destroyProcess( process );
-        }
     }
 
     public static List<EquipmentEntity> getEquipments( String groupId,
             String neId ) throws AdapterException
     {
         log.debug( "------------Start getEquipment-------------------" );
-        Process process = null;
         try
         {
-            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_EQ_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -491,11 +477,6 @@ public class GetEquipment
         {
             log.error( "getEquipment", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
-        }
-        finally
-        {
-            if( process != null )
-                ExecExternalScript.destroyProcess( process );
         }
     }
 }

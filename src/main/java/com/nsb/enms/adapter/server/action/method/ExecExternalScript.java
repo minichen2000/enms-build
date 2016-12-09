@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.action.method;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,8 +19,6 @@ public class ExecExternalScript
 {
     private static final Logger log = LogManager
             .getLogger( ExecExternalScript.class );
-
-    private static final Object obj = new Object();
 
     private static String tstmgrScript = ConfLoader.getInstance().getConf(
         ConfigKey.TSTMGR_SCRIPT, ConfigKey.DEFAULT_TSTMGR_SCRIPT );
@@ -59,32 +56,6 @@ public class ExecExternalScript
         }
     }
     
-    public static void destroyProcess(Process process)
-    {
-        if (process != null)
-        {
-            closeStream( process.getInputStream() );
-            closeStream( process.getOutputStream() );
-            closeStream( process.getErrorStream() );
-            process.destroy();
-        }
-    }
-    
-    private static void closeStream(Closeable c)
-    {
-        if (c != null)
-        {
-            try
-            {
-                c.close();
-            }
-            catch( IOException e )
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private static Process run4Normal( ExternalScriptType scriptType,
             String... params ) throws AdapterException
     {
@@ -107,11 +78,8 @@ public class ExecExternalScript
         System.arraycopy( params, 0, cmdArray, 1, params.length );
         try
         {
-            synchronized( obj )
-            {
-                log.debug( "exec:" + Arrays.asList( cmdArray ) );
-                return Runtime.getRuntime().exec( cmdArray, null, fileDir );
-            }
+            log.debug( "exec:" + Arrays.asList( cmdArray ) );
+            return Runtime.getRuntime().exec( cmdArray, null, fileDir );
         }
         catch( IOException e )
         {
