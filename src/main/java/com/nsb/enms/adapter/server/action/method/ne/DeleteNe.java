@@ -26,18 +26,17 @@ public class DeleteNe
             .getConf( ConfigKey.STOP_SUPERVISION_REQ,
                 ConfigKey.DEFAULT_STOP_SUPERVISION_REQ );
 
-    public static boolean deleteNe( String groupId, String neId )
+    public static void deleteNe( String groupId, String neId )
             throws AdapterException
     {
-        boolean flag = false;
         stopSupervision( groupId, neId );
-        flag = removeNe( groupId, neId );
-        return flag;
+        removeNe( groupId, neId );
     }
 
     private static void stopSupervision( String groupId, String neId )
             throws AdapterException
     {
+        log.debug( "------------Start stopSupervision-------------------" );
         Process process = null;
         try
         {
@@ -47,19 +46,12 @@ public class DeleteNe
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-            String line = null;
-            boolean flag = false;
-            while( (line = br.readLine()) != null )
+            while( br.readLine() != null )
             {
-                if (line.contains( "ActionReply received" ))
-                {
-                    flag = true;
-                    break;
-                }
+                
             }
             br.close();
-            process.waitFor();
-            if (!flag)
+            if (process.waitFor() != 0)
             {
                 throw new AdapterException(
                     ErrorCode.FAIL_UNSUPERVISE_NE_BY_EMLIM );
@@ -75,11 +67,13 @@ public class DeleteNe
             if (process != null)
                 ExecExternalScript.destroyProcess( process );
         }
+        log.debug( "------------End stopSupervision-------------------" );
     }
 
-    private static boolean removeNe( String groupId, String neId )
+    private static void removeNe( String groupId, String neId )
             throws AdapterException
     {
+        log.debug( "------------Start removeNe-------------------" );
         Process process = null;
         try
         {
@@ -105,7 +99,6 @@ public class DeleteNe
                 throw new AdapterException( ErrorCode.FAIL_DELETE_NE_BY_EMLIM );
             }
             Q3EmlImMgr.instance().removeNe( Integer.valueOf( neId ) );
-            return flag;
         }
         catch( Exception e )
         {
@@ -116,5 +109,6 @@ public class DeleteNe
             if (process != null)
                 ExecExternalScript.destroyProcess( process );
         }
+        log.debug( "------------End removeNe-------------------" );
     }
 }

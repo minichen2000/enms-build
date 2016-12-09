@@ -25,7 +25,8 @@ public class GetXc {
 			ConfigKey.DEFAULT_XC_GET_REQ);
 
 	public static List<XcEntity> getXcs(int groupId, int neId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start getXcs-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, String.valueOf(groupId),
 					String.valueOf(neId));
@@ -90,14 +91,15 @@ public class GetXc {
 			}
 			br.close();
 
-			if (process.waitFor() != 0 || xcList.size() < 1) {
+			if (process.waitFor() != 0) {
 				log.error("Get xc failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_XC_BY_EMLIM);
 			}
+			log.debug( "------------End getXcs-------------------" );
 			return xcList;
 
 		} catch (Exception e) {
-			log.error("getXc", e);
+			log.error("getXcs", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_XC_BY_EMLIM);
 		} finally {
             if (process != null)

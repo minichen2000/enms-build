@@ -34,6 +34,7 @@ public class StartSupervision
         int count = 0;
         while( count < MAX_COUNT )
         {
+            log.debug( "------------Start startSupervision-------------------" );
             Process process = null;
             try
             {
@@ -50,6 +51,7 @@ public class StartSupervision
                     if( line.contains( "ActionReply received" ) )
                     {
                         flag = true;
+                        break;
                     }
                 }
                 br.close();

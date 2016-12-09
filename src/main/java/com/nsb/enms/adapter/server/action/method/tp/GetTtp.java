@@ -25,7 +25,8 @@ public class GetTtp {
 			ConfigKey.DEFAULT_GET_T_PORT_REQ);
 
 	public static List<TpEntity> getVc4Ttps(String groupId, String neId) throws AdapterException {
-		List<TpEntity> tpList = new ArrayList<TpEntity>();
+	    log.debug( "------------Start getVc4Ttps-------------------" );
+	    List<TpEntity> tpList = new ArrayList<TpEntity>();
 		Process process = null;
 		try {
 			String scope = "firstLevelOnly";
@@ -82,9 +83,10 @@ public class GetTtp {
 				log.error("Get VC4TTP failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getVc4Ttps-------------------" );
 			return tpList;
 		} catch (Exception e) {
-			log.error("getVc4Ttp", e);
+			log.error("getVc4Ttps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		} finally {
             if (process != null)

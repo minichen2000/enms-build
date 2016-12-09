@@ -25,7 +25,8 @@ public class GetTp {
 			ConfigKey.DEFAULT_GET_PORT_REQ);
 
 	public static List<TpEntity> getTps(String groupId, String neId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start getTps-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId);
 			InputStream inputStream = process.getInputStream();
@@ -94,13 +95,14 @@ public class GetTp {
 			}
 			br.close();
 
-			if (process.waitFor() != 0 || tpList.size() < 1) {
+			if (process.waitFor() != 0) {
 				log.error("Get tp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getTps-------------------" );
 			return tpList;
 		} catch (Exception e) {
-			log.error("getTp", e);
+			log.error("getTps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		} finally {
 		    if (process != null)

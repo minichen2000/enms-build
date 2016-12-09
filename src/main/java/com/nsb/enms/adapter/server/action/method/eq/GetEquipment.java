@@ -48,18 +48,17 @@ public class GetEquipment
     public static Map<String, List<AdpKVPair>> getRIs( String groupId,
             String neId ) throws AdapterException
     {
+        log.debug( "--------------Start getRIs--------------" );
         Map<String, List<AdpKVPair>> map = new HashMap<String, List<AdpKVPair>>();
         Process process = null;
         try
         {
-            log.debug( "--------------Start getRIs--------------" );
             process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_RI_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-
             String line = null;
             boolean flag = false;
             while( (line = br.readLine()) != null )
@@ -71,8 +70,8 @@ public class GetEquipment
                 }
             }
             br.close();
-
-            if( process.waitFor() != 0 && flag == false )
+            process.waitFor();
+            if( !flag )
             {
                 throw new AdapterException(
                         ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
@@ -85,7 +84,7 @@ public class GetEquipment
             while( (line = br.readLine()) != null )
             {
                 line = line.trim();
-                if (line.startsWith( "USER LABEL" ))
+                if( line.startsWith( "USER LABEL" ) )
                 {
                     pairList = new ArrayList<AdpKVPair>();
                     String key = line.split( ":" )[1].trim();
@@ -93,8 +92,8 @@ public class GetEquipment
                     map.put( key, pairList );
                     continue;
                 }
-                
-                if (line.startsWith( "Unit part number" ))
+
+                if( line.startsWith( "Unit part number" ) )
                 {
                     AdpKVPair pair = new AdpKVPair();
                     pair.setKey( "unitPartNumber" );
@@ -102,8 +101,8 @@ public class GetEquipment
                     pairList.add( pair );
                     continue;
                 }
-                
-                if (line.startsWith( "Software part number" ))
+
+                if( line.startsWith( "Software part number" ) )
                 {
                     AdpKVPair pair = new AdpKVPair();
                     pair.setKey( "softwarePartNumber" );
@@ -111,8 +110,8 @@ public class GetEquipment
                     pairList.add( pair );
                     continue;
                 }
-                
-                if (line.startsWith( "Serial number" ))
+
+                if( line.startsWith( "Serial number" ) )
                 {
                     AdpKVPair pair = new AdpKVPair();
                     pair.setKey( "serialNumber" );
@@ -132,7 +131,7 @@ public class GetEquipment
         }
         finally
         {
-            if (process != null)
+            if( process != null )
                 ExecExternalScript.destroyProcess( process );
         }
     }
@@ -140,10 +139,10 @@ public class GetEquipment
     public static List<TptCoordinatorEntity> getISAs( String groupId,
             String neId ) throws AdapterException
     {
+        log.debug( "--------------Start getCardIpAddress--------------" );
         Process process = null;
         try
         {
-            log.debug( "--------------Start getCardIpAddress--------------" );
             process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_ISA_SCENARIO, groupId, neId );
 
@@ -152,9 +151,7 @@ public class GetEquipment
 
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-
             String line = null;
-
             while( (line = br.readLine()) != null )
             {
                 if( line.contains( "GetReply received" ) )
@@ -286,18 +283,18 @@ public class GetEquipment
         }
         finally
         {
-            if (process != null)
+            if( process != null )
                 ExecExternalScript.destroyProcess( process );
         }
     }
 
     public static List<EquipmentEntity> getEquipments( String groupId,
             String neId ) throws AdapterException
-    {   
+    {
+        log.debug( "------------Start getEquipment-------------------" );
         Process process = null;
         try
         {
-            log.debug( "------------Start getEquipment-------------------" );
             process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_EQ_SCENARIO, groupId, neId );
 
@@ -308,7 +305,6 @@ public class GetEquipment
                     new InputStreamReader( inputStream ) );
 
             String line = null;
-
             while( (line = br.readLine()) != null )
             {
                 if( line.contains( "GetReply received" ) )
@@ -335,8 +331,23 @@ public class GetEquipment
 
                         if( line.startsWith( "allowedEquipmentType" ) )
                         {
+                            Pattern pattern2 = Pattern.compile(
+                                "boardType\\s*\\{\\s*(type.*?)\\s*\\}[,|\\s*\\},]" );
+                            Matcher matcher = pattern2.matcher( line );
+                            List<String> allowedEquipmentTypes = new ArrayList<String>();
+                            String value = "";
+                            while( matcher.find() )
+                            {
+                                value = matcher.group( 1 );
+                                String[] elements = value.split( ",\\s*" );
+                                for( String element : elements )
+                                {
+                                    allowedEquipmentTypes.add(
+                                        element.replace( "type", "" ).trim() );
+                                }
+                            }
                             equipmentEntity.setAllowedEquipmentTypes(
-                                ParseUtil.parseAllowedEquipmentType( line ) );
+                                allowedEquipmentTypes );
                             continue;
                         }
 
@@ -468,7 +479,6 @@ public class GetEquipment
                 }
             }
             br.close();
-
             if( process.waitFor() != 0 )
             {
                 throw new AdapterException(
@@ -481,9 +491,10 @@ public class GetEquipment
         {
             log.error( "getEquipment", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
-        } finally
+        }
+        finally
         {
-            if (process != null)
+            if( process != null )
                 ExecExternalScript.destroyProcess( process );
         }
     }

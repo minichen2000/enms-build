@@ -14,7 +14,6 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
 import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.common.ErrorCode;
 
@@ -45,25 +44,17 @@ public class CreateNe
         //int neId = groupNeId.getSecond();
         int groupId = Q3EmlImMgr.instance().getGroupId(id);
         log.debug( "The groupId = " + groupId + ", neId = " + id );
-        boolean flag = false;
-        flag = createNe( groupId, id, neRelease, neType, userLabel,
+        createNe( groupId, id, neRelease, neType, userLabel,
             locationName );
-        if( flag )
-        {
-            flag = setNeAddress( groupId, id, neAddress );
-        }
-
-        if( flag )
-        {
-            return GetNe.getNe( groupId, id );
-        }
-        return null;
+        setNeAddress( groupId, id, neAddress );
+        return GetNe.getNe( groupId, id );
     }
 
-    private static boolean createNe( int groupId, int neId, String neRelease,
+    private static void createNe( int groupId, int neId, String neRelease,
             String neType, String userLabel, String locationName )
             throws AdapterException
     {
+        log.debug( "------------Start createNe-------------------" );
         Process process = null;
         try
         {
@@ -82,23 +73,22 @@ public class CreateNe
                 if( line.contains( "CreateReply received" ) )
                 {
                     flag = true;
+                    break;
                 }
             }
             br.close();
-
-            if( process.waitFor() != 0 || !flag )
+            process.waitFor();
+            if( !flag )
             {
                 throw new AdapterException(
-                        AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-                        "Create ne failed!!!" );
+                        ErrorCode.FAIL_CREATE_NE_BY_EMLIM );
             }
-            return flag;
         }
         catch( Exception e )
         {
             log.error( "createNe", e );
             throw new AdapterException(
-                    AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+                ErrorCode.FAIL_CREATE_NE_BY_EMLIM );
         } finally
         {
             if (process != null)
@@ -106,11 +96,13 @@ public class CreateNe
                 ExecExternalScript.destroyProcess( process );
             }
         }
+        log.debug( "------------End createNe-------------------" );
     }
 
-    private static boolean setNeAddress( int groupId, int neId,
+    private static void setNeAddress( int groupId, int neId,
             String neAddress ) throws AdapterException
     {
+        log.debug( "------------Start setNeAddress-------------------" );
         Process process = null;
         try
         {
@@ -132,15 +124,16 @@ public class CreateNe
                 if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
+                    break;
                 }
             }
             br.close();
-            if( process.waitFor() != 0 || !flag )
+            process.waitFor();
+            if( !flag )
             {
                 throw new AdapterException(
                         ErrorCode.FAIL_SET_NE_ADDRESS_BY_EMLIM );
             }
-            return flag;
         }
         catch( Exception e )
         {
@@ -152,5 +145,6 @@ public class CreateNe
             if (process != null)
                 ExecExternalScript.destroyProcess( process );
         }
+        log.debug( "------------End setNeAddress-------------------" );
     }
 }

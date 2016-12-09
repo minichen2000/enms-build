@@ -54,7 +54,8 @@ public class GetCtp {
 	}
 
 	private static String getRsCtp(String groupId, String neId, String tpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start getRsCtp-------------------" );
+	    Process process = null;
 	    try {
 			// labelledOpticalSPITTPBidirectional = 0.0.7.774.127.7.0.3.4
 			String objectClass = "0.0.7.774.127.7.0.3.4";
@@ -78,6 +79,7 @@ public class GetCtp {
 				log.error("Get rsCtp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getRsCtp-------------------" );
 			return rsTTPId;
 		} catch (Exception e) {
 			log.error("getRsCtp", e);
@@ -114,7 +116,8 @@ public class GetCtp {
 	}
 
 	private static String getMsCtp(String groupId, String neId, String rsTtpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start getMsCtp-------------------" );
+	    Process process = null;
 	    try {
 			// rsTTPBidirectional = 0.0.7.774.0.3.40
 			String objectClass = "0.0.7.774.0.3.40";
@@ -138,6 +141,7 @@ public class GetCtp {
 				log.error("Get msCtp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getMsCtp-------------------" );
 			return msTTPId;
 		} catch (Exception e) {
 			log.error("getMsCtp", e);
@@ -150,7 +154,8 @@ public class GetCtp {
 	}
 
 	private static String getUnProtectedCtp(String groupId, String neId, String msTtpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start getUnProtectedCtp-------------------" );
+	    Process process = null;
 	    try {
 			// msTTPBidirectional = 0.0.7.774.0.3.25
 			String objectClass = "0.0.7.774.0.3.25";
@@ -174,6 +179,7 @@ public class GetCtp {
 				log.error("Get unProtectedCtp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getUnProtectedCtp-------------------" );
 			return protectedTTPId;
 		} catch (Exception e) {
 			log.error("getUnProtectedCtp", e);
@@ -186,7 +192,8 @@ public class GetCtp {
 
 	private static List<TpEntity> getAu4Ctps(String groupId, String neId, String protectedTtpId)
 			throws AdapterException {
-		List<TpEntity> tpList = new LinkedList<TpEntity>();
+	    log.debug( "------------Start getAu4Ctps-------------------" );
+	    List<TpEntity> tpList = new LinkedList<TpEntity>();
 		Process process = null;
 		try {
 			// protectedTTPBidirectional = 0.0.7.774.127.3.0.3.2
@@ -210,6 +217,7 @@ public class GetCtp {
 				log.error("Get au4Ctp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getAu4Ctp-------------------" );
 			return tpList;
 		} catch (Exception e) {
 			log.error("getAu4Ctp", e);
@@ -253,7 +261,8 @@ public class GetCtp {
 	}
 
 	private static Pair<String, String> getEPdhCtp(String groupId, String neId, String tpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start getEPdhCtp-------------------" );
+	    Process process = null;
 	    try {
 			// pPITTPBidirectionalR1 = 1.3.12.2.1006.54.0.0.3.210
 			String objectClass = "1.3.12.2.1006.54.0.0.3.210";
@@ -311,6 +320,7 @@ public class GetCtp {
 				log.error("Get ePdhCtp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getEpdhCtp-------------------" );
 			return pair;
 		} catch (Exception e) {
 			log.error("getEpdhCtp", e);
@@ -323,7 +333,8 @@ public class GetCtp {
 	}
 
 	private static List<TpEntity> getVc12Ttps(String groupId, String neId, String tpId) throws AdapterException {
-		List<TpEntity> tpList = new LinkedList<TpEntity>();
+	    log.debug( "------------Start getVc12Ttps-------------------" );
+	    List<TpEntity> tpList = new LinkedList<TpEntity>();
 		Process process = null;
 		try {
 			// vc12PathTraceTTPBidirectional = 0.0.7.774.127.7.0.3.10
@@ -344,9 +355,10 @@ public class GetCtp {
 				log.error("Get vc12Ttp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getVc12Ttps-------------------" );
 			return tpList;
 		} catch (Exception e) {
-			log.error("getVc12Ttp", e);
+			log.error("getVc12Ttps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		} finally {
             if (process != null)
@@ -355,7 +367,8 @@ public class GetCtp {
 	}
 
 	private static List<TpEntity> getVc3Ttps(String groupId, String neId, String tpId) throws AdapterException {
-		List<TpEntity> tpList = new LinkedList<TpEntity>();
+	    log.debug( "------------Start getVc3Ttps-------------------" );
+	    List<TpEntity> tpList = new LinkedList<TpEntity>();
 		try {
 			String objectClass = "0.0.7.774.0.3.101";
 			String vc3TTPId = "0.0.7.774.0.7.41";
@@ -374,15 +387,17 @@ public class GetCtp {
 				log.error("Get vc3Ttp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getVc3Ttps-------------------" );
 			return tpList;
 		} catch (Exception e) {
-			log.error("getVc3Ttp", e);
+			log.error("getVc3Ttps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		}
 	}
 
 	public static List<TpEntity> getTu12Ctps(String groupId, String neId, String vc4TtpId) throws AdapterException {
-		List<TpEntity> tpList = new LinkedList<TpEntity>();
+	    log.debug( "------------Start getTu12Ctps-------------------" );
+	    List<TpEntity> tpList = new LinkedList<TpEntity>();
 		Process process = null;
 		try {
 			// modifiableVC4TTPBidirectionalR1 = 0.0.7.774.127.2.0.3.25
@@ -405,9 +420,10 @@ public class GetCtp {
 				log.error("Get tu12Ctp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getTu12Ctps-------------------" );
 			return tpList;
 		} catch (Exception e) {
-			log.error("getTu12Ctp", e);
+			log.error("getTu12Ctps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		} finally {
             if (process != null)
@@ -416,7 +432,8 @@ public class GetCtp {
 	}
 
 	public static List<TpEntity> getTu3Ctps(String groupId, String neId, String vc4TtpId) throws AdapterException {
-		List<TpEntity> tpList = new LinkedList<TpEntity>();
+	    log.debug( "------------Start getTu3Ctps-------------------" );
+	    List<TpEntity> tpList = new LinkedList<TpEntity>();
 		Process process = null;
 		try {
 			// modifiableVC4TTPBidirectionalR1 = 0.0.7.774.127.2.0.3.25
@@ -439,9 +456,10 @@ public class GetCtp {
 				log.error("Get tu3Ctp failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 			}
+			log.debug( "------------End getTu3Ctps-------------------" );
 			return tpList;
 		} catch (Exception e) {
-			log.error("getTu3Ctp", e);
+			log.error("getTu3Ctps", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
 		} finally {
             if (process != null)

@@ -13,12 +13,6 @@ public class ParseUtil
     private static Pattern pattern1 = Pattern
             .compile( "=\\s*\\w*\\s*(.*)\\s+" );
 
-    private static Pattern pattern2 = Pattern
-            .compile( "boardType\\s*\\{\\s*(type.*?)\\s*\\}[,|\\s*\\},]" );
-
-//    private static Pattern pattern3 = Pattern
-//            .compile( "=\\s*\\w*_*(\\w+)\\s*" );
-
     public static String parseAttrWithSingleValue( String line )
     {
         return line
@@ -74,36 +68,6 @@ public class ParseUtil
         return "";
     }
 
-    public static List<String> parseAllowedEquipmentType( String line )
-    {
-        Matcher matcher = pattern2.matcher( line );
-        List<String> values = new ArrayList<String>();
-        String value = "";
-        while( matcher.find() )
-        {
-            value = matcher.group( 1 );
-            String[] elements = value.split( ",\\s*" );
-            for( String element : elements )
-            {
-                values.add( element.replace( "type", "" ).trim() );
-            }
-        }
-        return values;
-    }
-
-//    public static boolean parseBooleanAttr( String line )
-//    {
-//        Matcher matcher = pattern3.matcher( line );
-//        if( matcher.find() )
-//        {
-//            if( "true".equals( matcher.group( 1 ) ) )
-//            {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
     public static List<String> parseList( String line )
     {
         List<String> list = new ArrayList<String>();
@@ -123,14 +87,6 @@ public class ParseUtil
 
     public static void main( String[] args )
     {
-        String string = "allowedEquipmentType= { boardCase { boardType { type P4S1-4E } }, boardCase { boardType { type BCE-E1T, type ISABCEE1 }, compatibles { type BCE-E1T, type ISABCEE1 } }, boardCase { boardType { type BCE-ETHT, type BCE-ETH }, compatibles { type BCE-ETHT, type BCE-ETH } }, boardCase { boardType { type ASI-MB2, type ASI-MB }, compatibles { type ASI-MB2, type ASI-MB } }, boardCase { boardType { type P8S1-4E } }, boardCase { boardType { type P8DCN } }, boardCase { boardType { type ES16B, type ISA-ES16 }, compatibles { type ES16B, type ISA-ES16 } }, boardCase { boardType { type COWLA2 } }, boardCase { boardType { type P4OC3 } }, boardCase { boardType { type 4XANYC } }, boardCase { boardType { type P4S4N } }, boardCase { boardType { type ES1-8FXB, type ES1-8FX }, compatibles { type ES1-8FXB, type ES1-8FX } }, boardCase { boardType { type ES4-8FEB, type ES4-8FE }, compatibles { type ES4-8FEB, type ES4-8FE } }, boardCase { boardType { type ES1-8FEB, type ES1-8FE }, compatibles { type ES1-8FEB, type ES1-8FE } }, boardCase { boardType { type PREA1GBE } }, boardCase { boardType { type PREA4ETH } }, boardCase { boardType { type ATM8x8 } }, boardCase { boardType { type ATM4x4D3 } }, boardCase { boardType { type ATM4x4V2 } }, boardCase { boardType { type ATM4x4 } }, boardCase { boardType { type GETH-MB } }, boardCase { boardType { type ETH-MB } }, boardCase { boardType { type CO-16, type L-162ND, type L-162N, type L-162, type L-161ND, type L-161N, type L-161, type S-161ND, type S-161N, type S-161, type I-161ND, type L-42N, type L-41N, type S-41N }, compatibles { type CO-16, type L-162ND, type L-162N, type L-162, type L-161ND, type L-161N, type L-161, type S-161ND, type S-161N, type S-161, type I-161ND, type L-42N, type L-41N, type S-41N } }, boardCase { boardType { type P4ES1N } }, boardCase { boardType { type P4E4N } }, boardCase { boardType { type P4S1N } }, boardCase { boardType { type P3E3/T3 } }, boardCase { boardType { type P63E1N-M4, type P63E1N, type P63E1 }, compatibles { type P63E1N-M4, type P63E1N, type P63E1 } }, boardCase { boardType { type P21E1N-M4, type P21E1N, type P21E1 }, compatibles { type P21E1N-M4, type P21E1N, type P21E1 } }, boardCase { boardType { noType NULL } } } ,";
-        System.out.println( string );
-        List<String> vaList = parseAllowedEquipmentType( string );
-        for( String val : vaList )
-        {
-            System.out.println( val );
-        }
-
         String str2 = "equipmentExpected=type ETH-ATX ,";
         System.out.println( parseAttr1( str2 ) );
 

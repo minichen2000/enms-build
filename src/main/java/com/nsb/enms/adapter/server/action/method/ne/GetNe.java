@@ -37,7 +37,7 @@ public class GetNe
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
 
-            String line;
+            String line = null;
             while( (line = br.readLine()) != null )
             {
                 if( line.contains( "GetReply received" ) )

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -141,65 +140,6 @@ public class CreatePort {
 						if (line.startsWith("managedObjectInstance")) {
 							String moi = ParseUtil.parseAttrWithMultiValue(line);
 							equipmentEntity.setMoi(moi);
-							continue;
-						}
-
-						if (line.startsWith("allowedEquipmentType")) {
-							equipmentEntity.setAllowedEquipmentTypes(ParseUtil.parseAllowedEquipmentType(line));
-							continue;
-						}
-
-						if (line.startsWith("specificPhysicalInstance")) {
-							//equipmentEntity.setSpecificPhysicalInstance(ParseUtil.parseAttr1(line));
-							continue;
-						}
-
-						if (line.startsWith("equipmentActual")) {
-							equipmentEntity.setEquipmentActual(ParseUtil.parseAttr1(line));
-							continue;
-						}
-
-						if (line.startsWith("equipmentExpected")) {
-							equipmentEntity.setEquipmentExpected(ParseUtil.parseAttr1(line));
-							continue;
-						}
-
-						if (line.startsWith("version")) {
-							equipmentEntity.setVersion(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("availabilityStatus")) {
-							String availabilityStatus = ParseUtil.parseAttrWithSingleValue(line);
-							if (!StringUtils.isEmpty(availabilityStatus)) {
-								String[] elements = availabilityStatus.split(",\\s*");
-								availabilityStatus = "";
-								for (String element : elements) {
-									availabilityStatus += element.trim().split("\\s*")[0] + ":";
-								}
-								equipmentEntity.setAvailabilityStatus(
-										availabilityStatus.substring(0, availabilityStatus.length() - 1));
-							}
-							continue;
-						}
-
-						if (line.startsWith("alarmStatus")) {
-							String alarmStatus = ParseUtil.parseAttr(line);
-							String[] elements = alarmStatus.split("_");
-							equipmentEntity.setAlarmStatus(elements[0]);
-							if (elements.length == 2) {
-								equipmentEntity.setAlarmStatus(elements[1]);
-							}
-							continue;
-						}
-
-						if (line.startsWith("operationalState")) {
-							equipmentEntity.setOperationalState(ParseUtil.parseAttr(line));
-							continue;
-						}
-
-						if (line.startsWith("administrativeState")) {
-							equipmentEntity.setAdministrativeState(ParseUtil.parseAttr(line));
 							continue;
 						}
 

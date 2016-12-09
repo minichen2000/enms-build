@@ -20,8 +20,9 @@ public class DeleteXc {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.DELETE_XC_REQ,
 			ConfigKey.DEFAULT_DELETE_XC_REQ);
 
-	public static boolean deleteXc(String groupId, String neId, String corssConnectionId) throws AdapterException {
-		Process process = null;
+	public static void deleteXc(String groupId, String neId, String corssConnectionId) throws AdapterException {
+	    log.debug( "------------Start deleteXc-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId,
 					corssConnectionId);
@@ -40,12 +41,12 @@ public class DeleteXc {
 				}
 			}
 			br.close();
-
-			if (process.waitFor() != 0 || !flag) {
+			process.waitFor();
+			if (!flag) {
 				log.error("Delete XC failed!!!");
 				throw new AdapterException(ErrorCode.FAIL_DELETE_XC_BY_EMLIM);
 			}
-			return flag;
+			log.debug( "------------End deleteXc-------------------" );
 		} catch (Exception e) {
 			log.error("deleteXc", e);
 			throw new AdapterException(ErrorCode.FAIL_DELETE_XC_BY_EMLIM);

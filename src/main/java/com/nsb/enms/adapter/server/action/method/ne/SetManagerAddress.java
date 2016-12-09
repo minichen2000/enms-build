@@ -27,9 +27,10 @@ public class SetManagerAddress
             .getConf( ConfigKey.SET_SPARE_OS_ADDR_REQ,
                 ConfigKey.DEFAULT_SET_SPARE_OS_ADDR_REQ );
 
-    public static boolean setMainOSAddress( String groupId, String neId,
+    public static void setMainOSAddress( String groupId, String neId,
             String mainOSAddress ) throws AdapterException
     {
+        log.debug( "------------Start setMainOSAddress-------------------" );
         Process process = null;
         try
         {
@@ -46,11 +47,16 @@ public class SetManagerAddress
                 if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
+                    break;
                 }
             }
             br.close();
             process.waitFor();
-            return flag;
+            if( !flag )
+            {
+                throw new AdapterException(
+                        ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
+            }
         }
         catch( Exception e )
         {
@@ -58,15 +64,18 @@ public class SetManagerAddress
             throw new AdapterException(
                     ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
         }
-        finally {
-            if (process != null)
+        finally
+        {
+            if( process != null )
                 ExecExternalScript.destroyProcess( process );
         }
+        log.debug( "------------End setMainOSAddress-------------------" );
     }
 
-    public static boolean setSpareOSAddress( String groupId, String neId,
+    public static void setSpareOSAddress( String groupId, String neId,
             String spareOSAddress ) throws AdapterException
     {
+        log.debug( "------------Start setSpareOSAddress-------------------" );
         Process process = null;
         try
         {
@@ -83,11 +92,16 @@ public class SetManagerAddress
                 if( line.contains( "SetReply received" ) )
                 {
                     flag = true;
+                    break;
                 }
             }
             br.close();
             process.waitFor();
-            return flag;
+            if (!flag)
+            {
+                throw new AdapterException(
+                    ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
+            }
         }
         catch( Exception e )
         {
@@ -95,9 +109,11 @@ public class SetManagerAddress
             throw new AdapterException(
                     ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
         }
-        finally {
-            if (process != null)
+        finally
+        {
+            if( process != null )
                 ExecExternalScript.destroyProcess( process );
         }
+        log.debug( "------------End setSpareOSAddress-------------------" );
     }
 }

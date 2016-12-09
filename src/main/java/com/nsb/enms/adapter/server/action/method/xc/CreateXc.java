@@ -38,7 +38,8 @@ public class CreateXc {
 
 	public static XcEntity createXcVc4(String groupId, String neId, String pTTPId, String augId, String au4CTPId)
 			throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start createXcVc4-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC4, groupId, neId, pTTPId,
 					augId, au4CTPId);
@@ -47,6 +48,7 @@ public class CreateXc {
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
+			log.debug( "------------End createXcVc4-------------------" );
 			return xcEntity;
 
 		} catch (Exception e) {
@@ -61,7 +63,8 @@ public class CreateXc {
 
 	public static XcEntity createXcVc12(String groupId, String neId, String vc4TtpId, String tug3Id, String tug2Id,
 			String tu12CtpId, String vc12TtpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start createXcVc12-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC12, groupId, neId, vc4TtpId,
 					tug3Id, tug2Id, tu12CtpId, vc12TtpId);
@@ -70,6 +73,7 @@ public class CreateXc {
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
+			log.debug( "------------End createXcVc12-------------------" );
 			return xcEntity;
 
 		} catch (Exception e) {
@@ -84,7 +88,8 @@ public class CreateXc {
 
 	public static XcEntity createXcVc3(String groupId, String neId, String vc4TtpId, String tug3Id, String tu3CtpId,
 			String vc3TtpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start createXcVc3-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_VC3, groupId, neId, vc4TtpId,
 					tug3Id, tu3CtpId, vc3TtpId);
@@ -93,6 +98,7 @@ public class CreateXc {
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
+			log.debug( "------------End createXcVc3-------------------" );
 			return xcEntity;
 
 		} catch (Exception e) {
@@ -108,7 +114,8 @@ public class CreateXc {
 	public static XcEntity createXcTu12(String groupId, String neId, String a_vc4TtpId, String a_tug3Id,
 			String a_tug2Id, String a_tu12CtpId, String z_vc4TtpId, String z_tug3Id, String z_tug2Id,
 			String z_tu12CtpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start createXcTu12-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId,
 					a_vc4TtpId, a_tug3Id, a_tug2Id, a_tu12CtpId, z_vc4TtpId, z_tug3Id, z_tug2Id, z_tu12CtpId);
@@ -117,6 +124,7 @@ public class CreateXc {
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
+			log.debug( "------------End createXcTu12-------------------" );
 			return xcEntity;
 
 		} catch (Exception e) {
@@ -131,7 +139,8 @@ public class CreateXc {
 
 	public static XcEntity createXcTu3(String groupId, String neId, String a_vc4TtpId, String a_tug3Id,
 			String a_tu3CtpId, String z_vc4TtpId, String z_tug3Id, String z_tu3CtpId) throws AdapterException {
-		Process process = null;
+	    log.debug( "------------Start createXcTu3-------------------" );
+	    Process process = null;
 	    try {
 			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, a_vc4TtpId,
 					a_tug3Id, a_tu3CtpId, z_vc4TtpId, z_tug3Id, z_tu3CtpId);
@@ -140,6 +149,7 @@ public class CreateXc {
 			if (process.waitFor() != 0) {
 				throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_EMLIM);
 			}
+			log.debug( "------------End createXcTu3-------------------" );
 			return xcEntity;
 
 		} catch (Exception e) {

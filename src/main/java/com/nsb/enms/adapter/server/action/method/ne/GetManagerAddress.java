@@ -27,6 +27,7 @@ public class GetManagerAddress
     public static Pair<String, String> getManagerAddress( int groupId,
             int neId ) throws AdapterException
     {
+        log.debug( "------------Start getManagerAddress-------------------" );
         Process process = null;
         try
         {
@@ -37,8 +38,7 @@ public class GetManagerAddress
             Pair<String, String> pair = new Pair<String, String>();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-
-            String line;
+            String line = null;
             while( (line = br.readLine()) != null )
             {
                 if( line.contains( "GetReply received" ) )
@@ -75,6 +75,7 @@ public class GetManagerAddress
                         AdapterExceptionType.EXCPT_INTERNAL_ERROR,
                         "Get manager address failed!!!" );
             }
+            log.debug( "------------End getManagerAddress-------------------" );
             return pair;
         }
         catch( Exception e )
