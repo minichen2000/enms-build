@@ -30,9 +30,10 @@ public class SetManagerAddress
     public static boolean setMainOSAddress( String groupId, String neId,
             String mainOSAddress ) throws AdapterException
     {
+        Process process = null;
         try
         {
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 setMainOSAddressScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -57,14 +58,19 @@ public class SetManagerAddress
             throw new AdapterException(
                     ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
         }
+        finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
     }
 
     public static boolean setSpareOSAddress( String groupId, String neId,
             String spareOSAddress ) throws AdapterException
     {
+        Process process = null;
         try
         {
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 setSpareOSAddressScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -88,6 +94,10 @@ public class SetManagerAddress
             log.error( "setSpareOSAddress", e );
             throw new AdapterException(
                     ErrorCode.FAIL_SET_MANAGER_ADDRESS_BY_EMLIM );
+        }
+        finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
         }
     }
 }

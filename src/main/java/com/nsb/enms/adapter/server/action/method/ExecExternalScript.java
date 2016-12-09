@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.action.method;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -55,6 +56,32 @@ public class ExecExternalScript
         else
         {
             return run4Normal( scriptType, params );
+        }
+    }
+    
+    public static void destroyProcess(Process process)
+    {
+        if (process != null)
+        {
+            closeStream( process.getInputStream() );
+            closeStream( process.getOutputStream() );
+            closeStream( process.getErrorStream() );
+            process.destroy();
+        }
+    }
+    
+    private static void closeStream(Closeable c)
+    {
+        if (c != null)
+        {
+            try
+            {
+                c.close();
+            }
+            catch( IOException e )
+            {
+                e.printStackTrace();
+            }
         }
     }
 

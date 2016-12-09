@@ -61,10 +61,11 @@ public class CheckQ3EmlImApp
 
     public static boolean checkQ3EmlIm( int groupId )
     {
+        Process process = null;
         try
         {
             boolean flag = false;
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 monitorScript, String.valueOf( groupId ) );
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( process.getInputStream() ) );
@@ -84,6 +85,10 @@ public class CheckQ3EmlImApp
         catch( Exception e )
         {
             log.error( "checkQ3EmlIm", e );
+        } finally 
+        {
+            if (process != null)
+                ExecExternalScript.destroyProcess(process);    
         }
         return false;
     }

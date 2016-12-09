@@ -21,8 +21,9 @@ public class DeleteXc {
 			ConfigKey.DEFAULT_DELETE_XC_REQ);
 
 	public static boolean deleteXc(String groupId, String neId, String corssConnectionId) throws AdapterException {
-		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId,
+		Process process = null;
+	    try {
+			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId,
 					corssConnectionId);
 			InputStream inputStream = process.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -48,6 +49,10 @@ public class DeleteXc {
 		} catch (Exception e) {
 			log.error("deleteXc", e);
 			throw new AdapterException(ErrorCode.FAIL_DELETE_XC_BY_EMLIM);
-		}
+		} finally
+	    {
+		    if (process != null)
+		        ExecExternalScript.destroyProcess( process );
+	    }
 	}
 }

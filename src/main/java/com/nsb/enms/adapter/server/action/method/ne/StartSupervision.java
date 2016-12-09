@@ -34,9 +34,10 @@ public class StartSupervision
         int count = 0;
         while( count < MAX_COUNT )
         {
+            Process process = null;
             try
             {
-                Process process = ExecExternalScript.run(
+                process = ExecExternalScript.run(
                     ExternalScriptType.TSTMGR, startSupervisionScenario,
                     groupId, neId );
                 InputStream inputStream = process.getInputStream();
@@ -71,6 +72,10 @@ public class StartSupervision
                 log.error( "startSupervision", e );
                 throw new AdapterException(
                         ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM );
+            }
+            finally {
+                if (process != null)
+                    ExecExternalScript.destroyProcess( process );
             }
         }
         return false;

@@ -36,9 +36,9 @@ public class TerminateTp {
 	public static boolean terminateTug3ToTu12(String groupId, String neId, String vc4TTPId, String tug3Id)
 			throws AdapterException {
 		boolean isOk = false;
-
+		Process process = null;
 		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId, vc4TTPId,
+			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU12, groupId, neId, vc4TTPId,
 					tug3Id);
 			InputStream inputStream = process.getInputStream();
 
@@ -60,15 +60,18 @@ public class TerminateTp {
 		} catch (Exception e) {
 			log.error("terminateTug3ToTu12", e);
 			throw new AdapterException(ErrorCode.FAIL_TERMINATE_TP_BY_EMLIM);
-		}
+		} finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
 	}
 
 	public static boolean terminateTug3ToTu3(String groupId, String neId, String vc4TTPId, String tug3Id)
 			throws AdapterException {
 		boolean isOk = false;
-
+		Process process = null;
 		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, vc4TTPId,
+			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO_TU3, groupId, neId, vc4TTPId,
 					tug3Id);
 			InputStream inputStream = process.getInputStream();
 
@@ -90,6 +93,9 @@ public class TerminateTp {
 		} catch (Exception e) {
 			log.error("terminateTug3ToTu3", e);
 			throw new AdapterException(ErrorCode.FAIL_TERMINATE_TP_BY_EMLIM);
-		}
+		} finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
 	}
 }

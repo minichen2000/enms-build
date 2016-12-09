@@ -28,9 +28,10 @@ public class DeletePort {
 
 	public static List<TptCoordinatorEntity> deleteISAPort(String groupId, String neId, String tptCoordinatorId,
 			String position) throws AdapterException {
-		try {
+		Process process = null;
+	    try {
 			log.debug("--------------Start deleteISAPort--------------");
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, DELETE_ISA_PORT, groupId, neId,
+			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, DELETE_ISA_PORT, groupId, neId,
 					tptCoordinatorId, position);
 
 			InputStream inputStream = process.getInputStream();
@@ -96,6 +97,10 @@ public class DeletePort {
 		} catch (Exception e) {
 			log.error("deleteISAPort", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM);
-		}
+		} finally
+	    {
+		    if (process != null)
+		        ExecExternalScript.destroyProcess( process );
+	    }
 	}
 }

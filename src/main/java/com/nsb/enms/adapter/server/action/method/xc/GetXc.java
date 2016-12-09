@@ -25,8 +25,9 @@ public class GetXc {
 			ConfigKey.DEFAULT_XC_GET_REQ);
 
 	public static List<XcEntity> getXcs(int groupId, int neId) throws AdapterException {
-		try {
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, String.valueOf(groupId),
+		Process process = null;
+	    try {
+			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, String.valueOf(groupId),
 					String.valueOf(neId));
 			InputStream inputStream = process.getInputStream();
 			List<XcEntity> xcList = new LinkedList<XcEntity>();
@@ -98,6 +99,9 @@ public class GetXc {
 		} catch (Exception e) {
 			log.error("getXc", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_XC_BY_EMLIM);
-		}
+		} finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
 	}
 }

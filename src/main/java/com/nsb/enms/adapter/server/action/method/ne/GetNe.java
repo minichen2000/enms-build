@@ -27,9 +27,10 @@ public class GetNe
             throws AdapterException
     {
         log.debug( "------------Start getNe-------------------" );
+        Process process = null;
         try
         {
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 SCENARIO, String.valueOf( groupId ), String.valueOf( neId ) );
             InputStream inputStream = process.getInputStream();
             NeEntity neEntity = new NeEntity();
@@ -128,6 +129,11 @@ public class GetNe
         {
             log.error( "getNe", e );
             throw new AdapterException( ErrorCode.FAIL_GET_NE_BY_EMLIM );
+        }
+        finally
+        {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
         }
     }
 }

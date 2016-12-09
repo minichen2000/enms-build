@@ -26,13 +26,13 @@ public class GetTtp {
 
 	public static List<TpEntity> getVc4Ttps(String groupId, String neId) throws AdapterException {
 		List<TpEntity> tpList = new ArrayList<TpEntity>();
-
+		Process process = null;
 		try {
 			String scope = "firstLevelOnly";
 			String vc4TTPId = "0.0.7.774.0.7.42";
 			String filterParam = vc4TTPId;
 
-			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId, scope,
+			process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, groupId, neId, scope,
 					filterParam);
 			InputStream inputStream = process.getInputStream();
 
@@ -86,6 +86,9 @@ public class GetTtp {
 		} catch (Exception e) {
 			log.error("getVc4Ttp", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_TP_BY_EMLIM);
-		}
+		} finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
 	}
 }

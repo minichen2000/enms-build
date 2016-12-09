@@ -38,21 +38,32 @@ public class DeleteNe
     private static void stopSupervision( String groupId, String neId )
             throws AdapterException
     {
+        Process process = null;
         try
         {
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 stopSupervisionScenario, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
                     new InputStreamReader( inputStream ) );
-            String line;
+            String line = null;
+            boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-
+                if (line.contains( "ActionReply received" ))
+                {
+                    flag = true;
+                    break;
+                }
             }
             br.close();
             process.waitFor();
+            if (!flag)
+            {
+                throw new AdapterException(
+                    ErrorCode.FAIL_UNSUPERVISE_NE_BY_EMLIM );
+            }
         }
         catch( Exception e )
         {
@@ -60,14 +71,19 @@ public class DeleteNe
             throw new AdapterException(
                     ErrorCode.FAIL_UNSUPERVISE_NE_BY_EMLIM );
         }
+        finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
     }
 
     private static boolean removeNe( String groupId, String neId )
             throws AdapterException
     {
+        Process process = null;
         try
         {
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 deleteNeScenario, groupId, neId );
             InputStream inputStream = process.getInputStream();
             BufferedReader br = new BufferedReader(
@@ -79,11 +95,12 @@ public class DeleteNe
                 if( line.contains( "DeleteReply received" ) )
                 {
                     flag = true;
+                    break;
                 }
             }
             br.close();
-
-            if( process.waitFor() != 0 || !flag )
+            process.waitFor();
+            if( !flag )
             {
                 throw new AdapterException( ErrorCode.FAIL_DELETE_NE_BY_EMLIM );
             }
@@ -94,6 +111,10 @@ public class DeleteNe
         {
             log.error( "removeNe", e );
             throw new AdapterException( ErrorCode.FAIL_DELETE_NE_BY_EMLIM );
+        }
+        finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
         }
     }
 }

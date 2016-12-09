@@ -64,9 +64,10 @@ public class CreateNe
             String neType, String userLabel, String locationName )
             throws AdapterException
     {
+        Process process = null;
         try
         {
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 createNeScenario, String.valueOf( groupId ),
                 String.valueOf( neId ), neRelease, neType, userLabel,
                 locationName );
@@ -98,12 +99,19 @@ public class CreateNe
             log.error( "createNe", e );
             throw new AdapterException(
                     AdapterExceptionType.EXCPT_INTERNAL_ERROR, e.getMessage() );
+        } finally
+        {
+            if (process != null)
+            {
+                ExecExternalScript.destroyProcess( process );
+            }
         }
     }
 
     private static boolean setNeAddress( int groupId, int neId,
             String neAddress ) throws AdapterException
     {
+        Process process = null;
         try
         {
             String scenario = setNeAddressScenario;
@@ -111,7 +119,7 @@ public class CreateNe
             {
                 scenario = setNeIsaAddressScenario;
             }
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 scenario, String.valueOf( groupId ), String.valueOf( neId ),
                 neAddress );
             InputStream inputStream = process.getInputStream();
@@ -139,6 +147,10 @@ public class CreateNe
             log.error( "setNeAddress", e );
             throw new AdapterException(
                     ErrorCode.FAIL_SET_NE_ADDRESS_BY_EMLIM );
+        }
+        finally {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
         }
     }
 }

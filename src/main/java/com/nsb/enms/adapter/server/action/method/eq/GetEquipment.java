@@ -49,10 +49,11 @@ public class GetEquipment
             String neId ) throws AdapterException
     {
         Map<String, List<AdpKVPair>> map = new HashMap<String, List<AdpKVPair>>();
+        Process process = null;
         try
         {
             log.debug( "--------------Start getRIs--------------" );
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_RI_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -63,7 +64,7 @@ public class GetEquipment
             boolean flag = false;
             while( (line = br.readLine()) != null )
             {
-                if( line.indexOf( "ActionReply received" ) >= 0 )
+                if( line.contains( "ActionReply received" ) )
                 {
                     flag = true;
                     break;
@@ -129,15 +130,21 @@ public class GetEquipment
             log.error( "getRIs", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
         }
+        finally
+        {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
     }
 
     public static List<TptCoordinatorEntity> getISAs( String groupId,
             String neId ) throws AdapterException
     {
+        Process process = null;
         try
         {
             log.debug( "--------------Start getCardIpAddress--------------" );
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_ISA_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -150,13 +157,13 @@ public class GetEquipment
 
             while( (line = br.readLine()) != null )
             {
-                if( line.indexOf( "GetReply received" ) >= 0 )
+                if( line.contains( "GetReply received" ) )
                 {
                     TptCoordinatorEntity tptCoordinatorEntity = new TptCoordinatorEntity();
                     while( (line = br.readLine()) != null )
                     {
                         line = line.trim();
-                        if( line.indexOf( "managedObjectClass" ) >= 0 )
+                        if( line.startsWith( "managedObjectClass" ) )
                         {
                             String moc = ParseUtil
                                     .parseAttrWithSingleValue( line );
@@ -277,15 +284,21 @@ public class GetEquipment
             log.error( "getCardIpAddress", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
         }
+        finally
+        {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
+        }
     }
 
     public static List<EquipmentEntity> getEquipments( String groupId,
             String neId ) throws AdapterException
-    {
+    {   
+        Process process = null;
         try
         {
             log.debug( "------------Start getEquipment-------------------" );
-            Process process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
+            process = ExecExternalScript.run( ExternalScriptType.TSTMGR,
                 GET_EQ_SCENARIO, groupId, neId );
 
             InputStream inputStream = process.getInputStream();
@@ -298,13 +311,13 @@ public class GetEquipment
 
             while( (line = br.readLine()) != null )
             {
-                if( line.indexOf( "GetReply received" ) >= 0 )
+                if( line.contains( "GetReply received" ) )
                 {
                     EquipmentEntity equipmentEntity = new EquipmentEntity();
                     while( (line = br.readLine()) != null )
                     {
                         line = line.trim();
-                        if( line.indexOf( "managedObjectClass" ) >= 0 )
+                        if( line.startsWith( "managedObjectClass" ) )
                         {
                             String moc = ParseUtil
                                     .parseAttrWithSingleValue( line );
@@ -468,6 +481,10 @@ public class GetEquipment
         {
             log.error( "getEquipment", e );
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_EMLIM );
+        } finally
+        {
+            if (process != null)
+                ExecExternalScript.destroyProcess( process );
         }
     }
 }
