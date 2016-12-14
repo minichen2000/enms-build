@@ -10,14 +10,14 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.business.ne.AdpNesMgr;
-import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
+import com.nsb.enms.adapter.server.sdh.business.ne.AdpNesMgr;
+import com.nsb.enms.adapter.server.sdh.business.xc.AdpXcsMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;

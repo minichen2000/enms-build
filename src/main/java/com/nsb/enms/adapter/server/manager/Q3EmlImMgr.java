@@ -10,22 +10,22 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.alarm.AlarmNEOutOfMngt;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.adapter.server.sdh.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeStateCallBack;
-import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.common.CommunicationState;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class Q3EmlImMgr {
 	private static final Logger log = LogManager.getLogger(Q3EmlImMgr.class);
@@ -72,40 +72,40 @@ public class Q3EmlImMgr {
 		timer.scheduleAtFixedRate(new Q3EmlImListener(groupId), period, period);
 	}
 
-//	public synchronized Pair<Integer, Integer> getGroupNeId() throws AdapterException {
-//		if (neIdList.size() < MAX_NE_NUM) {
-//			int neId = getMaxNeIdFromDb() + 1;
-//			updateMaxNeId2Db(neId);
-//			neIdList.add(neId);
-//			return new Pair<Integer, Integer>(groupId, neId);
-//		}
-//
-//		throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR,
-//				"The emlim doesn't has capacity to manager NE!!!");
-//	}
-	
-	public synchronized int getGroupId(Integer neId) throws AdapterException 
-	{
-	    if (neIdList.size() < MAX_NE_NUM)
-	    {
-	        neIdList.add( neId );
-	        return groupId;
-	    }
-	    throw new AdapterException(ErrorCode.FAIL_NO_FREE_ADAPTER);
+	// public synchronized Pair<Integer, Integer> getGroupNeId() throws
+	// AdapterException {
+	// if (neIdList.size() < MAX_NE_NUM) {
+	// int neId = getMaxNeIdFromDb() + 1;
+	// updateMaxNeId2Db(neId);
+	// neIdList.add(neId);
+	// return new Pair<Integer, Integer>(groupId, neId);
+	// }
+	//
+	// throw new AdapterException(AdapterExceptionType.EXCPT_INTERNAL_ERROR,
+	// "The emlim doesn't has capacity to manager NE!!!");
+	// }
+
+	public synchronized int getGroupId(Integer neId) throws AdapterException {
+		if (neIdList.size() < MAX_NE_NUM) {
+			neIdList.add(neId);
+			return groupId;
+		}
+		throw new AdapterException(ErrorCode.FAIL_NO_FREE_ADAPTER);
 	}
 
-//	private void updateMaxNeId2Db(int neId) {
-//		AdpMaxNeIdMgr.updateNeIdByGroupId(String.valueOf(groupId), String.valueOf(neId));
-//	}
-//
-//	private int getMaxNeIdFromDb() {
-//		String maxNeId = StringUtils.EMPTY;
-//		maxNeId = AdpMaxNeIdMgr.getNeIdByGroupId(String.valueOf(groupId));
-//		if (StringUtils.isEmpty(maxNeId)) {
-//			return 1;
-//		}
-//		return Integer.valueOf(maxNeId);
-//	}
+	// private void updateMaxNeId2Db(int neId) {
+	// AdpMaxNeIdMgr.updateNeIdByGroupId(String.valueOf(groupId),
+	// String.valueOf(neId));
+	// }
+	//
+	// private int getMaxNeIdFromDb() {
+	// String maxNeId = StringUtils.EMPTY;
+	// maxNeId = AdpMaxNeIdMgr.getNeIdByGroupId(String.valueOf(groupId));
+	// if (StringUtils.isEmpty(maxNeId)) {
+	// return 1;
+	// }
+	// return Integer.valueOf(maxNeId);
+	// }
 
 	public void removeNe(int neId) {
 		rwLock.writeLock().lock();
@@ -131,10 +131,11 @@ public class Q3EmlImMgr {
 				xcsDbMgr.deleteXcsByNeId(ne.getId());
 				tpsDbMgr.deleteTpsbyNeId(ne.getId());
 				equsDbMgr.deleteEquipmentsByNeId(ne.getId());
-				nesDbMgr.deleteNe( ne.getId() );
+				nesDbMgr.deleteNe(ne.getId());
 			}
-			//nesDbMgr.deleteNesByGroupId(groupId);
-			//AdpMaxNeIdMgr.updateNeIdByGroupId(String.valueOf(groupId), String.valueOf(0));
+			// nesDbMgr.deleteNesByGroupId(groupId);
+			// AdpMaxNeIdMgr.updateNeIdByGroupId(String.valueOf(groupId),
+			// String.valueOf(0));
 		} catch (Exception e) {
 			log.error("deleteNe", e);
 		}

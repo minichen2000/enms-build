@@ -15,8 +15,6 @@ import static com.mongodb.client.model.Sorts.descending;
 
 import org.apache.log4j.Logger;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 
 import com.mongodb.Block;
@@ -25,144 +23,101 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-import com.nsb.enms.adapter.server.common.db.mongodb.AdpAlarmBeanCodec;
 import com.nsb.enms.adapter.server.common.db.mongodb.bean.AdpCommonBean;
 
-public class AdpMongoDBMgr
-{
-	private static final Logger log = Logger.getLogger( AdpMongoDBMgr.class );
+public class AdpMongoDBMgr {
+	private static final Logger log = Logger.getLogger(AdpMongoDBMgr.class);
 
-    private final static AdpMongoDBMgr mgr = new AdpMongoDBMgr();
+	private final static AdpMongoDBMgr mgr = new AdpMongoDBMgr();
 
-    private MongoClient mongoClient = null;
+	private MongoClient mongoClient = null;
 
-    private MongoDatabase database = null;
+	private MongoDatabase database = null;
 
-    private MongoCollection<Document> dbc = null;
+	private MongoCollection<Document> dbc = null;
 
-    private MongoCollection<AdpCommonBean> customDbc = null;
+	private AdpMongoDBMgr() {
+		mongoClient = new MongoClient("localhost", 27017);
+		database = mongoClient.getDatabase("eNMS");
+	}
 
-    private AdpMongoDBMgr()
-    {
-        mongoClient = new MongoClient( "localhost", 27017 );
-        database = mongoClient.getDatabase( "eNMS" );
-    }
+	public void getDefaultDbc(String dbName) {
+		dbc = database.getCollection(dbName);
+	}
 
-    public void getCustomDbc( String dbName )
-    {
-        CodecRegistry codecRegistry = CodecRegistries.fromRegistries(
-            CodecRegistries.fromCodecs( new AdpAlarmBeanCodec() ),
-            MongoClient.getDefaultCodecRegistry() );
-        customDbc = database.getCollection( dbName, AdpCommonBean.class )
-                .withCodecRegistry( codecRegistry );
-    }
+	public static AdpMongoDBMgr getInstance() {
+		return mgr;
+	}
 
-    public void getDefaultDbc( String dbName )
-    {
-        dbc = database.getCollection( dbName );
-    }
+	public MongoClient getClient() {
+		if (this.mongoClient == null) {
+			throw new IllegalStateException("mongo client was not initialized");
+		}
 
-    public static AdpMongoDBMgr getInstance()
-    {
-        return mgr;
-    }
+		return this.mongoClient;
+	}
 
-    public MongoClient getClient()
-    {
-        if( this.mongoClient == null )
-        {
-            throw new IllegalStateException(
-                    "mongo client was not initialized" );
-        }
+	public MongoDatabase getDatabase() {
+		return database;
+	}
 
-        return this.mongoClient;
-    }
+	/**
+	 * 插入一条数据至集合中
+	 * 
+	 * @param bean
+	 */
+	public synchronized void insert(AdpCommonBean bean) {
+		Document doc = new Document("aId", bean.getaId()).append("userLable", bean.getUserLable());
 
-    public MongoDatabase getDatabase()
-    {
-        return database;
-    }
+		dbc.insertOne(doc);
+	}
 
-    /**
-     * 插入一条数据至集合中
-     * 
-     * @param bean
-     */
-    public synchronized void insert( AdpCommonBean bean )
-    {
-        Document doc = new Document( "aId", bean.getaId() ).append( "userLable",
-            bean.getUserLable() );
+	/**
+	 * 插入一条数据至集合中
+	 * 
+	 * @param bean
+	 */
+	public synchronized void insertByJson(String json) {
+		Document doc = (Document) JSON.parse(json);
+		dbc.insertOne(doc);
+	}
 
-        dbc.insertOne( doc );
-    }
+	// TODO 不使用的话，则删除该方法
+	/**
+	 * 获取大于等于指定序列号的告警
+	 * 
+	 * @param alarmSeq
+	 */
+	public void getAlarmsGteID(int alarmSeq) {
+		FindIterable<Document> iterable = dbc.find(gte("alarmSeq", alarmSeq)).sort(ascending("alarmSeq"));
+		iterable.forEach(new Block<Document>() {
+			@Override
+			public void apply(final Document document) {
+				System.out.println(document);
+			}
+		});
+	}
 
-    /**
-     * 插入一条数据至集合中
-     * 
-     * @param bean
-     */
-    public synchronized void insertByJson( String json )
-    {
-        Document doc = (Document) JSON.parse( json );
-        dbc.insertOne( doc );
-    }
+	public long getCurrentMaxAlarmSeq() {
+		if (dbc.count() <= 0) {
+			return 0;
+		}
 
-    /**
-     * 插入一条数据至集合中
-     * 
-     * @param bean
-     */
-    public synchronized void customInsert( AdpCommonBean bean )
-    {
-        customDbc.insertOne( bean );
-    }
+		FindIterable<Document> iterable = dbc.find().sort(descending("alarmSeq")).limit(1);
+		Document doc = iterable.first();
+		long maxAlarmSeq = doc.getLong("alarmSeq");
+		log.debug("maxAlarmSeq = " + maxAlarmSeq);
+		return maxAlarmSeq;
+	}
 
-    // TODO 不使用的话，则删除该方法
-    /**
-     * 获取大于等于指定序列号的告警
-     * 
-     * @param alarmSeq
-     */
-    public void getAlarmsGteID( int alarmSeq )
-    {
-        FindIterable<Document> iterable = dbc
-                .find( gte( "alarmSeq", alarmSeq ) )
-                .sort( ascending( "alarmSeq" ) );
-        iterable.forEach( new Block<Document>()
-        {
-            @Override
-            public void apply( final Document document )
-            {
-                System.out.println( document );
-            }
-        } );
-    }
+	/**
+	 * 关闭数据库连接
+	 */
+	public void close() {
+		mongoClient.close();
+	}
 
-    public long getCurrentMaxAlarmSeq()
-    {
-        if( dbc.count() <= 0 )
-        {
-            return 0;
-        }
-
-        FindIterable<Document> iterable = dbc.find()
-                .sort( descending( "alarmSeq" ) ).limit( 1 );
-        Document doc = iterable.first();
-        long maxAlarmSeq = doc.getLong( "alarmSeq" );
-        log.debug( "maxAlarmSeq = " + maxAlarmSeq );
-        return maxAlarmSeq;
-    }
-
-    /**
-     * 关闭数据库连接
-     */
-    public void close()
-    {
-        mongoClient.close();
-    }
-
-    private Bson filter()
-    {
-        return fields( exclude( "_id", "createTime" ) );
-    }
+	private Bson filter() {
+		return fields(exclude("_id", "createTime"));
+	}
 }

@@ -3,16 +3,16 @@ package com.nsb.enms.adapter.server.statemachine.ne.model;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
-import com.nsb.enms.common.ErrorCode;
-import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.common.AlignmentState;
 import com.nsb.enms.common.CommunicationState;
+import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.MaintenanceState;
 import com.nsb.enms.common.OperationState;
 import com.nsb.enms.common.SupervisionState;
+import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class NeStateCallBack {
 	private final static Logger log = LogManager.getLogger(NeStateCallBack.class);

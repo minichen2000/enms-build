@@ -5,11 +5,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
-import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.notification.entity.EventType;
 import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
 import com.nsb.enms.alarm.NMSAlarm;
@@ -45,10 +45,10 @@ public class NotificationSender {
 
 	public void send(NotificationEntity entity) {
 		EventType eventType = entity.getEventType();
-		//Long eventTime = TimeUtil.getTime(entity.getEventTime());
+		// Long eventTime = TimeUtil.getTime(entity.getEventTime());
 		String moc = entity.getMoc().getMoc();
 		String moi = entity.getMoi().getMoi();
-		Integer neId = Integer.valueOf( moi.split( "/" )[1].split( "=" )[1] );
+		Integer neId = Integer.valueOf(moi.split("/")[1].split("=")[1]);
 		EntityType objectType = getObjectType(moc);
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(objectType, moc, moi);
 		Integer objectID = getObjectId(objectType, neId, keyOnNe);
@@ -65,23 +65,27 @@ public class NotificationSender {
 			break;
 		case ATTRIBUTE_VALUE_CHANGE:
 		case STATE_CHANGE:
-			publisher.sendAVC( objectType, objectID, entity.getDefinition().getAttributeID(), entity.getDefinition().getNewAttributeValue(), entity.getDefinition().getOldAttributeValue() );
+			publisher.sendAVC(objectType, objectID, entity.getDefinition().getAttributeID(),
+					entity.getDefinition().getNewAttributeValue(), entity.getDefinition().getOldAttributeValue());
 			break;
 		case ALARM:
-//			AlarmType alarmType = getAlarmType(entity.getAttributeInfo().get("alarmType"));
-//			AlarmSeverity alarmSeverity = getAlarmSeverity(entity.getAttributeInfo().get("perceivedSeverity"));
-//			String probableCause = entity.getAttributeInfo().get("probableCause");
-//			Alarm alarm = publisher.createAlarm(AlarmCode.ALM_NE_OUT_OF_MNGT, alarmType, alarmSeverity, eventTime, null,
-//					null, probableCause, objectType, objectID, null, null, "");
-//			publisher.sendAlarm( new AlarmNEMisalignment(objectID) );
+			// AlarmType alarmType =
+			// getAlarmType(entity.getAttributeInfo().get("alarmType"));
+			// AlarmSeverity alarmSeverity =
+			// getAlarmSeverity(entity.getAttributeInfo().get("perceivedSeverity"));
+			// String probableCause =
+			// entity.getAttributeInfo().get("probableCause");
+			// Alarm alarm = publisher.createAlarm(AlarmCode.ALM_NE_OUT_OF_MNGT,
+			// alarmType, alarmSeverity, eventTime, null,
+			// null, probableCause, objectType, objectID, null, null, "");
+			// publisher.sendAlarm( new AlarmNEMisalignment(objectID) );
 			break;
 		default:
 			break;
 		}
 	}
 
-	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, String value,
-			String oldValue) {
+	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, String value, String oldValue) {
 		publisher.sendAVC(entityType, objectID, key, value, oldValue);
 	}
 
@@ -93,17 +97,19 @@ public class NotificationSender {
 		publisher.sendOD(objectType, objectID);
 	}
 
-//	public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType, AlarmSeverity severity, Long eventTime,
-//			Long occureTime, Long clearTime, String probableCause, EntityType objectType, Integer objectId,
-//			Integer ackStatus, Long ackTime, String description) {
-//		Alarm alarm = publisher.createAlarm(alarmCode, alarmType, severity, eventTime, occureTime, clearTime,
-//				probableCause, objectType, objectId, ackStatus, ackTime, description);
-//		send(alarm);
-//	}
-	
-	public void sendAlarm(NMSAlarm alarm)
-	{
-	    publisher.sendAlarm( alarm );
+	// public void sendAlarm(AlarmCode alarmCode, AlarmType alarmType,
+	// AlarmSeverity severity, Long eventTime,
+	// Long occureTime, Long clearTime, String probableCause, EntityType
+	// objectType, Integer objectId,
+	// Integer ackStatus, Long ackTime, String description) {
+	// Alarm alarm = publisher.createAlarm(alarmCode, alarmType, severity,
+	// eventTime, occureTime, clearTime,
+	// probableCause, objectType, objectId, ackStatus, ackTime, description);
+	// send(alarm);
+	// }
+
+	public void sendAlarm(NMSAlarm alarm) {
+		publisher.sendAlarm(alarm);
 	}
 
 	private EntityType getObjectType(String moc) {
