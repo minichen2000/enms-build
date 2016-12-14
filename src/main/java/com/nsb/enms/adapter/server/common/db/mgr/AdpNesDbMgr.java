@@ -25,7 +25,7 @@ import com.nsb.enms.adapter.server.common.MethodOperator;
 import com.nsb.enms.adapter.server.common.db.mongodb.constant.AdpDBConst;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.sdh.action.method.ne.SetManagerAddress;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;

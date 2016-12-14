@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.sdh.business.eq.AdpEqusMgr;
 import com.nsb.enms.adapter.server.sdh.business.tp.AdpTpsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;

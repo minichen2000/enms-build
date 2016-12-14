@@ -11,8 +11,8 @@ import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
+import com.nsb.enms.adapter.server.sdh.q3manager.Q3EmlImMgr;
 import com.nsb.enms.common.ErrorCode;
 
 public class DeleteNe {

@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.manager;
+package com.nsb.enms.adapter.server.sdh.q3manager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

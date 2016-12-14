@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.notification;
+package com.nsb.enms.adapter.server.common.notification;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,8 +10,8 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.utils.GenerateKeyOnNeUtil;
-import com.nsb.enms.adapter.server.notification.entity.EventType;
-import com.nsb.enms.adapter.server.notification.entity.NotificationEntity;
+import com.nsb.enms.adapter.server.sdh.q3gateway.entity.EventType;
+import com.nsb.enms.adapter.server.sdh.q3gateway.entity.NotificationEntity;
 import com.nsb.enms.alarm.NMSAlarm;
 import com.nsb.enms.common.AlarmSeverity;
 import com.nsb.enms.common.AlarmType;

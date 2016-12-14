@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.manager;
+package com.nsb.enms.adapter.server.sdh.q3manager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.notification.NotificationSender;
+import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.sdh.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.statemachine.ne.model.NeEvent;
