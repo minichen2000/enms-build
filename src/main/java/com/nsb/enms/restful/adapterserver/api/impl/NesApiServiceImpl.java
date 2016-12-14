@@ -12,12 +12,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.business.ne.AdpNesMgr;
 import com.nsb.enms.adapter.server.business.xc.AdpXcsMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
-import com.nsb.enms.adapter.server.db.mgr.AdpEqusDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpNesDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpTpsDbMgr;
-import com.nsb.enms.adapter.server.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
 import com.nsb.enms.restful.adapterserver.api.NotFoundException;
@@ -201,14 +201,14 @@ public class NesApiServiceImpl extends NesApiService {
 	@Override
 	public Response getEquipmentById(Integer neid, Integer eqid, SecurityContext securityContext)
 			throws NotFoundException {
-	    AdpEquipment equipment = null;
-        try {
-            equipment = equsDbMgr.getEquipmentById(neid, eqid);            
-        } catch (Exception e) {
-            log.error("getEquipmentById", e);
-            return Response.serverError().entity( e ).build();
-        }
-        return Response.ok().entity(equipment).build();
+		AdpEquipment equipment = null;
+		try {
+			equipment = equsDbMgr.getEquipmentById(neid, eqid);
+		} catch (Exception e) {
+			log.error("getEquipmentById", e);
+			return Response.serverError().entity(e).build();
+		}
+		return Response.ok().entity(equipment).build();
 	}
 
 	@Override
