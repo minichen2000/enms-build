@@ -10,6 +10,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.api.factories.AdpNeFactory;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
@@ -39,13 +40,20 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
-		AdpNe ne = null;
 		try {
-			ne = nesMgr.addNe(body);
+			AdpNe ne = AdpNeFactory.getInstance().addNe(body);
+			return Response.ok().entity(ne).build();
 		} catch (AdapterException e) {
 			return ErrorWrapperUtils.adapterException(e);
 		}
-		return Response.ok().entity(ne).build();
+
+		// AdpNe ne = null;
+		// try {
+		// ne = nesMgr.addNe(body);
+		// } catch (AdapterException e) {
+		// return ErrorWrapperUtils.adapterException(e);
+		// }
+		// return Response.ok().entity(ne).build();
 	}
 
 	private Response failDbOperation() {

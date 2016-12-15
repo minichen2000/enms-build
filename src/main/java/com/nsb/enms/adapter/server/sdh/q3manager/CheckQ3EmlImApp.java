@@ -8,10 +8,10 @@ import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
+import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
 
 public class CheckQ3EmlImApp {
 	private static final Logger log = LogManager.getLogger(CheckQ3EmlImApp.class);

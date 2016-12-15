@@ -9,13 +9,13 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.ExternalScriptType;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.conf.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.TpEntity;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
+import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
 import com.nsb.enms.common.ErrorCode;
 
 public class GetTp {
