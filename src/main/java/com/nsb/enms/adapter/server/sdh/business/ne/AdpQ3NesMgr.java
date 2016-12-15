@@ -23,7 +23,7 @@ import com.nsb.enms.adapter.server.sdh.action.method.ne.DeleteNe;
 import com.nsb.enms.adapter.server.sdh.action.method.ne.SetManagerAddress;
 import com.nsb.enms.adapter.server.sdh.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.sdh.business.sync.SyncThread;
-import com.nsb.enms.adapter.server.sdh.business.xc.AdpXcsMgr;
+import com.nsb.enms.adapter.server.sdh.business.xc.AdpQ3XcsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.alarm.AlarmNEMisalignment;
 import com.nsb.enms.alarm.AlarmNENotSupervised;
@@ -247,7 +247,7 @@ public class AdpQ3NesMgr {
 		try {
 			nesDbMgr.deleteNe(id);
 
-			AdpXcsMgr xcsMgr = new AdpXcsMgr();
+			AdpQ3XcsMgr xcsMgr = new AdpQ3XcsMgr();
 			xcsMgr.deleteXcsByNeId(Integer.valueOf(neId));
 
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();

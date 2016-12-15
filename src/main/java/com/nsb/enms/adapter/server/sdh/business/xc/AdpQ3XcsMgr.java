@@ -25,14 +25,14 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
-public class AdpXcsMgr {
-	private final static Logger log = LogManager.getLogger(AdpXcsMgr.class);
+public class AdpQ3XcsMgr {
+	private final static Logger log = LogManager.getLogger(AdpQ3XcsMgr.class);
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
 	private AdpTpsMgr tpsMgr = new AdpTpsMgr();
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
-	public AdpXcsMgr() {
+	public AdpQ3XcsMgr() {
 	}
 
 	public AdpXc createXcByTu12AndVc12(Integer neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {

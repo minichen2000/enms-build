@@ -25,7 +25,7 @@ import com.nsb.enms.restful.model.adapter.AdpXc;
 public class AdpCreateXcsMgr {
 	private final static Logger log = LogManager.getLogger(AdpCreateXcsMgr.class);
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
-	private AdpXcsMgr adpXcMgr = new AdpXcsMgr();
+	private AdpQ3XcsMgr adpXcMgr = new AdpQ3XcsMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
 	public AdpXc createXc(Integer neId, AdpXc body) throws AdapterException {

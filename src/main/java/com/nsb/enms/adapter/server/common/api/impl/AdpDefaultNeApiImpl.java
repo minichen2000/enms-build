@@ -1,6 +1,5 @@
 package com.nsb.enms.adapter.server.common.api.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -63,40 +62,70 @@ public abstract class AdpDefaultNeApiImpl implements AdpNeApiItf {
 
 	@Override
 	public AdpNe getNeById() throws AdapterException {
-		AdpNe ne = new AdpNe();
 		try {
-			ne = nesDbMgr.getNeById(data.getId());
+			AdpNe ne = nesDbMgr.getNeById(data.getId());
 			if (ne.getId() < 0) {
 				throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 			}
+			return ne;
 		} catch (Exception e) {
 			log.error("getNeById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return ne;
 	}
 
 	@Override
 	public List<AdpTp> getChildrenTps(Integer tpId) throws AdapterException {
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getChildrenTps(getId(), tpId);
+			List<AdpTp> tpList = tpsDbMgr.getChildrenTps(getId(), tpId);
+			return tpList;
 		} catch (Exception e) {
 			log.error("getChildrenTps", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return tpList;
 	}
 
 	@Override
 	public List<AdpTp> getNeTps() throws AdapterException {
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getTpsByNeId(getId());
+			List<AdpTp> tpList = tpsDbMgr.getTpsByNeId(getId());
+			return tpList;
 		} catch (Exception e) {
 			log.error("getTpsByNeId", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return tpList;
+	}
+
+	@Override
+	public AdpTp getTpById(Integer tpid) throws AdapterException {
+		try {
+			AdpTp tp = tpsDbMgr.getTpById(getId(), tpid);
+			return tp;
+		} catch (Exception e) {
+			log.error("getTpById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	@Override
+	public List<AdpTp> getTpsByLayerrate(String layerrate) throws AdapterException {
+		try {
+			List<AdpTp> tpList = tpsDbMgr.getTpsByLayerRate(getId(), layerrate);
+			return tpList;
+		} catch (Exception e) {
+			log.error("getTpsByLayerrate", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	@Override
+	public List<AdpTp> getTpsByType(String tpType) throws AdapterException {
+		try {
+			List<AdpTp> tpList = tpsDbMgr.getTpsByType(getId(), tpType);
+			return tpList;
+		} catch (Exception e) {
+			log.error("getTpsByType", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
 	}
 }

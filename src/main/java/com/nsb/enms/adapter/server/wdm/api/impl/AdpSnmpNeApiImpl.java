@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.api.impl.AdpDefaultNeApiImpl;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.AdpTp;
+import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 	private Logger log = LogManager.getLogger(AdpSnmpNeApiImpl.class);
@@ -19,67 +19,48 @@ public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 
 	@Override
 	public AdpNe addNe() throws AdapterException {
-		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void create() throws AdapterException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void assign() throws AdapterException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete() throws AdapterException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void update() throws AdapterException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void supervise() throws AdapterException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void synchronize() throws AdapterException {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void deleteNe() throws AdapterException {
 
 	}
 
 	@Override
-	public AdpNe getData() {
-		// TODO Auto-generated method stub
+	public AdpXc createXc(AdpXc xc) throws AdapterException {
 		return null;
 	}
 
 	@Override
-	public List<AdpTp> getTpsByLayerrate(Integer layerrate) throws AdapterException {
-		// TODO Auto-generated method stub
+	public List<AdpXc> getXcsByNeId() throws AdapterException {
 		return null;
 	}
 
 	@Override
-	public AdpTp getTp(Integer tpid) throws AdapterException {
-		// TODO Auto-generated method stub
-		return null;
+	public void deleteXcsByNeId() throws AdapterException {
+
 	}
 
 	@Override
-	public List<AdpTp> getTpsByType(Integer tptype) throws AdapterException {
-		// TODO Auto-generated method stub
+	public void deleteXcById(Integer xcid) throws AdapterException {
+
+	}
+
+	@Override
+	public AdpXc getXcById(Integer xcId) throws AdapterException {
 		return null;
 	}
 }
