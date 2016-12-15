@@ -1,23 +1,25 @@
-package com.nsb.enms.adapter.server.wdm.api.builder;
+package com.nsb.enms.adapter.server.sdh.api.builder;
 
 import com.nsb.enms.adapter.server.common.api.builder.AdpNeBuilder;
 import com.nsb.enms.adapter.server.common.api.itf.AdpNeApiItf;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.wdm.api.impl.AdpSnmpNeApiImpl;
+import com.nsb.enms.adapter.server.sdh.api.impl.AdpQ3NeApiImpl;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
-public class AdpSnmpNeBuilder extends AdpNeBuilder {
-	private static final AdpSnmpNeBuilder INSTANCE = new AdpSnmpNeBuilder();
+public class AdpQ3NeBuilder extends AdpNeBuilder {
 
-	private AdpSnmpNeBuilder() {
+	private static final AdpQ3NeBuilder INSTANCE = new AdpQ3NeBuilder();
+
+	private AdpQ3NeBuilder() {
+
 	}
 
-	public static AdpSnmpNeBuilder getInstance() {
+	public static AdpQ3NeBuilder getInstance() {
 		return INSTANCE;
 	}
 
 	@Override
 	public AdpNeApiItf getNeInstance(AdpNe ne) throws AdapterException {
-		return new AdpSnmpNeApiImpl(ne);
+		return new AdpQ3NeApiImpl(ne);
 	}
 }

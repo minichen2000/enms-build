@@ -5,18 +5,25 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.api.itf.AdpNeApiItf;
+import com.nsb.enms.adapter.server.common.MethodOperator;
+import com.nsb.enms.adapter.server.common.api.impl.AdpDefaultNeApiImpl;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.sdh.business.ne.AdpQ3NesMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class AdpQ3NeApiImpl implements AdpNeApiItf {
+public class AdpQ3NeApiImpl extends AdpDefaultNeApiImpl {
 	private Logger log = LogManager.getLogger(AdpQ3NeApiImpl.class);
+	private AdpQ3NesMgr nesMgr = new AdpQ3NesMgr();
+
+	public AdpQ3NeApiImpl(AdpNe ne) {
+		super(ne);
+	}
 
 	@Override
-	public AdpNe addNe(AdpNe ne) throws AdapterException {
-		// TODO Auto-generated method stub
-		return null;
+	public AdpNe addNe() throws AdapterException {
+		commonValidate(data, MethodOperator.ADD);
+		return nesMgr.addNe(data);
 	}
 
 	@Override

@@ -39,14 +39,14 @@ import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 
-public class AdpNesMgr {
-	private final static Logger log = LogManager.getLogger(AdpNesMgr.class);
+public class AdpQ3NesMgr {
+	private final static Logger log = LogManager.getLogger(AdpQ3NesMgr.class);
 	private final static String NAMESERVERFILE_URL = ConfLoader.getInstance().getConf("NAMESERVERFILE_URL", "");
 	private final static String ADP_ADDRESS = ConfLoader.getInstance().getConf(ConfigKey.ADP_ADDRESS, "");
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
-	public AdpNesMgr() {
+	public AdpQ3NesMgr() {
 	}
 
 	public AdpNe addNe(AdpNe body) throws AdapterException {
@@ -124,29 +124,6 @@ public class AdpNesMgr {
 	}
 
 	private void validateParam(AdpNe body, MethodOperator operate) throws AdapterException {
-		Integer id = body.getId();
-		if (null == id || id < 0) {
-			throw new AdapterException(ErrorCode.FAIL_INVALID_ID);
-		}
-
-		String userLabel = body.getUserLabel();
-		if (!ValidationUtil.isValidUserLabel(userLabel)) {
-			throw new AdapterException(ErrorCode.FAIL_INVALID_USER_LABEL);
-		}
-
-		if (MethodOperator.ADD == operate) {
-			boolean isExisted = false;
-			try {
-				isExisted = nesDbMgr.isUserLabelExisted(id, userLabel, operate);
-			} catch (Exception e) {
-				log.error("isUserLabelExisted", e);
-				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-			}
-			if (isExisted) {
-				throw new AdapterException(ErrorCode.FAIL_USER_LABEL_EXISTED);
-			}
-		}
-
 		String locationName = getLocationName();
 		if (!ValidationUtil.isValidLocationName(locationName)) {
 			throw new AdapterException(ErrorCode.FAIL_INVALID_LOCATION_NAME);

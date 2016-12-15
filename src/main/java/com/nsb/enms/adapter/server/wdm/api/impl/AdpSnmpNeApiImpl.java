@@ -5,16 +5,20 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.api.itf.AdpNeApiItf;
+import com.nsb.enms.adapter.server.common.api.impl.AdpDefaultNeApiImpl;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class AdpSnmpNeApiImpl implements AdpNeApiItf {
+public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 	private Logger log = LogManager.getLogger(AdpSnmpNeApiImpl.class);
 
+	public AdpSnmpNeApiImpl(AdpNe ne) {
+		super(ne);
+	}
+
 	@Override
-	public AdpNe addNe(AdpNe ne) throws AdapterException {
+	public AdpNe addNe() throws AdapterException {
 		// TODO Auto-generated method stub
 		return null;
 	}

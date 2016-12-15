@@ -7,7 +7,7 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public interface AdpNeApiItf {
-	public AdpNe addNe(AdpNe ne) throws AdapterException;
+	public AdpNe addNe() throws AdapterException;
 
 	public void create() throws AdapterException;
 

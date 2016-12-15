@@ -23,7 +23,15 @@ public class AdpNeFactory {
 		return AdpNeBuilder.getInstance().getNeInstance(ne);
 	}
 
+	public AdpNeApiItf getNeInstance(Integer neid) throws AdapterException {
+		return AdpNeBuilder.getInstance().getNeInstance(neid);
+	}
+
 	public AdpNe addNe(AdpNe ne) throws AdapterException {
-		return getNeInstance(ne).addNe(ne);
+		return getNeInstance(ne).addNe();
+	}
+
+	public void delete(Integer neId) throws AdapterException {
+		getNeInstance(neId).delete();
 	}
 }

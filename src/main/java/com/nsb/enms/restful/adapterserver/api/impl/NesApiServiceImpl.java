@@ -17,7 +17,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
-import com.nsb.enms.adapter.server.sdh.business.ne.AdpNesMgr;
+import com.nsb.enms.adapter.server.sdh.business.ne.AdpQ3NesMgr;
 import com.nsb.enms.adapter.server.sdh.business.xc.AdpXcsMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
@@ -32,7 +32,7 @@ public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-	private AdpNesMgr nesMgr = new AdpNesMgr();
+	private AdpQ3NesMgr nesMgr = new AdpQ3NesMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
@@ -44,6 +44,7 @@ public class NesApiServiceImpl extends NesApiService {
 			AdpNe ne = AdpNeFactory.getInstance().addNe(body);
 			return Response.ok().entity(ne).build();
 		} catch (AdapterException e) {
+			log.error("addNe", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
 
@@ -69,13 +70,20 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter------deleteNE");
 
 		try {
-			nesMgr.deleteNe(neid);
+			AdpNeFactory.getInstance().delete(neid);
+			return Response.ok().build();
 		} catch (AdapterException e) {
 			log.error("deleteNe", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
 
-		return Response.ok().build();
+		// try {
+		// nesMgr.deleteNe(neid);
+		// } catch (AdapterException e) {
+		// log.error("deleteNe", e);
+		// return ErrorWrapperUtils.adapterException(e);
+		// }
+
 	}
 
 	private Response failObjNotExist() {
