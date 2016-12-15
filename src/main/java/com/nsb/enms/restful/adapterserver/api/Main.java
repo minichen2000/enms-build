@@ -72,12 +72,13 @@ public class Main {
 
 		register2Controller();
 
-		String q3WSServerUri = ConfLoader.getInstance().getConf(ConfigKey.Q3_WS_SERVER_URI);
-		NotificationClient client = new NotificationClient(q3WSServerUri);
-		client.start();
+		// String q3WSServerUri =
+		// ConfLoader.getInstance().getConf(ConfigKey.Q3_WS_SERVER_URI);
+		// NotificationClient client = new NotificationClient(q3WSServerUri);
+		// client.start();
 
 		// The real groupId should be set
-		Q3EmlImMgr.instance().init(100);
+		// Q3EmlImMgr.instance().init(100);
 
 		NeStateMachineApp.instance().init();
 		NotificationSender.instance().init();
