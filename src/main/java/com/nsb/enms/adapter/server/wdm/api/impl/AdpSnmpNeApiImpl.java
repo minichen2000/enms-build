@@ -66,12 +66,6 @@ public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 	}
 
 	@Override
-	public List<AdpTp> getTps() throws AdapterException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<AdpTp> getTpsByLayerrate(Integer layerrate) throws AdapterException {
 		// TODO Auto-generated method stub
 		return null;

@@ -28,67 +28,48 @@ public class AdpQ3NeApiImpl extends AdpDefaultNeApiImpl {
 
 	@Override
 	public void create() throws AdapterException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void assign() throws AdapterException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void delete() throws AdapterException {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void update() throws AdapterException {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void supervise() throws AdapterException {
-		// TODO Auto-generated method stub
-
+		nesMgr.startSupervision(getId());
 	}
 
 	@Override
 	public void synchronize() throws AdapterException {
-		// TODO Auto-generated method stub
-
+		nesMgr.startAlignment(getId());
 	}
 
 	@Override
 	public AdpNe getData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<AdpTp> getTps() throws AdapterException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<AdpTp> getTpsByLayerrate(Integer layerrate) throws AdapterException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public AdpTp getTp(Integer tpid) throws AdapterException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<AdpTp> getTpsByType(Integer tptype) throws AdapterException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

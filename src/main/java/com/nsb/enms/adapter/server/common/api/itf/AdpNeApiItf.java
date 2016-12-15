@@ -9,6 +9,8 @@ import com.nsb.enms.restful.model.adapter.AdpTp;
 public interface AdpNeApiItf {
 	public AdpNe addNe() throws AdapterException;
 
+	public AdpNe getData();
+
 	public void create() throws AdapterException;
 
 	public void assign() throws AdapterException;
@@ -21,9 +23,11 @@ public interface AdpNeApiItf {
 
 	public void synchronize() throws AdapterException;
 
-	public AdpNe getData();
+	public AdpNe getNeById() throws AdapterException;
 
-	public List<AdpTp> getTps() throws AdapterException;
+	public List<AdpTp> getNeTps() throws AdapterException;
+
+	public List<AdpTp> getChildrenTps(Integer tpId) throws AdapterException;
 
 	public List<AdpTp> getTpsByLayerrate(Integer layerrate) throws AdapterException;
 

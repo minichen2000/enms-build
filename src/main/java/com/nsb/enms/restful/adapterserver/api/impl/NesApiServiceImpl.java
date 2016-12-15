@@ -17,7 +17,6 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ErrorWrapperUtils;
-import com.nsb.enms.adapter.server.sdh.business.ne.AdpQ3NesMgr;
 import com.nsb.enms.adapter.server.sdh.business.xc.AdpXcsMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.adapterserver.api.NesApiService;
@@ -32,7 +31,6 @@ public class NesApiServiceImpl extends NesApiService {
 	private final static Logger log = LogManager.getLogger(NesApiServiceImpl.class);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-	private AdpQ3NesMgr nesMgr = new AdpQ3NesMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
@@ -41,20 +39,12 @@ public class NesApiServiceImpl extends NesApiService {
 	@Override
 	public Response addNe(AdpNe body, SecurityContext securityContext) throws NotFoundException {
 		try {
-			AdpNe ne = AdpNeFactory.getInstance().addNe(body);
+			AdpNe ne = AdpNeFactory.getInstance().getApi(body).addNe();
 			return Response.ok().entity(ne).build();
 		} catch (AdapterException e) {
 			log.error("addNe", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
-
-		// AdpNe ne = null;
-		// try {
-		// ne = nesMgr.addNe(body);
-		// } catch (AdapterException e) {
-		// return ErrorWrapperUtils.adapterException(e);
-		// }
-		// return Response.ok().entity(ne).build();
 	}
 
 	private Response failDbOperation() {
@@ -70,20 +60,12 @@ public class NesApiServiceImpl extends NesApiService {
 		log.debug("adapter------deleteNE");
 
 		try {
-			AdpNeFactory.getInstance().delete(neid);
+			AdpNeFactory.getInstance().getApi(neid).delete();
 			return Response.ok().build();
 		} catch (AdapterException e) {
 			log.error("deleteNe", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
-
-		// try {
-		// nesMgr.deleteNe(neid);
-		// } catch (AdapterException e) {
-		// log.error("deleteNe", e);
-		// return ErrorWrapperUtils.adapterException(e);
-		// }
-
 	}
 
 	private Response failObjNotExist() {
@@ -92,17 +74,13 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response getNeById(Integer neid, SecurityContext securityContext) throws NotFoundException {
-		AdpNe ne = new AdpNe();
 		try {
-			ne = nesDbMgr.getNeById(neid);
-			if (ne.getId() < 0) {
-				return failObjNotExist();
-			}
-		} catch (Exception e) {
+			AdpNe ne = AdpNeFactory.getInstance().getApi(neid).getNeById();
+			return Response.ok().entity(ne).build();
+		} catch (AdapterException e) {
 			log.error("getNeById", e);
-			return failDbOperation();
+			return ErrorWrapperUtils.adapterException(e);
 		}
-		return Response.ok().entity(ne).build();
 	}
 
 	@Override
@@ -132,31 +110,32 @@ public class NesApiServiceImpl extends NesApiService {
 	public Response getChildrenTps(Integer neid, Integer tpid, SecurityContext securityContext)
 			throws NotFoundException {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
+
 		try {
-			tpList = tpsDbMgr.getChildrenTps(neid, tpid);
-		} catch (Exception e) {
+			tpList = AdpNeFactory.getInstance().getApi(neid).getChildrenTps(tpid);
+			return Response.ok().entity(tpList).build();
+		} catch (AdapterException e) {
 			log.error("getChildrenTps", e);
-			return Response.serverError().entity(e).build();
+			return ErrorWrapperUtils.adapterException(e);
 		}
-		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
 	public Response getNeTps(Integer neid, SecurityContext securityContext) throws NotFoundException {
-		System.out.println("getNeTps, neId = " + neid);
+		log.debug("getNeTps, neId = " + neid);
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		try {
-			tpList = tpsDbMgr.getTpsByNeId(neid);
-		} catch (Exception e) {
-			log.error("getTPByNEId", e);
-			return Response.serverError().entity(e).build();
+			tpList = AdpNeFactory.getInstance().getApi(neid).getNeTps();
+			return Response.ok().entity(tpList).build();
+		} catch (AdapterException e) {
+			log.error("getNeTps", e);
+			return ErrorWrapperUtils.adapterException(e);
 		}
-		return Response.ok().entity(tpList).build();
 	}
 
 	@Override
 	public Response getTpById(Integer neid, Integer tpid, SecurityContext securityContext) throws NotFoundException {
-		System.out.println("getTpById, neId = " + neid);
+		log.debug("getTpById, neId = " + neid);
 		AdpTp tp;
 		try {
 			tp = tpsDbMgr.getTpById(neid, tpid);
@@ -241,23 +220,23 @@ public class NesApiServiceImpl extends NesApiService {
 	@Override
 	public Response startAlignment(Integer neid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			nesMgr.startAlignment(neid);
+			AdpNeFactory.getInstance().getApi(neid).synchronize();
+			return Response.ok().build();
 		} catch (AdapterException e) {
-			log.error("startSupervision", e);
+			log.error("startAlignment", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
-		return Response.ok().build();
 	}
 
 	@Override
 	public Response startSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
 		try {
-			nesMgr.startSupervision(neid);
+			AdpNeFactory.getInstance().getApi(neid).supervise();
+			return Response.ok().build();
 		} catch (AdapterException e) {
 			log.error("startSupervision", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
-		return Response.ok().build();
 	}
 
 	@Override
