@@ -1,7 +1,7 @@
 package com.nsb.enms.adapter.server.common.utils;
 
 import java.util.Map;
-import com.nsb.enms.adapter.server.common.EnmsEnv;
+import com.nsb.enms.adapter.server.common.constants.EnmsEnv;
 
 public final class Env {
 

@@ -3,7 +3,7 @@ package com.nsb.enms.adapter.server.common.api.builder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.nsb.enms.adapter.server.common.api.factories.Constants;
+import com.nsb.enms.adapter.server.common.constants.Protocols;
 import com.nsb.enms.adapter.server.common.api.itf.AdpNeApiItf;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
@@ -19,8 +19,8 @@ public class AdpNeBuilder {
 
 	protected AdpNeBuilder() {
 		builderMap = new HashMap<String, AdpNeBuilder>();
-		builderMap.put(Constants.ALUQ3_PROTOCOL, AdpQ3NeBuilder.getInstance());
-		builderMap.put(Constants.SNMP_PROTOCOL, AdpSnmpNeBuilder.getInstance());
+		builderMap.put(Protocols.ALUQ3_PROTOCOL, AdpQ3NeBuilder.getInstance());
+		builderMap.put(Protocols.SNMP_PROTOCOL, AdpSnmpNeBuilder.getInstance());
 	}
 
 	public AdpNeApiItf getNeInstance(AdpNe ne) throws AdapterException {
@@ -42,6 +42,6 @@ public class AdpNeBuilder {
 	}
 
 	private AdpNeBuilder getNeBuilderInstance(AdpNe ne) throws AdapterException {
-		return builderMap.get(Constants.SNMP_PROTOCOL);
+		return builderMap.get(Protocols.SNMP_PROTOCOL);
 	}
 }

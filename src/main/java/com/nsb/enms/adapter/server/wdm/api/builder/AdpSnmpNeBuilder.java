@@ -20,4 +20,8 @@ public class AdpSnmpNeBuilder extends AdpNeBuilder {
 	public AdpNeApiItf getNeInstance(AdpNe ne) throws AdapterException {
 		return new AdpSnmpNeApiImpl(ne);
 	}
+
+	public AdpNeApiItf getTpInstance(AdpNe ne) throws AdapterException {
+		return new AdpSnmpNeApiImpl(ne);
+	}
 }

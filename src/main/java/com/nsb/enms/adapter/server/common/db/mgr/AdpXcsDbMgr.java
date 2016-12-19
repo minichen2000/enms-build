@@ -17,7 +17,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
-import com.nsb.enms.adapter.server.common.db.mongodb.constant.AdpDBConst;
+import com.nsb.enms.adapter.server.common.constants.AdpDBConst;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 

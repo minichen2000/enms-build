@@ -6,7 +6,7 @@ import org.bson.Document;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.nsb.enms.adapter.server.common.db.mongodb.constant.AdpDBConst;
+import com.nsb.enms.adapter.server.common.constants.AdpDBConst;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
 
 public class AdpSeqDbMgr {

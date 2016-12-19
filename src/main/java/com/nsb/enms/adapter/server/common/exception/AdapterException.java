@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.common.exception;
 
+import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 import com.nsb.enms.common.ErrorCode;
 
 public class AdapterException extends Exception {

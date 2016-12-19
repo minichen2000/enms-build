@@ -1,6 +1,6 @@
-package com.nsb.enms.adapter.server.common.api.factories;
+package com.nsb.enms.adapter.server.common.constants;
 
-public class Constants {
+public class Protocols {
 
 	// Protocol relevant types
 	public static final String ALUQ3_PROTOCOL = "Q3";

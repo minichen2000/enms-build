@@ -1,7 +1,7 @@
 package com.nsb.enms.adapter.server.sdh.q3gateway.entity;
 
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 
 public class Moi {
 	private String moi;

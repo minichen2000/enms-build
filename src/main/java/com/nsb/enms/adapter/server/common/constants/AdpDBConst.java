@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.db.mongodb.constant;
+package com.nsb.enms.adapter.server.common.constants;
 
 public class AdpDBConst {
 	public final static String DB_NAME_NE = "Adp_Ne";

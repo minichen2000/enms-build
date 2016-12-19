@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.MethodOperator;
-import com.nsb.enms.adapter.server.common.api.impl.AdpDefaultNeApiImpl;
+import com.nsb.enms.adapter.server.common.constants.MethodOperator;
+import com.nsb.enms.adapter.server.common.api.impl.AdpDefaultTpApiImpl;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.sdh.business.ne.AdpQ3NesMgr;
@@ -15,7 +15,7 @@ import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
-public class AdpQ3NeApiImpl extends AdpDefaultNeApiImpl {
+public class AdpQ3NeApiImpl extends AdpDefaultTpApiImpl {
 	private Logger log = LogManager.getLogger(AdpQ3NeApiImpl.class);
 	private AdpQ3NesMgr nesMgr = new AdpQ3NesMgr();
 	private AdpQ3XcsMgr adpXcMgr = new AdpQ3XcsMgr();

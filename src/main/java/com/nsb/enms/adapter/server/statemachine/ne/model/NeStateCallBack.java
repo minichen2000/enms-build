@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.exception.AdapterExceptionType;
+import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 import com.nsb.enms.common.AlignmentState;
 import com.nsb.enms.common.CommunicationState;
 import com.nsb.enms.common.ErrorCode;

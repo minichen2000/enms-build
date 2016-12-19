@@ -19,11 +19,11 @@ public class AdpNeFactory {
 		return INSTANCE;
 	}
 
-	public AdpNeApiItf getApi(AdpNe ne) throws AdapterException {
+	public AdpNeApiItf getNeApi(AdpNe ne) throws AdapterException {
 		return AdpNeBuilder.getInstance().getNeInstance(ne);
 	}
 
-	public AdpNeApiItf getApi(Integer neid) throws AdapterException {
+	public AdpNeApiItf getNeApi(Integer neid) throws AdapterException {
 		return AdpNeBuilder.getInstance().getNeInstance(neid);
 	}
 }
