@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.sdh.business.ping;
+package com.nsb.enms.adapter.server.common.business.ping;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.constants.ConfigKey;
-import com.nsb.enms.adapter.server.sdh.q3manager.Q3EmlImMgr;
 import com.nsb.enms.restful.controllerclient.ApiException;
 import com.nsb.enms.restful.controllerclient.api.CtlSystemApi;
 
@@ -46,7 +45,8 @@ public class PingApp {
 				if (count < MAX_COUNT) {
 					ping();
 				} else {
-					Q3EmlImMgr.instance().destroy();
+					// TODO 如果注册失败，执行各自模块下的相关业务
+					// Q3EmlImMgr.instance().destroy();
 				}
 			}
 		}

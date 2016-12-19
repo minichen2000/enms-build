@@ -1,11 +1,10 @@
-package com.nsb.enms.adapter.server.sdh.business.register;
+package com.nsb.enms.adapter.server.common.business.register;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.constants.ConfigKey;
-import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.restful.controllerclient.ApiException;
 import com.nsb.enms.restful.controllerclient.api.CtlSystemApi;
 import com.nsb.enms.restful.model.controller.Host;

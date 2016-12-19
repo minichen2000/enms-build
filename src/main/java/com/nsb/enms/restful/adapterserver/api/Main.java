@@ -13,13 +13,13 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import com.nsb.enms.adapter.server.common.business.ping.PingApp;
+import com.nsb.enms.adapter.server.common.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.constants.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.filter.AccessControlFilter;
-import com.nsb.enms.adapter.server.sdh.business.ping.PingApp;
-import com.nsb.enms.adapter.server.sdh.business.register.RegisterManager;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 
 public class Main {
