@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.NeEntity;
@@ -19,8 +19,8 @@ import com.nsb.enms.common.ErrorCode;
 public class GetNe {
 	private static final Logger log = LogManager.getLogger(GetNe.class);
 
-	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_NE_REQ,
-			ConfigKey.DEFAULT_GET_NE_REQ);
+	private static final String SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_NE_REQ,
+			SdhConfigKey.DEFAULT_GET_NE_REQ);
 
 	public static NeEntity getNe(int groupId, int neId) throws AdapterException {
 		log.debug("------------Start getNe-------------------");

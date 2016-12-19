@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 
 public class Moc {
@@ -59,7 +59,7 @@ public class Moc {
 		try {
 			isInit = true;
 
-			String file = ConfLoader.getInstance().getConf(ConfigKey.OID_TABLE_FILE);
+			String file = ConfLoader.getInstance().getConf(SdhConfigKey.OID_TABLE_FILE);
 
 			Scanner scanner = new Scanner(new File(file));
 

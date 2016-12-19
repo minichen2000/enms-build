@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
@@ -21,8 +21,8 @@ public class StartSupervision {
 
 	private static final long SLEEP_TIME = 10000;
 
-	private static String startSupervisionScenario = ConfLoader.getInstance().getConf(ConfigKey.START_SUPERVISION_REQ,
-			ConfigKey.DEFAULT_START_SUPERVISION_REQ);
+	private static String startSupervisionScenario = ConfLoader.getInstance().getConf(SdhConfigKey.START_SUPERVISION_REQ,
+			SdhConfigKey.DEFAULT_START_SUPERVISION_REQ);
 
 	public static boolean startSupervision(String groupId, String neId) throws AdapterException {
 		boolean flag = false;

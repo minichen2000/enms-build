@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
@@ -18,11 +18,11 @@ import com.nsb.enms.common.ErrorCode;
 public class DeleteNe {
 	private final static Logger log = LogManager.getLogger(DeleteNe.class);
 
-	private static String deleteNeScenario = ConfLoader.getInstance().getConf(ConfigKey.DELETE_NE_REQ,
-			ConfigKey.DEFAULT_DELETE_NE_REQ);
+	private static String deleteNeScenario = ConfLoader.getInstance().getConf(SdhConfigKey.DELETE_NE_REQ,
+			SdhConfigKey.DEFAULT_DELETE_NE_REQ);
 
-	private static String stopSupervisionScenario = ConfLoader.getInstance().getConf(ConfigKey.STOP_SUPERVISION_REQ,
-			ConfigKey.DEFAULT_STOP_SUPERVISION_REQ);
+	private static String stopSupervisionScenario = ConfLoader.getInstance().getConf(SdhConfigKey.STOP_SUPERVISION_REQ,
+			SdhConfigKey.DEFAULT_STOP_SUPERVISION_REQ);
 
 	public static void deleteNe(String groupId, String neId) throws AdapterException {
 		stopSupervision(groupId, neId);

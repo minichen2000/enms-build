@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.TpEntity;
@@ -21,8 +21,8 @@ import com.nsb.enms.common.ErrorCode;
 public class GetTp {
 	private static final Logger log = LogManager.getLogger(GetTp.class);
 
-	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_PORT_REQ,
-			ConfigKey.DEFAULT_GET_PORT_REQ);
+	private static final String SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_PORT_REQ,
+			SdhConfigKey.DEFAULT_GET_PORT_REQ);
 
 	public static List<TpEntity> getTps(String groupId, String neId) throws AdapterException {
 		log.debug("------------Start getTps-------------------");

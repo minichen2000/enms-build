@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.EquipmentEntity;
@@ -24,14 +24,14 @@ import com.nsb.enms.common.ErrorCode;
 public class CreatePort {
 	private static final Logger log = LogManager.getLogger(CreatePort.class);
 
-	private static final String CREATE_ISA_PORT_VC12 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_ISA_PORT_VC12,
-			ConfigKey.DEFAULT_CREATE_ISA_PORT_VC12);
+	private static final String CREATE_ISA_PORT_VC12 = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_ISA_PORT_VC12,
+			SdhConfigKey.DEFAULT_CREATE_ISA_PORT_VC12);
 
 	private static final String CREATE_ISA_PORT_VC12X = ConfLoader.getInstance()
-			.getConf(ConfigKey.CREATE_ISA_PORT_VC12X, ConfigKey.DEFAULT_CREATE_ISA_PORT_VC12X);
+			.getConf(SdhConfigKey.CREATE_ISA_PORT_VC12X, SdhConfigKey.DEFAULT_CREATE_ISA_PORT_VC12X);
 
-	private static final String CREATE_ISA_PORT_VCX = ConfLoader.getInstance().getConf(ConfigKey.CREATE_ISA_PORT_VCX,
-			ConfigKey.DEFAULT_CREATE_ISA_PORT_VCX);
+	private static final String CREATE_ISA_PORT_VCX = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_ISA_PORT_VCX,
+			SdhConfigKey.DEFAULT_CREATE_ISA_PORT_VCX);
 
 	public static List<TptCoordinatorEntity> createISAPortVC12(String groupId, String neId, String tptCoordinatorId,
 			String position) throws AdapterException {

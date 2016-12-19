@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.constants.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 
 public class ConfLoader {
 	private Properties conf = new Properties();

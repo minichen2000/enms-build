@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.TptCoordinatorEntity;
@@ -23,8 +23,8 @@ import com.nsb.enms.common.ErrorCode;
 public class DeletePort {
 	private static final Logger log = LogManager.getLogger(DeletePort.class);
 
-	private static final String DELETE_ISA_PORT = ConfLoader.getInstance().getConf(ConfigKey.DELETE_ISA_PORT,
-			ConfigKey.DEFAULT_DELETE_ISA_PORT);
+	private static final String DELETE_ISA_PORT = ConfLoader.getInstance().getConf(SdhConfigKey.DELETE_ISA_PORT,
+			SdhConfigKey.DEFAULT_DELETE_ISA_PORT);
 
 	public static List<TptCoordinatorEntity> deleteISAPort(String groupId, String neId, String tptCoordinatorId,
 			String position) throws AdapterException {

@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.EquipmentEntity;
@@ -31,17 +31,17 @@ import com.nsb.enms.restful.model.adapter.AdpKVPair;
 public class GetEquipment {
 	private static final Logger log = LogManager.getLogger(GetEquipment.class);
 
-	private static final String RI_FILE_PATH = ConfLoader.getInstance().getConf(ConfigKey.RI_FILE_PATH,
-			ConfigKey.DEFAULT_RI_FILE_PATH);
+	private static final String RI_FILE_PATH = ConfLoader.getInstance().getConf(SdhConfigKey.RI_FILE_PATH,
+			SdhConfigKey.DEFAULT_RI_FILE_PATH);
 
-	private static final String GET_RI_SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_RI_REQ,
-			ConfigKey.DEFAULT_GET_RI_REQ);
+	private static final String GET_RI_SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_RI_REQ,
+			SdhConfigKey.DEFAULT_GET_RI_REQ);
 
-	private static final String GET_ISA_SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_ISA_REQ,
-			ConfigKey.DEFAULT_GET_ISA_REQ);
+	private static final String GET_ISA_SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_ISA_REQ,
+			SdhConfigKey.DEFAULT_GET_ISA_REQ);
 
-	private static final String GET_EQ_SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_EQ_REQ,
-			ConfigKey.DEFAULT_GET_EQ_REQ);
+	private static final String GET_EQ_SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_EQ_REQ,
+			SdhConfigKey.DEFAULT_GET_EQ_REQ);
 
 	public static Map<String, List<AdpKVPair>> getRIs(String groupId, String neId) throws AdapterException {
 		log.debug("--------------Start getRIs--------------");

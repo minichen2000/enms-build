@@ -9,15 +9,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
 
 public class CheckQ3EmlImApp {
 	private static final Logger log = LogManager.getLogger(CheckQ3EmlImApp.class);
 
-	private static String monitorScript = ConfLoader.getInstance().getConf(ConfigKey.LIST_GROUP_SCRIPT,
-			ConfigKey.DEFAULT_LIST_GROUP_SCRIPT);
+	private static String monitorScript = ConfLoader.getInstance().getConf(SdhConfigKey.LIST_GROUP_SCRIPT,
+			SdhConfigKey.DEFAULT_LIST_GROUP_SCRIPT);
 
 	private static final int MAX_COUNT = ConfLoader.getInstance().getInt("MAX_EMLIM_MONITOR_NUM", 10);
 

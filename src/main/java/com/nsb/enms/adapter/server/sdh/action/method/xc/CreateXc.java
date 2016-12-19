@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.XcEntity;
@@ -21,20 +21,20 @@ import com.nsb.enms.common.ErrorCode;
 public class CreateXc {
 	private static final Logger log = LogManager.getLogger(CreateXc.class);
 
-	private static final String SCENARIO_VC4 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC4_REQ,
-			ConfigKey.DEFAULT_CREATE_XC_VC4_REQ);
+	private static final String SCENARIO_VC4 = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_XC_VC4_REQ,
+			SdhConfigKey.DEFAULT_CREATE_XC_VC4_REQ);
 
-	private static final String SCENARIO_VC3 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC3_REQ,
-			ConfigKey.DEFAULT_CREATE_XC_VC3_REQ);
+	private static final String SCENARIO_VC3 = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_XC_VC3_REQ,
+			SdhConfigKey.DEFAULT_CREATE_XC_VC3_REQ);
 
-	private static final String SCENARIO_VC12 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_VC12_REQ,
-			ConfigKey.DEFAULT_CREATE_XC_VC12_REQ);
+	private static final String SCENARIO_VC12 = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_XC_VC12_REQ,
+			SdhConfigKey.DEFAULT_CREATE_XC_VC12_REQ);
 
-	private static final String SCENARIO_TU12 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_TU12_REQ,
-			ConfigKey.DEFAULT_CREATE_XC_TU12_REQ);
+	private static final String SCENARIO_TU12 = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_XC_TU12_REQ,
+			SdhConfigKey.DEFAULT_CREATE_XC_TU12_REQ);
 
-	private static final String SCENARIO_TU3 = ConfLoader.getInstance().getConf(ConfigKey.CREATE_XC_TU3_REQ,
-			ConfigKey.DEFAULT_CREATE_XC_TU3_REQ);
+	private static final String SCENARIO_TU3 = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_XC_TU3_REQ,
+			SdhConfigKey.DEFAULT_CREATE_XC_TU3_REQ);
 
 	public static XcEntity createXcVc4(String groupId, String neId, String pTTPId, String augId, String au4CTPId)
 			throws AdapterException {

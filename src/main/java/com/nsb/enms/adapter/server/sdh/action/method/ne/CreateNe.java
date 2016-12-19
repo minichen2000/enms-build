@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.sdh.action.entity.NeEntity;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
@@ -20,14 +20,14 @@ import com.nsb.enms.common.ErrorCode;
 public class CreateNe {
 	private final static Logger log = LogManager.getLogger(CreateNe.class);
 
-	private static String createNeScenario = ConfLoader.getInstance().getConf(ConfigKey.CREATE_NE_REQ,
-			ConfigKey.DEFAULT_CREATE_NE_REQ);
+	private static String createNeScenario = ConfLoader.getInstance().getConf(SdhConfigKey.CREATE_NE_REQ,
+			SdhConfigKey.DEFAULT_CREATE_NE_REQ);
 
-	private static String setNeAddressScenario = ConfLoader.getInstance().getConf(ConfigKey.SET_NE_ADDR_REQ,
-			ConfigKey.DEFAULT_SET_NE_ADDR_REQ);
+	private static String setNeAddressScenario = ConfLoader.getInstance().getConf(SdhConfigKey.SET_NE_ADDR_REQ,
+			SdhConfigKey.DEFAULT_SET_NE_ADDR_REQ);
 
-	private static String setNeIsaAddressScenario = ConfLoader.getInstance().getConf(ConfigKey.SET_NE_ISA_ADDR_REQ,
-			ConfigKey.DEFAULT_SET_NE_ISA_ADDR_REQ);
+	private static String setNeIsaAddressScenario = ConfLoader.getInstance().getConf(SdhConfigKey.SET_NE_ISA_ADDR_REQ,
+			SdhConfigKey.DEFAULT_SET_NE_ISA_ADDR_REQ);
 
 	private static Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+");
 

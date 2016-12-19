@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
@@ -17,11 +17,11 @@ import com.nsb.enms.common.ErrorCode;
 public class TerminateTp {
 	private static final Logger log = LogManager.getLogger(TerminateTp.class);
 
-	private static final String SCENARIO_TU12 = ConfLoader.getInstance().getConf(ConfigKey.TERMINATE_TUG3_TO_TU12_REQ,
-			ConfigKey.DEFAULT_TERMINATE_TUG3_TO_TU12_REQ);
+	private static final String SCENARIO_TU12 = ConfLoader.getInstance().getConf(SdhConfigKey.TERMINATE_TUG3_TO_TU12_REQ,
+			SdhConfigKey.DEFAULT_TERMINATE_TUG3_TO_TU12_REQ);
 
-	private static final String SCENARIO_TU3 = ConfLoader.getInstance().getConf(ConfigKey.TERMINATE_TUG3_TO_TU3_REQ,
-			ConfigKey.DEFAULT_TERMINATE_TUG3_TO_TU3_REQ);
+	private static final String SCENARIO_TU3 = ConfLoader.getInstance().getConf(SdhConfigKey.TERMINATE_TUG3_TO_TU3_REQ,
+			SdhConfigKey.DEFAULT_TERMINATE_TUG3_TO_TU3_REQ);
 
 	public static void terminateTug3ToTu12(String groupId, String neId, String vc4TTPId) throws AdapterException {
 		String[] tug3IdList = { "1", "2", "3" };

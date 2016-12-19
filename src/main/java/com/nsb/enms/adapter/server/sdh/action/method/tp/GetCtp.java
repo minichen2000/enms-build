@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.TpEntity;
@@ -25,8 +25,8 @@ import com.nsb.enms.common.utils.Pair;
 public class GetCtp {
 	private static final Logger log = LogManager.getLogger(GetCtp.class);
 
-	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_CONNECTION_PORT_REQ,
-			ConfigKey.DEFAULT_GET_CONNECTION_PORT_REQ);
+	private static final String SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_CONNECTION_PORT_REQ,
+			SdhConfigKey.DEFAULT_GET_CONNECTION_PORT_REQ);
 
 	public static List<TpEntity> getSdhCtps(String groupId, String neId, String tpId) throws AdapterException {
 		log.debug("tpId = " + tpId);

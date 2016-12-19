@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.ParseUtil;
@@ -19,8 +19,8 @@ import com.nsb.enms.common.utils.Pair;
 public class GetManagerAddress {
 	private static final Logger log = LogManager.getLogger(GetNe.class);
 
-	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.GET_MANAGER_ADDRESS_REQ,
-			ConfigKey.DEFAULT_GET_MANAGER_ADDRESS_REQ);
+	private static final String SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_MANAGER_ADDRESS_REQ,
+			SdhConfigKey.DEFAULT_GET_MANAGER_ADDRESS_REQ);
 
 	public static Pair<String, String> getManagerAddress(int groupId, int neId) throws AdapterException {
 		log.debug("------------Start getManagerAddress-------------------");

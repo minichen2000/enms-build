@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.constants.EnmsEnv;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.constants.AdapterExceptionType;
 import com.nsb.enms.adapter.server.common.utils.Env;
@@ -18,8 +18,8 @@ import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
 public class ExecExternalScript {
 	private static final Logger log = LogManager.getLogger(ExecExternalScript.class);
 
-	private static String tstmgrScript = ConfLoader.getInstance().getConf(ConfigKey.TSTMGR_SCRIPT,
-			ConfigKey.DEFAULT_TSTMGR_SCRIPT);
+	private static String tstmgrScript = ConfLoader.getInstance().getConf(SdhConfigKey.TSTMGR_SCRIPT,
+			SdhConfigKey.DEFAULT_TSTMGR_SCRIPT);
 
 	/*
 	 * private static String q3EmlImScript = ConfLoader.getInstance().getConf(
@@ -27,8 +27,8 @@ public class ExecExternalScript {
 	 * );
 	 */
 
-	private static String tstmgrDir = ConfLoader.getInstance().getConf(ConfigKey.TSTMGR_SCRIPT_DIR,
-			ConfigKey.DEFAULT_TSTMGR_SCRIPT_DIR);
+	private static String tstmgrDir = ConfLoader.getInstance().getConf(SdhConfigKey.TSTMGR_SCRIPT_DIR,
+			SdhConfigKey.DEFAULT_TSTMGR_SCRIPT_DIR);
 
 	/*
 	 * private static String emlImDir = ConfLoader.getInstance().getConf(

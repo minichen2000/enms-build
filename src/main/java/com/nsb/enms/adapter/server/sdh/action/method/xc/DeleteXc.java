@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.sdh.action.method.ExecExternalScript;
 import com.nsb.enms.adapter.server.sdh.constants.ExternalScriptType;
@@ -17,8 +17,8 @@ import com.nsb.enms.common.ErrorCode;
 public class DeleteXc {
 	private static final Logger log = LogManager.getLogger(DeleteXc.class);
 
-	private static final String SCENARIO = ConfLoader.getInstance().getConf(ConfigKey.DELETE_XC_REQ,
-			ConfigKey.DEFAULT_DELETE_XC_REQ);
+	private static final String SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.DELETE_XC_REQ,
+			SdhConfigKey.DEFAULT_DELETE_XC_REQ);
 
 	public static void deleteXc(String groupId, String neId, String corssConnectionId) throws AdapterException {
 		log.debug("------------Start deleteXc-------------------");

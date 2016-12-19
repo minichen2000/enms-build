@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.alarm.AlarmNEOutOfMngt;
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
-import com.nsb.enms.adapter.server.common.constants.ConfigKey;
+import com.nsb.enms.adapter.server.sdh.constants.SdhConfigKey;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
@@ -34,8 +34,8 @@ public class Q3EmlImMgr {
 
 	private static Q3EmlImMgr inst_ = new Q3EmlImMgr();
 
-	private static final int MAX_NE_NUM = ConfLoader.getInstance().getInt(ConfigKey.MAX_NE_OF_ONE_EMLIM,
-			ConfigKey.DEFAULT_MAX_NE_OF_ONE_EMLIM);
+	private static final int MAX_NE_NUM = ConfLoader.getInstance().getInt(SdhConfigKey.MAX_NE_OF_ONE_EMLIM,
+			SdhConfigKey.DEFAULT_MAX_NE_OF_ONE_EMLIM);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
@@ -67,8 +67,8 @@ public class Q3EmlImMgr {
 		CheckQ3EmlImApp.check(groupId);
 
 		Timer timer = new Timer();
-		long period = ConfLoader.getInstance().getInt(ConfigKey.EMLIM_MONITOR_INTERVAL,
-				ConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL);
+		long period = ConfLoader.getInstance().getInt(SdhConfigKey.EMLIM_MONITOR_INTERVAL,
+				SdhConfigKey.DEFAULT_EMLIM_MONITOR_INTERVAL);
 		timer.scheduleAtFixedRate(new Q3EmlImListener(groupId), period, period);
 	}
 
