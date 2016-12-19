@@ -5,7 +5,7 @@ import java.util.List;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
-public interface AdpXcApiItf {
+public interface AdpXcApiItf extends AdpCommonApiItf {
 
 	public AdpXc createXc(AdpXc xc) throws AdapterException;
 

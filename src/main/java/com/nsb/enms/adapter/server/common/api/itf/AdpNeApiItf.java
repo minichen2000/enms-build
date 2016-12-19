@@ -3,7 +3,7 @@ package com.nsb.enms.adapter.server.common.api.itf;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
-public interface AdpNeApiItf {
+public interface AdpNeApiItf extends AdpCommonApiItf {
 	public AdpNe addNe() throws AdapterException;
 
 	public void deleteNe() throws AdapterException;

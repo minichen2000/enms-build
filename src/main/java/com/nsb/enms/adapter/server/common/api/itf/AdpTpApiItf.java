@@ -5,7 +5,7 @@ import java.util.List;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public interface AdpTpApiItf {
+public interface AdpTpApiItf extends AdpCommonApiItf {
 
 	public List<AdpTp> getNeTps() throws AdapterException;
 
