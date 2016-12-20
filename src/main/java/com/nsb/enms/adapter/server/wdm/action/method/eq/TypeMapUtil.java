@@ -63,7 +63,7 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.33", "11STAR1A" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.2", "11STGE12" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.4", "11STMM10" );
-        oidCardTypeMap.put( ".3.6.1.4.1.7483.1.5.11.72", "12CE120 (R9.1)" );
+        oidCardTypeMap.put( ".3.6.1.4.1.7483.1.5.11.72", "12CE120" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.6", "12P120" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.59", "130SCA1" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.38", "130SCX10" );
@@ -74,10 +74,10 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.8", "1UD200" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.7", "20P200" );
         
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.69", "20UC200 (R9.1)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.69", "20UC200" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.51", "260SCX2" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.67", "2UC400 (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.64", "30AN300 (R9.0)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.67", "2UC400" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.64", "30AN300" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.21", "43SCA1" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.31", "43SCGE1" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.16", "43SCX4" );
@@ -85,8 +85,8 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.8", "43STA1P" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.6", "43STX4" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.9", "43STX4P" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.65", "4AN400 (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.68", "4UC400 (R9.0)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.65", "4AN400" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.68", "4UC400" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.7", "4DPA2" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.5", "4DPA4" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.39", "4QPA8" );
@@ -105,11 +105,11 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.17", "AM2318A" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.22", "AM2625A" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.26", "ASWG" );
-        //oidCardTypeMap.put( "", "AWBEGR (R9.1)" );
-        //oidCardTypeMap.put( "", "AWBILA (R9.1)" );
-        //oidCardTypeMap.put( "", "AWBING (R9.1)" );
-        //oidCardTypeMap.put( "", "CEC2 (PSS-8x) (R9.1)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.18", "CEC2 (PSS-24x) (R9.0)" );
+        //oidCardTypeMap.put( "A1", "AWBEGR" );
+        //oidCardTypeMap.put( "A2", "AWBILA" );
+        //oidCardTypeMap.put( "A3", "AWBING" );
+        //oidCardTypeMap.put( "A4", "CEC2" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.18", "CEC2" );
         
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.9", "CWR8" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.12", "CWR8-88" );
@@ -117,26 +117,26 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.70", "D5X500" );
         
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.8.3", "DCM" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.3", "EC (for PSS-16 and PSS-32)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.8", "EC (for PSS-4)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.21", "EC2I (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.15", "8EC2 (for PSS-8)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.23", "8EC2E (for PSS-8) (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.17", "32EC2 (for PSS-32 and PSS-16II)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.24", "32EC2E (for PSS-32 and PSS-16II) (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.19", "EC-CW (for VWM-CW)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.20", "EC-DW (for VWM-DW)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.3", "EC" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.8", "EC" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.21", "EC2I" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.15", "8EC2" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.23", "8EC2E" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.17", "32EC2" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.24", "32EC2E" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.19", "EC-CW" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.2.20", "EC-DW" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.5", "FAN" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.14", "FAN (PSI-1T ) (R9.0)" );
-        //oidCardTypeMap.put( "", "IROADM9M (R9.1)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.14", "FAN" );
+        //oidCardTypeMap.put( "A5", "IROADM9M" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.1.10", "IROADMF" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.1.9", "IROADMV" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.14", "ITLB" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.23", "ITLU" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.74", "LCI1000 (R9.0)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.74", "LCI1000" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.4", "MCS8-16" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.25", "MESH4" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.11", "MFC (R9.0)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.11", "MFC" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.12.61", "MON-OCM" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.30", "MON-OTDR" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.1.8", "MSH8-FSM" );
@@ -146,20 +146,20 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.3", "OPSB" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.12", "OSCT" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.28", "OTDR" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.12", "PF (AC for PSS-8)" );
-        //oidCardTypeMap.put( "", "PF (PSS-8x) (R9.1)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.13", "PF (PSS-24x) (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.16", "PF (PSI-1T) (R9.0)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.4", "PF (all others)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.12", "PF" );
+        //oidCardTypeMap.put( "A6", "PF" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.13", "PF" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.16", "PF" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.4", "PF" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.28", "PSC1-6" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.41", "PTPCTL" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.11.42", "PTPIO" );
-        //oidCardTypeMap.put( "", "PTPIOC (R9.1)" );
+        //oidCardTypeMap.put( "A7", "PTPIOC" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.7.16", "RA2P" );
-        //oidCardTypeMap.put( "", "RA5P (R9.1)" );
-        //oidCardTypeMap.put( "", "S13X100R (R9.1)" );
-        //oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.5", "SC16 (R9.1)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.5", "SC96 (R9.0)" );
+        //oidCardTypeMap.put( "A8", "RA5P" );
+        //oidCardTypeMap.put( "A9", "S13X100R" );
+        //oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.5", "SC16" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.3.5", "SC96" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.12.20", "SFC1A" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.12.21", "SFC1B" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.12.22", "SFC1C" );
@@ -221,9 +221,9 @@ public class TypeMapUtil
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.13", "SFD44B" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.9", "SHFPNL" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.11", "SVAC" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.6", "USRPNL (PSS-16, PSS-16II, PSS-32)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.10", "8USRPNL (PSS-8)" );
-        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.1.6", "Virtual/Preset (R9.0)" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.6", "USRPNL" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.6.10", "8USRPNL" );
+        oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.1.6", "Virtual/Preset" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.21", "WR2-88" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.29", "WR20-TF" );
         oidCardTypeMap.put( "1.3.6.1.4.1.7483.1.5.6.30", "WR20-TFM" );
@@ -250,5 +250,5 @@ public class TypeMapUtil
             return oidCardTypeMap.get( oid );
         }
         return oid;
-    }
+    }       
 }

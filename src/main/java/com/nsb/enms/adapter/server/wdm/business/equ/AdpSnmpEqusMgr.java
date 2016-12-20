@@ -3,6 +3,7 @@ package com.nsb.enms.adapter.server.wdm.business.equ;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,6 +67,8 @@ public class AdpSnmpEqusMgr
             List<SnmpEquEntity> equs, int neId )
     {
         AdpEquipment adpEqu = new AdpEquipment();
+        List<AdpKVPair> params = new ArrayList<AdpKVPair>();
+        
         adpEqu.setId( equ.getId() );
         adpEqu.setNeId( neId );
         adpEqu.setPosition( equ.getIndex() );
@@ -74,11 +77,11 @@ public class AdpSnmpEqusMgr
         adpEqu.setActualType( equ.getPresentType() );
         adpEqu.setKeyOnNe( "" );
 
-        List<AdpKVPair> params = new ArrayList<AdpKVPair>();
         for( SnmpEquEntity equipment : equs )
         {
             String parentIndex = equipment.getIndex();
-            if( equ.getIndex().matches( parentIndex + "/[0-9]+" ) )
+            String index = equ.getIndex();
+            if( index.matches( parentIndex + "/[0-9]+" ) )
             {
                 AdpKVPair parentIdPair = new AdpKVPair();
                 parentIdPair.setKey( "parentId" );
@@ -86,6 +89,28 @@ public class AdpSnmpEqusMgr
                 params.add( parentIdPair );
             }
         }
+
+        if( !StringUtils.isEmpty( equ.getPresentType() ) && !"Empty".equals( equ.getPresentType() ) )
+        {
+            String serialNumber = equ.getSerialNumber();
+            String unitPartNumber = equ.getUnitPartNumber();
+            String softwarePartNumber = equ.getSoftwarePartNumber();
+            AdpKVPair serialNumberPair = new AdpKVPair();
+            serialNumberPair.setKey( "serialNumber" );
+            serialNumberPair.setValue( serialNumber );
+            params.add( serialNumberPair );
+
+            AdpKVPair unitPartNumberPair = new AdpKVPair();
+            unitPartNumberPair.setKey( "unitPartNumber" );
+            unitPartNumberPair.setValue( unitPartNumber );
+            params.add( unitPartNumberPair );
+
+            AdpKVPair softwarePartNumberPair = new AdpKVPair();
+            softwarePartNumberPair.setKey( "softwarePartNumber" );
+            softwarePartNumberPair.setValue( softwarePartNumber );
+            params.add( softwarePartNumberPair );
+        }
+
         adpEqu.setParams( params );
 
         return adpEqu;
@@ -107,5 +132,11 @@ public class AdpSnmpEqusMgr
             default:
                 return null;
         }
+    }
+    
+    public static void main( String[] args ) throws AdapterException
+    {
+        AdpSnmpEqusMgr snmpEqusMgr = new AdpSnmpEqusMgr();
+        snmpEqusMgr.syncEquip( 10, "135.251.96.5", 161, "admin_snmp" );
     }
 }
