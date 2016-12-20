@@ -30,10 +30,9 @@ public class AdpSnmpEqusMgr
 
     }
 
-    public void syncEquip( int neId, String ip, int port, String community )
+    public void syncEquip( SnmpClient client, Integer neId )
             throws AdapterException
     {
-        SnmpClient client = new SnmpClient( ip, port, community );
         List<SnmpEquEntity> equs = GetAllEquipments.getEquipments( client );
         for( SnmpEquEntity equ : equs )
         {
@@ -138,6 +137,7 @@ public class AdpSnmpEqusMgr
     public static void main( String[] args ) throws AdapterException
     {
         AdpSnmpEqusMgr snmpEqusMgr = new AdpSnmpEqusMgr();
-        snmpEqusMgr.syncEquip( 10, "135.251.96.5", 161, "admin_snmp" );
+        SnmpClient client = new SnmpClient( "135.251.96.5", 161, "admin_snmp" );
+        snmpEqusMgr.syncEquip( client, 10 );
     }
 }
