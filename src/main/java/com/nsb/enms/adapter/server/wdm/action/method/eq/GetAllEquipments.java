@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpEquEntity;
 import com.nsb.enms.common.ErrorCode;
@@ -12,6 +15,9 @@ import com.nsb.enms.common.utils.snmpclient.SnmpClient;
 
 public class GetAllEquipments
 {
+    private static final Logger log = LogManager
+            .getLogger( GetAllEquipments.class );
+
     public static List<SnmpEquEntity> getEquipments( SnmpClient client )
             throws AdapterException
     {
@@ -30,12 +36,14 @@ public class GetAllEquipments
         rack.setIndex( "1" );
         rack.setProgrammedType( "RACK" );
         rack.setPresentType( "RACK" );
+        racks.add( rack );
         return racks;
     }
 
     private static List<SnmpEquEntity> getShelfs( SnmpClient client )
             throws AdapterException
     {
+        log.debug( "--------------Start getShelfs--------------" );
         List<String> leafOids = new ArrayList<String>();
         leafOids.add( "1.3.6.1.4.1.7483.2.2.1.1.2.1.1.1.2" );
         leafOids.add( "1.3.6.1.4.1.7483.2.2.1.1.2.1.1.1.5" );
@@ -62,19 +70,21 @@ public class GetAllEquipments
                 shelf.setUnitPartNumber( row.get( 4 ).getSecond() );
                 shelf.setSoftwarePartNumber( row.get( 5 ).getSecond() );
                 shelf.setSerialNumber( row.get( 6 ).getSecond() );
-                shelfs.add( shelf );               
+                shelfs.add( shelf );
             }
         }
         catch( IOException e )
         {
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP );
         }
+        log.debug( "--------------End getShelfs--------------" );
         return shelfs;
     }
 
     private static List<SnmpEquEntity> getSlotCards( SnmpClient client )
             throws AdapterException
     {
+        log.debug( "--------------Start getSlotCards--------------" );
         List<String> leafOids = new ArrayList<String>();
         leafOids.add( "1.3.6.1.4.1.7483.2.2.2.1.2.2.1.1.2" );
         leafOids.add( "1.3.6.1.4.1.7483.2.2.2.1.2.2.1.1.3" );
@@ -113,7 +123,7 @@ public class GetAllEquipments
         {
             throw new AdapterException( ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP );
         }
-
+        log.debug( "--------------End getSlotCards--------------" );
         return slotCards;
     }
 }

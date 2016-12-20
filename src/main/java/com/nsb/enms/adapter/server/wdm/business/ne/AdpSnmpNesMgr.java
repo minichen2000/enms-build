@@ -40,7 +40,7 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpSnmpAddress;
 
 public class AdpSnmpNesMgr {
-	private final static Logger log = LogManager.getLogger(AdpSnmpTpsMgr.class);
+	private final static Logger log = LogManager.getLogger(AdpSnmpNesMgr.class);
 	private final static String ADP_ADDRESS = "135.251.99.58";
 	// ConfLoader.getInstance().getConf(ConfigKey.ADP_ADDRESS,"");
 	private static final String IP_ASCII = String2AsciiUtil.convert(ADP_ADDRESS);

@@ -68,14 +68,14 @@ public class AdpSnmpEqusMgr
     {
         AdpEquipment adpEqu = new AdpEquipment();
         List<AdpKVPair> params = new ArrayList<AdpKVPair>();
-        
+
         adpEqu.setId( equ.getId() );
         adpEqu.setNeId( neId );
         adpEqu.setPosition( equ.getIndex() );
         adpEqu.setType( getType( equ.getIndex() ) );
         adpEqu.setExpectedType( equ.getProgrammedType() );
         adpEqu.setActualType( equ.getPresentType() );
-        adpEqu.setKeyOnNe( "" );
+        adpEqu.setKeyOnNe( equ.getIndex() );
 
         for( SnmpEquEntity equipment : equs )
         {
@@ -90,7 +90,8 @@ public class AdpSnmpEqusMgr
             }
         }
 
-        if( !StringUtils.isEmpty( equ.getPresentType() ) && !"Empty".equals( equ.getPresentType() ) )
+        if( !StringUtils.isEmpty( equ.getPresentType() )
+                && !"Empty".equals( equ.getPresentType() ) )
         {
             String serialNumber = equ.getSerialNumber();
             String unitPartNumber = equ.getUnitPartNumber();
@@ -133,7 +134,7 @@ public class AdpSnmpEqusMgr
                 return null;
         }
     }
-    
+
     public static void main( String[] args ) throws AdapterException
     {
         AdpSnmpEqusMgr snmpEqusMgr = new AdpSnmpEqusMgr();
