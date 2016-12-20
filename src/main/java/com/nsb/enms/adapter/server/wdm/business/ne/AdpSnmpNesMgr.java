@@ -25,9 +25,6 @@ import com.nsb.enms.adapter.server.sdh.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.sdh.business.sync.SyncThread;
 import com.nsb.enms.adapter.server.sdh.business.xc.AdpQ3XcsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
-import com.nsb.enms.alarm.AlarmNEMisalignment;
-import com.nsb.enms.alarm.AlarmNENotSupervised;
-import com.nsb.enms.common.AlignmentState;
 import com.nsb.enms.common.CommunicationState;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
@@ -40,7 +37,6 @@ import com.nsb.enms.common.utils.snmpclient.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;
-import com.nsb.enms.restful.model.adapter.AdpQ3Address;
 import com.nsb.enms.restful.model.adapter.AdpSnmpAddress;
 
 public class AdpSnmpNesMgr {
@@ -62,21 +58,14 @@ public class AdpSnmpNesMgr {
 		String agent[] = snmpAgent.split(":");
 		SnmpClient client = new SnmpClient(agent[0], Integer.valueOf(agent[1]), "admin_snmp");
 		client.start();
-		// client.snmpSet(oid, value);
 		delRegistedTrap(client);
 		registTrap(client);
 		activeTrap(client);
+		setUserLabel(client, body.getUserLabel());
+		String neRelease = getNeRelease(client);
 
-		String location = getLocationName();
-		NeEntity entity = null;
-
-		if (null == entity) {
-			throw new AdapterException(ErrorCode.FAIL_CREATE_NE_BY_EMLIM);
-		}
-
-		log.debug(entity);
-
-		AdpNe ne = constructNe(entity, body.getId(), body.getNeType());
+		AdpNe ne = body;
+		ne.setNeRelease(neRelease);
 
 		try {
 			ne = nesDbMgr.addNe(ne);
@@ -87,8 +76,9 @@ public class AdpSnmpNesMgr {
 
 		Integer id = ne.getId();
 		NotificationSender.instance().sendOcNotif(EntityType.NE, id);
-		NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(id));
-		NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
+		// NotificationSender.instance().sendAlarm(new
+		// AlarmNENotSupervised(id));
+		// NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
 
 		log.debug("adapter----------------addNe----------end");
 
@@ -162,6 +152,31 @@ public class AdpSnmpNesMgr {
 		}
 	}
 
+	private void setUserLabel(SnmpClient client, String userLabel) {
+		try {
+			boolean isOk = client.snmpSet("1.3.6.1.4.1.7483.2.1.1.2.1.18", SNMPType.SNMP_STRING, userLabel);
+			if (!isOk) {
+				log.error("failed to setUserLabel");
+			}
+		} catch (Exception e) {
+			log.error("setUserLabel", e);
+		}
+	}
+
+	private String getNeRelease(SnmpClient client) {
+		try {
+			Pair<String, String> pair = client.snmpGet("1.3.6.1.4.1.7483.2.1.5.2.1.1.19");
+			if (null != pair) {
+				return pair.getSecond();
+			} else {
+				log.error("failed to getNeRelease");
+			}
+		} catch (Exception e) {
+			log.error("setUserLabel", e);
+		}
+		return StringUtils.EMPTY;
+	}
+
 	private void validateParam(AdpNe body, MethodOperator operate) throws AdapterException {
 		String locationName = getLocationName();
 		if (!ValidationUtil.isValidLocationName(locationName)) {
@@ -174,8 +189,7 @@ public class AdpSnmpNesMgr {
 	}
 
 	private String getLocationName() {
-		String id = ConfLoader.getInstance().getConf(ConfigKey.ADP_ID, "adapter_" + System.currentTimeMillis());
-		return id;
+		return ConfLoader.getInstance().getConf(ConfigKey.ADP_ID, "adapter_" + System.currentTimeMillis());
 	}
 
 	private void validateAddress(AdpAddresses addresses, MethodOperator operate) throws AdapterException {
@@ -203,31 +217,6 @@ public class AdpSnmpNesMgr {
 		if (!ValidationUtil.isValidPort(agent[1])) {
 			throw new AdapterException(ErrorCode.FAIL_INVALID_PORT);
 		}
-	}
-
-	private AdpNe constructNe(NeEntity entity, Integer id, String neType) {
-		AdpNe ne = new AdpNe();
-		ne.setId(id);
-		ne.setUserLabel(entity.getUserLabel());
-		ne.setNeRelease(entity.getNeRelease());
-
-		AdpAddresses address = new AdpAddresses();
-		AdpQ3Address q3Address = new AdpQ3Address();
-		q3Address.setAddress(entity.getNetworkAddress());
-		address.setQ3Address(q3Address);
-		address.setTl1Address(new ArrayList<String>());
-		address.setSnmpAddress(null);
-		ne.setAddresses(address);
-
-		ne.setNeType(neType);
-		ne.setOperationalState(OperationState.IDLE.name());
-		ne.setCommunicationState(CommunicationState.DISCONNECTED.name());
-		ne.setAlignmentState(AlignmentState.MISALIGNED.name());
-		ne.setSupervisionState(SupervisionState.NOT_SUPERVISED.name());
-
-		List<AdpKVPair> params = constructParams(entity);
-		ne.setParams(params);
-		return ne;
 	}
 
 	private List<AdpKVPair> constructParams(NeEntity entity) {
