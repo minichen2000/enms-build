@@ -404,7 +404,7 @@ public class AdpSnmpNesMgr {
 	}
 
 	public static void main(String args[]) {
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr();
+		AdpSnmpNesMgr mgr = new AdpSnmpNesMgr();
 		AdpNe body = new AdpNe();
 		AdpSnmpAddress snmpAddr = new AdpSnmpAddress();
 		snmpAddr.setSnmpAgent("135.251.96.5:161");
