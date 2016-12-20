@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.sdh.business.eq.AdpEqusMgr;
-import com.nsb.enms.adapter.server.sdh.business.tp.AdpTpsMgr;
+import com.nsb.enms.adapter.server.sdh.business.tp.AdpQ3TpsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.OperationState;
@@ -28,7 +28,7 @@ public class SyncThread implements Callable<Object> {
 	public Object call() throws Exception {
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", OperationState.SYNCING.name(),
 				OperationState.IDLE.name());
-		new AdpTpsMgr().syncTp(groupId, neId, id);
+		new AdpQ3TpsMgr().syncTp(groupId, neId, id);
 		new AdpEqusMgr().syncEquip(groupId, neId, id);
 		NeStateMachineApp.instance().afterSynchData(id);
 		// NotificationSender.instance().sendAvcNotif(EntityType.NE, id,

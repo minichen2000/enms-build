@@ -13,7 +13,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.LayerRatesUtil;
-import com.nsb.enms.adapter.server.sdh.business.tp.AdpTpsMgr;
+import com.nsb.enms.adapter.server.sdh.business.tp.AdpQ3TpsMgr;
 import com.nsb.enms.adapter.server.sdh.business.tp.TerminateTpMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
@@ -290,7 +290,7 @@ public class AdpCreateXcsMgr {
 			Integer ptpId) throws AdapterException {
 		String groupId = "100";
 		TerminateTpMgr terminateMgr = new TerminateTpMgr();
-		AdpTpsMgr adpTpsMgr = new AdpTpsMgr();
+		AdpQ3TpsMgr adpTpsMgr = new AdpQ3TpsMgr();
 		if (LayerRate.VC12 == layerRate || LayerRate.TU12 == layerRate) {
 			terminateMgr.terminateTug3ToTu12(groupId, String.valueOf(neId), vc4TTPId, tug3Id);
 			adpTpsMgr.syncTu12Ctp(groupId, neId, vc4TTPId, au4Ctp, ptpId);

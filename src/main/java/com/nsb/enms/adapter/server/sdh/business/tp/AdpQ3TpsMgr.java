@@ -22,11 +22,11 @@ import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class AdpTpsMgr {
-	private final static Logger log = LogManager.getLogger(AdpTpsMgr.class);
+public class AdpQ3TpsMgr {
+	private final static Logger log = LogManager.getLogger(AdpQ3TpsMgr.class);
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
-	public AdpTpsMgr() {
+	public AdpQ3TpsMgr() {
 	}
 
 	public List<AdpTp> syncTu12Ctp(String groupId, Integer neId, String vc4TtpId, AdpTp au4Ctp, Integer ptpDbId)

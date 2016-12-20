@@ -17,7 +17,7 @@ import com.nsb.enms.adapter.server.sdh.action.entity.XcEntity;
 import com.nsb.enms.adapter.server.sdh.action.entity.param.XcParamBean;
 import com.nsb.enms.adapter.server.sdh.action.method.xc.CreateXc;
 import com.nsb.enms.adapter.server.sdh.action.method.xc.DeleteXc;
-import com.nsb.enms.adapter.server.sdh.business.tp.AdpTpsMgr;
+import com.nsb.enms.adapter.server.sdh.business.tp.AdpQ3TpsMgr;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.ManagedObjectType;
@@ -29,7 +29,7 @@ public class AdpQ3XcsMgr {
 	private final static Logger log = LogManager.getLogger(AdpQ3XcsMgr.class);
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private AdpXcsDbMgr xcsDbMgr = new AdpXcsDbMgr();
-	private AdpTpsMgr tpsMgr = new AdpTpsMgr();
+	private AdpQ3TpsMgr tpsMgr = new AdpQ3TpsMgr();
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
 	public AdpQ3XcsMgr() {
