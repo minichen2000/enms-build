@@ -20,10 +20,10 @@ public class Ip2HexUtil {
 		String chars[] = ip.split("\\.");
 		for (String s : chars) {
 			Integer i = Integer.valueOf(s);
-			sb.append(Integer.toHexString(i));
+			sb.append(Integer.toHexString(i)).append(":");
 		}
 
-		sb.append("00");
+		sb.append("00:");
 		sb.append(Integer.toHexString(Integer.valueOf(port)));
 		return sb.toString();
 	}

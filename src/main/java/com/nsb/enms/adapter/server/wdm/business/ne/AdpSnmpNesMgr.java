@@ -113,8 +113,8 @@ public class AdpSnmpNesMgr {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private List<Pair<SNMPType, Object>> getCommonValues(int value) {
 		List<Pair<SNMPType, Object>> values = new ArrayList<Pair<SNMPType, Object>>();
-		values.add(new Pair(SNMPType.SNMP_STRING, "1.3.6.1.6.1.1"));
-		values.add(new Pair(SNMPType.SNMP_STRING, Ip2HexUtil.convert(ADP_ADDRESS, SNMP_PORT)));
+		values.add(new Pair(SNMPType.SNMP_OBJECTIDENTIFIER, "1.3.6.1.6.1.1"));
+		values.add(new Pair(SNMPType.SNMP_HEXSTRING, Ip2HexUtil.convert(ADP_ADDRESS, SNMP_PORT)));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 0));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 0));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 3));
