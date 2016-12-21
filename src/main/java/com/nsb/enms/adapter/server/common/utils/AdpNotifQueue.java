@@ -9,9 +9,9 @@ public class AdpNotifQueue<E>
 {
     private static Logger log = LogManager.getLogger( AdpNotifQueue.class );
 
-    private IGEventProcessor<E> processor;
+    private INotifProcessor<E> processor;
 
-    public AdpNotifQueue( IGEventProcessor<E> processor )
+    public AdpNotifQueue( INotifProcessor<E> processor )
     {
         this.processor = processor;
         new QueueThread().start();
