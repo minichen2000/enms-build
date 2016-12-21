@@ -40,65 +40,6 @@ public class AdpSnmpTpsMgr {
 		this.client = client;
 	}
 
-	private List<SnmpTpEntity> getIfTable() {
-		List<String> oids = new ArrayList<String>();
-		// oids.add("1.3.6.1.2.1.2.2.1.1"); // ifIndex
-		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
-		oids.add("1.3.6.1.2.1.2.2.1.7"); // ifAdminStatus
-		oids.add("1.3.6.1.2.1.2.2.1.8"); // ifOperStatus
-
-		List<SnmpTpEntity> entityList = new ArrayList<SnmpTpEntity>();
-		String oid, value;
-		SnmpTpEntity entity = new SnmpTpEntity();
-		for (List<Pair<String, String>> row : getTableValues(oids)) {
-			for (Pair<String, String> pair : row) {
-				oid = pair.getFirst();
-				value = pair.getSecond();
-				if ("index".equals(oid)) {
-					entity.setIndex(value);
-				} else if ("1.3.6.1.2.1.2.2.1.3".equals(oid)) {
-					entity.setTpType(value);
-				} else if ("1.3.6.1.2.1.2.2.1.7".equals(oid)) {
-					entity.setAdminStatus(Integer.valueOf(value));
-				} else if ("1.3.6.1.2.1.2.2.1.8".equals(oid)) {
-					entity.setOperStatus(Integer.valueOf(value));
-				}
-			}
-			entityList.add(entity);
-			System.out.println("************");
-		}
-		return entityList;
-	}
-
-	private List<SnmpTpEntity> getTnIfTable() {
-		List<String> oids = new ArrayList<String>();
-		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.1"); // tnIfPhysicalLocation
-		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
-		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
-
-		List<SnmpTpEntity> entityList = new ArrayList<SnmpTpEntity>();
-		String oid, value;
-		SnmpTpEntity entity = new SnmpTpEntity();
-		for (List<Pair<String, String>> row : getTableValues(oids)) {
-			for (Pair<String, String> pair : row) {
-				oid = pair.getFirst();
-				value = pair.getSecond();
-				if ("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.1".equals(oid)) {
-					entity.setIndex(value);
-				} else if ("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2".equals(oid)) {
-					entity.setInternalType(value);
-				} else if ("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3".equals(oid)) {
-					List<String> supportedTypes = new ArrayList<String>();
-					supportedTypes.add(value);
-					entity.setSupportedTypes(supportedTypes);
-				}
-			}
-			entityList.add(entity);
-			System.out.println("************");
-		}
-		return entityList;
-	}
-
 	private List<List<Pair<String, String>>> getTableValues(List<String> oids) {
 		List<List<Pair<String, String>>> values = new ArrayList<List<Pair<String, String>>>();
 		try {
@@ -132,24 +73,6 @@ public class AdpSnmpTpsMgr {
 		}
 		return tpList;
 	}
-
-	// public List<AdpTp> getTps() throws AdapterException {
-	// List<AdpTp> tpList = new ArrayList<AdpTp>();
-	// List<SnmpTpEntity> entityList1 = getIfTable();
-	// List<SnmpTpEntity> entityList2 = getTnIfTable();
-	// for (SnmpTpEntity entity1 : entityList1) {
-	// for (SnmpTpEntity entity2 : entityList2) {
-	// if (entity1.getIndex().equals(entity2.getIndex())) {
-	// entity1.setInternalType(entity2.getInternalType());
-	// entity1.setSupportedTypes(entity2.getSupportedTypes());
-	// break;
-	// }
-	// }
-	// constructTp(entity1, 0, 0, 0);
-	// }
-	//
-	// return tpList;
-	// }
 
 	private AdpTp constructTp(SnmpTpEntity tp, Integer neDbId, Integer ptpId, Integer parentTpId)
 			throws AdapterException {
