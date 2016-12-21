@@ -25,6 +25,7 @@ import com.nsb.enms.adapter.server.sdh.action.method.ne.StartSupervision;
 import com.nsb.enms.adapter.server.sdh.business.sync.SyncThread;
 import com.nsb.enms.adapter.server.sdh.business.xc.AdpQ3XcsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
+import com.nsb.enms.adapter.server.wdm.factory.SnmpClientFactory;
 import com.nsb.enms.common.CommunicationState;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
@@ -57,13 +58,13 @@ public class AdpSnmpNesMgr {
 		String snmpAgent = body.getAddresses().getSnmpAddress().getSnmpAgent();
 		String agent[] = snmpAgent.split(":");
 		SnmpClient client = new SnmpClient(agent[0], Integer.valueOf(agent[1]), "admin_snmp");
-		client.start();
+		SnmpClientFactory.getInstance().add(snmpAgent, client);
 		delRegistedTrap(client);
 		registTrap(client);
 		activeTrap(client);
 		setUserLabel(client, body.getUserLabel());
 		String neRelease = getNeRelease(client);
-		//
+
 		AdpNe ne = body;
 		ne.setNeRelease(neRelease);
 
@@ -400,7 +401,7 @@ public class AdpSnmpNesMgr {
 		AdpAddresses addresses = new AdpAddresses();
 		addresses.setSnmpAddress(snmpAddr);
 		body.setAddresses(addresses);
-		body.setUserLabel("testByLihongji");
+		body.setUserLabel("testByLihongji2");
 		try {
 			mgr.addNe(body);
 		} catch (AdapterException e) {

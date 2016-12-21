@@ -5,10 +5,13 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.api.impl.AdpDefaultNeApiImpl;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.wdm.business.ne.AdpSnmpNesMgr;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 	private Logger log = LogManager.getLogger(AdpSnmpNeApiImpl.class);
+
+	private AdpSnmpNesMgr mgr = new AdpSnmpNesMgr();
 
 	public AdpSnmpNeApiImpl(AdpNe ne) {
 		super(ne);
@@ -16,7 +19,7 @@ public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 
 	@Override
 	public AdpNe addNe() throws AdapterException {
-		return null;
+		return mgr.addNe(data);
 	}
 
 	@Override
