@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpEquEntity;
-import com.nsb.enms.adapter.server.wdm.action.util.TypeMapUtil;
+import com.nsb.enms.adapter.server.wdm.utils.SnmpEqShelfSlotTypeMapUtil;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmpclient.SnmpClient;
@@ -65,9 +65,9 @@ public class GetAllEquipments
                 shelf.setIndex( "1/" + index );
                 shelf.setName( row.get( 1 ).getSecond() );
                 shelf.setProgrammedType(
-                    TypeMapUtil.getShelfType( row.get( 2 ).getSecond() ) );
+                    SnmpEqShelfSlotTypeMapUtil.getShelfType( row.get( 2 ).getSecond() ) );
                 shelf.setPresentType(
-                    TypeMapUtil.getShelfType( row.get( 3 ).getSecond() ) );
+                    SnmpEqShelfSlotTypeMapUtil.getShelfType( row.get( 3 ).getSecond() ) );
                 shelf.setUnitPartNumber( row.get( 4 ).getSecond() );
                 shelf.setSoftwarePartNumber( row.get( 5 ).getSecond() );
                 shelf.setSerialNumber( row.get( 6 ).getSecond() );
@@ -110,9 +110,9 @@ public class GetAllEquipments
                         + row.get( 0 ).getSecond().replace( ".", "/" );
                 slotCard.setIndex( index );
                 slotCard.setProgrammedType(
-                    TypeMapUtil.getSlotCardType( row.get( 1 ).getSecond() ) );
+                    SnmpEqShelfSlotTypeMapUtil.getSlotCardType( row.get( 1 ).getSecond() ) );
                 slotCard.setPresentType(
-                    TypeMapUtil.getSlotCardType( row.get( 2 ).getSecond() ) );
+                    SnmpEqShelfSlotTypeMapUtil.getSlotCardType( row.get( 2 ).getSecond() ) );
                 slotCard.setName( row.get( 3 ).getSecond() );
                 slotCard.setSerialNumber( row.get( 4 ).getSecond() );
                 slotCard.setUnitPartNumber( row.get( 5 ).getSecond() );

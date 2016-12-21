@@ -1,9 +1,9 @@
-package com.nsb.enms.adapter.server.wdm.action.util;
+package com.nsb.enms.adapter.server.wdm.utils;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypeMapUtil
+public class SnmpEqShelfSlotTypeMapUtil
 {
     private static Map<String, String> oidShelfTypeMap = new HashMap<String, String>();
     
