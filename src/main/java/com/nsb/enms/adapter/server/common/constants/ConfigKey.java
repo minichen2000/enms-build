@@ -33,4 +33,6 @@ public class ConfigKey {
 
 	public static final int DEFAULT_REG_PERIOD = 60 * 1000;
 
+	public static final int DEFAULT_SNMP_PORT = 162;
+
 }
