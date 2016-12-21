@@ -109,23 +109,47 @@ public class AdpSnmpTpsMgr {
 		return values;
 	}
 
-	public List<AdpTp> getTps() throws AdapterException {
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
-		List<SnmpTpEntity> entityList1 = getIfTable();
-		List<SnmpTpEntity> entityList2 = getTnIfTable();
-		for (SnmpTpEntity entity1 : entityList1) {
-			for (SnmpTpEntity entity2 : entityList2) {
-				if (entity1.getIndex().equals(entity2.getIndex())) {
-					entity1.setInternalType(entity2.getInternalType());
-					entity1.setSupportedTypes(entity2.getSupportedTypes());
-					break;
-				}
-			}
-			constructTp(entity1, 0, 0, 0);
-		}
+	private List<AdpTp> getTps() throws AdapterException {
+		List<String> oids = new ArrayList<String>();
+		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
+		oids.add("1.3.6.1.2.1.2.2.1.7"); // ifAdminStatus
+		oids.add("1.3.6.1.2.1.2.2.1.8"); // ifOperStatus
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
 
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		SnmpTpEntity entity = new SnmpTpEntity();
+		for (List<Pair<String, String>> row : getTableValues(oids)) {
+			entity.setIndex(row.get(0).getSecond());
+			entity.setTpType(row.get(1).getSecond());
+			entity.setAdminStatus(Integer.valueOf(row.get(2).getSecond()));
+			entity.setOperStatus(Integer.valueOf(row.get(3).getSecond()));
+			entity.setInternalType(row.get(4).getSecond());
+			List<String> supportedTypes = new ArrayList<String>();
+			supportedTypes.add(row.get(5).getSecond());
+			entity.setSupportedTypes(supportedTypes);
+			tpList.add(constructTp(entity, 0, 0, 0));
+		}
 		return tpList;
 	}
+
+	// public List<AdpTp> getTps() throws AdapterException {
+	// List<AdpTp> tpList = new ArrayList<AdpTp>();
+	// List<SnmpTpEntity> entityList1 = getIfTable();
+	// List<SnmpTpEntity> entityList2 = getTnIfTable();
+	// for (SnmpTpEntity entity1 : entityList1) {
+	// for (SnmpTpEntity entity2 : entityList2) {
+	// if (entity1.getIndex().equals(entity2.getIndex())) {
+	// entity1.setInternalType(entity2.getInternalType());
+	// entity1.setSupportedTypes(entity2.getSupportedTypes());
+	// break;
+	// }
+	// }
+	// constructTp(entity1, 0, 0, 0);
+	// }
+	//
+	// return tpList;
+	// }
 
 	private AdpTp constructTp(SnmpTpEntity tp, Integer neDbId, Integer ptpId, Integer parentTpId)
 			throws AdapterException {
@@ -154,7 +178,10 @@ public class AdpSnmpTpsMgr {
 		client.start();
 		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr(client);
 		try {
-			mgr.getIfTable();
+			List<AdpTp> tps = mgr.getTps();
+			for (AdpTp tp : tps) {
+				System.out.println(tp.toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
