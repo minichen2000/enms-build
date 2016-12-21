@@ -63,7 +63,7 @@ public class AdpSnmpNesMgr {
 		activeTrap(client);
 		setUserLabel(client, body.getUserLabel());
 		String neRelease = getNeRelease(client);
-
+		//
 		AdpNe ne = body;
 		ne.setNeRelease(neRelease);
 
@@ -120,7 +120,7 @@ public class AdpSnmpNesMgr {
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 3));
 		values.add(new Pair(SNMPType.SNMP_STRING, "Na_v2cPrams"));
 		values.add(new Pair(SNMPType.SNMP_UINTEGER, 0));
-		values.add(new Pair(SNMPType.SNMP_STRING, " v1v2_trap_dest"));
+		values.add(new Pair(SNMPType.SNMP_STRING, "v1v2_trap_dest"));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, value));
 		return values;
 	}
@@ -154,7 +154,7 @@ public class AdpSnmpNesMgr {
 
 	private void setUserLabel(SnmpClient client, String userLabel) {
 		try {
-			boolean isOk = client.snmpSet("1.3.6.1.4.1.7483.2.1.1.2.1.18", SNMPType.SNMP_STRING, userLabel);
+			boolean isOk = client.snmpSet("1.3.6.1.4.1.7483.2.1.1.2.1.18.0", SNMPType.SNMP_STRING, userLabel);
 			if (!isOk) {
 				log.error("failed to setUserLabel");
 			}
@@ -165,7 +165,7 @@ public class AdpSnmpNesMgr {
 
 	private String getNeRelease(SnmpClient client) {
 		try {
-			Pair<String, String> pair = client.snmpGet("1.3.6.1.4.1.7483.2.1.5.2.1.1.19");
+			Pair<String, String> pair = client.snmpGet("1.3.6.1.4.1.7483.2.1.5.2.1.1.19.0");
 			if (null != pair) {
 				return pair.getSecond();
 			} else {
@@ -400,6 +400,7 @@ public class AdpSnmpNesMgr {
 		AdpAddresses addresses = new AdpAddresses();
 		addresses.setSnmpAddress(snmpAddr);
 		body.setAddresses(addresses);
+		body.setUserLabel("testByLihongji");
 		try {
 			mgr.addNe(body);
 		} catch (AdapterException e) {
