@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.wdm.action.method.eq;
+package com.nsb.enms.adapter.server.wdm.action.util;
 
 import java.util.HashMap;
 import java.util.Map;

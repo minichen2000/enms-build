@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpEquEntity;
+import com.nsb.enms.adapter.server.wdm.action.util.TypeMapUtil;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmpclient.SnmpClient;
