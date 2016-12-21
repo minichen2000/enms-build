@@ -16,10 +16,8 @@ public class SnmpSyncThread implements Callable<Object> {
 	private final static Logger log = LogManager.getLogger(SnmpSyncThread.class);
 
 	private Integer neId;
-	private SnmpClient client;
 
 	public SnmpSyncThread(SnmpClient client, Integer neId) {
-	    this.client = client;
 		this.neId = neId;
 	}
 
@@ -27,7 +25,7 @@ public class SnmpSyncThread implements Callable<Object> {
 	public Object call() throws Exception {
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, neId, "operationalState", OperationState.SYNCING.name(),
 				OperationState.IDLE.name());
-		new AdpSnmpEqusMgr().syncEquip(client, neId);
+		new AdpSnmpEqusMgr().syncEquip(neId);
 		NeStateMachineApp.instance().afterSynchData(neId);
 		log.debug("------------ sync end -------------");
 		return null;

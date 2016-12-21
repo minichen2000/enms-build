@@ -21,6 +21,7 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.filter.AccessControlFilter;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
+import com.nsb.enms.adapter.server.wdm.notification.AdpSnmpTrapHandler;
 import com.nsb.enms.common.utils.snmpclient.SnmpTrap;
 
 public class Main {
@@ -93,6 +94,7 @@ public class Main {
 	 */
 	private static void startSnmpTrap() {
 		SnmpTrap trap = new SnmpTrap();
+		trap.setTrapCaller( new AdpSnmpTrapHandler() );
 		String ip = ConfLoader.getInstance().getConf(ConfigKey.ADP_IP, "127.0.0.1");
 		trap.run(ip, 162);
 	}

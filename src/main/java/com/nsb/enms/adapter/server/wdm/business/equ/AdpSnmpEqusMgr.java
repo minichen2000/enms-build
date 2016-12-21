@@ -12,6 +12,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpEquEntity;
 import com.nsb.enms.adapter.server.wdm.action.method.eq.GetAllEquipments;
+import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.common.EquType;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.snmpclient.SnmpClient;
@@ -30,9 +31,10 @@ public class AdpSnmpEqusMgr
 
     }
 
-    public void syncEquip( SnmpClient client, Integer neId )
+    public void syncEquip( Integer neId )
             throws AdapterException
     {
+        SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId( neId );
         List<SnmpEquEntity> equs = GetAllEquipments.getEquipments( client );
         for( SnmpEquEntity equ : equs )
         {
@@ -132,12 +134,5 @@ public class AdpSnmpEqusMgr
             default:
                 return null;
         }
-    }
-
-    public static void main( String[] args ) throws AdapterException
-    {
-        AdpSnmpEqusMgr snmpEqusMgr = new AdpSnmpEqusMgr();
-        SnmpClient client = new SnmpClient( "135.251.96.5", 161, "admin_snmp" );
-        snmpEqusMgr.syncEquip( client, 10 );
     }
 }

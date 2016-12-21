@@ -5,13 +5,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AdpNotifQueue<E>
+public class NotifQueue<E>
 {
-    private static Logger log = LogManager.getLogger( AdpNotifQueue.class );
+    private static Logger log = LogManager.getLogger( NotifQueue.class );
 
     private INotifProcessor<E> processor;
 
-    public AdpNotifQueue( INotifProcessor<E> processor )
+    public NotifQueue( INotifProcessor<E> processor )
     {
         this.processor = processor;
         new QueueThread().start();
