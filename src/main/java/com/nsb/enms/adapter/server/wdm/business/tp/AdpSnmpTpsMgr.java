@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.wdm.business.ne;
+package com.nsb.enms.adapter.server.wdm.business.tp;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,9 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
-import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
+import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.Pair;
@@ -18,26 +18,19 @@ import com.nsb.enms.common.utils.snmpclient.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class AdpSnmpTpsMgr {
-	private final static Logger log = LogManager.getLogger(AdpSnmpNesMgr.class);
-	private final static String ADP_ADDRESS = "135.251.99.58";
-	// ConfLoader.getInstance().getConf(ConfigKey.ADP_ADDRESS,"");
+	private final static Logger log = LogManager.getLogger(AdpSnmpTpsMgr.class);
 
 	private SnmpClient client;
-	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
 	public AdpSnmpTpsMgr() {
 	}
 
-	public AdpSnmpTpsMgr(SnmpClient client) {
-		this.client = client;
-	}
-
-	public SnmpClient getClient() {
-		return client;
-	}
-
-	public void setClient(SnmpClient client) {
-		this.client = client;
+	public AdpSnmpTpsMgr(Integer neId) {
+		try {
+			this.client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
+		} catch (AdapterException e) {
+			log.error("getByNeId", e);
+		}
 	}
 
 	private List<List<Pair<String, String>>> getTableValues(List<String> oids) {
@@ -50,7 +43,7 @@ public class AdpSnmpTpsMgr {
 		return values;
 	}
 
-	private List<AdpTp> getTps() throws AdapterException {
+	public List<AdpTp> getTps() throws AdapterException {
 		List<String> oids = new ArrayList<String>();
 		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
 		oids.add("1.3.6.1.2.1.2.2.1.7"); // ifAdminStatus
@@ -97,16 +90,5 @@ public class AdpSnmpTpsMgr {
 	}
 
 	public static void main(String args[]) {
-		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
-		client.start();
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr(client);
-		try {
-			List<AdpTp> tps = mgr.getTps();
-			for (AdpTp tp : tps) {
-				System.out.println(tp.toString());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 }

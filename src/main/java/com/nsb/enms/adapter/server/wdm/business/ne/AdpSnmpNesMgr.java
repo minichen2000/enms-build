@@ -21,11 +21,12 @@ import com.nsb.enms.adapter.server.common.utils.KeyValuePairUtil;
 import com.nsb.enms.adapter.server.common.utils.String2AsciiUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.NeEntity;
 import com.nsb.enms.adapter.server.sdh.action.method.ne.DeleteNe;
-import com.nsb.enms.adapter.server.sdh.action.method.ne.StartSupervision;
-import com.nsb.enms.adapter.server.sdh.business.sync.SyncThread;
 import com.nsb.enms.adapter.server.sdh.business.xc.AdpQ3XcsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
+import com.nsb.enms.adapter.server.wdm.business.sync.SnmpSyncThread;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
+import com.nsb.enms.alarm.AlarmNEMisalignment;
+import com.nsb.enms.alarm.AlarmNENotSupervised;
 import com.nsb.enms.common.CommunicationState;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.ErrorCode;
@@ -55,35 +56,21 @@ public class AdpSnmpNesMgr {
 	public AdpNe addNe(AdpNe body) throws AdapterException {
 		validateParam(body, MethodOperator.ADD);
 
-		String snmpAgent = body.getAddresses().getSnmpAddress().getSnmpAgent();
-		String agent[] = snmpAgent.split(":");
-		SnmpClient client = new SnmpClient(agent[0], Integer.valueOf(agent[1]), "admin_snmp");
-		AdpSnmpClientFactory.getInstance().add(snmpAgent, client);
-		delRegistedTrap(client);
-		registTrap(client);
-		activeTrap(client);
-		setUserLabel(client, body.getUserLabel());
-		String neRelease = getNeRelease(client);
-
-		AdpNe ne = body;
-		ne.setNeRelease(neRelease);
-
 		try {
-			ne = nesDbMgr.addNe(ne);
+			body = nesDbMgr.addNe(body);
 		} catch (Exception e) {
 			log.error("addNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		Integer id = ne.getId();
+		Integer id = body.getId();
 		NotificationSender.instance().sendOcNotif(EntityType.NE, id);
-		// NotificationSender.instance().sendAlarm(new
-		// AlarmNENotSupervised(id));
-		// NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
+		NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(id));
+		NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
 
 		log.debug("adapter----------------addNe----------end");
 
-		return ne;
+		return body;
 	}
 
 	private void delRegistedTrap(SnmpClient client) throws AdapterException {
@@ -318,37 +305,23 @@ public class AdpSnmpNesMgr {
 
 	public void startSupervision(Integer neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
-		List<AdpKVPair> pairs = ne.getParams();
-		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
-		String groupId = groupAndNeId[0];
-		String neId = groupAndNeId[1];
-		supervising(ne, groupId, neId);
+		String snmpAgent = ne.getAddresses().getSnmpAddress().getSnmpAgent();
+		String agent[] = snmpAgent.split(":");
+		SnmpClient client = new SnmpClient(agent[0], Integer.valueOf(agent[1]), "admin_snmp");
+		AdpSnmpClientFactory.getInstance().add(snmpAgent, client);
+		delRegistedTrap(client);
+		registTrap(client);
+		activeTrap(client);
+		setUserLabel(client, ne.getUserLabel());
+		String neRelease = getNeRelease(client);
+		ne.setNeRelease(neRelease);
+		updateBySupervision(ne);
 	}
 
-	/**
-	 * 监管网元
-	 * 
-	 * @param body
-	 * @param groupId
-	 * @param neId
-	 * @return
-	 */
-	private void supervising(AdpNe body, String groupId, String neId) throws AdapterException {
+	private void updateBySupervision(AdpNe body) throws AdapterException {
 		updateNe(body);
-		boolean isSuccess = false;
-		try {
-			NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
-					OperationState.SUPERVISING.name(), OperationState.IDLE.name());
-			isSuccess = StartSupervision.startSupervision(groupId, neId);
-		} catch (Exception e) {
-			log.error("failed to supervision ne", e);
-			body.setOperationalState(OperationState.IDLE.name());
-			updateNe(body);
-		}
-		log.debug("isSuccess = " + isSuccess);
-		if (!isSuccess) {
-			throw new AdapterException(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM);
-		}
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
+				OperationState.SUPERVISING.name(), OperationState.IDLE.name());
 		Integer id = body.getId();
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
@@ -362,30 +335,24 @@ public class AdpSnmpNesMgr {
 
 	public void startAlignment(Integer neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
-		List<AdpKVPair> pairs = ne.getParams();
-		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
-		String groupId = groupAndNeId[0];
-		String neId = groupAndNeId[1];
-		synchronizing(ne, groupId, neId);
+		synchronizing(ne);
 	}
 
 	/**
-	 * 同步TP
+	 * 执行同步业务
 	 * 
 	 * @param body
-	 * @param groupId
-	 * @param neId
 	 * @return
 	 */
-	private void synchronizing(AdpNe body, String groupId, String neId) throws AdapterException {
+	private void synchronizing(AdpNe body) throws AdapterException {
 		updateNe(body);
 
 		try {
-			SyncThread thread = new SyncThread(groupId, neId, body.getId());
+			SnmpSyncThread thread = new SnmpSyncThread(body.getId());
 			FutureTask<Object> ft = new FutureTask<Object>(thread);
 			new Thread(ft).start();
 		} catch (Exception e) {
-			log.error("failed to sync TP", e);
+			log.error("failed to sync", e);
 			if (e instanceof AdapterException) {
 				AdapterException adpExp = (AdapterException) e;
 				throw adpExp;

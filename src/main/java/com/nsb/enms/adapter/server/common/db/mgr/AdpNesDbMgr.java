@@ -94,6 +94,8 @@ public class AdpNesDbMgr {
 
 		updateCommunicationState(body, id, ne);
 
+		updateNeRelease(body, id, ne);
+		
 		/*
 		 * ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
 		 * Map<String, Object> nonNullAttrs =
@@ -118,6 +120,16 @@ public class AdpNesDbMgr {
 		 * 
 		 * } catch (Exception e) { log.error("updateNe", e); } }
 		 */
+	}
+
+	private void updateNeRelease(AdpNe body, Integer id, AdpNe ne) {
+		String neRelease = body.getNeRelease();
+		String neReleaseFromDb = ne.getNeRelease();
+		if (StringUtils.isEmpty(neRelease) || StringUtils.equals(neRelease, neReleaseFromDb)) {
+			return;
+		}
+		dbc.updateOne(new BasicDBObject("id", id), set("neRelease", neRelease));
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "neRelease", neRelease, neReleaseFromDb);
 	}
 
 	private void updateOperationalState(AdpNe body, Integer id, AdpNe ne) {
