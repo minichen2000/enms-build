@@ -13,17 +13,17 @@ import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.common.utils.snmpclient.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
-public class SnmpClientFactory {
-	private final static Logger log = LogManager.getLogger(SnmpClientFactory.class);
-	private static final SnmpClientFactory factory = new SnmpClientFactory();
+public class AdpSnmpClientFactory {
+	private final static Logger log = LogManager.getLogger(AdpSnmpClientFactory.class);
+	private static final AdpSnmpClientFactory factory = new AdpSnmpClientFactory();
 	private Map<String, SnmpClient> map = new ConcurrentHashMap<String, SnmpClient>();
 
 	private AdpNesDbMgr mgr = new AdpNesDbMgr();
 
-	private SnmpClientFactory() {
+	private AdpSnmpClientFactory() {
 	}
 
-	public static SnmpClientFactory getInstance() {
+	public static AdpSnmpClientFactory getInstance() {
 		return factory;
 	}
 

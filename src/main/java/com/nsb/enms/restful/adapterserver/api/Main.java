@@ -21,6 +21,7 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.filter.AccessControlFilter;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
+import com.nsb.enms.common.utils.snmpclient.SnmpTrap;
 
 public class Main {
 	private static Logger log;
@@ -84,6 +85,16 @@ public class Main {
 		PingApp pingApp = new PingApp();
 		pingApp.checkPing();
 
+		startSnmpTrap();
+	}
+
+	/**
+	 * 监听SNMP网元的通知
+	 */
+	private static void startSnmpTrap() {
+		SnmpTrap trap = new SnmpTrap();
+		String ip = ConfLoader.getInstance().getConf(ConfigKey.ADP_IP, "127.0.0.1");
+		trap.run(ip, 162);
 	}
 
 	private static String loadConf() {
