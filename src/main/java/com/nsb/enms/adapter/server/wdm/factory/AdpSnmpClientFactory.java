@@ -11,7 +11,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.utils.ValidationUtil;
-import com.nsb.enms.common.utils.snmpclient.SnmpClient;
+import com.nsb.enms.common.utils.snmp.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class AdpSnmpClientFactory {

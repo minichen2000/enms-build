@@ -35,7 +35,7 @@ import com.nsb.enms.common.SNMPType;
 import com.nsb.enms.common.SupervisionState;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.ValidationUtil;
-import com.nsb.enms.common.utils.snmpclient.SnmpClient;
+import com.nsb.enms.common.utils.snmp.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpAddresses;
 import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpNe;

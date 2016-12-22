@@ -16,7 +16,7 @@ import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
-import com.nsb.enms.common.utils.snmpclient.SnmpClient;
+import com.nsb.enms.common.utils.snmp.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class AdpSnmpTpsMgr {

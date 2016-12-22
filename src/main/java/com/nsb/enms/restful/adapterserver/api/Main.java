@@ -22,7 +22,7 @@ import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.filter.AccessControlFilter;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.wdm.notification.AdpSnmpTrapHandler;
-import com.nsb.enms.common.utils.snmpclient.SnmpTrap;
+import com.nsb.enms.common.utils.snmp.SnmpTrap;
 
 public class Main {
 	private static Logger log;

@@ -7,10 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.utils.NotifQueue;
 import com.nsb.enms.adapter.server.common.utils.INotifProcessor;
+import com.nsb.enms.adapter.server.common.utils.NotifQueue;
 import com.nsb.enms.common.utils.Pair;
-import com.nsb.enms.common.utils.snmpclient.DispatchTrap;
+import com.nsb.enms.common.utils.snmp.DispatchTrap;
 
 public class AdpSnmpTrapHandler implements DispatchTrap {
 	private static final Logger log = LogManager.getLogger(AdpSnmpTrapHandler.class);
