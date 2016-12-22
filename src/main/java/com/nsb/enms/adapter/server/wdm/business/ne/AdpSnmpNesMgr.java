@@ -43,8 +43,8 @@ import com.nsb.enms.restful.model.adapter.AdpSnmpAddress;
 
 public class AdpSnmpNesMgr {
 	private final static Logger log = LogManager.getLogger(AdpSnmpNesMgr.class);
-	private final static String ADP_ADDRESS = ConfLoader.getInstance().getConf(ConfigKey.ADP_ADDRESS, "");
-	private static final String IP_ASCII = String2AsciiUtil.convert(ADP_ADDRESS);
+	private final static String ADP_IP = ConfLoader.getInstance().getConf(ConfigKey.ADP_IP, "");
+	private static final String IP_ASCII = String2AsciiUtil.convert(ADP_IP);
 
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
@@ -100,7 +100,7 @@ public class AdpSnmpNesMgr {
 	private List<Pair<SNMPType, Object>> getCommonValues(int value) {
 		List<Pair<SNMPType, Object>> values = new ArrayList<Pair<SNMPType, Object>>();
 		values.add(new Pair(SNMPType.SNMP_OBJECTIDENTIFIER, "1.3.6.1.6.1.1"));
-		values.add(new Pair(SNMPType.SNMP_HEXSTRING, Ip2HexUtil.convert(ADP_ADDRESS, ConfigKey.DEFAULT_SNMP_PORT)));
+		values.add(new Pair(SNMPType.SNMP_HEXSTRING, Ip2HexUtil.convert(ADP_IP, ConfigKey.DEFAULT_SNMP_PORT)));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 0));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 0));
 		values.add(new Pair(SNMPType.SNMP_INTEGER, 3));

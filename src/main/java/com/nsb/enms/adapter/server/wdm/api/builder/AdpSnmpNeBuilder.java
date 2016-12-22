@@ -28,7 +28,7 @@ public class AdpSnmpNeBuilder extends AdpBuilder {
 	public AdpCommonApiItf getApiItf(AdpNe ne, EntityType type) throws AdapterException {
 		switch (type) {
 		case NE:
-			new AdpSnmpNeApiImpl(ne);
+			return new AdpSnmpNeApiImpl(ne);
 		case TP:
 			return new AdpSnmpTpApiImpl(ne);
 		case EQUIPMENT:

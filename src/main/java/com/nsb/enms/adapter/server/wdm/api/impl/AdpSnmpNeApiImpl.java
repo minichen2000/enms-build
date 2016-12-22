@@ -28,10 +28,12 @@ public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 
 	@Override
 	public void supervise() throws AdapterException {
+		mgr.startSupervision(getId());
 	}
 
 	@Override
 	public void synchronize() throws AdapterException {
+		mgr.startAlignment(getId());
 	}
 
 	@Override
