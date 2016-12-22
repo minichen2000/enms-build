@@ -13,9 +13,9 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public abstract class AdpDefaultTpApiImpl implements AdpTpApiItf {
-	private Logger log = LogManager.getLogger(AdpDefaultNeApiImpl.class);
+	private Logger log = LogManager.getLogger(AdpDefaultTpApiImpl.class);
 	protected AdpNe data;
-	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
+	protected AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 	private Integer id;
 
 	public AdpDefaultTpApiImpl(AdpNe ne) {
@@ -38,17 +38,6 @@ public abstract class AdpDefaultTpApiImpl implements AdpTpApiItf {
 			return tpList;
 		} catch (Exception e) {
 			log.error("getChildrenTps", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-	}
-
-	@Override
-	public List<AdpTp> getNeTps() throws AdapterException {
-		try {
-			List<AdpTp> tpList = tpsDbMgr.getTpsByNeId(getId());
-			return tpList;
-		} catch (Exception e) {
-			log.error("getTpsByNeId", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}

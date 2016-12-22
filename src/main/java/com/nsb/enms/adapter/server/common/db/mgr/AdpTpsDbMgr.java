@@ -24,6 +24,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.common.constants.AdpDBConst;
+import com.nsb.enms.adapter.server.common.constants.Protocols;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -110,17 +111,13 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public List<AdpTp> getTpsByNeId(Integer neid) throws Exception {
-		log.debug("getTPByNEId, neId = " + neid);
-		List<Document> docList = dbc
-				.find(and(eq("neId", neid),
-						in("layerRates", ManagedObjectType.STM1_OPTICAL, ManagedObjectType.STM4_OPTICAL,
-								ManagedObjectType.STM16_OPTICAL, ManagedObjectType.STM64_OPTICAL,
-								ManagedObjectType.STM256_OPTICAL, ManagedObjectType.STM1_ELECTRICAL)))
-				.into(new ArrayList<Document>());
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by neid = " + neid);
-			return new ArrayList<AdpTp>();
+	public List<AdpTp> getTpsByNeId(Integer neid, Protocols protocols) throws Exception {
+		log.debug("getTpsByNeId, neId = " + neid);
+		List<Document> docList = new ArrayList<Document>();
+		if (Protocols.ALUQ3 == protocols) {
+			docList = getTpsByQ3Ne(neid);
+		} else if (Protocols.SNMP == protocols) {
+			docList = getTpsBySnmpNe(neid);
 		}
 
 		log.debug(docList.size());
@@ -134,6 +131,29 @@ public class AdpTpsDbMgr {
 			tpList.add(tp);
 		}
 		return tpList;
+	}
+
+	private List<Document> getTpsByQ3Ne(Integer neid) {
+		List<Document> docList = dbc
+				.find(and(eq("neId", neid),
+						in("layerRates", ManagedObjectType.STM1_OPTICAL, ManagedObjectType.STM4_OPTICAL,
+								ManagedObjectType.STM16_OPTICAL, ManagedObjectType.STM64_OPTICAL,
+								ManagedObjectType.STM256_OPTICAL, ManagedObjectType.STM1_ELECTRICAL)))
+				.into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find q3 tp, query by neid = " + neid);
+			return new ArrayList<Document>();
+		}
+		return docList;
+	}
+
+	private List<Document> getTpsBySnmpNe(Integer neid) {
+		List<Document> docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find snmp tp, query by neid = " + neid);
+			return new ArrayList<Document>();
+		}
+		return docList;
 	}
 
 	// TODO layerRate在数据库中保存的是List，这里传入的String，这个方法是有问题的

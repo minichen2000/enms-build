@@ -15,13 +15,13 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 
 public class AdpBuilder {
 	private static final AdpBuilder INSTANCE = new AdpBuilder();
-	private Map<String, AdpBuilder> builderMap;
+	private Map<Protocols, AdpBuilder> builderMap;
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
 	protected AdpBuilder() {
-		builderMap = new HashMap<String, AdpBuilder>();
-		builderMap.put(Protocols.ALUQ3_PROTOCOL, AdpQ3Builder.getInstance());
-		builderMap.put(Protocols.SNMP_PROTOCOL, AdpSnmpNeBuilder.getInstance());
+		builderMap = new HashMap<Protocols, AdpBuilder>();
+		builderMap.put(Protocols.ALUQ3, AdpQ3Builder.getInstance());
+		builderMap.put(Protocols.SNMP, AdpSnmpNeBuilder.getInstance());
 	}
 
 	public AdpCommonApiItf getApiItf(AdpNe ne, EntityType type) throws AdapterException {
@@ -43,6 +43,6 @@ public class AdpBuilder {
 	}
 
 	private AdpBuilder getBuilderInstance(AdpNe ne) throws AdapterException {
-		return builderMap.get(Protocols.SNMP_PROTOCOL);
+		return builderMap.get(Protocols.SNMP);
 	}
 }
