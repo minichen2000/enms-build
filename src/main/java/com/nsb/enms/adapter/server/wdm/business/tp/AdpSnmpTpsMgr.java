@@ -14,6 +14,7 @@ import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmpclient.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -23,11 +24,10 @@ public class AdpSnmpTpsMgr {
 
 	private SnmpClient client;
 	private AdpTpsDbMgr tpsMgr = new AdpTpsDbMgr();
-
-	public AdpSnmpTpsMgr() {
-	}
+	private Integer neId;
 
 	public AdpSnmpTpsMgr(Integer neId) {
+		this.neId = neId;
 		try {
 			this.client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 		} catch (AdapterException e) {
@@ -45,7 +45,7 @@ public class AdpSnmpTpsMgr {
 		return values;
 	}
 
-	public List<AdpTp> getTps() throws AdapterException {
+	public List<AdpTp> syncTps() throws AdapterException {
 		List<String> oids = new ArrayList<String>();
 		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
 		oids.add("1.3.6.1.2.1.2.2.1.7"); // ifAdminStatus
@@ -64,9 +64,12 @@ public class AdpSnmpTpsMgr {
 			List<String> supportedTypes = new ArrayList<String>();
 			supportedTypes.add(row.get(5).getSecond());
 			entity.setSupportedTypes(supportedTypes);
-			AdpTp tp = constructTp(entity, 0, 0, 0);
+			AdpTp tp = constructTp(entity, TpType.PTP, null, 0);
 			try {
-				tpsMgr.addTp(tp);
+				AdpTp tpFromDb = tpsMgr.getTpById(tp.getId());
+				if (null == tpFromDb || null == tpFromDb.getId()) {
+					tp = tpsMgr.addTp(tp);
+				}
 			} catch (Exception e) {
 				log.error("addTp", e);
 				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -77,7 +80,7 @@ public class AdpSnmpTpsMgr {
 		return tpList;
 	}
 
-	private AdpTp constructTp(SnmpTpEntity tp, Integer neDbId, Integer ptpId, Integer parentTpId)
+	private AdpTp constructTp(SnmpTpEntity tp, TpType tpType, Integer ptpId, Integer parentTpId)
 			throws AdapterException {
 		AdpTp adpTp = new AdpTp();
 		Integer maxTpId;
@@ -87,15 +90,19 @@ public class AdpSnmpTpsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		adpTp.setId(maxTpId);
-		adpTp.setNeId(neDbId);
-		adpTp.setUserLabel(SnmpTpUserLabelUtil.generate(tp.getIndex()));
+		adpTp.setNeId(neId);
+		String userLabel = SnmpTpUserLabelUtil.generate(tp.getIndex());
+		adpTp.setUserLabel(userLabel);
+		adpTp.setNativeName(userLabel);
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(tp.getInternalType());
 		adpTp.setLayerRates(layerRates);
-		adpTp.setKeyOnNe("");
-		adpTp.setTpType(tp.getTpType());
-		adpTp.setPtpID(ptpId);
-		adpTp.setParentTpID(parentTpId);
+		adpTp.setKeyOnNe(tp.getIndex());
+		adpTp.setTpType(tpType.name());
+		if (TpType.PTP != tpType) {
+			adpTp.setPtpID(maxTpId);
+			adpTp.setParentTpID(parentTpId);
+		}
 		return adpTp;
 	}
 

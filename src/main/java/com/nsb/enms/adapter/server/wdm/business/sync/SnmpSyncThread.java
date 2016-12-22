@@ -26,7 +26,7 @@ public class SnmpSyncThread implements Callable<Object> {
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, neId, "operationalState",
 				OperationState.SYNCING.name(), OperationState.IDLE.name());
 		new AdpSnmpEqusMgr().syncEquip(neId);
-		new AdpSnmpTpsMgr(neId).getTps();
+		new AdpSnmpTpsMgr(neId).syncTps();
 		NeStateMachineApp.instance().afterSynchData(neId);
 		log.debug("------------ sync end -------------");
 		return null;
