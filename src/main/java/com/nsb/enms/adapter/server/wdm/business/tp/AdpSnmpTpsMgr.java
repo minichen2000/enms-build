@@ -11,9 +11,11 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
+import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.ErrorCode;
+import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmp.SnmpClient;
@@ -95,7 +97,11 @@ public class AdpSnmpTpsMgr {
 		adpTp.setUserLabel(userLabel);
 		adpTp.setNativeName(userLabel);
 		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(tp.getInternalType());
+		String actualTpType = SnmpTpType.getTpType(tp.getInternalType());
+		layerRates.add(actualTpType);
+		if (TpType.PTP == tpType && !actualTpType.equals(SnmpTpType.PHN)) {
+			layerRates.add(LayerRate.PHYSICAL.name());
+		}
 		adpTp.setLayerRates(layerRates);
 		adpTp.setKeyOnNe(tp.getIndex());
 		adpTp.setTpType(tpType.name());
