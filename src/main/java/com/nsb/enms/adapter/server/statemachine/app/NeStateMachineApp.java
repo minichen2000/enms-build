@@ -42,9 +42,9 @@ public class NeStateMachineApp {
 	public void init() {
 		StateMachineBuilder<NeOperationalStateMachine, OperationState, NeEvent, NeStateCallBack> operationalStateBuilder = new StateMachineBuilder<NeOperationalStateMachine, OperationState, NeEvent, NeStateCallBack>(
 				NeOperationalStateMachine.class);
-		operationalStateBuilder.registExTransition(OperationState.IDLE, OperationState.SYNCING,
+		operationalStateBuilder.registExTransition(OperationState.IDLE, OperationState.SUPERVISING,
 				NeEvent.E_IDLE_2_SUPERVISING, "transState");
-		operationalStateBuilder.registExTransition(OperationState.SYNCING, OperationState.IDLE,
+		operationalStateBuilder.registExTransition(OperationState.SUPERVISING, OperationState.IDLE,
 				NeEvent.E_SUPERVISING_2_IDLE, "transState");
 		operationalStateBuilder.registExTransition(OperationState.IDLE, OperationState.SYNCING,
 				NeEvent.E_IDLE_2_SYNCHRONIZING, "transState");

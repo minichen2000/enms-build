@@ -328,7 +328,7 @@ public class AdpSnmpNesMgr {
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState",
 				CommunicationState.DISCONNECTED.name(), CommunicationState.CONNECTED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "operationalState", OperationState.IDLE.name(),
-				OperationState.SYNCING.name());
+				OperationState.SUPERVISING.name());
 	}
 
 	public void startAlignment(Integer neid) throws AdapterException {
