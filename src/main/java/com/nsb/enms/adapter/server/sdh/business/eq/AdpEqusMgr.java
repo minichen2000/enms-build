@@ -179,18 +179,8 @@ public class AdpEqusMgr {
 
 	private String getType(String moi) {
 		String[] elements = moi.split("/");
-		switch (elements.length) {
-		case 3:
-			return EquType.rack.name();
-		case 4:
-			return EquType.shelf.name();
-		case 5:
-			return EquType.slot.name();
-		case 6:
-			return EquType.subslot.name();
-		default:
-			return null;
-		}
+		int len = elements.length - 2;
+		return EquType.getEquType(len);
 	}
 
 	private String getPosition(String moi) {

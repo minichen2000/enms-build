@@ -13,6 +13,10 @@ import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.common.utils.INotifProcessor;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmp.DispatchTrap;
+import com.nsb.enms.mib.pss.def.M_tnTrapChangedObject;
+import com.nsb.enms.mib.pss.def.M_tnTrapData;
+import com.nsb.enms.mib.pss.def.M_tnTrapObjectID;
+import com.nsb.enms.mib.pss.def.M_tnTrapTime;
 
 public class AdpSnmpTrapHandler implements DispatchTrap {
 	private static final Logger log = LogManager.getLogger(AdpSnmpTrapHandler.class);
@@ -45,22 +49,28 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 		String data = "";
 		String changeObject = "";
 		for (Pair<String, String> pair : trapInfo) {
-			if (pair.getFirst().startsWith("1.3.6.1.4.1.7483.2.1.2.2.1.1.1.3")) {
+			if (pair.getFirst().equals("ip"))
+			{
+				ip = pair.getSecond();
+				continue;
+			}
+			
+			if (pair.getFirst().startsWith(M_tnTrapTime.oid)) {
 				timeStamp = TimeUtil.getSysUpTime(pair.getSecond());
 				continue;
 			}
 
-			if (pair.getFirst().startsWith("1.3.6.1.4.1.7483.2.1.2.2.1.1.1.5")) {
+			if (pair.getFirst().startsWith(M_tnTrapObjectID.oid)) {
 				objectId = pair.getSecond();
 				continue;
 			}
 
-			if (pair.getFirst().startsWith("1.3.6.1.4.1.7483.2.1.2.2.1.1.1.9")) {
+			if (pair.getFirst().startsWith(M_tnTrapData.oid)) {
 				data = pair.getSecond();
 				continue;
 			}
 
-			if (pair.getFirst().startsWith("1.3.6.1.4.1.7483.2.1.2.2.1.1.1.8")) {
+			if (pair.getFirst().startsWith(M_tnTrapChangedObject.oid)) {
 				changeObject = pair.getSecond();
 				flag = true;
 			}

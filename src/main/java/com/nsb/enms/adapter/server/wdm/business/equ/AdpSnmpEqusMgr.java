@@ -101,17 +101,6 @@ public class AdpSnmpEqusMgr {
 
 	private String getType(String index) {
 		int len = index.split("/").length;
-		switch (len) {
-		case 1:
-			return EquType.rack.name();
-		case 2:
-			return EquType.shelf.name();
-		case 3:
-			return EquType.slot.name();
-		case 4:
-			return EquType.subslot.name();
-		default:
-			return null;
-		}
+		return EquType.getEquType(len);
 	}
 }

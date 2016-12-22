@@ -32,6 +32,11 @@
 			<groupId>com.nsb.enms</groupId>
 			<artifactId>statemachine</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.nsb.enms</groupId>
+			<artifactId>snmpmib</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.nsb.enms</groupId>
