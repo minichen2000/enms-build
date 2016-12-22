@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.wdm.notification;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -30,7 +31,7 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 	}
 
 	@Override
-	public void onTrap(Pair<Pair<String, Integer>, Pair<String, String>> trapInfo) {
-		// queue.push(trapValue);
+	public void onTrap(List<Pair<String, String>> trapInfo) {
+
 	}
 }
