@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
@@ -21,6 +22,7 @@ public class AdpSnmpTpsMgr {
 	private final static Logger log = LogManager.getLogger(AdpSnmpTpsMgr.class);
 
 	private SnmpClient client;
+	private AdpTpsDbMgr tpsMgr = new AdpTpsDbMgr();
 
 	public AdpSnmpTpsMgr() {
 	}
@@ -62,8 +64,16 @@ public class AdpSnmpTpsMgr {
 			List<String> supportedTypes = new ArrayList<String>();
 			supportedTypes.add(row.get(5).getSecond());
 			entity.setSupportedTypes(supportedTypes);
-			tpList.add(constructTp(entity, 0, 0, 0));
+			AdpTp tp = constructTp(entity, 0, 0, 0);
+			try {
+				tpsMgr.addTp(tp);
+			} catch (Exception e) {
+				log.error("addTp", e);
+				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+			}
+			tpList.add(tp);
 		}
+
 		return tpList;
 	}
 
@@ -78,7 +88,7 @@ public class AdpSnmpTpsMgr {
 		}
 		adpTp.setId(maxTpId);
 		adpTp.setNeId(neDbId);
-		adpTp.setUserLabel(SnmpTpUserLabelUtil.generate(tp.getUserLabel()));
+		adpTp.setUserLabel(SnmpTpUserLabelUtil.generate(tp.getIndex()));
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(tp.getInternalType());
 		adpTp.setLayerRates(layerRates);

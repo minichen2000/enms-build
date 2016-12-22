@@ -3,6 +3,7 @@ package com.nsb.enms.adapter.server.wdm.factory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,8 +29,8 @@ public class AdpSnmpClientFactory {
 	}
 
 	public void add(String ip, SnmpClient client) {
-		if (!ValidationUtil.isValidIpAddress(ip) || null == client) {
-			log.error("invalid parameter");
+		if (StringUtils.isEmpty(ip) || null == client) {
+			log.error("ip or client was invalid parameter");
 			return;
 		}
 		if (map.containsKey(ip)) {
