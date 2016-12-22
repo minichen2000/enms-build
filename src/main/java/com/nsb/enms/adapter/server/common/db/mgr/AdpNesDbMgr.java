@@ -95,7 +95,7 @@ public class AdpNesDbMgr {
 		updateCommunicationState(body, id, ne);
 
 		updateNeRelease(body, id, ne);
-		
+
 		/*
 		 * ModelAttrPatchApp modelAttrPatchApp = new ModelAttrPatchApp();
 		 * Map<String, Object> nonNullAttrs =

@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.common.notification;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,7 +87,7 @@ public class NotificationSender {
 	}
 
 	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, String value, String oldValue) {
-		publisher.sendAVC(entityType, objectID, key, value, oldValue);
+		publisher.sendAVC(entityType, objectID, key, value, (oldValue == null ? StringUtils.EMPTY : oldValue));
 	}
 
 	public void sendOcNotif(EntityType objectType, Integer objectID) {
