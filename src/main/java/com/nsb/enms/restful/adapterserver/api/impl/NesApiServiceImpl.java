@@ -106,17 +106,6 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response startSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
-		try {
-			AdpFactory.getInstance().getNeApi(neid).supervise();
-			return Response.ok().build();
-		} catch (AdapterException e) {
-			log.error("startSupervision", e);
-			return ErrorWrapperUtils.adapterException(e);
-		}
-	}
-
-	@Override
 	public Response addTps(Integer neid, List<AdpTp> tps, SecurityContext securityContext) throws NotFoundException {
 		return null;
 	}
@@ -273,5 +262,32 @@ public class NesApiServiceImpl extends NesApiService {
 			log.error("getXcsByNeId", e);
 			return ErrorWrapperUtils.adapterException(e);
 		}
+	}
+
+	@Override
+	public Response startNeMaintenance(Integer neid, SecurityContext securityContext) throws NotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response startNeSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
+		try {
+			AdpFactory.getInstance().getNeApi(neid).supervise();
+			return Response.ok().build();
+		} catch (AdapterException e) {
+			log.error("startSupervision", e);
+			return ErrorWrapperUtils.adapterException(e);
+		}
+	}
+
+	@Override
+	public Response stopNeMaintenance(Integer neid, SecurityContext securityContext) throws NotFoundException {
+		return null;
+	}
+
+	@Override
+	public Response stopNeSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
+		return null;
 	}
 }
