@@ -97,4 +97,16 @@ public class AdpEqusDbMgr {
 		AdpEquipment equipment = gson.fromJson(doc.toJson(), AdpEquipment.class);
 		return equipment;
 	}
+
+	public AdpEquipment getEquByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+		List<Document> docList = dbc.find(and(eq("keyOnNe", keyOnNe), eq("neId", neId)))
+				.into(new ArrayList<Document>());
+
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find equipment, query by keyOnNe = " + keyOnNe + " and neId = " + neId);
+			return null;
+		}
+		Document doc = docList.get(0);
+		return constructEquipment(doc);
+	}
 }
