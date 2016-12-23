@@ -172,6 +172,7 @@ public class AdpSnmpTpsMgr {
 		}
 		String actualType = equ.getActualType();
 		if (StringUtils.isEmpty(actualType) || StringUtils.equals("Empty", actualType)) {
+			log.error("there is no actualType of equ, queried by " + index);
 			return null;
 		}
 		return actualType;
