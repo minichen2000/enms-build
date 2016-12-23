@@ -31,19 +31,23 @@ public class AdpSnmpEqusMgr {
 	public void syncEquip(Integer neId) throws AdapterException {
 		SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 		List<SnmpEquEntity> equs = GetAllEquipments.getEquipments(client);
-		for (SnmpEquEntity equ : equs) {
-			try {
-				equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
-			} catch (Exception e) {
-				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-			}
-		}
+
+		// for (SnmpEquEntity equ : equs) {
+		// try {
+		// equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
+		// } catch (Exception e) {
+		// throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		// }
+		// }
 
 		for (SnmpEquEntity equ : equs) {
 			log.debug(equ);
-			AdpEquipment newEqu = constructEquip(equ, equs, neId);
 			try {
-				equsDbMgr.addEquipment(newEqu);
+				AdpEquipment eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, equ.getIndex());
+				if (eqFromDb == null || eqFromDb.getId() == null) {
+					AdpEquipment newEqu = constructEquip(equ, equs, neId);
+					equsDbMgr.addEquipment(newEqu);
+				}
 			} catch (Exception e) {
 				log.error("addEquipment:", e);
 				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -51,10 +55,16 @@ public class AdpSnmpEqusMgr {
 		}
 	}
 
-	private AdpEquipment constructEquip(SnmpEquEntity equ, List<SnmpEquEntity> equs, int neId) {
+	private AdpEquipment constructEquip(SnmpEquEntity equ, List<SnmpEquEntity> equs, int neId) throws AdapterException {
 		AdpEquipment adpEqu = new AdpEquipment();
 		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
-
+		if (equ.getId() == null) {
+			try {
+				equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
+			} catch (Exception e) {
+				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+			}
+		}
 		adpEqu.setId(equ.getId());
 		adpEqu.setNeId(neId);
 		adpEqu.setPosition(equ.getIndex());
@@ -67,6 +77,19 @@ public class AdpSnmpEqusMgr {
 			String parentIndex = equipment.getIndex();
 			String index = equ.getIndex();
 			if (index.matches(parentIndex + "/[0-9]+")) {
+				if (equipment.getId() == null) {
+					AdpEquipment eqFromDb;
+					try {
+						eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, equipment.getIndex());
+						if (eqFromDb == null || eqFromDb.getId() == null) {
+							equipment.setId(AdpSeqDbMgr.getMaxEquipmentId());
+						} else {
+							equipment.setId(eqFromDb.getId());
+						}
+					} catch (Exception e) {
+						throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+					}
+				}
 				AdpKVPair parentIdPair = new AdpKVPair();
 				parentIdPair.setKey("parentId");
 				parentIdPair.setValue(String.valueOf(equipment.getId()));

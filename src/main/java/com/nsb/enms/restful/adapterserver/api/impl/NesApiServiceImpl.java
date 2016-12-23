@@ -178,29 +178,27 @@ public class NesApiServiceImpl extends NesApiService {
 	@Override
 	public Response getEquipmentById(Integer neid, Integer eqid, SecurityContext securityContext)
 			throws NotFoundException {
-		AdpEquipment equipment = null;
 		try {
-			equipment = equsDbMgr.getEquipmentById(neid, eqid);
+			AdpEquipment equipment = AdpFactory.getInstance().getEquApi(neid).getEquipmentById(eqid);
+			return Response.ok().entity(equipment).build();
 		} catch (Exception e) {
 			log.error("getEquipmentById", e);
 			return Response.serverError().entity(e).build();
 		}
-		return Response.ok().entity(equipment).build();
 	}
 
 	@Override
 	public Response getEquipmentsByNeId(Integer neid, SecurityContext securityContext) throws NotFoundException {
-		List<AdpEquipment> equipments = new ArrayList<AdpEquipment>();
 		try {
-			equipments = equsDbMgr.getEquipmentsByNeId(neid);
+			List<AdpEquipment> equipments = AdpFactory.getInstance().getEquApi(neid).getEquipmentsByNeId(neid);
 			if (equipments.isEmpty()) {
 				return failObjNotExist();
 			}
+			return Response.ok().entity(equipments).build();
 		} catch (Exception e) {
 			log.error("getEquipmentsByNeId", e);
 			return failDbOperation();
 		}
-		return Response.ok().entity(equipments).build();
 	}
 
 	@Override
