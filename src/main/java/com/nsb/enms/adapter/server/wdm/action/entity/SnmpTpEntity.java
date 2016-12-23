@@ -17,6 +17,8 @@ public class SnmpTpEntity {
 
 	private List<String> supportedTypes;
 
+	private String direction;
+
 	public String getUserLabel() {
 		return userLabel;
 	}
@@ -73,10 +75,18 @@ public class SnmpTpEntity {
 		this.index = index;
 	}
 
+	public String getDirection() {
+		return direction;
+	}
+
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
+
 	@Override
 	public String toString() {
 		return "SnmpTpEntity [index=" + index + ", userLabel=" + userLabel + ", tpType=" + tpType + ", internalType="
 				+ internalType + ", adminStatus=" + adminStatus + ", operStatus=" + operStatus + ", supportedTypes="
-				+ supportedTypes + "]";
+				+ supportedTypes + ", direction=" + direction + "]";
 	}
 }

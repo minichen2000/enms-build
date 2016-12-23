@@ -13,6 +13,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
+import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.adapter.server.wdm.utils.PSSBoardUtil;
@@ -68,7 +69,7 @@ public class AdpSnmpTpsMgr {
 				continue;
 			}
 
-			String equType = isActualEqu(index);
+			String equType = isExpectedEquExisted(index);
 			if (StringUtils.isEmpty(equType)) {
 				continue;
 			}
@@ -90,6 +91,7 @@ public class AdpSnmpTpsMgr {
 		List<String> supportedTypes = new ArrayList<String>();
 		supportedTypes.add(row.get(5).getSecond());
 		entity.setSupportedTypes(supportedTypes);
+		entity.setDirection(row.get(6).getSecond());
 	}
 
 	private boolean isTpExisted(String keyOnNe) throws AdapterException {
@@ -122,6 +124,7 @@ public class AdpSnmpTpsMgr {
 		oids.add("1.3.6.1.2.1.2.2.1.8"); // ifOperStatus
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.9"); // tnAccessPortDirection
 		return oids;
 	}
 
@@ -152,10 +155,11 @@ public class AdpSnmpTpsMgr {
 			adpTp.setPtpID(maxTpId);
 			adpTp.setParentTpID(parentTpId);
 		}
+		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
 		return adpTp;
 	}
 
-	private String isActualEqu(String index) throws AdapterException {
+	private String isExpectedEquExisted(String index) throws AdapterException {
 		Integer[] position = SnmpTpUserLabelUtil.string2Hex(index);
 		String equKeyOnNe = "1/" + position[0] + "/" + position[1];
 		AdpEquipment equ = null;
@@ -170,12 +174,12 @@ public class AdpSnmpTpsMgr {
 			log.error("equ is null,queried by " + equKeyOnNe);
 			return null;
 		}
-		String actualType = equ.getActualType();
-		if (StringUtils.isEmpty(actualType) || StringUtils.equals("Empty", actualType)) {
-			log.error("there is no actualType of equ, queried by " + index);
+		String expectedType = equ.getExpectedType();
+		if (StringUtils.isEmpty(expectedType) || StringUtils.equals("Empty", expectedType)) {
+			log.error("there is no expectedType of equ, queried by " + index);
 			return null;
 		}
-		return actualType;
+		return expectedType;
 	}
 
 	private String setUserLabel(String index, String equType) {
