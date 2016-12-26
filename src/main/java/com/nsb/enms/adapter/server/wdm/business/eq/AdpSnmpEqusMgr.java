@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.wdm.business.equ;
+package com.nsb.enms.adapter.server.wdm.business.eq;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +97,7 @@ public class AdpSnmpEqusMgr {
 			}
 		}
 
-		if (!StringUtils.isEmpty(equ.getPresentType()) && !"Empty".equals(equ.getPresentType())) {
+		if (!StringUtils.isEmpty(equ.getPresentType()) && !StringUtils.equals("Empty", equ.getPresentType())) {
 			String serialNumber = equ.getSerialNumber();
 			String unitPartNumber = equ.getUnitPartNumber();
 			String softwarePartNumber = equ.getSoftwarePartNumber();

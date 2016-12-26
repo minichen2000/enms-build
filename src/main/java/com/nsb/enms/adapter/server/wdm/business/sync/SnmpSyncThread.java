@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
-import com.nsb.enms.adapter.server.wdm.business.equ.AdpSnmpEqusMgr;
+import com.nsb.enms.adapter.server.wdm.business.eq.AdpSnmpEqusMgr;
 import com.nsb.enms.adapter.server.wdm.business.tp.AdpSnmpTpsMgr;
 import com.nsb.enms.common.EntityType;
 import com.nsb.enms.common.OperationState;

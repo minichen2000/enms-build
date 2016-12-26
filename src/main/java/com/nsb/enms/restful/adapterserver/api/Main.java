@@ -94,7 +94,7 @@ public class Main {
 	 */
 	private static void startSnmpTrap() {
 		SnmpTrap trap = new SnmpTrap();
-		trap.setTrapCaller(new AdpSnmpTrapHandler());
+		trap.setTrapCaller(AdpSnmpTrapHandler.getInstance());
 		String ip = ConfLoader.getInstance().getConf(ConfigKey.ADP_IP, "127.0.0.1");
 		trap.run(ip, ConfigKey.DEFAULT_SNMP_PORT);
 	}
