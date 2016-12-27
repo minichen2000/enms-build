@@ -127,7 +127,7 @@ public class AdpQ3TpsMgr {
 		AdpTp adpTp = new AdpTp();
 		Integer maxTpId;
 		try {
-			maxTpId = AdpSeqDbMgr.getMaxTpId();
+			maxTpId = AdpSeqDbMgr.getMaxTpId(neDbId);
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}

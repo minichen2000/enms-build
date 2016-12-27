@@ -133,7 +133,7 @@ public class AdpSnmpTpsMgr {
 		AdpTp adpTp = new AdpTp();
 		Integer maxTpId;
 		try {
-			maxTpId = AdpSeqDbMgr.getMaxTpId();
+			maxTpId = AdpSeqDbMgr.getMaxTpId(neId);
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}

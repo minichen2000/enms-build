@@ -22,8 +22,8 @@ public class AdpSeqDbMgr {
 		return getMaxIdByType(NE);
 	}
 
-	public static synchronized Integer getMaxTpId() throws Exception {
-		return getMaxIdByType(TP);
+	public static synchronized Integer getMaxTpId(Integer neId) throws Exception {
+		return getMaxIdByType(TP + "_" + neId);
 	}
 
 	public static synchronized Integer getMaxXcId() throws Exception {
