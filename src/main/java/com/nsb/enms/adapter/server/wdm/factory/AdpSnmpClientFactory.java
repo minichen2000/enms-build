@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.common.ErrorCode;
-import com.nsb.enms.common.utils.ValidationUtil;
 import com.nsb.enms.common.utils.snmp.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpNe;
 
@@ -28,22 +27,29 @@ public class AdpSnmpClientFactory {
 		return factory;
 	}
 
-	public void add(String ip, SnmpClient client) {
-		if (StringUtils.isEmpty(ip) || null == client) {
-			log.error("ip or client was invalid parameter");
+	/**
+	 * 获取snmpClient
+	 * 
+	 * @param address
+	 *            address=ip:port
+	 * @param client
+	 */
+	public void add(String address, SnmpClient client) {
+		if (StringUtils.isEmpty(address) || null == client) {
+			log.error("address or client was invalid parameter");
 			return;
 		}
-		if (map.containsKey(ip)) {
-			log.warn("ip was exsited in map, now update it's value");
+		if (map.containsKey(address)) {
+			log.warn("address was exsited in map, now update it's value");
 		}
-		map.put(ip, client);
+		map.put(address, client);
 	}
 
-	public SnmpClient getByIp(String ip) {
-		if (!ValidationUtil.isValidIpAddress(ip)) {
+	public SnmpClient getByAddress(String address) {
+		if (StringUtils.isEmpty(address)) {
 			return null;
 		}
-		return map.get(ip);
+		return map.get(address);
 	}
 
 	public SnmpClient getByNeId(Integer neId) throws AdapterException {
@@ -57,5 +63,25 @@ public class AdpSnmpClientFactory {
 			log.error("getNeById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
+	}
+
+	public void removeByNeId(Integer neId) throws AdapterException {
+		if (null == neId || neId < 0) {
+			return;
+		}
+		try {
+			AdpNe ne = mgr.getNeById(neId);
+			map.remove(ne.getAddresses().getSnmpAddress().getSnmpAgent());
+		} catch (Exception e) {
+			log.error("getNeById", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	public void removeByAddress(String address) throws AdapterException {
+		if (StringUtils.isEmpty(address)) {
+			return;
+		}
+		map.remove(address);
 	}
 }

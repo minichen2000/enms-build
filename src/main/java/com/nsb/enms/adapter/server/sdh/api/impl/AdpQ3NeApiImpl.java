@@ -42,4 +42,8 @@ public class AdpQ3NeApiImpl extends AdpDefaultNeApiImpl {
 	public void synchronize() throws AdapterException {
 		nesMgr.startAlignment(getId());
 	}
+
+	@Override
+	public void stopNeSupervision() throws AdapterException {
+	}
 }

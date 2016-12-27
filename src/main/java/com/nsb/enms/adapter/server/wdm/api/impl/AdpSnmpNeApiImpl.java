@@ -38,6 +38,11 @@ public class AdpSnmpNeApiImpl extends AdpDefaultNeApiImpl {
 
 	@Override
 	public void deleteNe() throws AdapterException {
+		mgr.deleteNe(getId());
+	}
 
+	@Override
+	public void stopNeSupervision() throws AdapterException {
+		mgr.stopSupervision(getId());
 	}
 }

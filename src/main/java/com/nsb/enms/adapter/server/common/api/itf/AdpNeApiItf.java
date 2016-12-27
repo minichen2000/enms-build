@@ -15,4 +15,6 @@ public interface AdpNeApiItf extends AdpCommonApiItf {
 	public void synchronize() throws AdapterException;
 
 	public AdpNe getNeById() throws AdapterException;
+
+	public void stopNeSupervision() throws AdapterException;
 }

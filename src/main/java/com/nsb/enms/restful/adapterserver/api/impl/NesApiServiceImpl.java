@@ -264,7 +264,6 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response startNeMaintenance(Integer neid, SecurityContext securityContext) throws NotFoundException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -286,6 +285,12 @@ public class NesApiServiceImpl extends NesApiService {
 
 	@Override
 	public Response stopNeSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
-		return null;
+		try {
+			AdpFactory.getInstance().getNeApi(neid).stopNeSupervision();
+			return Response.ok().build();
+		} catch (AdapterException e) {
+			log.error("stopNeSupervision", e);
+			return ErrorWrapperUtils.adapterException(e);
+		}
 	}
 }

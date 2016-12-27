@@ -17,11 +17,8 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.common.utils.Ip2HexUtil;
-import com.nsb.enms.adapter.server.common.utils.KeyValuePairUtil;
 import com.nsb.enms.adapter.server.common.utils.String2AsciiUtil;
 import com.nsb.enms.adapter.server.sdh.action.entity.NeEntity;
-import com.nsb.enms.adapter.server.sdh.action.method.ne.DeleteNe;
-import com.nsb.enms.adapter.server.sdh.business.xc.AdpQ3XcsMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;
 import com.nsb.enms.adapter.server.wdm.business.sync.SnmpSyncThread;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
@@ -241,36 +238,33 @@ public class AdpSnmpNesMgr {
 		}
 	}
 
-	public void deleteNe(Integer id) throws AdapterException {
+	public void deleteNe(Integer neId) throws AdapterException {
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
 			// TODO 确定错误码是否正确
 			throw new AdapterException(ErrorCode.FAIL_NOT_OPERABLE);
 		}
 
-		AdpNe ne = isNeExisted(id);
-		List<AdpKVPair> pairs = ne.getParams();
-		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
-		String groupId = groupAndNeId[0];
-		String neId = groupAndNeId[1];
-
-		log.debug("groupId = " + groupId + ", neId = " + neId);
-
-		DeleteNe.deleteNe(groupId, neId);
-		NotificationSender.instance().sendOdNotif(EntityType.NE, id);
+		AdpNe ne = isNeExisted(neId);
+		String address = ne.getAddresses().getSnmpAddress().getSnmpAgent();
+		SnmpClient client = AdpSnmpClientFactory.getInstance().getByAddress(address);
+		if (null != client) {
+			client.close();
+			AdpSnmpClientFactory.getInstance().removeByAddress(address);
+		}
 
 		// delete db record, contains ne and tp
 		try {
-			nesDbMgr.deleteNe(id);
+			nesDbMgr.deleteNe(neId);
 
-			AdpQ3XcsMgr xcsMgr = new AdpQ3XcsMgr();
-			xcsMgr.deleteXcsByNeId(Integer.valueOf(neId));
+			// AdpSnmpXcsMgr xcsMgr = new AdpSnmpXcsMgr();
+			// xcsMgr.deleteXcsByNeId(neId);
 
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
-			tpsDbMgr.deleteTpsbyNeId(Integer.valueOf(neId));
+			tpsDbMgr.deleteTpsbyNeId(neId);
 
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
-			equipmentsDbMgr.deleteEquipmentsByNeId(Integer.valueOf(neId));
+			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
 		} catch (AdapterException e) {
 			if (ErrorCode.FAIL_OBJ_NOT_EXIST != e.errorCode) {
 				throw e;
@@ -279,6 +273,8 @@ public class AdpSnmpNesMgr {
 			log.error("deleteNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
+
+		NotificationSender.instance().sendOdNotif(EntityType.NE, neId);
 	}
 
 	private boolean checkBusiness() {
@@ -314,6 +310,16 @@ public class AdpSnmpNesMgr {
 		String neRelease = getNeRelease(client);
 		ne.setNeRelease(neRelease);
 		updateBySupervision(ne);
+	}
+
+	public void stopSupervision(Integer neid) throws AdapterException {
+		AdpNe ne = isNeExisted(neid);
+		String address = ne.getAddresses().getSnmpAddress().getSnmpAgent();
+		SnmpClient client = AdpSnmpClientFactory.getInstance().getByAddress(address);
+		if (null != client) {
+			client.close();
+			AdpSnmpClientFactory.getInstance().removeByAddress(address);
+		}
 	}
 
 	private void updateBySupervision(AdpNe body) throws AdapterException {
