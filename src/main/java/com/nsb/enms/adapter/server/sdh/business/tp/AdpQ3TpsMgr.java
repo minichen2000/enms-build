@@ -74,7 +74,9 @@ public class AdpQ3TpsMgr {
 	private List<AdpTp> addTps(List<AdpTp> tps) throws AdapterException {
 		try {
 			for (AdpTp tp : tps) {
-				AdpTp newTp = tpsDbMgr.getTpById(tp.getId());
+				// TODO 添加neid
+				Integer neId = 1;
+				AdpTp newTp = tpsDbMgr.getTpById(neId, tp.getId());
 				if (null == newTp || newTp.getId() == null) {
 					tpsDbMgr.addTp(tp);
 				}
@@ -226,7 +228,8 @@ public class AdpQ3TpsMgr {
 		updateTps(pdhPTP);
 
 		try {
-			tpsDbMgr.updateTpLayerRate(ptpDbId, layerRates);
+			// TODO 添加neid
+			tpsDbMgr.updateTpLayerRate(Integer.valueOf(neId), ptpDbId, layerRates);
 		} catch (Exception e) {
 			log.error("getTpById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);

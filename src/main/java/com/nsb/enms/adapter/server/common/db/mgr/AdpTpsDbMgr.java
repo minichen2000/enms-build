@@ -25,6 +25,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.common.constants.AdpDBConst;
 import com.nsb.enms.adapter.server.common.constants.Protocols;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -32,9 +33,23 @@ import com.nsb.enms.restful.model.adapter.AdpTp;
 public class AdpTpsDbMgr {
 	private final static Logger log = LogManager.getLogger(AdpTpsDbMgr.class);
 	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
-	private MongoCollection<Document> dbc = db.getCollection(AdpDBConst.DB_NAME_TP);
-	private MongoCollection<BasicDBObject> dbc1 = db.getCollection(AdpDBConst.DB_NAME_TP, BasicDBObject.class);
+	// private MongoCollection<Document> dbc =
+	// db.getCollection(AdpDBConst.DB_NAME_TP);
+	// private MongoCollection<BasicDBObject> dbc1 =
+	// db.getCollection(AdpDBConst.DB_NAME_TP, BasicDBObject.class);
 	private Gson gson = new Gson();
+
+	public AdpTpsDbMgr() {
+
+	}
+
+	private MongoCollection<BasicDBObject> getCustomCollection(Integer neId) {
+		return db.getCollection(AdpDBConst.DB_NAME_TP + "_" + neId, BasicDBObject.class);
+	}
+
+	private MongoCollection<Document> getCollection(Integer neId) {
+		return db.getCollection(AdpDBConst.DB_NAME_TP + "_" + neId);
+	}
 
 	public List<AdpTp> addTps(List<AdpTp> body) throws Exception {
 		for (AdpTp tp : body) {
@@ -47,30 +62,13 @@ public class AdpTpsDbMgr {
 	public AdpTp addTp(AdpTp tp) throws Exception {
 		String gsonTp = gson.toJson(tp);
 		BasicDBObject dbObject = (BasicDBObject) JSON.parse(gsonTp);
-		dbc1.insertOne(dbObject);
-		return tp;
-	}
-
-	public AdpTp getTpById(Integer tpid) throws Exception {
-		List<Document> docList = dbc.find(eq("id", tpid)).into(new ArrayList<Document>());
-
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by tpid = " + tpid);
-			return new AdpTp();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
-		}
-
-		Document doc = docList.get(0);
-		AdpTp tp = constructTp(doc);
+		getCustomCollection(tp.getNeId()).insertOne(dbObject);
 		return tp;
 	}
 
 	public AdpTp getTpById(Integer neId, Integer tpid) throws Exception {
-		List<Document> docList = dbc.find(and(eq("neId", neId), eq("id", tpid))).into(new ArrayList<Document>());
+		List<Document> docList = getCollection(neId).find(and(eq("neId", neId), eq("id", tpid)))
+				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by tpid = " + tpid);
@@ -88,7 +86,7 @@ public class AdpTpsDbMgr {
 	}
 
 	public AdpTp getTpByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
-		List<Document> docList = dbc.find(and(eq("neId", neId), eq("keyOnNe", keyOnNe)))
+		List<Document> docList = getCollection(neId).find(and(eq("neId", neId), eq("keyOnNe", keyOnNe)))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -133,44 +131,45 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	private List<Document> getTpsByQ3Ne(Integer neid) {
-		List<Document> docList = dbc
-				.find(and(eq("neId", neid),
+	private List<Document> getTpsByQ3Ne(Integer neId) {
+		List<Document> docList = getCollection(neId)
+				.find(and(eq("neId", neId),
 						in("layerRates", ManagedObjectType.STM1_OPTICAL, ManagedObjectType.STM4_OPTICAL,
 								ManagedObjectType.STM16_OPTICAL, ManagedObjectType.STM64_OPTICAL,
 								ManagedObjectType.STM256_OPTICAL, ManagedObjectType.STM1_ELECTRICAL)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find q3 tp, query by neid = " + neid);
+			log.error("can not find q3 tp, query by neid = " + neId);
 			return new ArrayList<Document>();
 		}
 		return docList;
 	}
 
-	private List<Document> getTpsBySnmpNe(Integer neid) {
-		List<Document> docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
+	private List<Document> getTpsBySnmpNe(Integer neId) {
+		List<Document> docList = getCollection(neId).find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find snmp tp, query by neid = " + neid);
+			log.error("can not find snmp tp, query by neid = " + neId);
 			return new ArrayList<Document>();
 		}
 		return docList;
 	}
 
 	// TODO layerRate在数据库中保存的是List，这里传入的String，这个方法是有问题的
-	public List<AdpTp> getTpsByLayerRate(Integer neid, String layerrate) throws Exception {
+	public List<AdpTp> getTpsByLayerRate(Integer neId, String layerrate) throws Exception {
+		MongoCollection<Document> dbc = getCollection(neId);
 		List<Document> docList = null;
-		if ((null == neid || neid < 0) && StringUtils.isEmpty(layerrate)) {
+		if ((null == neId || neId < 0) && StringUtils.isEmpty(layerrate)) {
 			docList = dbc.find().into(new ArrayList<Document>());
 		} else if (StringUtils.isEmpty(layerrate)) {
-			docList = dbc.find(eq("neId", neid)).into(new ArrayList<Document>());
-		} else if (null == neid || neid < 0) {
+			docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
+		} else if (null == neId || neId < 0) {
 			docList = dbc.find(eq("layerRate", layerrate)).into(new ArrayList<Document>());
 		} else {
-			docList = dbc.find(and(eq("neId", neid), eq("layerRate", layerrate))).into(new ArrayList<Document>());
+			docList = dbc.find(and(eq("neId", neId), eq("layerRate", layerrate))).into(new ArrayList<Document>());
 		}
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by neid = " + neid + ", layerRate = " + layerrate);
+			log.error("can not find tp, query by neid = " + neId + ", layerRate = " + layerrate);
 			return new ArrayList<AdpTp>();
 		}
 
@@ -199,7 +198,8 @@ public class AdpTpsDbMgr {
 				} else {
 					Object obj = f.get(body);
 					if (null != obj && !(obj.toString().equalsIgnoreCase("id"))) {
-						dbc.updateOne(new BasicDBObject("id", body.getId()), set(f.getName(), f.get(body).toString()));
+						getCollection(body.getNeId()).updateOne(new BasicDBObject("id", body.getId()),
+								set(f.getName(), f.get(body).toString()));
 					}
 				}
 
@@ -211,43 +211,41 @@ public class AdpTpsDbMgr {
 		return true;
 	}
 
-	public void updateTpLayerRate(Integer tpId, List<String> layerRates) throws Exception {
-		dbc.updateOne(eq("id", tpId), set("layerRates", layerRates));
+	public void updateTpLayerRate(Integer neId, Integer tpId, List<String> layerRates) throws Exception {
+		getCollection(neId).updateOne(eq("id", tpId), set("layerRates", layerRates));
 	}
 
-	public List<AdpTp> getTps() throws Exception {
+	public List<AdpTp> getTps(Protocols protocol) throws Exception {
 		Date begin = new Date();
-
-		List<Document> docList = dbc.find().into(new ArrayList<Document>());
-
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp");
+		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
+		List<Integer> idList = nesDbMgr.getNeIds();
+		if (null == idList || idList.isEmpty()) {
+			log.error("there is no ne found");
 			return new ArrayList<AdpTp>();
 		}
 
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
-		}
-
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
-		for (Document doc : docList) {
-			AdpTp tp = constructTp(doc);
-			tpList.add(tp);
+		List<AdpTp> allTpList = new ArrayList<AdpTp>();
+		for (Integer i : idList) {
+			List<AdpTp> tpList = getTpsByNeId(i, protocol);
+			if (null == tpList || tpList.isEmpty()) {
+				log.error("can not find tp list by neid :" + i);
+				continue;
+			}
+			allTpList.addAll(tpList);
 		}
 
 		Date end = new Date();
 		log.debug("getTPs, cost time = " + (end.getTime() - begin.getTime()));
 
-		return tpList;
+		return allTpList;
 	}
 
-	public List<AdpTp> getTpsByType(Integer neid, String tptype) throws Exception {
+	public List<AdpTp> getTpsByType(Integer neId, String tptype) throws Exception {
 		List<Document> docList = null;
-		docList = dbc.find(and(eq("neId", neid), eq("tpType", tptype))).into(new ArrayList<Document>());
+		docList = getCollection(neId).find(and(eq("neId", neId), eq("tpType", tptype))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by neid = " + neid + ", tptype = " + tptype);
+			log.error("can not find tp, query by neid = " + neId + ", tptype = " + tptype);
 			return new ArrayList<AdpTp>();
 		}
 
@@ -264,20 +262,20 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public void deleteTpsbyNeId(Integer neid) throws Exception {
-		dbc.deleteMany(new Document("neId", neid));
+	public void deleteTpsbyNeId(Integer neId) throws Exception {
+		getCollection(neId).deleteMany(new Document("neId", neId));
 	}
 
-	public List<AdpTp> getCtpsByTpId(Integer neid, String ptpid) throws Exception {
+	public List<AdpTp> getCtpsByTpId(Integer neId, String ptpid) throws Exception {
 		Date begin = new Date();
-		log.debug("getCTPsByTP, neid = {}, ptpid = {}", neid, ptpid);
+		log.debug("getCTPsByTP, neid = {}, ptpid = {}", neId, ptpid);
 
-		Bson filter = and(eq("neId", neid), eq("parentTpId", ptpid),
+		Bson filter = and(eq("neId", neId), eq("parentTpId", ptpid),
 				or(eq("tpType", "au4CTPBidirectionalR1"), eq("tpType", "vc12PathTraceTTPBidirectional")));
-		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find ctp, query by neid = {} and ptpid = {}", neid, ptpid);
+			log.error("can not find ctp, query by neid = {} and ptpid = {}", neId, ptpid);
 			return new ArrayList<AdpTp>();
 		}
 
@@ -298,35 +296,6 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public List<AdpTp> getChildrenTps(Integer tpid) throws Exception {
-		Date begin = new Date();
-		log.debug("getChildrenTps, tpid = {}", tpid);
-
-		Bson filter = and(eq("parentTpId", tpid), eq("tpType", "tu12CTPBidirectionalR1"));
-		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
-
-		if (null == docList || docList.isEmpty()) {
-			log.error("can not find children tps, query by tpid = {}", tpid);
-			return new ArrayList<AdpTp>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
-		}
-
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
-		for (Document doc : docList) {
-			AdpTp tp = constructTp(doc);
-			tpList.add(tp);
-		}
-
-		Date end = new Date();
-		log.debug("getChildrenTPs cost time = " + (end.getTime() - begin.getTime()));
-
-		return tpList;
-	}
-
 	public List<AdpTp> getChildrenTps(Integer neId, Integer tpId) throws Exception {
 		Date begin = new Date();
 		log.debug("getChildrenTps, neId = {}, tpid = {}", neId, tpId);
@@ -335,7 +304,7 @@ public class AdpTpsDbMgr {
 		Bson filter = and(eq("neId", neId), eq("parentTpID", tpId),
 				in("layerRates", ManagedObjectType.VC12.getLayerRates(), ManagedObjectType.TU12.getLayerRates(),
 						ManagedObjectType.VC3.getLayerRates(), ManagedObjectType.TU3.getLayerRates()));
-		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find children tps, query by tpid = {}", tpId);
@@ -359,7 +328,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public AdpTp getTpByLayerRateAndTimeSlot(String suffixId, String layerRate) throws Exception {
+	public AdpTp getTpByLayerRateAndTimeSlot(Integer neId, String suffixId, String layerRate) throws Exception {
 		Date begin = new Date();
 		log.debug("getTpByLayerRateAndTimeSlot, suffixId = {}, layerRate = {}", suffixId, layerRate);
 
@@ -367,7 +336,7 @@ public class AdpTpsDbMgr {
 		q.put("id", Pattern.compile(""));
 
 		Bson filter = and(q, eq("tpType", layerRate));
-		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by suffixId = {}", suffixId);
@@ -386,14 +355,14 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public AdpTp getTpByTimeSlot(String suffixId) throws Exception {
+	public AdpTp getTpByTimeSlot(Integer neId, String suffixId) throws Exception {
 		Date begin = new Date();
 		log.debug("getTpByTimeSlot, suffixId = {}", suffixId);
 
 		BasicDBObject filter = new BasicDBObject();
 		filter.put("id", Pattern.compile(""));
 
-		List<Document> docList = dbc.find(filter).into(new ArrayList<Document>());
+		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find tp, query by suffixId = {}", suffixId);
@@ -413,7 +382,7 @@ public class AdpTpsDbMgr {
 	}
 
 	public Integer getIdByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
-		List<Document> docList = dbc.find(and(eq("keyOnNe", keyOnNe), eq("neId", neId)))
+		List<Document> docList = getCollection(neId).find(and(eq("keyOnNe", keyOnNe), eq("neId", neId)))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -426,10 +395,10 @@ public class AdpTpsDbMgr {
 		return tp.getId();
 	}
 
-	public AdpTp getTpByParentIdAndLayerRate(Integer parentId, List<String> layerRates) throws Exception {
+	public AdpTp getTpByParentIdAndLayerRate(Integer neId, Integer parentId, List<String> layerRates) throws Exception {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
-		List<Document> docList = dbc.find(and(eq("parentTpId", parentId), eq("layerRates", layerRates)))
+		List<Document> docList = getCollection(neId).find(and(eq("parentTpId", parentId), eq("layerRates", layerRates)))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -441,10 +410,10 @@ public class AdpTpsDbMgr {
 		return constructTp(doc);
 	}
 
-	public AdpTp getTpByIdAndLayerRate(Integer tpId, List<String> layerRates) throws Exception {
+	public AdpTp getTpByIdAndLayerRate(Integer neId, Integer tpId, List<String> layerRates) throws Exception {
 		log.debug("getTpByIdAndLayerRate, tpId = {}", tpId);
 
-		List<Document> docList = dbc.find(and(eq("id", tpId), eq("layerRates", layerRates)))
+		List<Document> docList = getCollection(neId).find(and(eq("id", tpId), eq("layerRates", layerRates)))
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {

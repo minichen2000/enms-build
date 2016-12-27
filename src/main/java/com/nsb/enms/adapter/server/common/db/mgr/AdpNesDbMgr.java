@@ -394,4 +394,21 @@ public class AdpNesDbMgr {
 		AdpNe ne = constructNe(doc);
 		return ne.getId();
 	}
+
+	public List<Integer> getNeIds() throws Exception {
+		Date begin = new Date();
+		List<Document> docList = dbc.find().projection(new Document("id", 1)).into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find ne");
+			return new ArrayList<Integer>();
+		}
+		List<Integer> neList = new ArrayList<Integer>();
+		for (Document doc : docList) {
+			neList.add(doc.getInteger("id"));
+		}
+		Date end = new Date();
+		log.debug("getNeIds, cost time = " + (end.getTime() - begin.getTime()));
+
+		return neList;
+	}
 }

@@ -330,7 +330,9 @@ public class AdpCreateXcsMgr {
 
 	private AdpTp getTpById(Integer tpId) throws AdapterException {
 		try {
-			AdpTp tp = tpsDbMgr.getTpById(tpId);
+			// TODO 添加neid
+			Integer neId = 1;
+			AdpTp tp = tpsDbMgr.getTpById(neId, tpId);
 			if (tp.getId() > -1) {
 				return tp;
 			}

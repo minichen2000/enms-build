@@ -223,7 +223,9 @@ public class AdpQ3XcsMgr {
 				subTpLR = ManagedObjectType.E3_PHYSICAL.getLayerRates();
 			}
 
-			ctp = tpsDbMgr.getTpByParentIdAndLayerRate(ptpId, subTpLR);
+			// TODO 添加neid
+			Integer neId = 1;
+			ctp = tpsDbMgr.getTpByParentIdAndLayerRate(neId, ptpId, subTpLR);
 		} catch (Exception e) {
 			log.error("getPdhSubTp", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
