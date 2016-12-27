@@ -99,6 +99,8 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 			if (!map.containsKey(ip)) {
 				map.put(ip, new ConcurrentHashMap<String, Long>());
 				map.get(ip).put("firstTime", new Date().getTime());
+				map.get(ip).put("firstSysUpTime", sysUpTime);
+				map.get(ip).put("lastSysUpTime", sysUpTime);
 			}
 
 			String key = ip + trapObjectId + trapData + trapChangeObject;
@@ -106,16 +108,21 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 				long oldSysUpTime = map.get(ip).get(key);
 				long time = sysUpTime - oldSysUpTime;
 				if (time >= MAX_SYSUP_TIME) {
+					map.get(ip).put(key, sysUpTime);
+					map.get(ip).put("lastSysUpTime", sysUpTime);
 					queue.push(trapInfo);
 				} else {
+					System.out.println("duplicate notification: " + trapInfo);
 					log.debug("duplicate notification: " + trapInfo);
 				}
 			} else {
 				map.get(ip).put(key, sysUpTime);
+				map.get(ip).put("lastSysUpTime", sysUpTime);
 				queue.push(trapInfo);
 			}
 
 		} else {
+			System.out.println("drop notification: " + trapInfo);
 			log.debug("drop notification: " + trapInfo);
 		}
 	}
@@ -130,9 +137,14 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 			for (String ip : map.keySet()) {
 				long currentTime = new Date().getTime();
 				long firstTime = map.get(ip).get("firstTime");
-				long time = currentTime - firstTime;
-				if (time  >= MAX_CLEAN_TIME) {
+				long firstSysUpTime = map.get(ip).get("firstSysUpTime");
+				long lastSysUpTime = map.get(ip).get("lastSysUpTime");
+				long currentSysTime = currentTime - firstTime;
+				long sysUpTime = lastSysUpTime - firstSysUpTime;
+				long time = currentSysTime - sysUpTime * 10;
+				if (time >= MAX_CLEAN_TIME && !map.get(ip).isEmpty()) {
 					map.remove(ip);
+					System.out.println("Clean the map with ip:" + ip);
 					log.debug("Clean the map with ip:" + ip);
 				}
 			}

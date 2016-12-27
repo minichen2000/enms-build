@@ -57,21 +57,14 @@ public class NotificationDispatcher {
 	public void dispatcher(List<Pair<String, String>> trap) {
 		for (Pair<String, String> pair : trap) {
 			if (equAttrOidList.contains(pair.getSecond())) {
-				printMsg(trap);
+				EqNotificationHandler.getInstance().handle(trap);
 				break;
 			}
 
 			if (tpAttrOidList.contains(pair.getSecond())) {
-				printMsg(trap);
+				TpNotificationHandler.getInstance().handle(trap);
 				break;
 			}
 		}
-	}
-
-	private void printMsg(List<Pair<String, String>> trap) {
-		for (Pair<String, String> pair : trap) {
-			System.out.println(pair.getFirst() + " = " + pair.getSecond());
-		}
-		System.out.println("=================================");
 	}
 }
