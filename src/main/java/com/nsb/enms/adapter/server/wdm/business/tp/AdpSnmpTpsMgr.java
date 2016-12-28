@@ -12,6 +12,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
 import com.nsb.enms.adapter.server.wdm.business.tp.ctp.Get130Scx10Ctps;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
@@ -108,41 +109,44 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void constructTpEntity(SnmpTpEntity entity, List<Pair<String, String>> row, String index) {
-		entity.setIndex(index);
-		entity.setTpType(row.get(1).getSecond());
-		entity.setAdminStatus(Integer.valueOf(row.get(2).getSecond()));
-		entity.setOperStatus(Integer.valueOf(row.get(3).getSecond()));
-		entity.setInternalType(row.get(4).getSecond());
-		List<String> supportedTypes = new ArrayList<String>();
-		supportedTypes.add(row.get(5).getSecond());
-		entity.setSupportedTypes(supportedTypes);
-		entity.setSecondaryState(Integer.valueOf(row.get(6).getSecond()));
-		int endType = Integer.valueOf(row.get(7).getSecond());
-		switch (endType) {
-		case 1: // notConnected
-			entity.setConnectedTo("");
-			break;
-		case 2: // internal
-			entity.setConnectedTo("ifIndex");
-			break;
-		case 3: // external
-			entity.setConnectedTo("IP/ifIndex");
-			break;
+		try {
+			entity.setIndex(index);
+			entity.setTpType(row.get(1).getSecond());
+			entity.setAdminStatus(Object2IntegerUtil.toInt(row.get(2).getSecond()));
+			entity.setOperStatus(Object2IntegerUtil.toInt(row.get(3).getSecond()));
+			entity.setInternalType(row.get(4).getSecond());
+			List<String> supportedTypes = new ArrayList<String>();
+			supportedTypes.add(row.get(5).getSecond());
+			entity.setSupportedTypes(supportedTypes);
+			entity.setSecondaryState(Object2IntegerUtil.toInt(row.get(6).getSecond()));
+			int endType = Object2IntegerUtil.toInt(row.get(7).getSecond());
+			switch (endType) {
+			case 1: // notConnected
+				entity.setConnectedTo("");
+				break;
+			case 2: // internal
+				entity.setConnectedTo("ifIndex");
+				break;
+			case 3: // external
+				entity.setConnectedTo("IP/ifIndex");
+				break;
+			}
+			entity.setDirection(row.get(8).getSecond());
+			endType = Object2IntegerUtil.toInt(row.get(9).getSecond());
+			switch (endType) {
+			case 1: // notConnected
+				entity.setConnectedFrom("");
+				break;
+			case 2: // internal
+				entity.setConnectedFrom("ifIndex");
+				break;
+			case 3: // external
+				entity.setConnectedFrom("IP/ifIndex");
+				break;
+			}
+		} catch (Exception e) {
+			log.error("constructTpEntity", e);
 		}
-		entity.setDirection(row.get(8).getSecond());
-		endType = Integer.valueOf(row.get(9).getSecond());
-		switch (endType) {
-		case 1: // notConnected
-			entity.setConnectedFrom("");
-			break;
-		case 2: // internal
-			entity.setConnectedFrom("ifIndex");
-			break;
-		case 3: // external
-			entity.setConnectedFrom("IP/ifIndex");
-			break;
-		}
-
 	}
 
 	private boolean isTpExisted(String keyOnNe) throws AdapterException {
