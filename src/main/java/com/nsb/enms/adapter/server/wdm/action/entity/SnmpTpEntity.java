@@ -19,6 +19,12 @@ public class SnmpTpEntity {
 
 	private String direction;
 
+	private int secondaryState;
+
+	private String connectedTo;
+
+	private String connectedFrom;
+
 	public String getUserLabel() {
 		return userLabel;
 	}
@@ -83,10 +89,35 @@ public class SnmpTpEntity {
 		this.direction = direction;
 	}
 
+	public int getSecondaryState() {
+		return this.secondaryState;
+	}
+
+	public void setSecondaryState(int secondaryState) {
+		this.secondaryState = secondaryState;
+	}
+
+	public String getConnectedTo() {
+		return this.connectedTo;
+	}
+
+	public void setConnectedTo(String connectedTo) {
+		this.connectedTo = connectedTo;
+	}
+
+	public String getConnectedFrom() {
+		return this.connectedFrom;
+	}
+
+	public void setConnectedFrom(String connectedFrom) {
+		this.connectedFrom = connectedFrom;
+	}
+
 	@Override
 	public String toString() {
 		return "SnmpTpEntity [index=" + index + ", userLabel=" + userLabel + ", tpType=" + tpType + ", internalType="
 				+ internalType + ", adminStatus=" + adminStatus + ", operStatus=" + operStatus + ", supportedTypes="
-				+ supportedTypes + ", direction=" + direction + "]";
+				+ supportedTypes + ", direction=" + direction + ", secondaryState=" + secondaryState +", connectedTo="
+				+ connectedTo +", connectedFrom=" + connectedFrom + "]";
 	}
 }

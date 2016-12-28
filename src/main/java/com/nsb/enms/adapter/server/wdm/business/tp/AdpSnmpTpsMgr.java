@@ -24,6 +24,7 @@ import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmp.SnmpClient;
 import com.nsb.enms.restful.model.adapter.AdpEquipment;
+import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class AdpSnmpTpsMgr {
@@ -91,7 +92,29 @@ public class AdpSnmpTpsMgr {
 		List<String> supportedTypes = new ArrayList<String>();
 		supportedTypes.add(row.get(5).getSecond());
 		entity.setSupportedTypes(supportedTypes);
-		entity.setDirection(row.get(6).getSecond());
+		entity.setSecondaryState(Integer.valueOf(row.get(6).getSecond()));
+		int endType = Integer.valueOf(row.get(7).getSecond());
+		switch(endType)
+		{
+		case 1: // notConnected
+			entity.setConnectedTo("");break;
+		case 2: // internal
+			entity.setConnectedTo("ifIndex");break;
+		case 3: // external
+			entity.setConnectedTo("IP/ifIndex");break;
+		}
+		entity.setDirection(row.get(8).getSecond());
+		endType = Integer.valueOf(row.get(9).getSecond());
+		switch(endType)
+		{
+		case 1: // notConnected
+			entity.setConnectedFrom("");break;
+		case 2: // internal
+			entity.setConnectedFrom("ifIndex");break;
+		case 3: // external
+			entity.setConnectedFrom("IP/ifIndex");break;
+		}
+		
 	}
 
 	private boolean isTpExisted(String keyOnNe) throws AdapterException {
@@ -124,7 +147,10 @@ public class AdpSnmpTpsMgr {
 		oids.add("1.3.6.1.2.1.2.2.1.8"); // ifOperStatus
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.5"); // tnAccessPortStateQualifier
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.8"); // tnAccessPortFarEndType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.9"); // tnAccessPortDirection
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.17"); //tnAccessPortFarEndTypeConnFrom
 		return oids;
 	}
 
@@ -156,6 +182,14 @@ public class AdpSnmpTpsMgr {
 			adpTp.setParentTpID(parentTpId);
 		}
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
+		if (TpType.PTP == tpType && equType.equals("130SCX10")) {
+			AdpKVPair pair = new AdpKVPair();
+			pair.setKey("supportedContainer");
+			pair.setValue("ODU2");
+			List<AdpKVPair> params = new ArrayList<AdpKVPair>();
+			params.add(pair);
+			adpTp.setParams(params);
+		}
 		return adpTp;
 	}
 
