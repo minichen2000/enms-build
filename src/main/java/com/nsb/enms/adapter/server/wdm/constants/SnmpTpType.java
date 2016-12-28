@@ -23,4 +23,9 @@ public enum SnmpTpType {
 		}
 		return UNKNOWN.name();
 	}
+	
+	public static void main(String args[]) {
+		boolean isOk = "PHN".equals(SnmpTpType.PHN);
+		System.out.println(isOk);
+	}
 }

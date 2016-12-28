@@ -13,6 +13,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
+import com.nsb.enms.adapter.server.wdm.business.tp.ctp.Get130Scx10Ctps;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
@@ -55,10 +56,33 @@ public class AdpSnmpTpsMgr {
 	}
 
 	public List<AdpTp> syncTps() throws AdapterException {
+		List<AdpTp> tpList = new ArrayList<AdpTp>();
+		List<AdpTp> ptpList = syncPtps();
+		tpList.addAll(ptpList);
+		List<AdpTp> ctpList = syncCtps(ptpList);
+		if (null != ctpList && !ctpList.isEmpty()) {
+			tpList.addAll(ctpList);
+		}
+		return tpList;
+	}
+
+	private List<AdpTp> syncPtps() throws AdapterException {
 		List<String> oids = setOidParams();
 		List<List<Pair<String, String>>> values = getTableValues(oids);
 		List<AdpTp> tpList = constructTpList(values);
 		return tpList;
+	}
+
+	private List<AdpTp> syncCtps(List<AdpTp> ptpList) throws AdapterException {
+		Get130Scx10Ctps ctps = new Get130Scx10Ctps();
+		for (AdpTp tp : ptpList) {
+			String keyOnNe = tp.getKeyOnNe();
+			if (is130Scx10(keyOnNe)) {
+				List<AdpTp> tpList = ctps.getNotOtnSignalCtps(neId, tp.getId(), keyOnNe);
+				return tpList;
+			}
+		}
+		return null;
 	}
 
 	private List<AdpTp> constructTpList(List<List<Pair<String, String>>> values) throws AdapterException {
@@ -94,27 +118,31 @@ public class AdpSnmpTpsMgr {
 		entity.setSupportedTypes(supportedTypes);
 		entity.setSecondaryState(Integer.valueOf(row.get(6).getSecond()));
 		int endType = Integer.valueOf(row.get(7).getSecond());
-		switch(endType)
-		{
+		switch (endType) {
 		case 1: // notConnected
-			entity.setConnectedTo("");break;
+			entity.setConnectedTo("");
+			break;
 		case 2: // internal
-			entity.setConnectedTo("ifIndex");break;
+			entity.setConnectedTo("ifIndex");
+			break;
 		case 3: // external
-			entity.setConnectedTo("IP/ifIndex");break;
+			entity.setConnectedTo("IP/ifIndex");
+			break;
 		}
 		entity.setDirection(row.get(8).getSecond());
 		endType = Integer.valueOf(row.get(9).getSecond());
-		switch(endType)
-		{
+		switch (endType) {
 		case 1: // notConnected
-			entity.setConnectedFrom("");break;
+			entity.setConnectedFrom("");
+			break;
 		case 2: // internal
-			entity.setConnectedFrom("ifIndex");break;
+			entity.setConnectedFrom("ifIndex");
+			break;
 		case 3: // external
-			entity.setConnectedFrom("IP/ifIndex");break;
+			entity.setConnectedFrom("IP/ifIndex");
+			break;
 		}
-		
+
 	}
 
 	private boolean isTpExisted(String keyOnNe) throws AdapterException {
@@ -150,7 +178,7 @@ public class AdpSnmpTpsMgr {
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.5"); // tnAccessPortStateQualifier
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.8"); // tnAccessPortFarEndType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.9"); // tnAccessPortDirection
-		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.17"); //tnAccessPortFarEndTypeConnFrom
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.17"); // tnAccessPortFarEndTypeConnFrom
 		return oids;
 	}
 
@@ -171,7 +199,7 @@ public class AdpSnmpTpsMgr {
 		List<String> layerRates = new ArrayList<String>();
 		String actualTpType = SnmpTpType.getTpType(tp.getInternalType());
 		layerRates.add(actualTpType);
-		if (TpType.PTP == tpType && !actualTpType.equals(SnmpTpType.PHN)) {
+		if (TpType.PTP == tpType && !actualTpType.equalsIgnoreCase(SnmpTpType.PHN.name())) {
 			layerRates.add(LayerRate.PHYSICAL.name());
 		}
 		adpTp.setLayerRates(layerRates);
@@ -221,6 +249,14 @@ public class AdpSnmpTpsMgr {
 		String portName = PSSBoardUtil.getPSSPortDesc(equType, position[2]);
 		String userLabel = equType + "-" + position[0] + "-" + position[1] + "-" + portName;
 		return userLabel;
+	}
+
+	private boolean is130Scx10(String index) throws AdapterException {
+		String ExpectedType = isExpectedEquExisted(index);
+		if ("130SCX10".equalsIgnoreCase(ExpectedType)) {
+			return true;
+		}
+		return false;
 	}
 
 	public static void main(String args[]) {

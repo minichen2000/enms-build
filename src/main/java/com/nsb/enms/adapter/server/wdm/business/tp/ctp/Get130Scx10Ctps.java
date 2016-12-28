@@ -3,7 +3,11 @@ package com.nsb.enms.adapter.server.wdm.business.tp.ctp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
+import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
@@ -12,12 +16,14 @@ import com.nsb.enms.common.TpType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
 public class Get130Scx10Ctps {
+	private final static Logger log = LogManager.getLogger(Get130Scx10Ctps.class);
+	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
 
 	public static void main(String[] args) {
 
 	}
 
-	private AdpTp getDsrCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getDsrCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.DSR.name());
 		int primaryLayerRate = LayerRate.DSR.ordinal();
@@ -32,7 +38,8 @@ public class Get130Scx10Ctps {
 		tp.setNativeName(userLabel);
 		tp.setUserLabel(userLabel);
 		tp.setLayerRates(layerRates);
-		tp.setKeyOnNe(ptpIndex);
+		String keyOnNe = primaryLayerRate + "_" + ptpIndex;
+		tp.setKeyOnNe(keyOnNe);
 		tp.setDirection(Direction.BI.name());
 		tp.setFreeResources(null);
 		tp.setTpType(TpType.CTP.name());
@@ -55,28 +62,36 @@ public class Get130Scx10Ctps {
 		return maxTpId;
 	}
 
-	private AdpTp getOdujCtps(String userLabel, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOdujCtp(String userLabel, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.ODU2.name());
 		int primaryLayerRate = LayerRate.ODU2.ordinal();
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private void getClientCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		getDsrCtps(neId, ptpId, ptpIndex);
-		getOdujCtps("/odu2=1", neId, ptpId, ptpIndex);
+	private void getClientCtps(List<AdpTp> ctpList, Integer neId, Integer ptpId, String ptpIndex)
+			throws AdapterException {
+		AdpTp dsrCtp = getDsrCtp(neId, ptpId, ptpIndex);
+		ctpList.add(dsrCtp);
+		AdpTp odujCtp = getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
+		ctpList.add(odujCtp);
 	}
 
-	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private void getLineCtps(List<AdpTp> ctpList, Integer neId, Integer ptpId, String ptpIndex)
+			throws AdapterException {
 		for (int i = 1; i <= 10; i++) {
-			getOdujCtps("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
+			AdpTp odujCtp = getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
+			ctpList.add(odujCtp);
 		}
-		getOdukCtps(neId, ptpId, ptpIndex);
-		getOtukCtps(neId, ptpId, ptpIndex);
-		getOchCtps(neId, ptpId, ptpIndex);
+		AdpTp odukCtp = getOdukCtp(neId, ptpId, ptpIndex);
+		ctpList.add(odukCtp);
+		AdpTp otukCtp = getOtukCtps(neId, ptpId, ptpIndex);
+		ctpList.add(otukCtp);
+		AdpTp ochjCtp = getOchCtp(neId, ptpId, ptpIndex);
+		ctpList.add(ochjCtp);
 	}
 
-	private AdpTp getOdukCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOdukCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.ODU4.name());
 		int primaryLayerRate = LayerRate.ODU4.ordinal();
@@ -85,7 +100,7 @@ public class Get130Scx10Ctps {
 
 	}
 
-	private AdpTp getOchCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OCH.name());
 		int primaryLayerRate = LayerRate.OCH.ordinal();
@@ -118,8 +133,38 @@ public class Get130Scx10Ctps {
 		}
 	}
 
-	public void getNotOtnSignalCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		getClientCtps(neId, ptpId, ptpIndex);
-		getLineCtps(neId, ptpId, ptpIndex);
+	public List<AdpTp> getNotOtnSignalCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		List<AdpTp> ctpList = new ArrayList<AdpTp>();
+		getClientCtps(ctpList, neId, ptpId, ptpIndex);
+		getLineCtps(ctpList, neId, ptpId, ptpIndex);
+		List<AdpTp> newCtpList = new ArrayList<AdpTp>();
+		for (AdpTp ctp : ctpList) {
+			if (isCtpExisted(neId, ctp.getKeyOnNe())) {
+				// TODO 替换已有值
+				continue;
+			}
+			try {
+				AdpTp newCtp = tpDbMgr.addTp(ctp);
+				newCtpList.add(newCtp);
+			} catch (Exception e) {
+				log.error("addTps", e);
+				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+			}
+		}
+
+		return newCtpList;
+	}
+
+	private boolean isCtpExisted(Integer neId, String keyOnNe) throws AdapterException {
+		try {
+			AdpTp tpFromDb = tpDbMgr.getTpByKeyOnNe(neId, keyOnNe);
+			if (null == tpFromDb || null == tpFromDb.getId()) {
+				return false;
+			}
+		} catch (Exception e) {
+			log.error("getTpByKeyOnNe", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return true;
 	}
 }
