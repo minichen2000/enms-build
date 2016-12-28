@@ -329,7 +329,7 @@ public class AdpSnmpNesMgr {
 		Integer id = body.getId();
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
-		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervsionState",
+		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervisionState",
 				SupervisionState.SUPERVISED.name(), SupervisionState.NOT_SUPERVISED.name());
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "communicationState",
 				CommunicationState.DISCONNECTED.name(), CommunicationState.CONNECTED.name());
