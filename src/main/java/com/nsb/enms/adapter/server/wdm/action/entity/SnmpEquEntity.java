@@ -17,6 +17,10 @@ public class SnmpEquEntity
     private String softwarePartNumber;
 
     private String serialNumber;
+    
+    private String adminState;
+    
+    private String operationalState;
 
     public Integer getId()
     {
@@ -97,8 +101,24 @@ public class SnmpEquEntity
     {
         this.serialNumber = serialNumber;
     }
+ 
+    public String getAdminState() {
+		return adminState;
+	}
 
-    @Override
+	public void setAdminState(String adminState) {
+		this.adminState = adminState;
+	}
+
+	public String getOperationalState() {
+		return operationalState;
+	}
+
+	public void setOperationalState(String operationalState) {
+		this.operationalState = operationalState;
+	}
+
+	@Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
@@ -112,6 +132,8 @@ public class SnmpEquEntity
         sb.append("    unitPartNumber: ").append(unitPartNumber).append("\n");
         sb.append("    softwarePartNumber: ").append(softwarePartNumber).append("\n");
         sb.append("    serialNumber: ").append(serialNumber).append("\n");
+        sb.append("    adminState: ").append(adminState).append("\n");
+        sb.append("    operationalState: ").append(operationalState).append("\n");
         sb.append("}");
         return sb.toString();
     }

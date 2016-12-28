@@ -1,12 +1,12 @@
 package com.nsb.enms.adapter.server.wdm.notification;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,14 +15,11 @@ import com.nsb.enms.adapter.server.common.constants.ConfigKey;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.NotifQueue;
 import com.nsb.enms.adapter.server.common.utils.TimeUtil;
+import com.nsb.enms.adapter.server.wdm.constants.SnmpTrapAttribute;
 import com.nsb.enms.adapter.server.common.utils.INotifProcessor;
-import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmp.DispatchTrap;
 import com.nsb.enms.common.utils.snmp.SnmpTrap;
 import com.nsb.enms.mib.pss.def.M_sysUpTime;
-import com.nsb.enms.mib.pss.def.M_tnTrapChangedObject;
-import com.nsb.enms.mib.pss.def.M_tnTrapData;
-import com.nsb.enms.mib.pss.def.M_tnTrapObjectID;
 
 public class AdpSnmpTrapHandler implements DispatchTrap {
 	private static final Logger log = LogManager.getLogger(AdpSnmpTrapHandler.class);
@@ -36,17 +33,17 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 	private static final long NOTIF_CLEAN_PERIOD = ConfLoader.getInstance().getInt(ConfigKey.NOTIF_CLEAN_PERIOD,
 			ConfigKey.DEFAULT_NOTIF_CLEAN_PERIOD);
 
-	private static NotifQueue<List<Pair<String, String>>> queue;
+	private static NotifQueue<Map<String, String>> queue;
 
 	private static AdpSnmpTrapHandler INSTANCE = new AdpSnmpTrapHandler();
 
 	private static Map<String, Map<String, Long>> map = new ConcurrentHashMap<String, Map<String, Long>>();
 
 	private AdpSnmpTrapHandler() {
-		queue = new NotifQueue<List<Pair<String, String>>>(new INotifProcessor<List<Pair<String, String>>>() {
+		queue = new NotifQueue<Map<String, String>>(new INotifProcessor<Map<String, String>>() {
 
 			@Override
-			public void process(List<Pair<String, String>> trapValue) throws AdapterException {
+			public void process(Map<String, String> trapValue) throws AdapterException {
 				NotificationDispatcher.getInstance().dispatcher(trapValue);
 			}
 		});
@@ -60,42 +57,15 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 	}
 
 	@Override
-	public void onTrap(List<Pair<String, String>> trapInfo) {
-		long sysUpTime = 0;
-		boolean flag = false;
-		String ip = "";
-		String trapObjectId = "";
-		String trapData = "";
-		String trapChangeObject = "";
-		for (Pair<String, String> pair : trapInfo) {
-			if (pair.getFirst().equals("ip")) {
-				ip = pair.getSecond();
-				continue;
-			}
+	public void onTrap(Map<String, String> trapInfo) {
+		String trapChangeObject = trapInfo.get(SnmpTrapAttribute.tnTrapChangedObject);
 
-			if (pair.getFirst().startsWith(M_sysUpTime.oid)) {
-				sysUpTime = TimeUtil.getSysUpTime(pair.getSecond());
-				continue;
-			}
+		if (!StringUtils.isEmpty(trapChangeObject)) {
+			long sysUpTime = TimeUtil.getSysUpTime(trapInfo.get(M_sysUpTime.oid + ".0"));
+			String ip = trapInfo.get("ip");
+			String trapObjectId = trapInfo.get(SnmpTrapAttribute.tnTrapObjectID);
+			String trapData = trapInfo.get(SnmpTrapAttribute.tnTrapData);
 
-			if (pair.getFirst().startsWith(M_tnTrapObjectID.oid)) {
-				trapObjectId = pair.getSecond();
-				continue;
-			}
-
-			if (pair.getFirst().startsWith(M_tnTrapData.oid)) {
-				trapData = pair.getSecond();
-				continue;
-			}
-
-			if (pair.getFirst().startsWith(M_tnTrapChangedObject.oid)) {
-				trapChangeObject = pair.getSecond();
-				flag = true;
-				continue;
-			}
-		}
-
-		if (flag) {
 			if (!map.containsKey(ip)) {
 				map.put(ip, new ConcurrentHashMap<String, Long>());
 				map.get(ip).put("firstTime", new Date().getTime());

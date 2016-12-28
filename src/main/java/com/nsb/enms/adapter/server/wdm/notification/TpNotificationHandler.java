@@ -1,11 +1,10 @@
 package com.nsb.enms.adapter.server.wdm.notification;
 
-import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.common.utils.Pair;
 
 public class TpNotificationHandler extends DefaultNotificationHandler{
 
@@ -21,10 +20,10 @@ public class TpNotificationHandler extends DefaultNotificationHandler{
 		return INSTANCE;
 	}
 
-	public void handle(List<Pair<String, String>> trap) {
-		for (Pair<String, String> pair : trap) {
-			System.out.println(pair.getFirst() + " = " + pair.getSecond());
-			log.debug(pair.getFirst() + " = " + pair.getSecond());
+	public void handle(Map<String, String> trap) {
+		for (String key : trap.keySet()) {
+			System.out.println(key + " = " + trap.get(key));
+			log.debug(key + " = " + trap.get(key));
 		}
 		System.out.println("=================================");
 	}

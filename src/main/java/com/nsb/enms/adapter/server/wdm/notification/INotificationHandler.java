@@ -1,9 +1,8 @@
 package com.nsb.enms.adapter.server.wdm.notification;
 
-import java.util.List;
+import java.util.Map;
 
-import com.nsb.enms.common.utils.Pair;
 
 public interface INotificationHandler {
-	public void handle(List<Pair<String, String>> trap);
+	public void handle(Map<String, String> trap);
 }

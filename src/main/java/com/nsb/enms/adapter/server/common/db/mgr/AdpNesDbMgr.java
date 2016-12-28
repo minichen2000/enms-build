@@ -394,6 +394,17 @@ public class AdpNesDbMgr {
 		AdpNe ne = constructNe(doc);
 		return ne.getId();
 	}
+	
+	public Integer getIdByAddress(String address) throws Exception {
+		List<Document> docList = dbc.find(eq("addresses.snmpAddress.snmpAgent", address)).into(new ArrayList<Document>());
+		if (null == docList || docList.isEmpty()) {
+			log.error("can not find ne, query by addresses.snmpAddress.snmpAgent = " + address);
+			return null;
+		}
+		Document doc = docList.get(0);
+		AdpNe ne = constructNe(doc);
+		return ne.getId();
+	}
 
 	public List<Integer> getNeIds() throws Exception {
 		Date begin = new Date();
