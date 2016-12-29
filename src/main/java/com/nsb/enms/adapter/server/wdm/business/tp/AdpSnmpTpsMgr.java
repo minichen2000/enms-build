@@ -195,7 +195,17 @@ public class AdpSnmpTpsMgr {
 		}
 		return tp;
 	}
-
+	private boolean updateTp2Db(AdpTp tp) throws AdapterException {
+		boolean ret = false;
+		try {
+			ret = tpsMgr.updateTp(tp);
+		} catch (Exception e) {
+			log.error("updateTp", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return ret;
+	}
+	
 	private List<String> setOidParams() {
 		List<String> oids = new ArrayList<String>();
 		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
@@ -408,9 +418,9 @@ public class AdpSnmpTpsMgr {
 		}
 	}
 	private void updateTpConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
-		boolean bStore;
+		boolean bUpdate;
 		for (AdpTp tp : tpList) {
-			bStore = false;
+			bUpdate = false;
 			List<AdpKVPair> params = tp.getParams();
 			for (AdpKVPair pair : params) {
 				String key = pair.getKey();
@@ -423,12 +433,12 @@ public class AdpSnmpTpsMgr {
 					String tpId = queryTpId(ifIndex);
 					if (tpId != null) {
 						pair.setKey(tpId);
-						bStore = true;
+						bUpdate = true;
 					}
 				}
 			}
-			if (bStore)
-				addTp2Db(tp);
+			if (bUpdate)
+				updateTp2Db(tp);
 		}
 	}
 	
