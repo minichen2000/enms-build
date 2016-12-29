@@ -21,6 +21,22 @@ public class SnmpEquEntity
     private String adminState;
     
     private String operationalState;
+    
+    private String clei;
+    
+    private String hfd;
+    
+    private String marketingPartNumber;
+    
+    private String companyID;
+    
+    private String mnemonic;
+    
+    private String date;
+    
+    private String extraData;
+    
+    private String factoryID;
 
     public Integer getId()
     {
@@ -118,6 +134,70 @@ public class SnmpEquEntity
 		this.operationalState = operationalState;
 	}
 
+	public String getClei() {
+		return clei;
+	}
+
+	public void setClei(String clei) {
+		this.clei = clei;
+	}
+
+	public String getHfd() {
+		return hfd;
+	}
+
+	public void setHfd(String hfd) {
+		this.hfd = hfd;
+	}
+
+	public String getMarketingPartNumber() {
+		return marketingPartNumber;
+	}
+
+	public void setMarketingPartNumber(String marketingPartNumber) {
+		this.marketingPartNumber = marketingPartNumber;
+	}
+
+	public String getCompanyID() {
+		return companyID;
+	}
+
+	public void setCompanyID(String companyID) {
+		this.companyID = companyID;
+	}
+
+	public String getMnemonic() {
+		return mnemonic;
+	}
+
+	public void setMnemonic(String mnemonic) {
+		this.mnemonic = mnemonic;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public String getExtraData() {
+		return extraData;
+	}
+
+	public void setExtraData(String extraData) {
+		this.extraData = extraData;
+	}
+
+	public String getFactoryID() {
+		return factoryID;
+	}
+
+	public void setFactoryID(String factoryID) {
+		this.factoryID = factoryID;
+	}
+
 	@Override
     public String toString()
     {
@@ -133,7 +213,14 @@ public class SnmpEquEntity
         sb.append("    softwarePartNumber: ").append(softwarePartNumber).append("\n");
         sb.append("    serialNumber: ").append(serialNumber).append("\n");
         sb.append("    adminState: ").append(adminState).append("\n");
-        sb.append("    operationalState: ").append(operationalState).append("\n");
+        sb.append("    clei: ").append(clei).append("\n");
+        sb.append("    hfd: ").append(hfd).append("\n");
+        sb.append("    marketingPartNumber: ").append(marketingPartNumber).append("\n");
+        sb.append("    companyID: ").append(companyID).append("\n");
+        sb.append("    mnemonic: ").append(mnemonic).append("\n");
+        sb.append("    date: ").append(date).append("\n");
+        sb.append("    extraData: ").append(extraData).append("\n");
+        sb.append("    factoryID: ").append(factoryID).append("\n");        
         sb.append("}");
         return sb.toString();
     }

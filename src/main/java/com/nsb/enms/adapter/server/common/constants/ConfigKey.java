@@ -37,7 +37,7 @@ public class ConfigKey {
 	
 	public static final String MAX_SYSUP_TIME = "MAX_SYSUP_TIME";
 
-	public static final int DEFAULT_MAX_SYSUP_TIME = 10;
+	public static final int DEFAULT_MAX_SYSUP_TIME = 50;
 	
 	public static final String MAX_CLEAN_TIME = "MAX_CLEAN_TIME";
 

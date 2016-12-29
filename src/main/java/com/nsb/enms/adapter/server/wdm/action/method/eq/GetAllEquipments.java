@@ -51,14 +51,7 @@ public class GetAllEquipments {
 
 	private static List<SnmpEquEntity> getShelfs(SnmpClient client) throws AdapterException {
 		log.debug("--------------Start getShelfs--------------");
-		List<String> leafOids = new ArrayList<String>();
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfName);
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfProgrammedType);
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfPresentType);
-
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfRiManufacturingPartNumber);
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfRiSWPartNum);
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfRiSerialNumber);
+		List<String> leafOids = getShelfLeafOids();
 		List<SnmpEquEntity> shelfs = new ArrayList<SnmpEquEntity>();
 		try {
 			List<List<Pair<String, String>>> rows = client.snmpWalkTableView(leafOids);
@@ -66,12 +59,8 @@ public class GetAllEquipments {
 				SnmpEquEntity shelf = new SnmpEquEntity();
 				String index = row.get(0).getSecond().replace(".", "/");
 				shelf.setIndex("1/" + index);
-				shelf.setName(row.get(1).getSecond());
-				shelf.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(2).getSecond()));
-				shelf.setPresentType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(3).getSecond()));
-				shelf.setUnitPartNumber(row.get(4).getSecond());
-				shelf.setSoftwarePartNumber(row.get(5).getSecond());
-				shelf.setSerialNumber(row.get(6).getSecond());
+				row.remove(0);
+				constructShelf(shelf, row);
 				shelfs.add(shelf);
 			}
 		} catch (IOException e) {
@@ -83,25 +72,12 @@ public class GetAllEquipments {
 
 	private static SnmpEquEntity getShelf(SnmpClient client, String index) throws AdapterException {
 		log.debug("--------------Start getShelf--------------");
-		List<String> leafOids = new ArrayList<String>();
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfName );
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfProgrammedType );
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfPresentType );
-
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfRiManufacturingPartNumber );
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfRiSWPartNum );
-		leafOids.add(SnmpEqAttribute.ShelfAttribute.shelfRiSerialNumber );
+		List<String> leafOids = getShelfLeafOids();
 		SnmpEquEntity shelf = new SnmpEquEntity();
 		try {
 			List<Pair<String, String>> row = client.snmpMultiGet(leafOids, index);
 			shelf.setIndex("1/" + index.replace(".", "/"));
-			shelf.setName(row.get(0).getSecond());
-			shelf.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(1).getSecond()));
-			shelf.setPresentType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(2).getSecond()));
-			shelf.setUnitPartNumber(row.get(3).getSecond());
-			shelf.setSoftwarePartNumber(row.get(4).getSecond());
-			shelf.setSerialNumber(row.get(5).getSecond());
-
+			constructShelf(shelf, row);
 		} catch (IOException e) {
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
 		}
@@ -111,16 +87,7 @@ public class GetAllEquipments {
 
 	private static List<SnmpEquEntity> getSlotCards(SnmpClient client) throws AdapterException {
 		log.debug("--------------Start getSlotCards--------------");
-		List<String> leafOids = new ArrayList<String>();
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotProgrammedType);
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotPresentType);
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotAdminState);
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotOperationalState);
-
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardName);
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardSerialNumber);
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardManufacturingPartNumber);
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardSWPartNum);
+		List<String> leafOids = getSlotCardLeafOids();
 
 		List<SnmpEquEntity> slotCards = new ArrayList<SnmpEquEntity>();
 		try {
@@ -129,14 +96,8 @@ public class GetAllEquipments {
 				SnmpEquEntity slotCard = new SnmpEquEntity();
 				String index = "1/" + row.get(0).getSecond().replace(".", "/");
 				slotCard.setIndex(index);
-				slotCard.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getSlotCardType(row.get(1).getSecond()));
-				slotCard.setPresentType(SnmpEqShelfSlotTypeMapUtil.getSlotCardType(row.get(2).getSecond()));
-				slotCard.setAdminState(SnmpSlotState.getSlotState(row.get(3).getSecond()));
-				slotCard.setOperationalState(SnmpSlotState.getSlotState(row.get(4).getSecond()));
-				slotCard.setName(row.get(5).getSecond());
-				slotCard.setSerialNumber(row.get(6).getSecond());
-				slotCard.setUnitPartNumber(row.get(7).getSecond());
-				slotCard.setSoftwarePartNumber(row.get(8).getSecond());
+				row.remove(0);
+				constructSlotCard(slotCard, row);
 				slotCards.add(slotCard);
 			}
 		} catch (IOException e) {
@@ -148,29 +109,12 @@ public class GetAllEquipments {
 
 	private static SnmpEquEntity getSlotCard(SnmpClient client, String index) throws AdapterException {
 		log.debug("--------------Start getSlotCard--------------");
-		List<String> leafOids = new ArrayList<String>();
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotProgrammedType );
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotPresentType );
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotAdminState );
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.slotOperationalState );
-
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardName );
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardSerialNumber );
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardManufacturingPartNumber );
-		leafOids.add(SnmpEqAttribute.SlotCardAttribute.cardSWPartNum );
-
+		List<String> leafOids = getSlotCardLeafOids();
 		SnmpEquEntity slotCard = new SnmpEquEntity();
 		try {
 			List<Pair<String, String>> row = client.snmpMultiGet(leafOids, index);
 			slotCard.setIndex("1/" + index.replace(".", "/"));
-			slotCard.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getSlotCardType(row.get(0).getSecond()));
-			slotCard.setPresentType(SnmpEqShelfSlotTypeMapUtil.getSlotCardType(row.get(1).getSecond()));
-			slotCard.setAdminState(SnmpSlotState.getSlotState(row.get(2).getSecond()));
-			slotCard.setOperationalState(SnmpSlotState.getSlotState(row.get(3).getSecond()));
-			slotCard.setName(row.get(4).getSecond());
-			slotCard.setSerialNumber(row.get(5).getSecond());
-			slotCard.setUnitPartNumber(row.get(6).getSecond());
-			slotCard.setSoftwarePartNumber(row.get(7).getSecond());
+			constructSlotCard(slotCard, row);
 		} catch (IOException e) {
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
 		}
@@ -178,14 +122,81 @@ public class GetAllEquipments {
 		return slotCard;
 	}
 	
-	public static void main(String[] args) {
-		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
-		try {
-			SnmpEquEntity shelf = getSlotCard(client, "1.19");
-			System.out.println(shelf);
-		} catch (AdapterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private static void constructShelf(SnmpEquEntity shelf, List<Pair<String, String>> row)
+	{
+		shelf.setName(row.get(0).getSecond());
+		shelf.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(1).getSecond()));
+		shelf.setPresentType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(2).getSecond()));
+		shelf.setUnitPartNumber(row.get(3).getSecond());
+		shelf.setSoftwarePartNumber(row.get(4).getSecond());
+		shelf.setSerialNumber(row.get(5).getSecond());
+		shelf.setClei(row.get(6).getSecond());
+		shelf.setCompanyID(row.get(7).getSecond());
+		shelf.setDate(row.get(8).getSecond());
+		shelf.setExtraData(row.get(9).getSecond());
+		shelf.setFactoryID(row.get(10).getSecond());
+		shelf.setMnemonic(row.get(11).getSecond());
+	}
+	
+	private static void constructSlotCard(SnmpEquEntity slotCard, List<Pair<String, String>> row)
+	{
+		slotCard.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getSlotCardType(row.get(0).getSecond()));
+		slotCard.setPresentType(SnmpEqShelfSlotTypeMapUtil.getSlotCardType(row.get(1).getSecond()));
+		slotCard.setAdminState(SnmpSlotState.getSlotState(row.get(2).getSecond()));
+		slotCard.setOperationalState(SnmpSlotState.getSlotState(row.get(3).getSecond()));
+		slotCard.setName(row.get(4).getSecond());
+		slotCard.setSerialNumber(row.get(5).getSecond());
+		slotCard.setUnitPartNumber(row.get(6).getSecond());
+		slotCard.setSoftwarePartNumber(row.get(7).getSecond());
+		slotCard.setClei(row.get(8).getSecond());
+		slotCard.setCompanyID(row.get(9).getSecond());
+		slotCard.setDate(row.get(10).getSecond());
+		slotCard.setExtraData(row.get(11).getSecond());
+		slotCard.setFactoryID(row.get(12).getSecond());
+		slotCard.setHfd(row.get(13).getSecond());
+		slotCard.setMarketingPartNumber(row.get(14).getSecond());
+		slotCard.setMnemonic(row.get(15).getSecond());
+	}
+	
+	private static List<String> getShelfLeafOids()
+	{
+		List<String> leafOids = new ArrayList<String>();
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfName );
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfProgrammedType );
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfPresentType );
+
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiManufacturingPartNumber );
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiSWPartNum );
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiSerialNumber );
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiCLEI);
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiCompanyID);
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiDate);
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiExtraData);
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiFactoryID);
+		leafOids.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiMnemonic);
+		return leafOids;
+	}
+	
+	private static List<String> getSlotCardLeafOids()
+	{
+		List<String> leafOids = new ArrayList<String>();
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnSlotProgrammedType );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnSlotPresentType );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnSlotAdminState );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnSlotOperationalState );
+
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardName );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardSerialNumber );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardManufacturingPartNumber );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardSWPartNum );
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardCLEI);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardCompanyID);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardDate);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardExtraData);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardFactoryID);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardHFD);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardMarketingPartNumber);
+		leafOids.add(SnmpEqAttribute.SlotCardAttribute.tnCardMnemonic);
+		return leafOids;
 	}
 }

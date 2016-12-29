@@ -61,12 +61,10 @@ public class AdpSnmpEqusMgr {
 	public AdpEquipment getEquipment(String address, String index, EquType type) throws AdapterException {
 		try {
 			Integer neId = nesDbMgr.getIdByAddress(address);
-
-			SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
-			SnmpEquEntity equ = GetAllEquipments.getEquipment(client, index, type);
-
-			AdpEquipment eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, equ.getIndex());
-			if (eqFromDb == null || eqFromDb.getId() == null) {
+			AdpEquipment eqFromDb = isEqExist(neId, getPosition(index));
+			if (eqFromDb == null) {
+				SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
+				SnmpEquEntity equ = GetAllEquipments.getEquipment(client, index, type);
 				AdpEquipment newEqu = constructEqu(equ, neId);
 				equsDbMgr.addEquipment(newEqu);
 				return newEqu;
@@ -76,6 +74,47 @@ public class AdpSnmpEqusMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return null;
+	}
+
+	public void updateEquipment(AdpEquipment adpEq) throws AdapterException {
+		try {
+			equsDbMgr.updateEquipment(adpEq);
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	public void deleteEquipment(AdpEquipment adpEq) throws AdapterException {
+		try {
+			equsDbMgr.deleteEquipment(adpEq);
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	private AdpEquipment isEqExist(Integer neId, String position) throws AdapterException {
+		try {
+			AdpEquipment eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, position);
+			if (eqFromDb == null || eqFromDb.getId() == null) {
+				return null;
+			}
+			return eqFromDb;
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+
+	}
+
+	public AdpEquipment isEqExist(String address, String index) throws AdapterException {
+		try {
+			Integer neId = nesDbMgr.getIdByAddress(address);
+			if (index.length() < 2 || index.contains(".")) {
+				index = getPosition(index);
+			}
+			return isEqExist(neId, index);
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
 	}
 
 	private AdpEquipment constructEqu(SnmpEquEntity equ, List<SnmpEquEntity> equs, int neId) throws AdapterException {
@@ -161,10 +200,59 @@ public class AdpSnmpEqusMgr {
 			String serialNumber = equ.getSerialNumber();
 			String unitPartNumber = equ.getUnitPartNumber();
 			String softwarePartNumber = equ.getSoftwarePartNumber();
+			String clei = equ.getClei();
+			String hfd = equ.getHfd();
+			String marketingPartNumber = equ.getMarketingPartNumber();
+			String companyID = equ.getCompanyID();
+			String mnemonic = equ.getMnemonic();
+			String date = equ.getDate();
+			String extraData = equ.getExtraData();
+			String factoryID = equ.getFactoryID();
+
+			AdpKVPair cleiPair = new AdpKVPair();
+			cleiPair.setKey("CLEI");
+			cleiPair.setValue(clei);
+			params.add(cleiPair);
+
+			AdpKVPair hfdPair = new AdpKVPair();
+			hfdPair.setKey("HFD");
+			hfdPair.setValue(hfd);
+			params.add(hfdPair);
+
+			AdpKVPair marketingPartNumberPair = new AdpKVPair();
+			marketingPartNumberPair.setKey("MarketingPartNumber");
+			marketingPartNumberPair.setValue(marketingPartNumber);
+			params.add(marketingPartNumberPair);
+
+			AdpKVPair companyIDPair = new AdpKVPair();
+			companyIDPair.setKey("CompanyID");
+			companyIDPair.setValue(companyID);
+			params.add(companyIDPair);
+
 			AdpKVPair serialNumberPair = new AdpKVPair();
 			serialNumberPair.setKey("serialNumber");
 			serialNumberPair.setValue(serialNumber);
 			params.add(serialNumberPair);
+
+			AdpKVPair mnemonicPair = new AdpKVPair();
+			mnemonicPair.setKey("Mnemonic");
+			mnemonicPair.setValue(mnemonic);
+			params.add(mnemonicPair);
+
+			AdpKVPair datePair = new AdpKVPair();
+			datePair.setKey("Date");
+			datePair.setValue(date);
+			params.add(datePair);
+
+			AdpKVPair extraDataPair = new AdpKVPair();
+			extraDataPair.setKey("ExtraData");
+			extraDataPair.setValue(extraData);
+			params.add(extraDataPair);
+
+			AdpKVPair factoryIDPair = new AdpKVPair();
+			factoryIDPair.setKey("FactoryID");
+			factoryIDPair.setValue(factoryID);
+			params.add(factoryIDPair);
 
 			AdpKVPair unitPartNumberPair = new AdpKVPair();
 			unitPartNumberPair.setKey("unitPartNumber");
@@ -178,8 +266,12 @@ public class AdpSnmpEqusMgr {
 		}
 	}
 
-	private String getType(String index) {
-		int len = index.split("/").length;
+	private String getType(String position) {
+		int len = position.split("/").length;
 		return EquType.getEquType(len);
+	}
+
+	private String getPosition(String index) {
+		return "1/" + index.replace(".", "/");
 	}
 }

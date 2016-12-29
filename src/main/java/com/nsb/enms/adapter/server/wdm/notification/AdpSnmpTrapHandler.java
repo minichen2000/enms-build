@@ -82,7 +82,6 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 					map.get(ip).put("lastSysUpTime", sysUpTime);
 					queue.push(trapInfo);
 				} else {
-					System.out.println("duplicate notification: " + trapInfo);
 					log.debug("duplicate notification: " + trapInfo);
 				}
 			} else {
@@ -92,7 +91,6 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 			}
 
 		} else {
-			System.out.println("drop notification: " + trapInfo);
 			log.debug("drop notification: " + trapInfo);
 		}
 	}
@@ -114,16 +112,9 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 				long time = currentSysTime - sysUpTime * 10;
 				if (time >= MAX_CLEAN_TIME && !map.get(ip).isEmpty()) {
 					map.remove(ip);
-					System.out.println("Clean the map with ip:" + ip);
 					log.debug("Clean the map with ip:" + ip);
 				}
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		SnmpTrap trap = new SnmpTrap();
-		trap.setTrapCaller(new AdpSnmpTrapHandler());
-		trap.run("135.251.99.37", 163);
 	}
 }

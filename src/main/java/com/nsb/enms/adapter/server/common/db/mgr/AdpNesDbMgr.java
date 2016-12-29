@@ -263,7 +263,7 @@ public class AdpNesDbMgr {
 	private void updateAlignmentState(AdpNe body, Integer id, AdpNe ne) {
 		String alignmentState = body.getAlignmentState();
 		String alignmentStateFromDb = ne.getAlignmentState();
-		if (null == alignmentState || StringUtils.equals(alignmentState, alignmentStateFromDb)) {
+		if (StringUtils.equals(alignmentState, alignmentStateFromDb)) {
 			return;
 		}
 		dbc.updateOne(new BasicDBObject("id", id), set("alignmentState", alignmentState));
@@ -394,9 +394,10 @@ public class AdpNesDbMgr {
 		AdpNe ne = constructNe(doc);
 		return ne.getId();
 	}
-	
+
 	public Integer getIdByAddress(String address) throws Exception {
-		List<Document> docList = dbc.find(eq("addresses.snmpAddress.snmpAgent", address)).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(eq("addresses.snmpAddress.snmpAgent", address))
+				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne, query by addresses.snmpAddress.snmpAgent = " + address);
 			return null;

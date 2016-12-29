@@ -22,6 +22,8 @@ public class EqNotificationHandler extends DefaultNotificationHandler {
 
 	private static EqNotificationHandler INSTANCE = new EqNotificationHandler();
 
+	private static AdpSnmpEqusMgr snmpEqusMgr = new AdpSnmpEqusMgr();
+
 	private EqNotificationHandler() {
 
 	}
@@ -32,15 +34,16 @@ public class EqNotificationHandler extends DefaultNotificationHandler {
 
 	@Override
 	public void handle(Map<String, String> trap) {
-		if (StringUtils.equals("Change Notification", trap.get(SnmpTrapAttribute.tnTrapDescr)) && StringUtils.equals(
-				trap.get(SnmpTrapAttribute.tnTrapChangedObject), SnmpEqAttribute.ShelfAttribute.shelfProgrammedType)) {
+		if (StringUtils.equals("Change Notification", trap.get(SnmpTrapAttribute.tnTrapDescr))
+				&& StringUtils.equals(trap.get(SnmpTrapAttribute.tnTrapChangedObject),
+						SnmpEqAttribute.ShelfAttribute.tnShelfProgrammedType)) {
 			createOrDeleteShelf(trap);
 			return;
 		}
 
 		if (StringUtils.equals("Change Notification", trap.get(SnmpTrapAttribute.tnTrapDescr))
 				&& StringUtils.equals(trap.get(SnmpTrapAttribute.tnTrapChangedObject),
-						SnmpEqAttribute.SlotCardAttribute.slotProgrammedType)) {
+						SnmpEqAttribute.SlotCardAttribute.tnSlotProgrammedType)) {
 			createOrDeleteSlot(trap);
 			return;
 		}
@@ -51,17 +54,23 @@ public class EqNotificationHandler extends DefaultNotificationHandler {
 		String index = getIndex(trap.get(SnmpTrapAttribute.tnTrapObjectID), EquType.shelf);
 		String data = trap.get(SnmpTrapAttribute.tnTrapData);
 		String shelfProgrammedType = SnmpEqShelfSlotTypeMapUtil.getShelfType(data);
-		if (StringUtils.isEmpty(shelfProgrammedType) || StringUtils.equals("Empty", shelfProgrammedType)) {
-			
-		} else {
-			try {
-				AdpEquipment equipment = new AdpSnmpEqusMgr().getEquipment(address, index, EquType.shelf);
+
+		try {
+			if (StringUtils.isEmpty(shelfProgrammedType) || StringUtils.equals("Empty", shelfProgrammedType)) {
+				AdpEquipment equipment = snmpEqusMgr.isEqExist(address, index);
+				if (equipment != null) {
+					snmpEqusMgr.deleteEquipment(equipment);
+					NotificationSender.instance().sendOdNotif(EntityType.BOARD, equipment.getId());
+				}
+			} else {
+				AdpEquipment equipment = snmpEqusMgr.getEquipment(address, index, EquType.shelf);
 				if (equipment != null) {
 					NotificationSender.instance().sendOcNotif(EntityType.BOARD, equipment.getId());
 				}
-			} catch (AdapterException e) {
-				log.error("Failed to send notification", e);
+
 			}
+		} catch (AdapterException e) {
+			log.error("Failed to send notification", e);
 		}
 	}
 
@@ -69,54 +78,52 @@ public class EqNotificationHandler extends DefaultNotificationHandler {
 		String address = trap.get("ip");
 		String index = getIndex(trap.get(SnmpTrapAttribute.tnTrapObjectID), EquType.slot);
 		String data = trap.get(SnmpTrapAttribute.tnTrapData);
-		String shelfProgrammedType = SnmpEqShelfSlotTypeMapUtil.getShelfType(data);
-		if (StringUtils.isEmpty(shelfProgrammedType) || StringUtils.equals("Empty", shelfProgrammedType)) {
-			
-		} else {
-			try {
-				AdpEquipment equipment = new AdpSnmpEqusMgr().getEquipment(address, index, EquType.slot);
-				if (equipment != null) {
-					NotificationSender.instance().sendOcNotif(EntityType.BOARD, equipment.getId());
-				}
-			} catch (AdapterException e) {
-				log.error("Failed to send notification", e);
+		String slotProgrammedType = SnmpEqShelfSlotTypeMapUtil.getSlotCardType(data);
+
+		try {
+			AdpEquipment eqFromDb = snmpEqusMgr.isEqExist(address, index);
+			if (eqFromDb != null) {
+				eqFromDb.setExpectedType(slotProgrammedType);
+				snmpEqusMgr.updateEquipment(eqFromDb);
 			}
+		} catch (Exception e) {
+			log.error("Failed to send notification", e);
 		}
 	}
 
 	private String getIndex(String objectId, EquType type) {
 		String index = Integer.toHexString(Integer.valueOf(objectId));
+		String shelfIndex = "";
+		String slotIndex = "";
 		switch (type) {
 		case shelf:
 			if (index.length() == 7) {
-				return index.substring(0, 1);
+				shelfIndex = index.substring(0, 1);
+			} else if (index.length() == 8) {
+				shelfIndex = index.substring(0, 2);
 			}
-
-			if (index.length() == 8) {
-				return index.substring(0, 2);
-			}
+			return hex2Oct(shelfIndex);
 		case slot:
 			if (index.length() == 7) {
 				index = index.substring(0, 3);
-				if (StringUtils.equals("0", index.substring(1, 2))) {
-					index = index.substring(0, 1) + "." + index.substring(2, 3);
-				} else {
-					index = index.substring(0, 1) + "." + index.substring(1, 3);
-				}
-				return index;
-			}
-
-			if (index.length() == 8) {
+				shelfIndex = index.substring(0, 1);
+				slotIndex = index.substring(1, 3);
+			} else if (index.length() == 8) {
 				index = index.substring(0, 4);
-				if (StringUtils.equals("0", index.substring(2, 3))) {
-					index = index.substring(0, 2) + "." + index.substring(3, 4);
-				} else {
-					index = index.substring(0, 2) + "." + index.substring(2, 4);
-				}
-				return index;
+				shelfIndex = index.substring(0, 2);
+				slotIndex = index.substring(2, 4);
 			}
+			return hex2Oct(shelfIndex) + "." + hex2Oct(slotIndex);
 		default:
 			return null;
 		}
+	}
+
+	private String hex2Oct(String hex) {
+		if (StringUtils.isEmpty(hex)) {
+			return null;
+		}
+		int index = Integer.valueOf(hex, 16);
+		return String.valueOf(index);
 	}
 }

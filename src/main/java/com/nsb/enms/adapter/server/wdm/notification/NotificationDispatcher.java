@@ -20,20 +20,20 @@ public class NotificationDispatcher {
 	private static final NotificationDispatcher INSTANCE = new NotificationDispatcher();
 
 	private NotificationDispatcher() {
-		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.shelfName);
-		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.shelfProgrammedType);
-		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.shelfPresentType);
-		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.shelfRiManufacturingPartNumber);
-		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.shelfRiSWPartNum);
-		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.shelfRiSerialNumber);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.slotProgrammedType);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.slotPresentType);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.slotAdminState);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.slotOperationalState);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.cardName);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.cardSerialNumber);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.cardManufacturingPartNumber);
-		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.cardSWPartNum);
+		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.tnShelfName);
+		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.tnShelfProgrammedType);
+		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.tnShelfPresentType);
+		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiManufacturingPartNumber);
+		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiSWPartNum);
+		equAttrOidList.add(SnmpEqAttribute.ShelfAttribute.tnShelfRiSerialNumber);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnSlotProgrammedType);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnSlotPresentType);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnSlotAdminState);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnSlotOperationalState);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnCardName);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnCardSerialNumber);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnCardManufacturingPartNumber);
+		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnCardSWPartNum);
 
 		tpAttrOidList.add(M_ifType.oid);
 		tpAttrOidList.add(M_ifAdminStatus.oid);

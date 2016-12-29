@@ -2,10 +2,14 @@ package com.nsb.enms.adapter.server.common.db.mgr;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.regex;
+import static com.mongodb.client.model.Updates.set;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -17,6 +21,8 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.common.constants.AdpDBConst;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
+import com.nsb.enms.adapter.server.common.notification.NotificationSender;
+import com.nsb.enms.common.EntityType;
 import com.nsb.enms.restful.model.adapter.AdpEquipment;
 
 public class AdpEqusDbMgr {
@@ -37,8 +43,31 @@ public class AdpEqusDbMgr {
 		return body;
 	}
 
-	public void deleteEquipmentsByNeId(int neId) throws Exception {
+	public void deleteEquipmentsByNeId(Integer neId) throws Exception {
 		dbc.deleteMany(new Document("neId", neId));
+	}
+
+	public void deleteEquipment(AdpEquipment body) throws Exception {
+		Integer neId = body.getNeId();
+		String index = body.getPosition();
+		dbc.deleteMany(and(eq("neId", neId), regex("position", Pattern.compile(index + "(/[0-9]*)*"))));
+	}
+
+	public void updateEquipment(AdpEquipment body) throws Exception {
+		Integer id = body.getId();
+		AdpEquipment eq = getEquipmentById(body.getNeId(), id);
+		updateExpectedType(body, id, eq);
+	}
+
+	private void updateExpectedType(AdpEquipment body, Integer id, AdpEquipment eq) throws Exception {
+		String expectedType = body.getExpectedType();
+		String expectedTypeFromDb = eq.getExpectedType();
+		if (null == expectedType || StringUtils.equals(expectedType, expectedTypeFromDb)) {
+			return;
+		}
+		dbc.updateOne(new BasicDBObject("id", id), set("expectedType", expectedType));
+		NotificationSender.instance().sendAvcNotif(EntityType.BOARD, id, "expectedType", expectedType,
+				expectedTypeFromDb);
 	}
 
 	public AdpEquipment getEquipmentById(int neid, int eqid) throws Exception {
