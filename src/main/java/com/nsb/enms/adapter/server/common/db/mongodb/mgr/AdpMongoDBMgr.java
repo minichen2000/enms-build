@@ -38,6 +38,7 @@ public class AdpMongoDBMgr {
 
 	private AdpMongoDBMgr() {
 		mongoClient = new MongoClient("localhost", 27017);
+		mongoClient = new MongoClient("172.24.168.153", 27017);
 		database = mongoClient.getDatabase("eNMS");
 	}
 

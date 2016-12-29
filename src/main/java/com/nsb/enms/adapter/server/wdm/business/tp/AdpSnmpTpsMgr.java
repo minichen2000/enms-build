@@ -91,7 +91,9 @@ public class AdpSnmpTpsMgr {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (List<Pair<String, String>> row : values) {
 			String index = row.get(0).getSecond();
-			if (isTpExisted(index)) {
+			AdpTp tp = isTpExisted(index);
+			if (null != tp) {
+				tpList.add(tp);
 				continue;
 			}
 
@@ -101,7 +103,7 @@ public class AdpSnmpTpsMgr {
 			}
 
 			constructTpEntity(entity, row, index);
-			AdpTp tp = constructTp(entity, TpType.PTP, equType, null, 0);
+			tp = constructTp(entity, TpType.PTP, equType, null, 0);
 			addTp2Db(tp);
 			tpList.add(tp);
 		}
@@ -149,17 +151,17 @@ public class AdpSnmpTpsMgr {
 		}
 	}
 
-	private boolean isTpExisted(String keyOnNe) throws AdapterException {
+	private AdpTp isTpExisted(String keyOnNe) throws AdapterException {
 		try {
 			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null == tpFromDb || null == tpFromDb.getId()) {
-				return false;
+			if (null != tpFromDb && null != tpFromDb.getId() && -1 < tpFromDb.getId()) {
+				return tpFromDb;
 			}
 		} catch (Exception e) {
 			log.error("getTpByKeyOnNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return true;
+		return null;
 	}
 
 	private AdpTp addTp2Db(AdpTp tp) throws AdapterException {
@@ -264,5 +266,14 @@ public class AdpSnmpTpsMgr {
 	}
 
 	public static void main(String args[]) {
+		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
+		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
+		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr(5);
+		try {
+			mgr.syncTps();
+		} catch (AdapterException e) {
+			e.printStackTrace();
+		}
+
 	}
 }

@@ -139,8 +139,10 @@ public class Get130Scx10Ctps {
 		getLineCtps(ctpList, neId, ptpId, ptpIndex);
 		List<AdpTp> newCtpList = new ArrayList<AdpTp>();
 		for (AdpTp ctp : ctpList) {
-			if (isCtpExisted(neId, ctp.getKeyOnNe())) {
+			AdpTp ctpFromDb = isCtpExisted(neId, ctp.getKeyOnNe());
+			if (null != ctpFromDb) {
 				// TODO 替换已有值
+				newCtpList.add(ctpFromDb);
 				continue;
 			}
 			try {
@@ -155,16 +157,16 @@ public class Get130Scx10Ctps {
 		return newCtpList;
 	}
 
-	private boolean isCtpExisted(Integer neId, String keyOnNe) throws AdapterException {
+	private AdpTp isCtpExisted(Integer neId, String keyOnNe) throws AdapterException {
 		try {
 			AdpTp tpFromDb = tpDbMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null == tpFromDb || null == tpFromDb.getId()) {
-				return false;
+			if (null != tpFromDb && null != tpFromDb.getId() && -1 < tpFromDb.getId()) {
+				return tpFromDb;
 			}
 		} catch (Exception e) {
 			log.error("getTpByKeyOnNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return true;
+		return null;
 	}
 }

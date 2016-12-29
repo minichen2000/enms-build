@@ -1,5 +1,7 @@
 package com.nsb.enms.adapter.server.wdm.constants;
 
+import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
+
 public enum SnmpTpType {
 	PHN(1), DEFAULT(2), UNKNOWN(3), OC3(4), OC12(5), OC48(6), OC192(7), OTS(8), OCH(9), OTU1(10),
 	OTU2(11), GIGE(12), TENGIGE(13), STM1(14), STM4(15), STM16(16), STM64(17), FC1G(18), FC2G(19), FC4G(20),
@@ -17,7 +19,7 @@ public enum SnmpTpType {
 
 	public static String getTpType(String code) {
 		for (SnmpTpType type : SnmpTpType.values()) {
-			if (type.code == Integer.valueOf(code)) {
+			if (type.code == Object2IntegerUtil.toInt(code)) {
 				return type.name();
 			}
 		}
