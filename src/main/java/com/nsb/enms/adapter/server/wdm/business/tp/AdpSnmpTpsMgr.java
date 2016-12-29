@@ -15,6 +15,7 @@ import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
 import com.nsb.enms.adapter.server.wdm.business.tp.ctp.Get130Scx10Ctps;
+import com.nsb.enms.adapter.server.wdm.business.xc.AdpSnmpXcsMgr;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
@@ -35,7 +36,10 @@ public class AdpSnmpTpsMgr {
 	private SnmpClient client;
 	private AdpTpsDbMgr tpsMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsMgr = new AdpEqusDbMgr();
+	private AdpSnmpXcsMgr xcsMgr = new AdpSnmpXcsMgr();
 	private Integer neId;
+	private List<AdpTp> _130Scx10ClientPtpList = new ArrayList<AdpTp>();
+	private List<AdpTp> _130Scx10LinePtpList = new ArrayList<AdpTp>();
 
 	public AdpSnmpTpsMgr(Integer neId) {
 		this.neId = neId;
@@ -59,6 +63,64 @@ public class AdpSnmpTpsMgr {
 	public void syncTps() throws AdapterException {
 		List<AdpTp> ptpList = syncPtps();
 		syncCtps(ptpList);
+		createXc();
+	}
+
+	private void createXc() throws AdapterException {
+		if (_130Scx10ClientPtpList.isEmpty() || _130Scx10LinePtpList.isEmpty()) {
+			return;
+		}
+
+		for (AdpTp tp : _130Scx10ClientPtpList) {
+			System.out.println(tp.getUserLabel());
+			createFixedXc(tp);
+		}
+	}
+
+	private void createFixedXc(AdpTp tp) throws AdapterException {
+		String userLabel = tp.getUserLabel();
+		int index = userLabel.indexOf("-C");
+		try {
+			String clientCtpkeyOnNe = "/odu2=1_" + tp.getKeyOnNe();
+			AdpTp ctp1 = tpsMgr.getTpByKeyOnNe(neId, clientCtpkeyOnNe);
+			if (!isTpValid(ctp1)) {
+				log.error("ctp1 is invalid");
+				return;
+			}
+			String userLabel_L1 = userLabel.substring(0, index) + "-L1";
+			String portNumber = userLabel.substring(index + 2);
+			String lineCtpkeyOnNe = "/odu4=1/odu2=" + portNumber + "_" + findL1PtpIndex(userLabel_L1);
+			AdpTp ctp2 = tpsMgr.getTpByKeyOnNe(neId, lineCtpkeyOnNe);
+			if (!isTpValid(ctp2)) {
+				log.error("ctp2 is invalid");
+				return;
+			}
+
+			Integer ctpId1 = ctp1.getId();
+			Integer ctpId2 = ctp2.getId();
+			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
+				return;
+			}
+
+			List<Integer> atps = new ArrayList<Integer>();
+			atps.add(ctpId1);
+			List<Integer> ztps = new ArrayList<Integer>();
+			ztps.add(ctpId2);
+			xcsMgr.createXc(neId, atps, ztps);
+		} catch (AdapterException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	private String findL1PtpIndex(String userLabel) {
+		for (AdpTp tp : _130Scx10LinePtpList) {
+			if (tp.getUserLabel().equalsIgnoreCase(userLabel)) {
+				return tp.getKeyOnNe();
+			}
+		}
+		return StringUtils.EMPTY;
 	}
 
 	private List<AdpTp> syncPtps() throws AdapterException {
@@ -74,7 +136,25 @@ public class AdpSnmpTpsMgr {
 		for (AdpTp tp : ptpList) {
 			String keyOnNe = tp.getKeyOnNe();
 			if (is130Scx10(keyOnNe)) {
-				ctps.syncNotOtnSignalCtpsAndXc(neId, tp.getId(), keyOnNe);
+				ctps.syncCtps(tp);
+				save130Scx10Ptp2List(tp);
+			}
+		}
+	}
+
+	private void save130Scx10Ptp2List(AdpTp tp) {
+		String userLabel = tp.getUserLabel();
+		if (StringUtils.isEmpty(userLabel)) {
+			return;
+		}
+		int index = userLabel.indexOf("-C");
+		if (index == -1) {
+			if (!_130Scx10LinePtpList.contains(tp)) {
+				_130Scx10LinePtpList.add(tp);
+			}
+		} else {
+			if (!_130Scx10ClientPtpList.contains(tp)) {
+				_130Scx10ClientPtpList.add(tp);
 			}
 		}
 	}
@@ -114,14 +194,11 @@ public class AdpSnmpTpsMgr {
 			supportedTypes.add(row.get(5).getSecond());
 			entity.setSupportedTypes(supportedTypes);
 			entity.setSecondaryState(Object2IntegerUtil.toInt(row.get(6).getSecond()));
-			
 			String address = row.get(7).getSecond();
 			String ifIndex = row.get(8).getSecond();
 			int endType = Object2IntegerUtil.toInt(row.get(9).getSecond());
 			setTpEntityConnectedTo(entity, endType, ifIndex, address);
-			
 			entity.setDirection(row.get(10).getSecond());
-			
 			address = row.get(11).getSecond();
 			ifIndex = row.get(12).getSecond();
 			endType = Object2IntegerUtil.toInt(row.get(13).getSecond());
@@ -280,7 +357,6 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void constructPtpParameters(AdpTp adpTp, SnmpTpEntity tp, TpType tpType, String equType) {
-		
 		setPtpParameter(adpTp, "adminState", String.valueOf(tp.getAdminStatus()));
 		setPtpParameter(adpTp, "operStatus", String.valueOf(tp.getOperStatus()));
 		setPtpParameter(adpTp, "secondaryState", String.valueOf(tp.getSecondaryState()));
@@ -289,21 +365,30 @@ public class AdpSnmpTpsMgr {
 		setPtpParameter(adpTp, "signalRate", tp.getInternalType());
 		setPtpParameter(adpTp, "connectedTo", tp.getConnectedTo());
 		setPtpParameter(adpTp, "connectedFrom", tp.getConnectedFrom());
-		setPtpParameter(adpTp, "sfpPortModuleVendor", tp.getSfpPortModuleVendor());  // Vendor
-		setPtpParameter(adpTp, "sfpPortModuleType", tp.getSfpPortModuleType()); // Module Type
-		setPtpParameter(adpTp, "sfpPortCLEI", tp.getSfpPortCLEI()); // CLEI
-		setPtpParameter(adpTp, "sfpPortUnitPartNum", tp.getSfpPortUnitPartNum()); // Unit Part Number
-		setPtpParameter(adpTp, "sfpPortFactoryID", tp.getSfpPortFactoryID()); // Factory ID
-		setPtpParameter(adpTp, "sfpPortSWPartNum", tp.getSfpPortSWPartNum()); // Software Part Number
-		setPtpParameter(adpTp, "sfpPortModuleVendorSerNo", tp.getSfpPortModuleVendorSerNo()); // Serial Number
-		setPtpParameter(adpTp, "sfpPortDate", tp.getSfpPortDate()); // Date
-		setPtpParameter(adpTp, "sfpPortExtraData", tp.getSfpPortExtraData()); // Extra Data
-		
+		// Vendor
+		setPtpParameter(adpTp, "sfpPortModuleVendor", tp.getSfpPortModuleVendor());
+		// Module Type
+		setPtpParameter(adpTp, "sfpPortModuleType", tp.getSfpPortModuleType());
+		// CLEI
+		setPtpParameter(adpTp, "sfpPortCLEI", tp.getSfpPortCLEI());
+		// Unit Part Number
+		setPtpParameter(adpTp, "sfpPortUnitPartNum", tp.getSfpPortUnitPartNum());
+		// Factory ID
+		setPtpParameter(adpTp, "sfpPortFactoryID", tp.getSfpPortFactoryID());
+		// Software Part Number
+		setPtpParameter(adpTp, "sfpPortSWPartNum", tp.getSfpPortSWPartNum());
+		// Serial Number
+		setPtpParameter(adpTp, "sfpPortModuleVendorSerNo", tp.getSfpPortModuleVendorSerNo());
+		// Date
+		setPtpParameter(adpTp, "sfpPortDate", tp.getSfpPortDate());
+		// Extra Data
+		setPtpParameter(adpTp, "sfpPortExtraData", tp.getSfpPortExtraData());
+
 		// 130SCX10 Client PTP specail Param
 		if (TpType.PTP == tpType && true == is130SCX10ClientPtp(adpTp, equType))
 			setPtpParameter(adpTp, "supportedContainer", "ODU2");
 	}
-	
+
 	private void setPtpParameter(AdpTp adpTp, String key, String value) {
 		AdpKVPair pair = new AdpKVPair();
 		pair.setKey(key);
@@ -329,8 +414,8 @@ public class AdpSnmpTpsMgr {
 		}
 		log.debug("connected to = " + entity.getConnectedTo());
 	}
-	
-	private void setTpEntityConnectedFrom(SnmpTpEntity entity, int endType, String ifIndex, String address) {	
+
+	private void setTpEntityConnectedFrom(SnmpTpEntity entity, int endType, String ifIndex, String address) {
 		switch (endType) {
 		case 1: // notConnected
 			entity.setConnectedFrom("");
@@ -348,7 +433,7 @@ public class AdpSnmpTpsMgr {
 		}
 		log.debug("connected to = " + entity.getConnectedFrom());
 	}
-	
+
 	private String queryPtpId(String keyOnNe) {
 		try {
 			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
@@ -405,6 +490,7 @@ public class AdpSnmpTpsMgr {
 		}
 		return ret;
 	}
+
 	private Integer getAdpTpId(TpType tpType, Object obj) {
 		Integer adpTpId;
 		if (TpType.PTP == tpType)
@@ -413,13 +499,26 @@ public class AdpSnmpTpsMgr {
 			adpTpId = generatePtpId(obj);
 		return adpTpId;
 	}
-	
+
 	public Integer generatePtpId(Object obj) {
 		Integer ptpId;
 		ptpId = new Integer(Integer.valueOf(obj.toString()));
 		return ptpId;
 	}
-	
+
+	private boolean isTpValid(AdpTp tp) {
+		if (null == tp) {
+			return false;
+		}
+		if (null == tp.getId()) {
+			return false;
+		}
+		if (tp.getId() < 0) {
+			return false;
+		}
+		return true;
+	}
+
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
@@ -429,6 +528,5 @@ public class AdpSnmpTpsMgr {
 		} catch (AdapterException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

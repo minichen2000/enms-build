@@ -40,7 +40,8 @@ public class AdpXcsDbMgr {
 	}
 
 	public List<AdpXc> findXcsByTpId(Integer tpid) throws Exception {
-		List<Document> docList = dbc.find(or(in("atps", tpid), in("ztps", tpid))).into(new ArrayList<Document>());
+		List<Document> docList = dbc.find(or(in("aEndPoints", tpid), in("zEndPoints", tpid)))
+				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find xc, query by tpid = {}", tpid);
 			return new ArrayList<AdpXc>();

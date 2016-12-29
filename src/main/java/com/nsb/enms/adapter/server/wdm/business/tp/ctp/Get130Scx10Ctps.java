@@ -9,19 +9,15 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.wdm.business.xc.AdpSnmpXcsMgr;
-import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
-import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class Get130Scx10Ctps {
 	private final static Logger log = LogManager.getLogger(Get130Scx10Ctps.class);
 	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
-	private AdpSnmpXcsMgr xcsMgr = new AdpSnmpXcsMgr();
 
 	public static void main(String[] args) {
 
@@ -73,20 +69,15 @@ public class Get130Scx10Ctps {
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private void getClientCtps(AdpXc xc, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private void getClientCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		getDsrCtp(neId, ptpId, ptpIndex);
-		AdpTp odujCtp = getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
-		List<Integer> atpIds = new ArrayList<Integer>();
-		atpIds.add(odujCtp.getId());
-		xc.setAEndPoints(atpIds);
+		getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
 	}
 
-	private void getLineCtps(AdpXc xc, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		int i = getClientPortIndex(ptpIndex);
-		AdpTp odujCtp = getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
-		List<Integer> ztpIds = new ArrayList<Integer>();
-		ztpIds.add(odujCtp.getId());
-		xc.setZEndPoints(ztpIds);
+	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		for (int i = 1; i < 11; i++) {
+			getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
+		}
 		getOdukCtp(neId, ptpId, ptpIndex);
 		getOtukCtps(neId, ptpId, ptpIndex);
 		getOchCtp(neId, ptpId, ptpIndex);
@@ -117,28 +108,25 @@ public class Get130Scx10Ctps {
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private LayerRate getOduLayerRate(Integer i) {
-		switch (i) {
-		case 0:
-			return LayerRate.ODU0;
-		case 1:
-			return LayerRate.ODU1;
-		case 2:
-			return LayerRate.ODU2;
-		case 3:
-			return LayerRate.ODU3;
-		case 4:
-			return LayerRate.ODU4;
-		default:
-			return null;
-		}
-	}
+	// public void syncNotOtnSignalCtpsAndXc(Integer neId, Integer ptpId, String
+	// ptpIndex) throws AdapterException {
+	// AdpXc xc = new AdpXc();
+	// getClientCtps(null, neId, ptpId, ptpIndex);
+	// getLineCtps(null, neId, ptpId, ptpIndex);
+	// }
 
-	public void syncNotOtnSignalCtpsAndXc(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		AdpXc xc = new AdpXc();
-		getClientCtps(xc, neId, ptpId, ptpIndex);
-		getLineCtps(xc, neId, ptpId, ptpIndex);
-		createFixedXc(neId, xc);
+	public void syncCtps(AdpTp tp) throws AdapterException {
+		String userLabel = tp.getUserLabel();
+		System.out.println("=========" + userLabel);
+		Integer neId = tp.getNeId();
+		Integer ptpId = tp.getPtpID();
+		String ptpIndex = tp.getKeyOnNe();
+		if (userLabel.indexOf("-C") != -1) {
+			getClientCtps(neId, ptpId, ptpIndex);
+		} else if (userLabel.indexOf("-L1") != -1) {
+			System.out.println("xxxxxxxxxxxxxx");
+			getLineCtps(neId, ptpId, ptpIndex);
+		}
 	}
 
 	private AdpTp addCtp2Db(AdpTp ctp) throws AdapterException {
@@ -167,14 +155,5 @@ public class Get130Scx10Ctps {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return null;
-	}
-
-	private void createFixedXc(Integer neId, AdpXc xc) throws AdapterException {
-		xcsMgr.createXc(neId, xc.getAEndPoints(), xc.getZEndPoints());
-	}
-
-	private int getClientPortIndex(String index) {
-		Integer[] position = SnmpTpUserLabelUtil.string2Hex(index);
-		return position[2] - 1;
 	}
 }

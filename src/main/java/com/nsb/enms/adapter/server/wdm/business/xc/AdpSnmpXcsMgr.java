@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.wdm.business.xc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +13,7 @@ import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.XcRole;
 import com.nsb.enms.common.XcType;
+import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class AdpSnmpXcsMgr {
@@ -49,6 +51,19 @@ public class AdpSnmpXcsMgr {
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
+	}
+
+	public boolean isXcExisted(Integer ctpId) {
+		List<AdpXc> xcs = null;
+		try {
+			xcs = xcsMgr.findXcsByTpId(ctpId);
+		} catch (Exception e) {
+			log.error("findXcsByTpId", e);
+		}
+		if (null == xcs || xcs.isEmpty()) {
+			return false;
+		}
+		return true;
 	}
 
 	public static void main(String args[]) {
