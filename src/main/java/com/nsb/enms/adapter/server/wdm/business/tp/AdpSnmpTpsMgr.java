@@ -71,6 +71,7 @@ public class AdpSnmpTpsMgr {
 		List<String> oids = setOidParams();
 		List<List<Pair<String, String>>> values = getTableValues(oids);
 		List<AdpTp> tpList = constructTpList(values);
+		updateTpConnectedIfIndex(tpList);
 		return tpList;
 	}
 
@@ -121,31 +122,52 @@ public class AdpSnmpTpsMgr {
 			supportedTypes.add(row.get(5).getSecond());
 			entity.setSupportedTypes(supportedTypes);
 			entity.setSecondaryState(Object2IntegerUtil.toInt(row.get(6).getSecond()));
-			int endType = Object2IntegerUtil.toInt(row.get(7).getSecond());
-			switch (endType) {
+			String ifIndex = row.get(7).getSecond();
+			int endType = Object2IntegerUtil.toInt(row.get(8).getSecond());
+			switch(endType)
+			{
 			case 1: // notConnected
-				entity.setConnectedTo("");
-				break;
+				entity.setConnectedTo("");break;
 			case 2: // internal
-				entity.setConnectedTo("ifIndex");
+				String tpId = queryTpId(ifIndex);
+				if (tpId == null) 
+					entity.setConnectedTo("ifIndex/" + ifIndex);
+				else
+					entity.setConnectedTo(tpId);
 				break;
 			case 3: // external
-				entity.setConnectedTo("IP/ifIndex");
-				break;
+				entity.setConnectedTo("IP/" + ifIndex);break;
 			}
-			entity.setDirection(row.get(8).getSecond());
-			endType = Object2IntegerUtil.toInt(row.get(9).getSecond());
-			switch (endType) {
+			log.debug("connected to = " + entity.getConnectedTo());
+			entity.setDirection(row.get(9).getSecond());
+			
+			ifIndex = row.get(10).getSecond();
+			endType = Object2IntegerUtil.toInt(row.get(11).getSecond());
+			switch(endType)
+			{
 			case 1: // notConnected
-				entity.setConnectedFrom("");
-				break;
+				entity.setConnectedFrom("");break;
 			case 2: // internal
-				entity.setConnectedFrom("ifIndex");
-				break;
+				String tpId = queryTpId(ifIndex);
+				if (tpId == null) 
+					entity.setConnectedFrom("ifIndex/" + ifIndex);
+				else
+					entity.setConnectedFrom(tpId);
 			case 3: // external
-				entity.setConnectedFrom("IP/ifIndex");
-				break;
+				entity.setConnectedFrom("IP/" + ifIndex);break;
 			}
+			log.debug("connected to = " + entity.getConnectedFrom());
+			
+			entity.setSfpPortModuleVendorSerNo(row.get(12).getSecond());
+			entity.setSfpPortModuleVendor(row.get(13).getSecond());
+			entity.setSfpPortModuleType(row.get(14).getSecond());
+			entity.setSfpPortCLEI(row.get(15).getSecond());
+			entity.setSfpPortUnitPartNum(row.get(16).getSecond());
+			entity.setSfpPortSWPartNum(row.get(17).getSecond());
+			entity.setSfpPortFactoryID(row.get(18).getSecond());
+			entity.setSfpPortDate(row.get(19).getSecond());
+			entity.setSfpPortExtraData(row.get(20).getSecond());
+		
 		} catch (Exception e) {
 			log.error("constructTpEntity", e);
 		}
@@ -182,9 +204,22 @@ public class AdpSnmpTpsMgr {
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.5"); // tnAccessPortStateQualifier
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.7"); // tnAccessPortFarEndIfIndex
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.8"); // tnAccessPortFarEndType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.9"); // tnAccessPortDirection
-		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.17"); // tnAccessPortFarEndTypeConnFrom
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.16"); // tnAccessPortFarEndIfIndexConnFrom
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.17"); //tnAccessPortFarEndTypeConnFrom
+		
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.2"); // tnSfpPortModuleVendorSerNo
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.4"); // tnSfpPortModuleVendor
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.7"); // tnSfpPortModuleType
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.8"); // tnSfpPortCLEI
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.9"); // tnSfpPortUnitPartNum
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.10"); // tnSfpPortSWPartNum
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.11"); // tnSfpPortFactoryID
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.12"); // tnSfpPortDate
+		oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.13"); // tnSfpPortExtraData
+		
 		return oids;
 	}
 
@@ -216,14 +251,8 @@ public class AdpSnmpTpsMgr {
 			adpTp.setParentTpID(parentTpId);
 		}
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
-		if (TpType.PTP == tpType && equType.equals("130SCX10")) {
-			AdpKVPair pair = new AdpKVPair();
-			pair.setKey("supportedContainer");
-			pair.setValue("ODU2");
-			List<AdpKVPair> params = new ArrayList<AdpKVPair>();
-			params.add(pair);
-			adpTp.setParams(params);
-		}
+		constructTpParameters(adpTp, tp, tpType, equType);		
+		
 		return adpTp;
 	}
 
@@ -256,6 +285,20 @@ public class AdpSnmpTpsMgr {
 		String userLabel = equType + "-" + position[0] + "-" + position[1] + "-" + portName;
 		return userLabel;
 	}
+	
+	private String queryTpId(String keyOnNe) {
+		try {
+			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
+			if (null == tpFromDb || null == tpFromDb.getId()) {
+				log.info("tpFromDb is null, " + "keyOnNe is " + keyOnNe);
+				return null;
+			}
+			return String.valueOf(tpFromDb.getId());
+		} catch (Exception e) {
+			log.error("getTpByKeyOnNe", e);
+			return null;
+		}
+	}
 
 	private boolean is130Scx10(String index) throws AdapterException {
 		String ExpectedType = isExpectedEquExisted(index);
@@ -264,7 +307,131 @@ public class AdpSnmpTpsMgr {
 		}
 		return false;
 	}
+	
+	private void constructTpParameters(AdpTp adpTp, SnmpTpEntity tp, TpType tpType, String equType) {
+		AdpKVPair pair = new AdpKVPair();
+		pair.setKey("adminState");
+		pair.setValue(String.valueOf(tp.getAdminStatus()));
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("operStatus");
+		pair.setValue(String.valueOf(tp.getOperStatus()));
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("secondaryState");
+		pair.setValue(String.valueOf(tp.getSecondaryState()));
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("supportedLayers");
+		pair.setValue(String.valueOf(tp.getSupportedTypes()));
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("signalRate");
+		pair.setValue(tp.getInternalType());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("signalRate");
+		pair.setValue(tp.getInternalType());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair(); // Vendor
+		pair.setKey("sfpPortModuleVendor");
+		pair.setValue(tp.getSfpPortModuleVendor());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortModuleType"); // Module Type
+		pair.setValue(tp.getSfpPortModuleType());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortCLEI"); // CLEI
+		pair.setValue(tp.getSfpPortCLEI());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortUnitPartNum"); // Unit Part Number
+		pair.setValue(tp.getSfpPortUnitPartNum());
+		adpTp.addParamsItem(pair);
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortFactoryID"); // Factory ID
+		pair.setValue(tp.getSfpPortFactoryID());
+		adpTp.addParamsItem(pair);
 
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortSWPartNum"); // Software Part Number
+		pair.setValue(tp.getSfpPortSWPartNum());
+		adpTp.addParamsItem(pair);
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortModuleVendorSerNo"); // Serial Number 
+		pair.setValue(tp.getSfpPortModuleVendorSerNo());
+		adpTp.addParamsItem(pair);
+			
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortDate"); // Date
+		pair.setValue(tp.getSfpPortDate());
+		
+		adpTp.addParamsItem(pair);	
+		pair = new AdpKVPair();
+		pair.setKey("sfpPortExtraData"); // Extra Data
+		pair.setValue(tp.getSfpPortExtraData());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("connectedTo");
+		pair.setValue(tp.getConnectedTo());
+		adpTp.addParamsItem(pair);
+		
+		pair = new AdpKVPair();
+		pair.setKey("connectedFrom");
+		pair.setValue(tp.getConnectedFrom());
+		adpTp.addParamsItem(pair);
+		
+		// 130SCX10 Client PTP specail Param
+		if (TpType.PTP == tpType && equType.equals("130SCX10")) {
+			String userLabel = adpTp.getUserLabel();
+			String[] labels = userLabel.split("-");
+			if (labels.length == 4) {
+				String portName = labels[labels.length - 1];
+				if (portName.substring(0, 1).equals("C")) { // Client PTP
+					pair = new AdpKVPair();
+					pair.setKey("supportedContainer");
+					pair.setValue("ODU2");
+					adpTp.addParamsItem(pair);
+				}
+			}
+		}
+	}
+	private void updateTpConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
+		boolean bStore;
+		for (AdpTp tp : tpList) {
+			bStore = false;
+			List<AdpKVPair> params = tp.getParams();
+			for (AdpKVPair pair : params) {
+				String key = pair.getKey();
+				if (!key.equals("connectedTo") && key.equals("connectedFrom"))
+					continue;
+				String value = pair.getValue();
+				if (value != null && value.substring(0, 7).equals("ifIndex/"))
+				{
+					String ifIndex = value.substring(8);
+					String tpId = queryTpId(ifIndex);
+					if (tpId != null) {
+						pair.setKey(tpId);
+						bStore = true;
+					}
+				}
+			}
+			if (bStore)
+				addTp2Db(tp);
+		}
+	}
+	
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
