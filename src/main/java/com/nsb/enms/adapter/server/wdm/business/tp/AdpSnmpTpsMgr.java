@@ -214,7 +214,8 @@ public class AdpSnmpTpsMgr {
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		adpTp.setId(maxTpId);
+		Integer tpId = getAdpTpId(tpType, maxTpId);
+		adpTp.setId(tpId);
 		adpTp.setNeId(neId);
 		String userLabel = setUserLabel(tp.getIndex(), equType);
 		adpTp.setUserLabel(userLabel);
@@ -229,7 +230,7 @@ public class AdpSnmpTpsMgr {
 		adpTp.setKeyOnNe(tp.getIndex());
 		adpTp.setTpType(tpType.name());
 		if (TpType.PTP != tpType) {
-			adpTp.setPtpID(maxTpId);
+			adpTp.setPtpID(tpId);
 			adpTp.setParentTpID(parentTpId);
 		}
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
@@ -403,6 +404,20 @@ public class AdpSnmpTpsMgr {
 			}
 		}
 		return ret;
+	}
+	private Integer getAdpTpId(TpType tpType, Object obj) {
+		Integer adpTpId;
+		if (TpType.PTP == tpType)
+			adpTpId = generatePtpId(obj);
+		else
+			adpTpId = generatePtpId(obj);
+		return adpTpId;
+	}
+	
+	public Integer generatePtpId(Object obj) {
+		Integer ptpId;
+		ptpId = new Integer(Integer.valueOf(obj.toString()));
+		return ptpId;
 	}
 	
 	public static void main(String args[]) {
