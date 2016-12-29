@@ -71,7 +71,6 @@ public class AdpSnmpTpsMgr {
 		List<String> oids = setOidParams();
 		List<List<Pair<String, String>>> values = getTableValues(oids);
 		List<AdpTp> tpList = constructTpList(values);
-		updateTpConnectedIfIndex(tpList);
 		return tpList;
 	}
 
@@ -129,11 +128,7 @@ public class AdpSnmpTpsMgr {
 				entity.setConnectedTo("");
 				break;
 			case 2: // internal
-				String tpId = queryTpId(ifIndex);
-				if (tpId == null)
-					entity.setConnectedTo("ifIndex/" + ifIndex);
-				else
-					entity.setConnectedTo(tpId);
+				entity.setConnectedTo(ifIndex);
 				break;
 			case 3: // external
 				entity.setConnectedTo("IP/" + ifIndex);
@@ -149,11 +144,8 @@ public class AdpSnmpTpsMgr {
 				entity.setConnectedFrom("");
 				break;
 			case 2: // internal
-				String tpId = queryTpId(ifIndex);
-				if (tpId == null)
-					entity.setConnectedFrom("ifIndex/" + ifIndex);
-				else
-					entity.setConnectedFrom(tpId);
+				entity.setConnectedFrom(ifIndex);
+				break;
 			case 3: // external
 				entity.setConnectedFrom("IP/" + ifIndex);
 				break;
@@ -198,17 +190,6 @@ public class AdpSnmpTpsMgr {
 		return tp;
 	}
 
-	private boolean updateTp2Db(AdpTp tp) throws AdapterException {
-		boolean ret = false;
-		try {
-			ret = tpsMgr.updateTp(tp);
-		} catch (Exception e) {
-			log.error("updateTp", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return ret;
-	}
-
 	private List<String> setOidParams() {
 		List<String> oids = new ArrayList<String>();
 		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
@@ -239,13 +220,8 @@ public class AdpSnmpTpsMgr {
 	private AdpTp constructTp(SnmpTpEntity tp, TpType tpType, String equType, Integer ptpId, Integer parentTpId)
 			throws AdapterException {
 		AdpTp adpTp = new AdpTp();
-		Integer maxTpId;
-		try {
-			maxTpId = AdpSeqDbMgr.getMaxTpId(neId);
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		adpTp.setId(maxTpId);
+		
+		adpTp.setId(tp.getIndex());
 		adpTp.setNeId(neId);
 		String userLabel = setUserLabel(tp.getIndex(), equType);
 		adpTp.setUserLabel(userLabel);
@@ -260,12 +236,14 @@ public class AdpSnmpTpsMgr {
 		adpTp.setKeyOnNe(tp.getIndex());
 		adpTp.setTpType(tpType.name());
 		if (TpType.PTP != tpType) {
-			adpTp.setPtpID(maxTpId);
+			adpTp.setPtpID(tp.getIndex());
 			adpTp.setParentTpID(parentTpId);
 		}
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
-		constructTpParameters(adpTp, tp, tpType, equType);
 
+		if (TpType.PTP == tpType) 
+			constructPtpParameters(adpTp, tp, tpType, equType);		
+		
 		return adpTp;
 	}
 
@@ -299,20 +277,7 @@ public class AdpSnmpTpsMgr {
 		return userLabel;
 	}
 
-	private String queryTpId(String keyOnNe) {
-		try {
-			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null == tpFromDb || null == tpFromDb.getId()) {
-				log.info("tpFromDb is null, " + "keyOnNe is " + keyOnNe);
-				return null;
-			}
-			return String.valueOf(tpFromDb.getId());
-		} catch (Exception e) {
-			log.error("getTpByKeyOnNe", e);
-			return null;
-		}
-	}
-
+	
 	private boolean is130Scx10(String index) throws AdapterException {
 		String ExpectedType = isExpectedEquExisted(index);
 		if ("130SCX10".equalsIgnoreCase(ExpectedType)) {
@@ -321,7 +286,7 @@ public class AdpSnmpTpsMgr {
 		return false;
 	}
 
-	private void constructTpParameters(AdpTp adpTp, SnmpTpEntity tp, TpType tpType, String equType) {
+	private void constructPtpParameters(AdpTp adpTp, SnmpTpEntity tp, TpType tpType, String equType) {
 		AdpKVPair pair = new AdpKVPair();
 		pair.setKey("adminState");
 		pair.setValue(String.valueOf(tp.getAdminStatus()));
@@ -418,30 +383,6 @@ public class AdpSnmpTpsMgr {
 					adpTp.addParamsItem(pair);
 				}
 			}
-		}
-	}
-
-	private void updateTpConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
-		boolean bUpdate;
-		for (AdpTp tp : tpList) {
-			bUpdate = false;
-			List<AdpKVPair> params = tp.getParams();
-			for (AdpKVPair pair : params) {
-				String key = pair.getKey();
-				if (!key.equals("connectedTo") && key.equals("connectedFrom"))
-					continue;
-				String value = pair.getValue();
-				if (value != null && value.substring(0, 7).equals("ifIndex/")) {
-					String ifIndex = value.substring(8);
-					String tpId = queryTpId(ifIndex);
-					if (tpId != null) {
-						pair.setKey(tpId);
-						bUpdate = true;
-					}
-				}
-			}
-			if (bUpdate)
-				updateTp2Db(tp);
 		}
 	}
 
