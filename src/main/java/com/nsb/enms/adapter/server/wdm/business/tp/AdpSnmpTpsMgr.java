@@ -56,15 +56,9 @@ public class AdpSnmpTpsMgr {
 		return values;
 	}
 
-	public List<AdpTp> syncTps() throws AdapterException {
-		List<AdpTp> tpList = new ArrayList<AdpTp>();
+	public void syncTps() throws AdapterException {
 		List<AdpTp> ptpList = syncPtps();
-		tpList.addAll(ptpList);
-		List<AdpTp> ctpList = syncCtps(ptpList);
-		if (null != ctpList && !ctpList.isEmpty()) {
-			tpList.addAll(ctpList);
-		}
-		return tpList;
+		syncCtps(ptpList);
 	}
 
 	private List<AdpTp> syncPtps() throws AdapterException {
@@ -75,16 +69,14 @@ public class AdpSnmpTpsMgr {
 		return tpList;
 	}
 
-	private List<AdpTp> syncCtps(List<AdpTp> ptpList) throws AdapterException {
+	private void syncCtps(List<AdpTp> ptpList) throws AdapterException {
 		Get130Scx10Ctps ctps = new Get130Scx10Ctps();
 		for (AdpTp tp : ptpList) {
 			String keyOnNe = tp.getKeyOnNe();
 			if (is130Scx10(keyOnNe)) {
-				List<AdpTp> tpList = ctps.getNotOtnSignalCtps(neId, tp.getId(), keyOnNe);
-				return tpList;
+				ctps.syncNotOtnSignalCtpsAndXc(neId, tp.getId(), keyOnNe);
 			}
 		}
-		return null;
 	}
 
 	private List<AdpTp> constructTpList(List<List<Pair<String, String>>> values) throws AdapterException {
@@ -142,7 +134,7 @@ public class AdpSnmpTpsMgr {
 			}
 			log.debug("connected to = " + entity.getConnectedTo());
 			entity.setDirection(row.get(10).getSecond());
-			address = row.get(11).getSecond();	
+			address = row.get(11).getSecond();
 			ifIndex = row.get(12).getSecond();
 			endType = Object2IntegerUtil.toInt(row.get(13).getSecond());
 			switch (endType) {
@@ -269,9 +261,9 @@ public class AdpSnmpTpsMgr {
 		}
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
 
-		if (TpType.PTP == tpType) 
-			constructPtpParameters(adpTp, tp, tpType, equType);		
-		
+		if (TpType.PTP == tpType)
+			constructPtpParameters(adpTp, tp, tpType, equType);
+
 		return adpTp;
 	}
 
@@ -305,7 +297,6 @@ public class AdpSnmpTpsMgr {
 		return userLabel;
 	}
 
-	
 	private boolean is130Scx10(String index) throws AdapterException {
 		String ExpectedType = isExpectedEquExisted(index);
 		if ("130SCX10".equalsIgnoreCase(ExpectedType)) {
@@ -413,7 +404,7 @@ public class AdpSnmpTpsMgr {
 			}
 		}
 	}
-	
+
 	private String queryPtpId(String keyOnNe) {
 		try {
 			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
@@ -426,7 +417,7 @@ public class AdpSnmpTpsMgr {
 			log.error("getTpByKeyOnNe", e);
 			return null;
 		}
-	}	
+	}
 
 	private void updatePtpConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
 		boolean bUpdate;
@@ -438,7 +429,7 @@ public class AdpSnmpTpsMgr {
 				if (!key.equals("connectedTo") && key.equals("connectedFrom"))
 					continue;
 				String value = pair.getValue();
-				if (value != null && value.substring(0, 7).equals("ifIndex/")) {
+				if (isIfIndex(value)) {
 					String ifIndex = value.substring(8);
 					String tpId = queryPtpId(ifIndex);
 					if (tpId != null) {
@@ -451,7 +442,11 @@ public class AdpSnmpTpsMgr {
 				updateTp2Db(tp);
 		}
 	}
-	
+
+	private boolean isIfIndex(String value) {
+		return value != null && value.startsWith("ifIndex/");
+	}
+
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);

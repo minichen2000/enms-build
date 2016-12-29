@@ -9,15 +9,19 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.wdm.business.xc.AdpSnmpXcsMgr;
+import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
+import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class Get130Scx10Ctps {
 	private final static Logger log = LogManager.getLogger(Get130Scx10Ctps.class);
 	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
+	private AdpSnmpXcsMgr xcsMgr = new AdpSnmpXcsMgr();
 
 	public static void main(String[] args) {
 
@@ -49,7 +53,7 @@ public class Get130Scx10Ctps {
 		tp.setParams(null);
 		tp.setObjectType(primaryLayerRate);
 		tp.setAlarmState(null);
-		return tp;
+		return addCtp2Db(tp);
 	}
 
 	private Integer getMaxId(Integer neId) throws AdapterException {
@@ -69,26 +73,23 @@ public class Get130Scx10Ctps {
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private void getClientCtps(List<AdpTp> ctpList, Integer neId, Integer ptpId, String ptpIndex)
-			throws AdapterException {
-		AdpTp dsrCtp = getDsrCtp(neId, ptpId, ptpIndex);
-		ctpList.add(dsrCtp);
+	private void getClientCtps(AdpXc xc, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		getDsrCtp(neId, ptpId, ptpIndex);
 		AdpTp odujCtp = getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
-		ctpList.add(odujCtp);
+		List<Integer> atpIds = new ArrayList<Integer>();
+		atpIds.add(odujCtp.getId());
+		xc.setAEndPoints(atpIds);
 	}
 
-	private void getLineCtps(List<AdpTp> ctpList, Integer neId, Integer ptpId, String ptpIndex)
-			throws AdapterException {
-		for (int i = 1; i <= 10; i++) {
-			AdpTp odujCtp = getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
-			ctpList.add(odujCtp);
-		}
-		AdpTp odukCtp = getOdukCtp(neId, ptpId, ptpIndex);
-		ctpList.add(odukCtp);
-		AdpTp otukCtp = getOtukCtps(neId, ptpId, ptpIndex);
-		ctpList.add(otukCtp);
-		AdpTp ochjCtp = getOchCtp(neId, ptpId, ptpIndex);
-		ctpList.add(ochjCtp);
+	private void getLineCtps(AdpXc xc, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		int i = getClientPortIndex(ptpIndex);
+		AdpTp odujCtp = getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
+		List<Integer> ztpIds = new ArrayList<Integer>();
+		ztpIds.add(odujCtp.getId());
+		xc.setZEndPoints(ztpIds);
+		getOdukCtp(neId, ptpId, ptpIndex);
+		getOtukCtps(neId, ptpId, ptpIndex);
+		getOchCtp(neId, ptpId, ptpIndex);
 	}
 
 	private AdpTp getOdukCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
@@ -133,28 +134,26 @@ public class Get130Scx10Ctps {
 		}
 	}
 
-	public List<AdpTp> getNotOtnSignalCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<AdpTp> ctpList = new ArrayList<AdpTp>();
-		getClientCtps(ctpList, neId, ptpId, ptpIndex);
-		getLineCtps(ctpList, neId, ptpId, ptpIndex);
-		List<AdpTp> newCtpList = new ArrayList<AdpTp>();
-		for (AdpTp ctp : ctpList) {
-			AdpTp ctpFromDb = isCtpExisted(neId, ctp.getKeyOnNe());
-			if (null != ctpFromDb) {
-				// TODO 替换已有值
-				newCtpList.add(ctpFromDb);
-				continue;
-			}
-			try {
-				AdpTp newCtp = tpDbMgr.addTp(ctp);
-				newCtpList.add(newCtp);
-			} catch (Exception e) {
-				log.error("addTps", e);
-				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-			}
-		}
+	public void syncNotOtnSignalCtpsAndXc(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		AdpXc xc = new AdpXc();
+		getClientCtps(xc, neId, ptpId, ptpIndex);
+		getLineCtps(xc, neId, ptpId, ptpIndex);
+		createFixedXc(neId, xc);
+	}
 
-		return newCtpList;
+	private AdpTp addCtp2Db(AdpTp ctp) throws AdapterException {
+		AdpTp ctpFromDb = isCtpExisted(ctp.getNeId(), ctp.getKeyOnNe());
+		if (null != ctpFromDb) {
+			// TODO 替换已有值
+			return ctpFromDb;
+		}
+		try {
+			ctpFromDb = tpDbMgr.addTp(ctp);
+		} catch (Exception e) {
+			log.error("addTps", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return ctpFromDb;
 	}
 
 	private AdpTp isCtpExisted(Integer neId, String keyOnNe) throws AdapterException {
@@ -168,5 +167,14 @@ public class Get130Scx10Ctps {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 		return null;
+	}
+
+	private void createFixedXc(Integer neId, AdpXc xc) throws AdapterException {
+		xcsMgr.createXc(neId, xc.getAEndPoints(), xc.getZEndPoints());
+	}
+
+	private int getClientPortIndex(String index) {
+		Integer[] position = SnmpTpUserLabelUtil.string2Hex(index);
+		return position[2] - 1;
 	}
 }
