@@ -71,6 +71,7 @@ public class AdpSnmpTpsMgr {
 		List<String> oids = setOidParams();
 		List<List<Pair<String, String>>> values = getTableValues(oids);
 		List<AdpTp> tpList = constructTpList(values);
+		updatePtpConnectedIfIndex(tpList);
 		return tpList;
 	}
 
@@ -121,46 +122,55 @@ public class AdpSnmpTpsMgr {
 			supportedTypes.add(row.get(5).getSecond());
 			entity.setSupportedTypes(supportedTypes);
 			entity.setSecondaryState(Object2IntegerUtil.toInt(row.get(6).getSecond()));
-			String ifIndex = row.get(7).getSecond();
-			int endType = Object2IntegerUtil.toInt(row.get(8).getSecond());
+			String address = row.get(7).getSecond();
+			String ifIndex = row.get(8).getSecond();
+			int endType = Object2IntegerUtil.toInt(row.get(9).getSecond());
 			switch (endType) {
 			case 1: // notConnected
 				entity.setConnectedTo("");
 				break;
 			case 2: // internal
-				entity.setConnectedTo(ifIndex);
+				String tpId = queryPtpId(ifIndex);
+				if (tpId == null)
+					entity.setConnectedTo("ifIndex/" + ifIndex);
+				else
+					entity.setConnectedTo(tpId);
 				break;
 			case 3: // external
-				entity.setConnectedTo("IP/" + ifIndex);
+				entity.setConnectedTo(address + "/" + ifIndex);
 				break;
 			}
 			log.debug("connected to = " + entity.getConnectedTo());
-			entity.setDirection(row.get(9).getSecond());
-
-			ifIndex = row.get(10).getSecond();
-			endType = Object2IntegerUtil.toInt(row.get(11).getSecond());
+			entity.setDirection(row.get(10).getSecond());
+			address = row.get(11).getSecond();	
+			ifIndex = row.get(12).getSecond();
+			endType = Object2IntegerUtil.toInt(row.get(13).getSecond());
 			switch (endType) {
 			case 1: // notConnected
 				entity.setConnectedFrom("");
 				break;
 			case 2: // internal
-				entity.setConnectedFrom(ifIndex);
+				String tpId = queryPtpId(ifIndex);
+				if (tpId == null)
+					entity.setConnectedFrom("ifIndex/" + ifIndex);
+				else
+					entity.setConnectedFrom(tpId);
 				break;
 			case 3: // external
-				entity.setConnectedFrom("IP/" + ifIndex);
+				entity.setConnectedFrom(address + "/" + ifIndex);
 				break;
 			}
 			log.debug("connected to = " + entity.getConnectedFrom());
 
-			entity.setSfpPortModuleVendorSerNo(row.get(12).getSecond());
-			entity.setSfpPortModuleVendor(row.get(13).getSecond());
-			entity.setSfpPortModuleType(row.get(14).getSecond());
-			entity.setSfpPortCLEI(row.get(15).getSecond());
-			entity.setSfpPortUnitPartNum(row.get(16).getSecond());
-			entity.setSfpPortSWPartNum(row.get(17).getSecond());
-			entity.setSfpPortFactoryID(row.get(18).getSecond());
-			entity.setSfpPortDate(row.get(19).getSecond());
-			entity.setSfpPortExtraData(row.get(20).getSecond());
+			entity.setSfpPortModuleVendorSerNo(row.get(14).getSecond());
+			entity.setSfpPortModuleVendor(row.get(15).getSecond());
+			entity.setSfpPortModuleType(row.get(16).getSecond());
+			entity.setSfpPortCLEI(row.get(17).getSecond());
+			entity.setSfpPortUnitPartNum(row.get(18).getSecond());
+			entity.setSfpPortSWPartNum(row.get(19).getSecond());
+			entity.setSfpPortFactoryID(row.get(20).getSecond());
+			entity.setSfpPortDate(row.get(21).getSecond());
+			entity.setSfpPortExtraData(row.get(22).getSecond());
 
 		} catch (Exception e) {
 			log.error("constructTpEntity", e);
@@ -190,6 +200,17 @@ public class AdpSnmpTpsMgr {
 		return tp;
 	}
 
+	private boolean updateTp2Db(AdpTp tp) throws AdapterException {
+		boolean ret = false;
+		try {
+			ret = tpsMgr.updateTp(tp);
+		} catch (Exception e) {
+			log.error("updateTp", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		return ret;
+	}
+
 	private List<String> setOidParams() {
 		List<String> oids = new ArrayList<String>();
 		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
@@ -198,9 +219,11 @@ public class AdpSnmpTpsMgr {
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.5"); // tnAccessPortStateQualifier
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.6"); // tnAccessPortFarEndAddress
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.7"); // tnAccessPortFarEndIfIndex
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.8"); // tnAccessPortFarEndType
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.9"); // tnAccessPortDirection
+		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.15"); // tnAccessPortFarEndAddressConnFrom
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.16"); // tnAccessPortFarEndIfIndexConnFrom
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.17"); // tnAccessPortFarEndTypeConnFrom
 
@@ -220,8 +243,13 @@ public class AdpSnmpTpsMgr {
 	private AdpTp constructTp(SnmpTpEntity tp, TpType tpType, String equType, Integer ptpId, Integer parentTpId)
 			throws AdapterException {
 		AdpTp adpTp = new AdpTp();
-		
-		adpTp.setId(tp.getIndex());
+		Integer maxTpId;
+		try {
+			maxTpId = AdpSeqDbMgr.getMaxTpId(neId);
+		} catch (Exception e) {
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+		adpTp.setId(maxTpId);
 		adpTp.setNeId(neId);
 		String userLabel = setUserLabel(tp.getIndex(), equType);
 		adpTp.setUserLabel(userLabel);
@@ -236,7 +264,7 @@ public class AdpSnmpTpsMgr {
 		adpTp.setKeyOnNe(tp.getIndex());
 		adpTp.setTpType(tpType.name());
 		if (TpType.PTP != tpType) {
-			adpTp.setPtpID(tp.getIndex());
+			adpTp.setPtpID(maxTpId);
 			adpTp.setParentTpID(parentTpId);
 		}
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
@@ -385,7 +413,45 @@ public class AdpSnmpTpsMgr {
 			}
 		}
 	}
+	
+	private String queryPtpId(String keyOnNe) {
+		try {
+			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
+			if (null == tpFromDb || null == tpFromDb.getId()) {
+				log.info("tpFromDb is null, " + "keyOnNe is " + keyOnNe);
+				return null;
+			}
+			return String.valueOf(tpFromDb.getId());
+		} catch (Exception e) {
+			log.error("getTpByKeyOnNe", e);
+			return null;
+		}
+	}	
 
+	private void updatePtpConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
+		boolean bUpdate;
+		for (AdpTp tp : tpList) {
+			bUpdate = false;
+			List<AdpKVPair> params = tp.getParams();
+			for (AdpKVPair pair : params) {
+				String key = pair.getKey();
+				if (!key.equals("connectedTo") && key.equals("connectedFrom"))
+					continue;
+				String value = pair.getValue();
+				if (value != null && value.substring(0, 7).equals("ifIndex/")) {
+					String ifIndex = value.substring(8);
+					String tpId = queryPtpId(ifIndex);
+					if (tpId != null) {
+						pair.setKey(tpId);
+						bUpdate = true;
+					}
+				}
+			}
+			if (bUpdate)
+				updateTp2Db(tp);
+		}
+	}
+	
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
