@@ -38,7 +38,7 @@ public class Get130Scx10Ctps {
 		tp.setNativeName(userLabel);
 		tp.setUserLabel(userLabel);
 		tp.setLayerRates(layerRates);
-		String keyOnNe = primaryLayerRate + "_" + ptpIndex;
+		String keyOnNe = userLabel + "_" + ptpIndex;
 		tp.setKeyOnNe(keyOnNe);
 		tp.setDirection(Direction.BI.name());
 		tp.setFreeResources(null);
