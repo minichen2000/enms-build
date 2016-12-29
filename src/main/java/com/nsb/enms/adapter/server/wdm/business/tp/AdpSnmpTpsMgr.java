@@ -114,45 +114,18 @@ public class AdpSnmpTpsMgr {
 			supportedTypes.add(row.get(5).getSecond());
 			entity.setSupportedTypes(supportedTypes);
 			entity.setSecondaryState(Object2IntegerUtil.toInt(row.get(6).getSecond()));
+			
 			String address = row.get(7).getSecond();
 			String ifIndex = row.get(8).getSecond();
 			int endType = Object2IntegerUtil.toInt(row.get(9).getSecond());
-			switch (endType) {
-			case 1: // notConnected
-				entity.setConnectedTo("");
-				break;
-			case 2: // internal
-				String tpId = queryPtpId(ifIndex);
-				if (tpId == null)
-					entity.setConnectedTo("ifIndex/" + ifIndex);
-				else
-					entity.setConnectedTo(tpId);
-				break;
-			case 3: // external
-				entity.setConnectedTo(address + "/" + ifIndex);
-				break;
-			}
-			log.debug("connected to = " + entity.getConnectedTo());
+			setTpEntityConnectedTo(entity, endType, ifIndex, address);
+			
 			entity.setDirection(row.get(10).getSecond());
+			
 			address = row.get(11).getSecond();
 			ifIndex = row.get(12).getSecond();
 			endType = Object2IntegerUtil.toInt(row.get(13).getSecond());
-			switch (endType) {
-			case 1: // notConnected
-				entity.setConnectedFrom("");
-				break;
-			case 2: // internal
-				String tpId = queryPtpId(ifIndex);
-				if (tpId == null)
-					entity.setConnectedFrom("ifIndex/" + ifIndex);
-				else
-					entity.setConnectedFrom(tpId);
-				break;
-			case 3: // external
-				entity.setConnectedFrom(address + "/" + ifIndex);
-				break;
-			}
-			log.debug("connected to = " + entity.getConnectedFrom());
+			setTpEntityConnectedFrom(entity, endType, ifIndex, address);
 
 			entity.setSfpPortModuleVendorSerNo(row.get(14).getSecond());
 			entity.setSfpPortModuleVendor(row.get(15).getSecond());
@@ -306,105 +279,75 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void constructPtpParameters(AdpTp adpTp, SnmpTpEntity tp, TpType tpType, String equType) {
-		AdpKVPair pair = new AdpKVPair();
-		pair.setKey("adminState");
-		pair.setValue(String.valueOf(tp.getAdminStatus()));
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("operStatus");
-		pair.setValue(String.valueOf(tp.getOperStatus()));
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("secondaryState");
-		pair.setValue(String.valueOf(tp.getSecondaryState()));
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("supportedLayers");
-		pair.setValue(String.valueOf(tp.getSupportedTypes()));
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("signalRate");
-		pair.setValue(tp.getInternalType());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("signalRate");
-		pair.setValue(tp.getInternalType());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair(); // Vendor
-		pair.setKey("sfpPortModuleVendor");
-		pair.setValue(tp.getSfpPortModuleVendor());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortModuleType"); // Module Type
-		pair.setValue(tp.getSfpPortModuleType());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortCLEI"); // CLEI
-		pair.setValue(tp.getSfpPortCLEI());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortUnitPartNum"); // Unit Part Number
-		pair.setValue(tp.getSfpPortUnitPartNum());
-		adpTp.addParamsItem(pair);
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortFactoryID"); // Factory ID
-		pair.setValue(tp.getSfpPortFactoryID());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortSWPartNum"); // Software Part Number
-		pair.setValue(tp.getSfpPortSWPartNum());
-		adpTp.addParamsItem(pair);
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortModuleVendorSerNo"); // Serial Number
-		pair.setValue(tp.getSfpPortModuleVendorSerNo());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortDate"); // Date
-		pair.setValue(tp.getSfpPortDate());
-
-		adpTp.addParamsItem(pair);
-		pair = new AdpKVPair();
-		pair.setKey("sfpPortExtraData"); // Extra Data
-		pair.setValue(tp.getSfpPortExtraData());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("connectedTo");
-		pair.setValue(tp.getConnectedTo());
-		adpTp.addParamsItem(pair);
-
-		pair = new AdpKVPair();
-		pair.setKey("connectedFrom");
-		pair.setValue(tp.getConnectedFrom());
-		adpTp.addParamsItem(pair);
-
+		
+		setPtpParameter(adpTp, "adminState", String.valueOf(tp.getAdminStatus()));
+		setPtpParameter(adpTp, "operStatus", String.valueOf(tp.getOperStatus()));
+		setPtpParameter(adpTp, "secondaryState", String.valueOf(tp.getSecondaryState()));
+		setPtpParameter(adpTp, "supportedLayers", String.valueOf(tp.getSupportedTypes()));
+		setPtpParameter(adpTp, "signalRate", tp.getInternalType());
+		setPtpParameter(adpTp, "signalRate", tp.getInternalType());
+		setPtpParameter(adpTp, "connectedTo", tp.getConnectedTo());
+		setPtpParameter(adpTp, "connectedFrom", tp.getConnectedFrom());
+		setPtpParameter(adpTp, "sfpPortModuleVendor", tp.getSfpPortModuleVendor());  // Vendor
+		setPtpParameter(adpTp, "sfpPortModuleType", tp.getSfpPortModuleType()); // Module Type
+		setPtpParameter(adpTp, "sfpPortCLEI", tp.getSfpPortCLEI()); // CLEI
+		setPtpParameter(adpTp, "sfpPortUnitPartNum", tp.getSfpPortUnitPartNum()); // Unit Part Number
+		setPtpParameter(adpTp, "sfpPortFactoryID", tp.getSfpPortFactoryID()); // Factory ID
+		setPtpParameter(adpTp, "sfpPortSWPartNum", tp.getSfpPortSWPartNum()); // Software Part Number
+		setPtpParameter(adpTp, "sfpPortModuleVendorSerNo", tp.getSfpPortModuleVendorSerNo()); // Serial Number
+		setPtpParameter(adpTp, "sfpPortDate", tp.getSfpPortDate()); // Date
+		setPtpParameter(adpTp, "sfpPortExtraData", tp.getSfpPortExtraData()); // Extra Data
+		
 		// 130SCX10 Client PTP specail Param
-		if (TpType.PTP == tpType && equType.equals("130SCX10")) {
-			String userLabel = adpTp.getUserLabel();
-			String[] labels = userLabel.split("-");
-			if (labels.length == 4) {
-				String portName = labels[labels.length - 1];
-				if (portName.substring(0, 1).equals("C")) { // Client PTP
-					pair = new AdpKVPair();
-					pair.setKey("supportedContainer");
-					pair.setValue("ODU2");
-					adpTp.addParamsItem(pair);
-				}
-			}
-		}
+		if (TpType.PTP == tpType && true == is130SCX10ClientPtp(adpTp, equType))
+			setPtpParameter(adpTp, "supportedContainer", "ODU2");
+	}
+	
+	private void setPtpParameter(AdpTp adpTp, String key, String value) {
+		AdpKVPair pair = new AdpKVPair();
+		pair.setKey(key);
+		pair.setValue(value);
+		adpTp.addParamsItem(pair);
 	}
 
+	private void setTpEntityConnectedTo(SnmpTpEntity entity, int endType, String ifIndex, String address) {
+		switch (endType) {
+		case 1: // notConnected
+			entity.setConnectedTo("");
+			break;
+		case 2: // internal
+			String tpId = queryPtpId(ifIndex);
+			if (tpId == null)
+				entity.setConnectedTo("ifIndex/" + ifIndex);
+			else
+				entity.setConnectedTo(tpId);
+			break;
+		case 3: // external
+			entity.setConnectedTo(address + "/" + ifIndex);
+			break;
+		}
+		log.debug("connected to = " + entity.getConnectedTo());
+	}
+	
+	private void setTpEntityConnectedFrom(SnmpTpEntity entity, int endType, String ifIndex, String address) {	
+		switch (endType) {
+		case 1: // notConnected
+			entity.setConnectedFrom("");
+			break;
+		case 2: // internal
+			String tpId = queryPtpId(ifIndex);
+			if (tpId == null)
+				entity.setConnectedFrom("ifIndex/" + ifIndex);
+			else
+				entity.setConnectedFrom(tpId);
+			break;
+		case 3: // external
+			entity.setConnectedFrom(address + "/" + ifIndex);
+			break;
+		}
+		log.debug("connected to = " + entity.getConnectedFrom());
+	}
+	
 	private String queryPtpId(String keyOnNe) {
 		try {
 			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
@@ -447,6 +390,21 @@ public class AdpSnmpTpsMgr {
 		return value != null && value.startsWith("ifIndex/");
 	}
 
+	private boolean is130SCX10ClientPtp(AdpTp adpTp, String equType) {
+		boolean ret = false;
+		if (equType.equals("130SCX10")) {
+			String userLabel = adpTp.getUserLabel();
+			String[] labels = userLabel.split("-");
+			if (labels.length == 4) {
+				String portName = labels[labels.length - 1];
+				if (portName.startsWith("C")) { // Client PTP
+					ret = true;
+				}
+			}
+		}
+		return ret;
+	}
+	
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
