@@ -25,7 +25,7 @@ public class SnmpOCHTpNameUtil {
 			oids.add("1.3.6.1.4.1.7483.2.2.4.3.4.42.1.3");
 			List<Pair<String, String>> values = client.snmpMultiGet(oids, index);
 			if (null == values || values.isEmpty()) {
-				return StringUtils.EMPTY;
+				return "/frequency=unknown";
 			}
 
 			String waveLength = values.get(0).getSecond();
@@ -42,7 +42,7 @@ public class SnmpOCHTpNameUtil {
 		} catch (NumberFormatException e) {
 			log.error("getNativeName", e);
 		}
-		return StringUtils.EMPTY;
+		return "/frequency=unknown";
 	}
 
 	public static void main(String args[]) {

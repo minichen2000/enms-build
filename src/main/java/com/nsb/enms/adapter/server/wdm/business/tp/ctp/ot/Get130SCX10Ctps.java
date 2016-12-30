@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.wdm.utils.SnmpOCHTpNameUtil;
 import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
@@ -30,15 +31,15 @@ public class Get130SCX10Ctps {
 		return constructCtp(neId, "/dsr=1", layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private AdpTp constructCtp(Integer neId, String userLabel, List<String> layerRates, Integer ptpId, String ptpIndex,
+	private AdpTp constructCtp(Integer neId, String nativeName, List<String> layerRates, Integer ptpId, String ptpIndex,
 			Integer primaryLayerRate) throws AdapterException {
 		AdpTp tp = new AdpTp();
 		tp.setId(getMaxId(neId));
 		tp.setNeId(neId);
-		tp.setNativeName(userLabel);
-		tp.setUserLabel(userLabel);
+		tp.setNativeName(nativeName);
+		tp.setUserLabel(nativeName);
 		tp.setLayerRates(layerRates);
-		String keyOnNe = userLabel + "_" + ptpIndex;
+		String keyOnNe = nativeName + "_" + ptpIndex;
 		tp.setKeyOnNe(keyOnNe);
 		tp.setDirection(Direction.BI.name());
 		tp.setFreeResources(null);
@@ -96,8 +97,8 @@ public class Get130SCX10Ctps {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OCH.name());
 		int primaryLayerRate = LayerRate.OCH.ordinal();
-		String userLabel = "";
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
+		String nativeName = SnmpOCHTpNameUtil.getNativeName(neId, ptpIndex);
+		return constructCtp(neId, nativeName, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
 	private AdpTp getOtukCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {

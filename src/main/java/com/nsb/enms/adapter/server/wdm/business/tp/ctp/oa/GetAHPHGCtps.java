@@ -23,15 +23,15 @@ public class GetAHPHGCtps {
 
 	}
 
-	private AdpTp constructCtp(Integer neId, String userLabel, List<String> layerRates, Integer ptpId, String ptpIndex,
+	private AdpTp constructCtp(Integer neId, String nativeName, List<String> layerRates, Integer ptpId, String ptpIndex,
 			Integer primaryLayerRate) throws AdapterException {
 		AdpTp tp = new AdpTp();
 		tp.setId(getMaxId(neId));
 		tp.setNeId(neId);
-		tp.setNativeName(userLabel);
-		tp.setUserLabel(userLabel);
+		tp.setNativeName(nativeName);
+		tp.setUserLabel(nativeName);
 		tp.setLayerRates(layerRates);
-		String keyOnNe = userLabel + "_" + ptpIndex;
+		String keyOnNe = nativeName + "_" + ptpIndex;
 		tp.setKeyOnNe(keyOnNe);
 		tp.setDirection(Direction.BI.name());
 		tp.setFreeResources(null);
@@ -55,41 +55,30 @@ public class GetAHPHGCtps {
 		return maxTpId;
 	}
 
-	private void getClientCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		getOchCtp(neId, ptpId, ptpIndex);
-	}
-
-	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		getOchCtp(neId, ptpId, ptpIndex);
+	private void getSigCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		getOmsCtps(neId, ptpId, ptpIndex);
 	}
 
-	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.OCH.name());
-		int primaryLayerRate = LayerRate.OCH.ordinal();
-		String userLabel = "";
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
+	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		getOmsCtps(neId, ptpId, ptpIndex);
 	}
 
 	private AdpTp getOmsCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.OTU4.name());
-		int primaryLayerRate = LayerRate.OTU4.ordinal();
-		String userLabel = "/out4=1";
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
+		layerRates.add(LayerRate.OMS.name());
+		int primaryLayerRate = LayerRate.OMS.ordinal();
+		String nativeName = "/oms=1";
+		return constructCtp(neId, nativeName, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
 	public void syncCtps(AdpTp tp) throws AdapterException {
-		String userLabel = tp.getNativeName();
-		System.out.println("=========" + userLabel);
+		String nativeName = tp.getNativeName();
 		Integer neId = tp.getNeId();
 		Integer ptpId = tp.getPtpID();
 		String ptpIndex = tp.getKeyOnNe();
-		if (userLabel.indexOf("-C") != -1) {
-			getClientCtps(neId, ptpId, ptpIndex);
-		} else if (userLabel.indexOf("-L1") != -1) {
-			System.out.println("xxxxxxxxxxxxxx");
+		if (nativeName.endsWith("-SIG")) {
+			getSigCtps(neId, ptpId, ptpIndex);
+		} else if (nativeName.endsWith("-LINE")) {
 			getLineCtps(neId, ptpId, ptpIndex);
 		}
 	}

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.wdm.utils.SnmpOCHTpNameUtil;
 import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
@@ -23,15 +24,15 @@ public class GetSFD44Ctps {
 
 	}
 
-	private AdpTp constructCtp(Integer neId, String userLabel, List<String> layerRates, Integer ptpId, String ptpIndex,
+	private AdpTp constructCtp(Integer neId, String nativeName, List<String> layerRates, Integer ptpId, String ptpIndex,
 			Integer primaryLayerRate) throws AdapterException {
 		AdpTp tp = new AdpTp();
 		tp.setId(getMaxId(neId));
 		tp.setNeId(neId);
-		tp.setNativeName(userLabel);
-		tp.setUserLabel(userLabel);
+		tp.setNativeName(nativeName);
+		tp.setUserLabel(nativeName);
 		tp.setLayerRates(layerRates);
-		String keyOnNe = userLabel + "_" + ptpIndex;
+		String keyOnNe = nativeName + "_" + ptpIndex;
 		tp.setKeyOnNe(keyOnNe);
 		tp.setDirection(Direction.BI.name());
 		tp.setFreeResources(null);
@@ -59,23 +60,23 @@ public class GetSFD44Ctps {
 		getOchCtp(neId, ptpId, ptpIndex);
 	}
 
-	private void getMutilCtps(Integer neId, Integer ptpId, String ptpIndex, String userLabel) throws AdapterException {
+	private void getMutilCtps(Integer neId, Integer ptpId, String ptpIndex, String nativeName) throws AdapterException {
 		for (int i = 1; i < 45; i++) {
-			getOchCtp(neId, ptpId, ptpIndex, userLabel + "_" + i);
+			getOchCtp(neId, ptpId, ptpIndex, nativeName + "_" + i);
 		}
 		getOmsCtps(neId, ptpId, ptpIndex);
 	}
 
 	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		String userLabel = "";
-		return getOchCtp(neId, ptpId, ptpIndex, userLabel);
+		String nativeName = SnmpOCHTpNameUtil.getNativeName(neId, ptpIndex);
+		return getOchCtp(neId, ptpId, ptpIndex, nativeName);
 	}
 
-	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex, String userLabel) throws AdapterException {
+	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex, String nativeName) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OCH.name());
 		int primaryLayerRate = LayerRate.OCH.ordinal();
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
+		return constructCtp(neId, nativeName, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
 	private AdpTp getOmsCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
@@ -123,12 +124,6 @@ public class GetSFD44Ctps {
 			log.error("getTpByKeyOnNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return null;
-	}
-
-	private String getOchName() {
-		// tnNetworkPortConfigTable.tnNwPortProgrammedChannel
-		// tnSfpPortInfoTable.tnSfpPortWavelength=1
 		return null;
 	}
 }

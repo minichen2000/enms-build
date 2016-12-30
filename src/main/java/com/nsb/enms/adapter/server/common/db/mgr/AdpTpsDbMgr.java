@@ -85,6 +85,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
+	// TODO 是否需要增加ptpId作为参数
 	public AdpTp getTpByKeyOnNe(String neId, String keyOnNe) throws Exception {
 		List<Document> docList = getCollection(neId).find(and(eq("neId", neId), eq("keyOnNe", keyOnNe)))
 				.into(new ArrayList<Document>());
@@ -424,7 +425,7 @@ public class AdpTpsDbMgr {
 		Document doc = docList.get(0);
 		return constructTp(doc);
 	}
-	
+
 	public void deleteTpByKeyOnNe(String neId, String keyOnNe) throws Exception {
 		getCollection(neId).deleteMany(new Document("keyOnNe", keyOnNe));
 	}
