@@ -552,7 +552,7 @@ public class AdpSnmpTpsMgr {
 			List<AdpKVPair> params = tp.getParams();
 			for (AdpKVPair pair : params) {
 				String key = pair.getKey();
-				if (!key.equals("connectedTo") && key.equals("connectedFrom"))
+				if (false == key.equals("connectedTo") && false == key.equals("connectedFrom"))
 					continue;
 				String value = pair.getValue();
 				if (isIfIndex(value)) {
