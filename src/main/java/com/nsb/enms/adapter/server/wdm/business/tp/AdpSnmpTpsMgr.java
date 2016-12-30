@@ -14,7 +14,7 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
-import com.nsb.enms.adapter.server.wdm.business.tp.ctp.Get130Scx10Ctps;
+import com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot.Get130SCX10Ctps;
 import com.nsb.enms.adapter.server.wdm.business.xc.AdpSnmpXcsMgr;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
@@ -132,7 +132,7 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void syncCtps(List<AdpTp> ptpList) throws AdapterException {
-		Get130Scx10Ctps ctps = new Get130Scx10Ctps();
+		Get130SCX10Ctps ctps = new Get130SCX10Ctps();
 		for (AdpTp tp : ptpList) {
 			String keyOnNe = tp.getKeyOnNe();
 			if (is130Scx10(keyOnNe)) {

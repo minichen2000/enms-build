@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.wdm.business.tp.ctp;
+package com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class Get130Scx10Ctps {
-	private final static Logger log = LogManager.getLogger(Get130Scx10Ctps.class);
+public class Get130SCX10Ctps {
+	private final static Logger log = LogManager.getLogger(Get130SCX10Ctps.class);
 	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
 
 	public static void main(String[] args) {
