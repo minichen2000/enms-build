@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.conf.ConfLoader;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
-import com.nsb.enms.adapter.server.common.business.register.RegisterManager;
+import com.nsb.enms.adapter.server.common.app.register.RegisterManager;
 import com.nsb.enms.adapter.server.sdh.q3gateway.NotificationClient;
 import com.nsb.enms.adapter.server.sdh.q3manager.Q3EmlImMgr;
 import com.nsb.enms.adapter.server.statemachine.app.NeStateMachineApp;

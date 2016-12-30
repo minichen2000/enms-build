@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.business.register;
+package com.nsb.enms.adapter.server.common.app.register;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

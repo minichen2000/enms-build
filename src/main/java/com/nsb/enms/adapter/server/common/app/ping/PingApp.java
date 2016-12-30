@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.common.business.ping;
+package com.nsb.enms.adapter.server.common.app.ping;
 
 import java.util.Timer;
 import java.util.TimerTask;
