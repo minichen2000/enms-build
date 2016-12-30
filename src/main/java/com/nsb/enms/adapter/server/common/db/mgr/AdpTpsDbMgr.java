@@ -424,4 +424,8 @@ public class AdpTpsDbMgr {
 		Document doc = docList.get(0);
 		return constructTp(doc);
 	}
+	
+	public void deleteTpByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+		getCollection(neId).deleteMany(new Document("keyOnNe", keyOnNe));
+	}
 }

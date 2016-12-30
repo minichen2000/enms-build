@@ -336,9 +336,12 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private boolean updateTp2Db(AdpTp tp) throws AdapterException {
-		boolean ret = false;
+		boolean ret = true;
 		try {
-			ret = tpsMgr.updateTp(tp);
+
+			tpsMgr.deleteTpByKeyOnNe(tp.getNeId(), tp.getKeyOnNe());
+			tpsMgr.addTp(tp);
+			//ret = tpsMgr.updateTp(tp);
 		} catch (Exception e) {
 			log.error("updateTp", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -457,7 +460,6 @@ public class AdpSnmpTpsMgr {
 		setPtpParameter(adpTp, "secondaryState", String.valueOf(tp.getSecondaryState()));
 		setPtpParameter(adpTp, "supportedLayers", String.valueOf(tp.getSupportedTypes()));
 		setPtpParameter(adpTp, "signalRate", tp.getInternalType());
-		setPtpParameter(adpTp, "signalRate", tp.getInternalType());
 		setPtpParameter(adpTp, "connectedTo", tp.getConnectedTo());
 		setPtpParameter(adpTp, "connectedFrom", tp.getConnectedFrom());
 		// Vendor
@@ -557,8 +559,9 @@ public class AdpSnmpTpsMgr {
 					String ifIndex = value.substring(8);
 					String tpId = queryPtpId(ifIndex);
 					if (tpId != null) {
-						pair.setKey(tpId);
+						pair.setValue(tpId);
 						bUpdate = true;
+						log.info("update key " + key + ", set the ifindex/" + ifIndex + " to id " + tpId);
 					}
 				}
 			}
