@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
+import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,13 +38,16 @@ public class AdpSnmpTpsMgr {
 	private SnmpClient client;
 	private AdpTpsDbMgr tpsMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsMgr = new AdpEqusDbMgr();
-	private AdpSnmpXcsMgr xcsMgr = new AdpSnmpXcsMgr();
+	private AdpSnmpXcsMgr xcsMgr;
 	private Integer neId;
 	private List<AdpTp> _130Scx10ClientPtpList = new ArrayList<AdpTp>();
 	private List<AdpTp> _130Scx10LinePtpList = new ArrayList<AdpTp>();
 
-	public AdpSnmpTpsMgr(Integer neId) {
+	private ObjectIdGenerator objectIdGenerator;
+	public AdpSnmpTpsMgr(Integer neId, ObjectIdGenerator objectIdGenerator) {
 		this.neId = neId;
+		this.objectIdGenerator=objectIdGenerator;
+		xcsMgr = new AdpSnmpXcsMgr(objectIdGenerator);
 		try {
 			this.client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 		} catch (AdapterException e) {
@@ -522,7 +527,7 @@ public class AdpSnmpTpsMgr {
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr(5);
+		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr(5, new WdmObjectIdGenerator());
 		try {
 			mgr.syncTps();
 		} catch (AdapterException e) {

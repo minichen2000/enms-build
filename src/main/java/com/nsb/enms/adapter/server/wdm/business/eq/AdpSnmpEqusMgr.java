@@ -3,6 +3,7 @@ package com.nsb.enms.adapter.server.wdm.business.eq;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,8 +28,10 @@ public class AdpSnmpEqusMgr {
 
 	private static AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 
-	public AdpSnmpEqusMgr() {
+	private ObjectIdGenerator objectIdGenerator;
 
+	public AdpSnmpEqusMgr(ObjectIdGenerator objectIdGenerator) {
+		this.objectIdGenerator=objectIdGenerator;
 	}
 
 	public void syncEqs(Integer neId) throws AdapterException {

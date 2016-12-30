@@ -2,6 +2,8 @@ package com.nsb.enms.adapter.server.wdm.business.sync;
 
 import java.util.concurrent.Callable;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
+import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,8 +27,9 @@ public class SnmpSyncThread implements Callable<Object> {
 	public Object call() throws Exception {
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, neId, "operationalState",
 				OperationState.SYNCING.name(), OperationState.IDLE.name());
-		new AdpSnmpEqusMgr().syncEqs(neId);
-		new AdpSnmpTpsMgr(neId).syncTps();
+		ObjectIdGenerator wdmObjectIdGenerator=new WdmObjectIdGenerator();
+		new AdpSnmpEqusMgr(wdmObjectIdGenerator).syncEqs(neId);
+		new AdpSnmpTpsMgr(neId,wdmObjectIdGenerator).syncTps();
 		NeStateMachineApp.instance().afterSynchData(neId);
 		log.debug("------------ sync end -------------");
 		return null;

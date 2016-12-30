@@ -3,6 +3,7 @@ package com.nsb.enms.adapter.server.wdm.business.xc;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,9 +20,12 @@ import com.nsb.enms.restful.model.adapter.AdpXc;
 public class AdpSnmpXcsMgr {
 	private final static Logger log = LogManager.getLogger(AdpSnmpXcsMgr.class);
 
+	private ObjectIdGenerator objectIdGenerator;
+
 	private AdpXcsDbMgr xcsMgr = new AdpXcsDbMgr();
 
-	public AdpSnmpXcsMgr() {
+	public AdpSnmpXcsMgr(ObjectIdGenerator objectIdGenerator) {
+		this.objectIdGenerator=objectIdGenerator;
 	}
 
 	public void createXc(Integer neId, List<Integer> atps, List<Integer> ztps) throws AdapterException {
