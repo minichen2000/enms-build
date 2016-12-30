@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot;
+package com.nsb.enms.adapter.server.wdm.business.tp.ctp.oa;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +15,12 @@ import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class Get130SCX10Ctps {
-	private final static Logger log = LogManager.getLogger(Get130SCX10Ctps.class);
+public class GetAHPHGCtps {
+	private final static Logger log = LogManager.getLogger(GetAHPHGCtps.class);
 	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
 
 	public static void main(String[] args) {
 
-	}
-
-	private AdpTp getDsrCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.DSR.name());
-		int primaryLayerRate = LayerRate.DSR.ordinal();
-		return constructCtp(neId, "/dsr=1", layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
 	private AdpTp constructCtp(Integer neId, String userLabel, List<String> layerRates, Integer ptpId, String ptpIndex,
@@ -62,34 +55,13 @@ public class Get130SCX10Ctps {
 		return maxTpId;
 	}
 
-	private AdpTp getOdujCtp(String userLabel, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.ODU2.name());
-		int primaryLayerRate = LayerRate.ODU2.ordinal();
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
-	}
-
 	private void getClientCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		getDsrCtp(neId, ptpId, ptpIndex);
-		getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
-	}
-
-	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		for (int i = 1; i < 11; i++) {
-			getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
-		}
-		getOdukCtp(neId, ptpId, ptpIndex);
-		getOtukCtps(neId, ptpId, ptpIndex);
 		getOchCtp(neId, ptpId, ptpIndex);
 	}
 
-	private AdpTp getOdukCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.ODU4.name());
-		int primaryLayerRate = LayerRate.ODU4.ordinal();
-		String userLabel = "/odu4=1";
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
-
+	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		getOchCtp(neId, ptpId, ptpIndex);
+		getOmsCtps(neId, ptpId, ptpIndex);
 	}
 
 	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
@@ -100,20 +72,13 @@ public class Get130SCX10Ctps {
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private AdpTp getOtukCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOmsCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OTU4.name());
 		int primaryLayerRate = LayerRate.OTU4.ordinal();
 		String userLabel = "/out4=1";
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
-
-	// public void syncNotOtnSignalCtpsAndXc(Integer neId, Integer ptpId, String
-	// ptpIndex) throws AdapterException {
-	// AdpXc xc = new AdpXc();
-	// getClientCtps(null, neId, ptpId, ptpIndex);
-	// getLineCtps(null, neId, ptpId, ptpIndex);
-	// }
 
 	public void syncCtps(AdpTp tp) throws AdapterException {
 		String userLabel = tp.getNativeName();

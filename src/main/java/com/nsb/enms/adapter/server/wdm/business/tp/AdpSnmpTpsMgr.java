@@ -4,21 +4,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
-import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
+import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
+import com.nsb.enms.adapter.server.wdm.business.tp.ctp.oa.GetAHPHGCtps;
 import com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot.Get130SCX10Ctps;
+import com.nsb.enms.adapter.server.wdm.business.tp.ctp.sfd.GetSFD44Ctps;
 import com.nsb.enms.adapter.server.wdm.business.xc.AdpSnmpXcsMgr;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
+import com.nsb.enms.adapter.server.wdm.constants.SnmpEquType;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.adapter.server.wdm.utils.PSSBoardUtil;
@@ -42,11 +45,16 @@ public class AdpSnmpTpsMgr {
 	private Integer neId;
 	private List<AdpTp> _130Scx10ClientPtpList = new ArrayList<AdpTp>();
 	private List<AdpTp> _130Scx10LinePtpList = new ArrayList<AdpTp>();
+	private List<AdpTp> sfd44ClientPtpList = new ArrayList<AdpTp>();
+	private List<AdpTp> sfd44LinePtpList = new ArrayList<AdpTp>();
+	private List<AdpTp> ahphgClientPtpList = new ArrayList<AdpTp>();
+	private List<AdpTp> ahphgLinePtpList = new ArrayList<AdpTp>();
 
 	private ObjectIdGenerator objectIdGenerator;
+
 	public AdpSnmpTpsMgr(Integer neId, ObjectIdGenerator objectIdGenerator) {
 		this.neId = neId;
-		this.objectIdGenerator=objectIdGenerator;
+		this.objectIdGenerator = objectIdGenerator;
 		xcsMgr = new AdpSnmpXcsMgr(objectIdGenerator);
 		try {
 			this.client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
@@ -72,18 +80,24 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void createXc() throws AdapterException {
-		if (_130Scx10ClientPtpList.isEmpty() || _130Scx10LinePtpList.isEmpty()) {
-			return;
+		if (!_130Scx10ClientPtpList.isEmpty() && !_130Scx10LinePtpList.isEmpty()) {
+			for (AdpTp tp : _130Scx10ClientPtpList) {
+				System.out.println(tp.getNativeName());
+				create130SCX10FixedXc(tp);
+			}
 		}
 
-		for (AdpTp tp : _130Scx10ClientPtpList) {
-			System.out.println(tp.getUserLabel());
-			createFixedXc(tp);
+		if (!sfd44ClientPtpList.isEmpty() && !sfd44LinePtpList.isEmpty()) {
+			int i = 0;
+			for (AdpTp tp : sfd44ClientPtpList) {
+				System.out.println(tp.getNativeName());
+				createSFD44FixedXc(tp, ++i);
+			}
 		}
 	}
 
-	private void createFixedXc(AdpTp tp) throws AdapterException {
-		String userLabel = tp.getUserLabel();
+	private void create130SCX10FixedXc(AdpTp tp) throws AdapterException {
+		String userLabel = tp.getNativeName();
 		int index = userLabel.indexOf("-C");
 		try {
 			String clientCtpkeyOnNe = "/odu2=1_" + tp.getKeyOnNe();
@@ -94,7 +108,7 @@ public class AdpSnmpTpsMgr {
 			}
 			String userLabel_L1 = userLabel.substring(0, index) + "-L1";
 			String portNumber = userLabel.substring(index + 2);
-			String lineCtpkeyOnNe = "/odu4=1/odu2=" + portNumber + "_" + findL1PtpIndex(userLabel_L1);
+			String lineCtpkeyOnNe = "/odu4=1/odu2=" + portNumber + "_" + find130SCX10L1PtpIndex(userLabel_L1);
 			AdpTp ctp2 = tpsMgr.getTpByKeyOnNe(neId, lineCtpkeyOnNe);
 			if (!isTpValid(ctp2)) {
 				log.error("ctp2 is invalid");
@@ -115,13 +129,63 @@ public class AdpSnmpTpsMgr {
 		} catch (AdapterException e) {
 			throw e;
 		} catch (Exception e) {
+			log.error("create130SCX10FixedXc", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
 
-	private String findL1PtpIndex(String userLabel) {
+	private void createSFD44FixedXc(AdpTp tp, int portNumber) throws AdapterException {
+		String userLabel = tp.getNativeName();
+		try {
+			int index = userLabel.lastIndexOf("-");
+			String tpRate = userLabel.substring(index + 1);
+			String clientCtpkeyOnNe = "/odu2=1_" + tp.getKeyOnNe();
+			AdpTp ctp1 = tpsMgr.getTpByKeyOnNe(neId, clientCtpkeyOnNe);
+			if (!isTpValid(ctp1)) {
+				log.error("ctp1 is invalid");
+				return;
+			}
+			String userLabel_L1 = userLabel.substring(0, index) + "-OMD";
+			String lineCtpkeyOnNe = userLabel_L1 + "_" + portNumber;
+			AdpTp ctp2 = tpsMgr.getTpByKeyOnNe(neId, lineCtpkeyOnNe);
+			if (!isTpValid(ctp2)) {
+				log.error("ctp2 is invalid");
+				return;
+			}
+
+			// update ctp2 userlabel
+
+			Integer ctpId1 = ctp1.getId();
+			Integer ctpId2 = ctp2.getId();
+			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
+				return;
+			}
+
+			List<Integer> atps = new ArrayList<Integer>();
+			atps.add(ctpId1);
+			List<Integer> ztps = new ArrayList<Integer>();
+			ztps.add(ctpId2);
+			xcsMgr.createXc(neId, atps, ztps);
+		} catch (AdapterException e) {
+			throw e;
+		} catch (Exception e) {
+			log.error("createSFD44FixedXc", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
+	}
+
+	private String find130SCX10L1PtpIndex(String userLabel) {
 		for (AdpTp tp : _130Scx10LinePtpList) {
-			if (tp.getUserLabel().equalsIgnoreCase(userLabel)) {
+			if (tp.getNativeName().equalsIgnoreCase(userLabel)) {
+				return tp.getKeyOnNe();
+			}
+		}
+		return StringUtils.EMPTY;
+	}
+
+	private String findSFD44L1PtpIndex(String userLabel) {
+		for (AdpTp tp : sfd44LinePtpList) {
+			if (tp.getNativeName().equalsIgnoreCase(userLabel)) {
 				return tp.getKeyOnNe();
 			}
 		}
@@ -137,18 +201,26 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void syncCtps(List<AdpTp> ptpList) throws AdapterException {
-		Get130SCX10Ctps ctps = new Get130SCX10Ctps();
+		Get130SCX10Ctps _130SCX10Ctps = new Get130SCX10Ctps();
+		GetSFD44Ctps sfd44Ctps = new GetSFD44Ctps();
+		GetAHPHGCtps ahphgCtps = new GetAHPHGCtps();
 		for (AdpTp tp : ptpList) {
 			String keyOnNe = tp.getKeyOnNe();
-			if (is130Scx10(keyOnNe)) {
-				ctps.syncCtps(tp);
+			String equType = getEquType(keyOnNe);
+			if (isExpectedEqu(SnmpEquType._130SCX10.getEquType(), equType)) {
+				_130SCX10Ctps.syncCtps(tp);
 				save130Scx10Ptp2List(tp);
+			} else if (isExpectedEqu(SnmpEquType.SFD44.getEquType(), equType)) {
+				sfd44Ctps.syncCtps(tp);
+				saveSFD44Ptp2List(tp);
+			} else if (isExpectedEqu(SnmpEquType.AHPHG.getEquType(), equType)) {
+				ahphgCtps.syncCtps(tp);
 			}
 		}
 	}
 
 	private void save130Scx10Ptp2List(AdpTp tp) {
-		String userLabel = tp.getUserLabel();
+		String userLabel = tp.getNativeName();
 		if (StringUtils.isEmpty(userLabel)) {
 			return;
 		}
@@ -164,6 +236,22 @@ public class AdpSnmpTpsMgr {
 		}
 	}
 
+	private void saveSFD44Ptp2List(AdpTp tp) {
+		String userLabel = tp.getNativeName();
+		if (StringUtils.isEmpty(userLabel)) {
+			return;
+		}
+		if (userLabel.endsWith("-OMD")) {
+			if (!sfd44LinePtpList.contains(tp)) {
+				sfd44LinePtpList.add(tp);
+			}
+		} else {
+			if (!sfd44ClientPtpList.contains(tp)) {
+				sfd44ClientPtpList.add(tp);
+			}
+		}
+	}
+
 	private List<AdpTp> constructTpList(List<List<Pair<String, String>>> values) throws AdapterException {
 		SnmpTpEntity entity = new SnmpTpEntity();
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -175,7 +263,7 @@ public class AdpSnmpTpsMgr {
 				continue;
 			}
 
-			String equType = isExpectedEquExisted(index);
+			String equType = getEquType(index);
 			if (StringUtils.isEmpty(equType)) {
 				continue;
 			}
@@ -323,7 +411,7 @@ public class AdpSnmpTpsMgr {
 		return adpTp;
 	}
 
-	private String isExpectedEquExisted(String index) throws AdapterException {
+	private String getEquType(String index) throws AdapterException {
 		Integer[] position = SnmpTpUserLabelUtil.string2Hex(index);
 		String equKeyOnNe = "1/" + position[0] + "/" + position[1];
 		AdpEquipment equ = null;
@@ -353,9 +441,11 @@ public class AdpSnmpTpsMgr {
 		return userLabel;
 	}
 
-	private boolean is130Scx10(String index) throws AdapterException {
-		String ExpectedType = isExpectedEquExisted(index);
-		if ("130SCX10".equalsIgnoreCase(ExpectedType)) {
+	private boolean isExpectedEqu(String expectedType, String actualType) throws AdapterException {
+		if (StringUtils.isEmpty(expectedType) || StringUtils.isEmpty(actualType)) {
+			return false;
+		}
+		if (actualType.equalsIgnoreCase(expectedType)) {
 			return true;
 		}
 		return false;
@@ -484,7 +574,7 @@ public class AdpSnmpTpsMgr {
 	private boolean is130SCX10ClientPtp(AdpTp adpTp, String equType) {
 		boolean ret = false;
 		if (equType.equals("130SCX10")) {
-			String userLabel = adpTp.getUserLabel();
+			String userLabel = adpTp.getNativeName();
 			String[] labels = userLabel.split("-");
 			if (labels.length == 4) {
 				String portName = labels[labels.length - 1];

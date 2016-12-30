@@ -1,4 +1,4 @@
-package com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot;
+package com.nsb.enms.adapter.server.wdm.business.tp.ctp.sfd;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +15,12 @@ import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class Get130SCX10Ctps {
-	private final static Logger log = LogManager.getLogger(Get130SCX10Ctps.class);
+public class GetSFD44Ctps {
+	private final static Logger log = LogManager.getLogger(GetSFD44Ctps.class);
 	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
 
 	public static void main(String[] args) {
 
-	}
-
-	private AdpTp getDsrCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.DSR.name());
-		int primaryLayerRate = LayerRate.DSR.ordinal();
-		return constructCtp(neId, "/dsr=1", layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
 	private AdpTp constructCtp(Integer neId, String userLabel, List<String> layerRates, Integer ptpId, String ptpIndex,
@@ -62,70 +55,46 @@ public class Get130SCX10Ctps {
 		return maxTpId;
 	}
 
-	private AdpTp getOdujCtp(String userLabel, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.ODU2.name());
-		int primaryLayerRate = LayerRate.ODU2.ordinal();
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
-	}
-
-	private void getClientCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		getDsrCtp(neId, ptpId, ptpIndex);
-		getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
-	}
-
-	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		for (int i = 1; i < 11; i++) {
-			getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
-		}
-		getOdukCtp(neId, ptpId, ptpIndex);
-		getOtukCtps(neId, ptpId, ptpIndex);
+	private void getSingleCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		getOchCtp(neId, ptpId, ptpIndex);
 	}
 
-	private AdpTp getOdukCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.ODU4.name());
-		int primaryLayerRate = LayerRate.ODU4.ordinal();
-		String userLabel = "/odu4=1";
-		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
-
+	private void getMutilCtps(Integer neId, Integer ptpId, String ptpIndex, String userLabel) throws AdapterException {
+		for (int i = 1; i < 45; i++) {
+			getOchCtp(neId, ptpId, ptpIndex, userLabel + "_" + i);
+		}
+		getOmsCtps(neId, ptpId, ptpIndex);
 	}
 
 	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+		String userLabel = "";
+		return getOchCtp(neId, ptpId, ptpIndex, userLabel);
+	}
+
+	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex, String userLabel) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OCH.name());
 		int primaryLayerRate = LayerRate.OCH.ordinal();
-		String userLabel = "";
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private AdpTp getOtukCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOmsCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(LayerRate.OTU4.name());
-		int primaryLayerRate = LayerRate.OTU4.ordinal();
-		String userLabel = "/out4=1";
+		layerRates.add(LayerRate.OMS.name());
+		int primaryLayerRate = LayerRate.OMS.ordinal();
+		String userLabel = "/oms=1";
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
-
-	// public void syncNotOtnSignalCtpsAndXc(Integer neId, Integer ptpId, String
-	// ptpIndex) throws AdapterException {
-	// AdpXc xc = new AdpXc();
-	// getClientCtps(null, neId, ptpId, ptpIndex);
-	// getLineCtps(null, neId, ptpId, ptpIndex);
-	// }
 
 	public void syncCtps(AdpTp tp) throws AdapterException {
 		String userLabel = tp.getNativeName();
-		System.out.println("=========" + userLabel);
 		Integer neId = tp.getNeId();
 		Integer ptpId = tp.getPtpID();
 		String ptpIndex = tp.getKeyOnNe();
-		if (userLabel.indexOf("-C") != -1) {
-			getClientCtps(neId, ptpId, ptpIndex);
-		} else if (userLabel.indexOf("-L1") != -1) {
-			System.out.println("xxxxxxxxxxxxxx");
-			getLineCtps(neId, ptpId, ptpIndex);
+		if (userLabel.endsWith("-OMD")) {
+			getMutilCtps(neId, ptpId, ptpIndex, userLabel);
+		} else {
+			getSingleCtps(neId, ptpId, ptpIndex);
 		}
 	}
 
@@ -154,6 +123,12 @@ public class Get130SCX10Ctps {
 			log.error("getTpByKeyOnNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
+		return null;
+	}
+
+	private String getOchName() {
+		// tnNetworkPortConfigTable.tnNwPortProgrammedChannel
+		// tnSfpPortInfoTable.tnSfpPortWavelength=1
 		return null;
 	}
 }
