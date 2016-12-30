@@ -3,7 +3,7 @@ package com.nsb.enms.adapter.server.sdh.action.entity;
 import java.util.List;
 
 public class EquipmentEntity {
-	private int id;
+	private String id;
 
 	private String moc;
 
@@ -31,11 +31,11 @@ public class EquipmentEntity {
 
 	private String administrativeState;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

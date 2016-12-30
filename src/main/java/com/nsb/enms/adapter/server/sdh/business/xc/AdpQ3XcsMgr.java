@@ -35,7 +35,7 @@ public class AdpQ3XcsMgr {
 	public AdpQ3XcsMgr() {
 	}
 
-	public AdpXc createXcByTu12AndVc12(Integer neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
+	public AdpXc createXcByTu12AndVc12(String neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
 		log.debug("atpId = {}", atp);
 		XcParamBean atpBean = getParam(neDbId, atp);
 
@@ -57,7 +57,7 @@ public class AdpQ3XcsMgr {
 		return insertXc2Db(neDbId, atp.getId(), ztp.getId(), ManagedObjectType.VC12.getLayerRates());
 	}
 
-	public AdpXc createXcByTu3AndVc3(Integer neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
+	public AdpXc createXcByTu3AndVc3(String neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
 		log.debug("atpId = {}", atp);
 		XcParamBean atpBean = getParam(neDbId, atp);
 
@@ -79,7 +79,7 @@ public class AdpQ3XcsMgr {
 		return insertXc2Db(neDbId, atp.getId(), ztp.getId(), ManagedObjectType.VC3.getLayerRates());
 	}
 
-	public String createXcByAu4AndVc4(Integer neId, AdpTp au4Ctp, Integer ptpId) throws AdapterException {
+	public String createXcByAu4AndVc4(String neId, AdpTp au4Ctp, String ptpId) throws AdapterException {
 		String moi = GenerateKeyOnNeUtil.getMoi(au4Ctp.getKeyOnNe());
 		String groupId = "100";
 		String pTTPId = moi.split("/")[0].replaceAll("protectedTTPId=", StringUtils.EMPTY);
@@ -96,7 +96,7 @@ public class AdpQ3XcsMgr {
 		String vc4TTPId = toTp.replace("vc4TTPId=", StringUtils.EMPTY);
 		log.debug("createXcVc4 ok");
 
-		Integer vc4TtpDbId = null;
+		String vc4TtpDbId = null;
 		List<AdpTp> ttps = tpsMgr.syncTtp(groupId, neId, vc4TTPId, ptpId);
 		if (null == ttps || ttps.isEmpty()) {
 			log.error("ttps is null or empty");
@@ -110,7 +110,7 @@ public class AdpQ3XcsMgr {
 		return vc4TTPId;
 	}
 
-	private AdpNe getNeById(Integer neDbId) throws AdapterException {
+	private AdpNe getNeById(String neDbId) throws AdapterException {
 		AdpNe ne = null;
 		try {
 			ne = nesDbMgr.getNeById(neDbId);
@@ -119,7 +119,7 @@ public class AdpQ3XcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		if (null == ne || ne.getId() < 0) {
+		if (null == ne || StringUtils.isEmpty(ne.getId())) {
 			log.error("can not find ne by id:" + neDbId);
 			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 		}
@@ -127,7 +127,7 @@ public class AdpQ3XcsMgr {
 		return ne;
 	}
 
-	private XcParamBean getParam(Integer neId, AdpTp tp) throws AdapterException {
+	private XcParamBean getParam(String neId, AdpTp tp) throws AdapterException {
 		List<String> layerRates = tp.getLayerRates();
 		String moi = GenerateKeyOnNeUtil.getMoi(tp.getKeyOnNe());
 		log.debug("moi = " + moi);
@@ -147,7 +147,7 @@ public class AdpQ3XcsMgr {
 
 		String groupId = "100";
 		bean.setGroupId(groupId);
-		bean.setNeId(String.valueOf(neId));
+		bean.setNeId(neId);
 		return bean;
 	}
 
@@ -213,7 +213,7 @@ public class AdpQ3XcsMgr {
 	// return tp;
 	// }
 
-	public AdpTp getPdhSubTp(Integer ptpId, LayerRate layerRate) throws AdapterException {
+	public AdpTp getPdhSubTp(String ptpId, LayerRate layerRate) throws AdapterException {
 		AdpTp ctp = null;
 		List<String> subTpLR = null;
 		try {
@@ -224,7 +224,7 @@ public class AdpQ3XcsMgr {
 			}
 
 			// TODO 添加neid
-			Integer neId = 1;
+			String neId = "1";
 			ctp = tpsDbMgr.getTpByParentIdAndLayerRate(neId, ptpId, subTpLR);
 		} catch (Exception e) {
 			log.error("getPdhSubTp", e);
@@ -233,7 +233,7 @@ public class AdpQ3XcsMgr {
 		return ctp;
 	}
 
-	public AdpTp getAu4Tp(Integer neId, String keyOnNe, Integer au4TpTimeSlot) throws AdapterException {
+	public AdpTp getAu4Tp(String neId, String keyOnNe, Integer au4TpTimeSlot) throws AdapterException {
 		String protectedTTPId = keyOnNe.split("=")[1];
 		String au4TpKeyOnNe = "au4CTPBidirectionalR1:protectedTTPId=" + protectedTTPId + "/augId=" + au4TpTimeSlot
 				+ "/au4CTPId=1";
@@ -245,7 +245,7 @@ public class AdpQ3XcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		if (null == tp || tp.getId() < 0) {
+		if (null == tp || StringUtils.isEmpty(tp.getId())) {
 			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 		}
 		return tp;
@@ -260,14 +260,14 @@ public class AdpQ3XcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		if (null == xc || xc.getId() < 0) {
+		if (null == xc || StringUtils.isEmpty(xc.getId())) {
 			log.error("can not find xc by id:" + xcId);
 			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 		}
 		deleteXc(xc);
 	}
 
-	public void deleteXcById(Integer neId, Integer xcId) throws AdapterException {
+	public void deleteXcById(String neId, String xcId) throws AdapterException {
 		AdpXc xc;
 		try {
 			xc = xcsDbMgr.getXcById(neId, xcId);
@@ -276,7 +276,7 @@ public class AdpQ3XcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		if (null == xc || xc.getId() < 0) {
+		if (null == xc || StringUtils.isEmpty(xc.getId())) {
 			log.error("can not find xc by id:" + xcId);
 			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 		}
@@ -298,7 +298,7 @@ public class AdpQ3XcsMgr {
 		}
 	}
 
-	public void deleteXcsByNeId(Integer neId) throws AdapterException {
+	public void deleteXcsByNeId(String neId) throws AdapterException {
 		List<AdpXc> xcList;
 		try {
 			xcList = xcsDbMgr.getXcsByNeId(neId);
@@ -316,7 +316,7 @@ public class AdpQ3XcsMgr {
 		}
 	}
 
-	public AdpXc createXcByTu12AndTu12(Integer neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
+	public AdpXc createXcByTu12AndTu12(String neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
 		log.debug("atpId = {}", atp);
 		XcParamBean atpBean = getParam(neDbId, atp);
 
@@ -330,7 +330,7 @@ public class AdpQ3XcsMgr {
 		return insertXc2Db(neDbId, atp.getId(), ztp.getId(), ManagedObjectType.TU12.getLayerRates());
 	}
 
-	public AdpXc createXcByTu3AndTu3(Integer neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
+	public AdpXc createXcByTu3AndTu3(String neDbId, AdpTp atp, AdpTp ztp) throws AdapterException {
 		log.debug("atpId = {}", atp);
 		XcParamBean atpBean = getParam(neDbId, atp);
 
@@ -344,17 +344,17 @@ public class AdpQ3XcsMgr {
 		return insertXc2Db(neDbId, atp.getId(), ztp.getId(), ManagedObjectType.TU3.getLayerRates());
 	}
 
-	private AdpXc insertXc2Db(Integer neDbId, Integer atpDbId, Integer ztpDbId, List<String> layerRates)
+	private AdpXc insertXc2Db(String neDbId, String atpDbId, String ztpDbId, List<String> layerRates)
 			throws AdapterException {
 		AdpXc xc = new AdpXc();
 		xc.setNeId(neDbId);
-		xc.setLayerrate(layerRates);
+		xc.setLayerRates(layerRates);
 
-		List<Integer> atps = new ArrayList<Integer>();
+		List<String> atps = new ArrayList<String>();
 		atps.add(atpDbId);
 		xc.setAEndPoints(atps);
 
-		List<Integer> ztps = new ArrayList<Integer>();
+		List<String> ztps = new ArrayList<String>();
 		ztps.add(ztpDbId);
 		xc.setZEndPoints(ztps);
 
@@ -366,7 +366,7 @@ public class AdpQ3XcsMgr {
 		return xc;
 	}
 
-	public AdpXc createXc(Integer neId, AdpXc body) throws AdapterException {
+	public AdpXc createXc(String neId, AdpXc body) throws AdapterException {
 		return new AdpCreateXcsMgr().createXc(neId, body);
 	}
 }

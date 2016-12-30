@@ -52,8 +52,8 @@ public class AdpSnmpClientFactory {
 		return map.get(address);
 	}
 
-	public SnmpClient getByNeId(Integer neId) throws AdapterException {
-		if (null == neId || neId < 0) {
+	public SnmpClient getByNeId(String neId) throws AdapterException {
+		if (StringUtils.isEmpty(neId)) {
 			return null;
 		}
 		try {
@@ -65,8 +65,8 @@ public class AdpSnmpClientFactory {
 		}
 	}
 
-	public void removeByNeId(Integer neId) throws AdapterException {
-		if (null == neId || neId < 0) {
+	public void removeByNeId(String neId) throws AdapterException {
+		if (StringUtils.isEmpty(neId)) {
 			return;
 		}
 		try {

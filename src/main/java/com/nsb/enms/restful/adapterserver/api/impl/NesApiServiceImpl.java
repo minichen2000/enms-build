@@ -49,7 +49,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response deleteNe(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response deleteNe(String neid, SecurityContext securityContext) throws NotFoundException {
 		log.debug("adapter------deleteNE");
 
 		try {
@@ -66,7 +66,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getNeById(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response getNeById(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpNe ne = AdpFactory.getInstance().getNeApi(neid).getNeById();
 			return Response.ok().entity(ne).build();
@@ -95,7 +95,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response startAlignment(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response startAlignment(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpFactory.getInstance().getNeApi(neid).synchronize();
 			return Response.ok().build();
@@ -106,12 +106,12 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response addTps(Integer neid, List<AdpTp> tps, SecurityContext securityContext) throws NotFoundException {
+	public Response addTps(String neid, List<AdpTp> tps, SecurityContext securityContext) throws NotFoundException {
 		return null;
 	}
 
 	@Override
-	public Response getChildrenTps(Integer neid, Integer tpid, SecurityContext securityContext)
+	public Response getChildrenTps(String neid, String tpid, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
 			List<AdpTp> tpList = AdpFactory.getInstance().getTpApi(neid).getChildrenTps(tpid);
@@ -123,7 +123,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getNeTps(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response getNeTps(String neid, SecurityContext securityContext) throws NotFoundException {
 		log.debug("getNeTps, neId = " + neid);
 		try {
 			List<AdpTp> tpList = AdpFactory.getInstance().getTpApi(neid).getNeTps();
@@ -135,7 +135,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getTpById(Integer neid, Integer tpid, SecurityContext securityContext) throws NotFoundException {
+	public Response getTpById(String neid, String tpid, SecurityContext securityContext) throws NotFoundException {
 		log.debug("getTpById, neId = " + neid);
 		try {
 			AdpTp tp = AdpFactory.getInstance().getTpApi(neid).getTpById(tpid);
@@ -147,7 +147,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getTpsByLayerRate(Integer neid, String layerrate, SecurityContext securityContext)
+	public Response getTpsByLayerRate(String neid, String layerrate, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
 			List<AdpTp> tpList = AdpFactory.getInstance().getTpApi(neid).getTpsByLayerrate(layerrate);
@@ -159,7 +159,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getTpsByType(Integer neid, String tptype, SecurityContext securityContext)
+	public Response getTpsByType(String neid, String tptype, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
 			List<AdpTp> tpList = AdpFactory.getInstance().getTpApi(neid).getTpsByType(tptype);
@@ -171,12 +171,12 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response updateTp(Integer neid, AdpTp tp, SecurityContext securityContext) throws NotFoundException {
+	public Response updateTp(String neid, AdpTp tp, SecurityContext securityContext) throws NotFoundException {
 		return null;
 	}
 
 	@Override
-	public Response getEquipmentById(Integer neid, Integer eqid, SecurityContext securityContext)
+	public Response getEquipmentById(String neid, String eqid, SecurityContext securityContext)
 			throws NotFoundException {
 		try {
 			AdpEquipment equipment = AdpFactory.getInstance().getEquApi(neid).getEquipmentById(eqid);
@@ -188,7 +188,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getEquipmentsByNeId(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response getEquipmentsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			List<AdpEquipment> equipments = AdpFactory.getInstance().getEquApi(neid).getEquipmentsByNeId(neid);
 			if (equipments.isEmpty()) {
@@ -202,13 +202,13 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response addEquipment(Integer neid, AdpEquipment equipment, SecurityContext securityContext)
+	public Response addEquipment(String neid, AdpEquipment equipment, SecurityContext securityContext)
 			throws NotFoundException {
 		return null;
 	}
 
 	@Override
-	public Response getXcById(Integer neid, Integer xcid, SecurityContext securityContext) throws NotFoundException {
+	public Response getXcById(String neid, String xcid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpXc xc = AdpFactory.getInstance().getXcApi(neid).getXcById(xcid);
 			return Response.ok().entity(xc).build();
@@ -219,7 +219,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response createXc(Integer neid, AdpXc xc, SecurityContext securityContext) throws NotFoundException {
+	public Response createXc(String neid, AdpXc xc, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpXc newXc = AdpFactory.getInstance().getXcApi(neid).createXc(xc);
 			return Response.ok().entity(newXc).build();
@@ -230,7 +230,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response deleteXcsByNeId(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response deleteXcsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpFactory.getInstance().getXcApi(neid).deleteXcsByNeId();
 			return Response.ok().build();
@@ -241,7 +241,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response deleteXc(Integer neid, Integer xcid, SecurityContext securityContext) throws NotFoundException {
+	public Response deleteXc(String neid, String xcid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpFactory.getInstance().getXcApi(neid).deleteXcById(xcid);
 			return Response.ok().build();
@@ -252,7 +252,7 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response getXcsByNeId(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response getXcsByNeId(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			List<AdpXc> xcs = AdpFactory.getInstance().getXcApi(neid).getXcsByNeId();
 			return Response.ok().entity(xcs).build();
@@ -263,12 +263,12 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response startNeMaintenance(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response startNeMaintenance(String neid, SecurityContext securityContext) throws NotFoundException {
 		return null;
 	}
 
 	@Override
-	public Response startNeSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response startNeSupervision(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpFactory.getInstance().getNeApi(neid).supervise();
 			return Response.ok().build();
@@ -279,12 +279,12 @@ public class NesApiServiceImpl extends NesApiService {
 	}
 
 	@Override
-	public Response stopNeMaintenance(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response stopNeMaintenance(String neid, SecurityContext securityContext) throws NotFoundException {
 		return null;
 	}
 
 	@Override
-	public Response stopNeSupervision(Integer neid, SecurityContext securityContext) throws NotFoundException {
+	public Response stopNeSupervision(String neid, SecurityContext securityContext) throws NotFoundException {
 		try {
 			AdpFactory.getInstance().getNeApi(neid).stopNeSupervision();
 			return Response.ok().build();

@@ -58,7 +58,7 @@ public class AdpSnmpNesMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		Integer id = body.getId();
+		String id = body.getId();
 		NotificationSender.instance().sendOcNotif(EntityType.NE, id);
 		NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(id));
 		NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
@@ -238,7 +238,7 @@ public class AdpSnmpNesMgr {
 		}
 	}
 
-	public void deleteNe(Integer neId) throws AdapterException {
+	public void deleteNe(String neId) throws AdapterException {
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
 			// TODO 确定错误码是否正确
@@ -281,12 +281,12 @@ public class AdpSnmpNesMgr {
 		return false;
 	}
 
-	private AdpNe isNeExisted(Integer neid) throws AdapterException {
+	private AdpNe isNeExisted(String neid) throws AdapterException {
 		AdpNe ne;
 		try {
 			ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
-			if (null == ne || ne.getId() < 0) {
+			if (null == ne || StringUtils.isEmpty(ne.getId())) {
 				throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 			}
 		} catch (Exception e) {
@@ -297,7 +297,7 @@ public class AdpSnmpNesMgr {
 		return ne;
 	}
 
-	public void startSupervision(Integer neid) throws AdapterException {
+	public void startSupervision(String neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
 		String snmpAgent = ne.getAddresses().getSnmpAddress().getSnmpAgent();
 		String agent[] = snmpAgent.split(":");
@@ -312,7 +312,7 @@ public class AdpSnmpNesMgr {
 		updateBySupervision(ne);
 	}
 
-	public void stopSupervision(Integer neid) throws AdapterException {
+	public void stopSupervision(String neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
 		String address = ne.getAddresses().getSnmpAddress().getSnmpAgent();
 		SnmpClient client = AdpSnmpClientFactory.getInstance().getByAddress(address);
@@ -326,7 +326,7 @@ public class AdpSnmpNesMgr {
 		updateNe(body);
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, body.getId(), "operationalState",
 				OperationState.SUPERVISING.name(), OperationState.IDLE.name());
-		Integer id = body.getId();
+		String id = body.getId();
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervisionState",
@@ -337,7 +337,7 @@ public class AdpSnmpNesMgr {
 				OperationState.SUPERVISING.name());
 	}
 
-	public void startAlignment(Integer neid) throws AdapterException {
+	public void startAlignment(String neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
 		synchronizing(ne);
 	}

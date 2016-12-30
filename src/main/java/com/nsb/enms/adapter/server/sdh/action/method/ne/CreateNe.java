@@ -31,7 +31,7 @@ public class CreateNe {
 
 	private static Pattern pattern = Pattern.compile("\\d+\\.\\d+\\.\\d+\\.\\d+:\\d+");
 
-	public static NeEntity createNe(Integer id, String neRelease, String neType, String userLabel, String locationName,
+	public static NeEntity createNe(String id, String neRelease, String neType, String userLabel, String locationName,
 			String neAddress) throws AdapterException {
 		// Pair<Integer, Integer> groupNeId =
 		// Q3EmlImMgr.instance().getGroupNeId();
@@ -44,12 +44,12 @@ public class CreateNe {
 		return GetNe.getNe(groupId, id);
 	}
 
-	private static void createNe(int groupId, int neId, String neRelease, String neType, String userLabel,
+	private static void createNe(int groupId, String neId, String neRelease, String neType, String userLabel,
 			String locationName) throws AdapterException {
 		log.debug("------------Start createNe-------------------");
 		try {
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, createNeScenario,
-					String.valueOf(groupId), String.valueOf(neId), neRelease, neType, userLabel, locationName);
+					String.valueOf(groupId), neId, neRelease, neType, userLabel, locationName);
 
 			InputStream inputStream = process.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -72,7 +72,7 @@ public class CreateNe {
 		log.debug("------------End createNe-------------------");
 	}
 
-	private static void setNeAddress(int groupId, int neId, String neAddress) throws AdapterException {
+	private static void setNeAddress(int groupId, String neId, String neAddress) throws AdapterException {
 		log.debug("------------Start setNeAddress-------------------");
 		try {
 			String scenario = setNeAddressScenario;
@@ -80,7 +80,7 @@ public class CreateNe {
 				scenario = setNeIsaAddressScenario;
 			}
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, scenario, String.valueOf(groupId),
-					String.valueOf(neId), neAddress);
+					neId, neAddress);
 			InputStream inputStream = process.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 			boolean flag = false;

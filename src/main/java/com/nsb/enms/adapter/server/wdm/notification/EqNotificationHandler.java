@@ -2,7 +2,6 @@ package com.nsb.enms.adapter.server.wdm.notification;
 
 import java.util.Map;
 
-import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.notification.NotificationSender;
 import com.nsb.enms.adapter.server.wdm.business.eq.AdpSnmpEqusMgr;
+import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpEqAttribute;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTrapAttribute;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpEqShelfSlotTypeMapUtil;
@@ -58,13 +58,13 @@ public class EqNotificationHandler extends DefaultNotificationHandler {
 
 		try {
 			if (StringUtils.isEmpty(shelfProgrammedType) || StringUtils.equals("Empty", shelfProgrammedType)) {
-				AdpEquipment equipment = snmpEqusMgr.isEqExist(address, index);
+				AdpEquipment equipment = snmpEqusMgr.checkIsEqExistedByAddress(address, index);
 				if (equipment != null) {
-					snmpEqusMgr.deleteEquipment(equipment);
+					snmpEqusMgr.deleteEquipmentsUnderShelf(equipment);
 					NotificationSender.instance().sendOdNotif(EntityType.BOARD, equipment.getId());
 				}
 			} else {
-				AdpEquipment equipment = snmpEqusMgr.getEquipment(address, index, EquType.shelf);
+				AdpEquipment equipment = snmpEqusMgr.addEquipment(address, index, EquType.shelf);
 				if (equipment != null) {
 					NotificationSender.instance().sendOcNotif(EntityType.BOARD, equipment.getId());
 				}
@@ -82,7 +82,7 @@ public class EqNotificationHandler extends DefaultNotificationHandler {
 		String slotProgrammedType = SnmpEqShelfSlotTypeMapUtil.getSlotCardType(data);
 
 		try {
-			AdpEquipment eqFromDb = snmpEqusMgr.isEqExist(address, index);
+			AdpEquipment eqFromDb = snmpEqusMgr.checkIsEqExistedByAddress(address, index);
 			if (eqFromDb != null) {
 				eqFromDb.setExpectedType(slotProgrammedType);
 				snmpEqusMgr.updateEquipment(eqFromDb);

@@ -28,7 +28,7 @@ public class AdpBuilder {
 		return getBuilderInstance(ne).getApiItf(ne, type);
 	}
 
-	public AdpCommonApiItf getApiItf(Integer neId, EntityType type) throws AdapterException {
+	public AdpCommonApiItf getApiItf(String neId, EntityType type) throws AdapterException {
 		AdpNe ne = new AdpNe();
 		try {
 			ne = nesDbMgr.getNeById(neId);

@@ -33,12 +33,12 @@ public class AdpSnmpXcApiImpl extends AdpDefaultXcApiImpl {
 	}
 
 	@Override
-	public void deleteXcById(Integer xcid) throws AdapterException {
+	public void deleteXcById(String xcid) throws AdapterException {
 
 	}
 
 	@Override
-	public AdpXc getXcById(Integer xcId) throws AdapterException {
+	public AdpXc getXcById(String xcId) throws AdapterException {
 		return null;
 	}
 }

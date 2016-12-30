@@ -28,9 +28,9 @@ public class AdpSnmpXcsMgr {
 		this.objectIdGenerator=objectIdGenerator;
 	}
 
-	public void createXc(Integer neId, List<Integer> atps, List<Integer> ztps) throws AdapterException {
+	public void createXc(String neId, List<String> atps, List<String> ztps) throws AdapterException {
 		AdpXc xc = new AdpXc();
-		Integer maxXcId;
+		String maxXcId;
 		try {
 			maxXcId = AdpSeqDbMgr.getMaxTpId(neId);
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class AdpSnmpXcsMgr {
 		}
 	}
 
-	public boolean isXcExisted(Integer ctpId) {
+	public boolean isXcExisted(String ctpId) {
 		List<AdpXc> xcs = null;
 		try {
 			xcs = xcsMgr.findXcsByTpId(ctpId);

@@ -9,11 +9,11 @@ public interface AdpTpApiItf extends AdpCommonApiItf {
 
 	public List<AdpTp> getNeTps() throws AdapterException;
 
-	public List<AdpTp> getChildrenTps(Integer tpId) throws AdapterException;
+	public List<AdpTp> getChildrenTps(String tpId) throws AdapterException;
 
 	public List<AdpTp> getTpsByLayerrate(String layerrate) throws AdapterException;
 
-	public AdpTp getTpById(Integer tpid) throws AdapterException;
+	public AdpTp getTpById(String tpid) throws AdapterException;
 
 	public List<AdpTp> getTpsByType(String tpType) throws AdapterException;
 }

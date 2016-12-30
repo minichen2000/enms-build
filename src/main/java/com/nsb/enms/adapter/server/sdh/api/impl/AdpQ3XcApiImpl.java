@@ -42,12 +42,12 @@ public class AdpQ3XcApiImpl extends AdpDefaultXcApiImpl {
 	}
 
 	@Override
-	public void deleteXcById(Integer xcid) throws AdapterException {
+	public void deleteXcById(String xcid) throws AdapterException {
 		adpXcMgr.deleteXcById(getId(), xcid);
 	}
 
 	@Override
-	public AdpXc getXcById(Integer xcId) throws AdapterException {
+	public AdpXc getXcById(String xcId) throws AdapterException {
 		try {
 			return xcsDbMgr.getXcById(getId(), xcId);
 		} catch (Exception e) {

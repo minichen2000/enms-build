@@ -43,11 +43,11 @@ public class AdpTpsDbMgr {
 
 	}
 
-	private MongoCollection<BasicDBObject> getCustomCollection(Integer neId) {
+	private MongoCollection<BasicDBObject> getCustomCollection(String neId) {
 		return db.getCollection(AdpDBConst.DB_NAME_TP + "_" + neId, BasicDBObject.class);
 	}
 
-	private MongoCollection<Document> getCollection(Integer neId) {
+	private MongoCollection<Document> getCollection(String neId) {
 		return db.getCollection(AdpDBConst.DB_NAME_TP + "_" + neId);
 	}
 
@@ -66,7 +66,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public AdpTp getTpById(Integer neId, Integer tpid) throws Exception {
+	public AdpTp getTpById(String neId, String tpid) throws Exception {
 		List<Document> docList = getCollection(neId).find(and(eq("neId", neId), eq("id", tpid)))
 				.into(new ArrayList<Document>());
 
@@ -85,7 +85,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public AdpTp getTpByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+	public AdpTp getTpByKeyOnNe(String neId, String keyOnNe) throws Exception {
 		List<Document> docList = getCollection(neId).find(and(eq("neId", neId), eq("keyOnNe", keyOnNe)))
 				.into(new ArrayList<Document>());
 
@@ -109,7 +109,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public List<AdpTp> getTpsByNeId(Integer neid, Protocols protocols) throws Exception {
+	public List<AdpTp> getTpsByNeId(String neid, Protocols protocols) throws Exception {
 		log.debug("getTpsByNeId, neId = " + neid);
 		List<Document> docList = new ArrayList<Document>();
 		if (Protocols.ALUQ3 == protocols) {
@@ -131,7 +131,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	private List<Document> getTpsByQ3Ne(Integer neId) {
+	private List<Document> getTpsByQ3Ne(String neId) {
 		List<Document> docList = getCollection(neId)
 				.find(and(eq("neId", neId),
 						in("layerRates", ManagedObjectType.STM1_OPTICAL, ManagedObjectType.STM4_OPTICAL,
@@ -145,7 +145,7 @@ public class AdpTpsDbMgr {
 		return docList;
 	}
 
-	private List<Document> getTpsBySnmpNe(Integer neId) {
+	private List<Document> getTpsBySnmpNe(String neId) {
 		List<Document> docList = getCollection(neId).find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find snmp tp, query by neid = " + neId);
@@ -155,14 +155,14 @@ public class AdpTpsDbMgr {
 	}
 
 	// TODO layerRate在数据库中保存的是List，这里传入的String，这个方法是有问题的
-	public List<AdpTp> getTpsByLayerRate(Integer neId, String layerrate) throws Exception {
+	public List<AdpTp> getTpsByLayerRate(String neId, String layerrate) throws Exception {
 		MongoCollection<Document> dbc = getCollection(neId);
 		List<Document> docList = null;
-		if ((null == neId || neId < 0) && StringUtils.isEmpty(layerrate)) {
+		if (StringUtils.isEmpty(neId) && StringUtils.isEmpty(layerrate)) {
 			docList = dbc.find().into(new ArrayList<Document>());
 		} else if (StringUtils.isEmpty(layerrate)) {
 			docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
-		} else if (null == neId || neId < 0) {
+		} else if (StringUtils.isEmpty(neId)) {
 			docList = dbc.find(eq("layerRate", layerrate)).into(new ArrayList<Document>());
 		} else {
 			docList = dbc.find(and(eq("neId", neId), eq("layerRate", layerrate))).into(new ArrayList<Document>());
@@ -211,21 +211,21 @@ public class AdpTpsDbMgr {
 		return true;
 	}
 
-	public void updateTpLayerRate(Integer neId, Integer tpId, List<String> layerRates) throws Exception {
+	public void updateTpLayerRate(String neId, String tpId, List<String> layerRates) throws Exception {
 		getCollection(neId).updateOne(eq("id", tpId), set("layerRates", layerRates));
 	}
 
 	public List<AdpTp> getTps(Protocols protocol) throws Exception {
 		Date begin = new Date();
 		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-		List<Integer> idList = nesDbMgr.getNeIds();
+		List<String> idList = nesDbMgr.getNeIds();
 		if (null == idList || idList.isEmpty()) {
 			log.error("there is no ne found");
 			return new ArrayList<AdpTp>();
 		}
 
 		List<AdpTp> allTpList = new ArrayList<AdpTp>();
-		for (Integer i : idList) {
+		for (String i : idList) {
 			List<AdpTp> tpList = getTpsByNeId(i, protocol);
 			if (null == tpList || tpList.isEmpty()) {
 				log.error("can not find tp list by neid :" + i);
@@ -240,7 +240,7 @@ public class AdpTpsDbMgr {
 		return allTpList;
 	}
 
-	public List<AdpTp> getTpsByType(Integer neId, String tptype) throws Exception {
+	public List<AdpTp> getTpsByType(String neId, String tptype) throws Exception {
 		List<Document> docList = null;
 		docList = getCollection(neId).find(and(eq("neId", neId), eq("tpType", tptype))).into(new ArrayList<Document>());
 
@@ -262,11 +262,11 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public void deleteTpsbyNeId(Integer neId) throws Exception {
+	public void deleteTpsbyNeId(String neId) throws Exception {
 		getCollection(neId).deleteMany(new Document("neId", neId));
 	}
 
-	public List<AdpTp> getCtpsByTpId(Integer neId, String ptpid) throws Exception {
+	public List<AdpTp> getCtpsByTpId(String neId, String ptpid) throws Exception {
 		Date begin = new Date();
 		log.debug("getCTPsByTP, neid = {}, ptpid = {}", neId, ptpid);
 
@@ -296,7 +296,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public List<AdpTp> getChildrenTps(Integer neId, Integer tpId) throws Exception {
+	public List<AdpTp> getChildrenTps(String neId, String tpId) throws Exception {
 		Date begin = new Date();
 		log.debug("getChildrenTps, neId = {}, tpid = {}", neId, tpId);
 
@@ -328,7 +328,7 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public AdpTp getTpByLayerRateAndTimeSlot(Integer neId, String suffixId, String layerRate) throws Exception {
+	public AdpTp getTpByLayerRateAndTimeSlot(String neId, String suffixId, String layerRate) throws Exception {
 		Date begin = new Date();
 		log.debug("getTpByLayerRateAndTimeSlot, suffixId = {}, layerRate = {}", suffixId, layerRate);
 
@@ -355,7 +355,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public AdpTp getTpByTimeSlot(Integer neId, String suffixId) throws Exception {
+	public AdpTp getTpByTimeSlot(String neId, String suffixId) throws Exception {
 		Date begin = new Date();
 		log.debug("getTpByTimeSlot, suffixId = {}", suffixId);
 
@@ -381,7 +381,7 @@ public class AdpTpsDbMgr {
 		return tp;
 	}
 
-	public Integer getIdByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+	public String getIdByKeyOnNe(String neId, String keyOnNe) throws Exception {
 		List<Document> docList = getCollection(neId).find(and(eq("keyOnNe", keyOnNe), eq("neId", neId)))
 				.into(new ArrayList<Document>());
 
@@ -395,7 +395,7 @@ public class AdpTpsDbMgr {
 		return tp.getId();
 	}
 
-	public AdpTp getTpByParentIdAndLayerRate(Integer neId, Integer parentId, List<String> layerRates) throws Exception {
+	public AdpTp getTpByParentIdAndLayerRate(String neId, String parentId, List<String> layerRates) throws Exception {
 		log.debug("getTpByParentIdAndLayerRate, parentId = {}", parentId);
 
 		List<Document> docList = getCollection(neId).find(and(eq("parentTpId", parentId), eq("layerRates", layerRates)))
@@ -410,7 +410,7 @@ public class AdpTpsDbMgr {
 		return constructTp(doc);
 	}
 
-	public AdpTp getTpByIdAndLayerRate(Integer neId, Integer tpId, List<String> layerRates) throws Exception {
+	public AdpTp getTpByIdAndLayerRate(String neId, String tpId, List<String> layerRates) throws Exception {
 		log.debug("getTpByIdAndLayerRate, tpId = {}", tpId);
 
 		List<Document> docList = getCollection(neId).find(and(eq("id", tpId), eq("layerRates", layerRates)))
@@ -425,7 +425,7 @@ public class AdpTpsDbMgr {
 		return constructTp(doc);
 	}
 	
-	public void deleteTpByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+	public void deleteTpByKeyOnNe(String neId, String keyOnNe) throws Exception {
 		getCollection(neId).deleteMany(new Document("keyOnNe", keyOnNe));
 	}
 }

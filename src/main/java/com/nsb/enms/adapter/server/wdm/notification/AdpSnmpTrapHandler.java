@@ -18,7 +18,6 @@ import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTrapAttribute;
 import com.nsb.enms.adapter.server.common.utils.INotifProcessor;
 import com.nsb.enms.common.utils.snmp.DispatchTrap;
-import com.nsb.enms.common.utils.snmp.SnmpTrap;
 import com.nsb.enms.mib.pss.def.M_sysUpTime;
 
 public class AdpSnmpTrapHandler implements DispatchTrap {

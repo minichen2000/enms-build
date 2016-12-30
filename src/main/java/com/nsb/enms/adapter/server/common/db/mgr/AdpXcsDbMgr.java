@@ -35,11 +35,11 @@ public class AdpXcsDbMgr {
 		return body;
 	}
 
-	public void deleteXc(Integer xcid) throws Exception {
+	public void deleteXc(String xcid) throws Exception {
 		dbc.deleteOne(new Document("id", xcid));
 	}
 
-	public List<AdpXc> findXcsByTpId(Integer tpid) throws Exception {
+	public List<AdpXc> findXcsByTpId(String tpid) throws Exception {
 		List<Document> docList = dbc.find(or(in("aEndPoints", tpid), in("zEndPoints", tpid)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
@@ -79,7 +79,7 @@ public class AdpXcsDbMgr {
 		return xc;
 	}
 
-	public AdpXc getXcById(Integer neid, Integer xcid) throws Exception {
+	public AdpXc getXcById(String neid, String xcid) throws Exception {
 		List<Document> docList = dbc.find(and(eq("neId", neid), eq("id", xcid))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
@@ -102,11 +102,11 @@ public class AdpXcsDbMgr {
 		return xc;
 	}
 
-	public void deleteXcsByNeId(int neId) throws Exception {
+	public void deleteXcsByNeId(String neId) throws Exception {
 		dbc.deleteMany(new Document("neId", neId));
 	}
 
-	public List<AdpXc> getXcsByNeId(Integer neId) throws Exception {
+	public List<AdpXc> getXcsByNeId(String neId) throws Exception {
 		System.out.println("getXcsByNeId, neId = " + neId);
 		List<Document> docList = dbc.find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
@@ -127,7 +127,7 @@ public class AdpXcsDbMgr {
 		return xcList;
 	}
 
-	public Integer getIdByKeyOnNe(Integer neId, String keyOnNe) throws Exception {
+	public String getIdByKeyOnNe(String neId, String keyOnNe) throws Exception {
 		List<Document> docList = dbc.find(and(eq("keyOnNe", keyOnNe), eq("neId", neId)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {

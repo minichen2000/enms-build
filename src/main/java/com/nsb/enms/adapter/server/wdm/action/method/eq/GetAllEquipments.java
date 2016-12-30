@@ -22,7 +22,7 @@ public class GetAllEquipments {
 
 	public static List<SnmpEquEntity> getEquipments(SnmpClient client) throws AdapterException {
 		List<SnmpEquEntity> equipments = new ArrayList<SnmpEquEntity>();
-		equipments.addAll(getRacks(client));
+		//equipments.addAll(getRacks(client));
 		equipments.addAll(getShelfs(client));
 		equipments.addAll(getSlotCards(client));
 		return equipments;
@@ -57,8 +57,11 @@ public class GetAllEquipments {
 			List<List<Pair<String, String>>> rows = client.snmpWalkTableView(leafOids);
 			for (List<Pair<String, String>> row : rows) {
 				SnmpEquEntity shelf = new SnmpEquEntity();
-				String index = row.get(0).getSecond().replace(".", "/");
-				shelf.setIndex("1/" + index);
+//				String index = row.get(0).getSecond().replace(".", "/");
+//				shelf.setIndex("1/" + index);
+				String index = row.get(0).getSecond();
+//				shelf.setId(index);
+				shelf.setIndex(index);
 				row.remove(0);
 				constructShelf(shelf, row);
 				shelfs.add(shelf);
@@ -76,7 +79,9 @@ public class GetAllEquipments {
 		SnmpEquEntity shelf = new SnmpEquEntity();
 		try {
 			List<Pair<String, String>> row = client.snmpMultiGet(leafOids, index);
-			shelf.setIndex("1/" + index.replace(".", "/"));
+//			shelf.setIndex("1/" + index.replace(".", "/"));
+//			shelf.setId(index);
+			shelf.setIndex(index);
 			constructShelf(shelf, row);
 		} catch (IOException e) {
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
@@ -94,8 +99,10 @@ public class GetAllEquipments {
 			List<List<Pair<String, String>>> rows = client.snmpWalkTableView(leafOids);
 			for (List<Pair<String, String>> row : rows) {
 				SnmpEquEntity slotCard = new SnmpEquEntity();
-				String index = "1/" + row.get(0).getSecond().replace(".", "/");
-				slotCard.setIndex(index);
+				//String index = "1/" + row.get(0).getSecond().replace(".", "/");
+				String index = row.get(0).getSecond();
+//				slotCard.setId(index);
+				slotCard.setIndex(index);				
 				row.remove(0);
 				constructSlotCard(slotCard, row);
 				slotCards.add(slotCard);
@@ -113,7 +120,9 @@ public class GetAllEquipments {
 		SnmpEquEntity slotCard = new SnmpEquEntity();
 		try {
 			List<Pair<String, String>> row = client.snmpMultiGet(leafOids, index);
-			slotCard.setIndex("1/" + index.replace(".", "/"));
+			//slotCard.setIndex("1/" + index.replace(".", "/"));
+//			slotCard.setId(index);
+			slotCard.setIndex(index);
 			constructSlotCard(slotCard, row);
 		} catch (IOException e) {
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);

@@ -15,26 +15,26 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 public abstract class AdpDefaultEquApiImpl implements AdpEquApiItf {
 	private Logger log = LogManager.getLogger(AdpDefaultEquApiImpl.class);
 	protected AdpNe data;
-	private Integer id;
+	private String neId;
 	private static AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
 
 	public AdpDefaultEquApiImpl(AdpNe ne) {
 		data = ne;
-		id = data.getId();
+		neId = data.getId();
 	}
 
 	public AdpNe getData() {
 		return data;
 	}
 
-	protected Integer getId() {
-		return id;
+	protected String getNeId() {
+		return neId;
 	}
 
 	@Override
-	public AdpEquipment getEquipmentById(Integer eqid) throws AdapterException {
+	public AdpEquipment getEquipmentById(String id) throws AdapterException {
 		try {
-			AdpEquipment equipment = equsDbMgr.getEquipmentById(getId(), eqid);
+			AdpEquipment equipment = equsDbMgr.getEquipmentById(getNeId(), id);
 			return equipment;
 		} catch (Exception e) {
 			log.error("getEquipmentById");
@@ -43,9 +43,9 @@ public abstract class AdpDefaultEquApiImpl implements AdpEquApiItf {
 	}
 
 	@Override
-	public List<AdpEquipment> getEquipmentsByNeId(Integer neid) throws AdapterException {
+	public List<AdpEquipment> getEquipmentsByNeId(String neId) throws AdapterException {
 		try {
-			List<AdpEquipment> equipments = equsDbMgr.getEquipmentsByNeId(neid);
+			List<AdpEquipment> equipments = equsDbMgr.getEquipmentsByNeId(neId);
 			return equipments;
 		} catch (Exception e) {
 			log.error("getEquipmentsByNeId");

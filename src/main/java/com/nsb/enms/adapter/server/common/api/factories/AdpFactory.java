@@ -27,7 +27,7 @@ public class AdpFactory {
 		return (AdpNeApiItf) AdpBuilder.getInstance().getApiItf(ne, EntityType.NE);
 	}
 
-	public AdpNeApiItf getNeApi(Integer neid) throws AdapterException {
+	public AdpNeApiItf getNeApi(String neid) throws AdapterException {
 		return (AdpNeApiItf) AdpBuilder.getInstance().getApiItf(neid, EntityType.NE);
 	}
 
@@ -35,7 +35,7 @@ public class AdpFactory {
 		return (AdpTpApiItf) AdpBuilder.getInstance().getApiItf(ne, EntityType.TP);
 	}
 
-	public AdpTpApiItf getTpApi(Integer neid) throws AdapterException {
+	public AdpTpApiItf getTpApi(String neid) throws AdapterException {
 		return (AdpTpApiItf) AdpBuilder.getInstance().getApiItf(neid, EntityType.TP);
 	}
 
@@ -43,7 +43,7 @@ public class AdpFactory {
 		return (AdpXcApiItf) AdpBuilder.getInstance().getApiItf(ne, EntityType.XC);
 	}
 
-	public AdpXcApiItf getXcApi(Integer neid) throws AdapterException {
+	public AdpXcApiItf getXcApi(String neid) throws AdapterException {
 		return (AdpXcApiItf) AdpBuilder.getInstance().getApiItf(neid, EntityType.XC);
 	}
 
@@ -51,7 +51,7 @@ public class AdpFactory {
 		return (AdpEquApiItf) AdpBuilder.getInstance().getApiItf(ne, EntityType.EQUIPMENT);
 	}
 
-	public AdpEquApiItf getEquApi(Integer neid) throws AdapterException {
+	public AdpEquApiItf getEquApi(String neid) throws AdapterException {
 		return (AdpEquApiItf) AdpBuilder.getInstance().getApiItf(neid, EntityType.EQUIPMENT);
 	}
 }

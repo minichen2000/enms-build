@@ -55,12 +55,12 @@ public class AdpNesDbMgr {
 		return body;
 	}
 
-	public Response deleteNe(Integer neid) throws Exception {
+	public Response deleteNe(String neid) throws Exception {
 		dbc.deleteOne(new BasicDBObject("id", neid));
 		return Response.ok().build();
 	}
 
-	public AdpNe getNeById(Integer neid) throws Exception {
+	public AdpNe getNeById(String neid) throws Exception {
 		List<Document> docList = dbc.find(eq("id", neid)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne, query by neId = " + neid);
@@ -77,7 +77,7 @@ public class AdpNesDbMgr {
 	}
 
 	public void updateNe(AdpNe body) throws Exception {
-		Integer id = body.getId();
+		String id = body.getId();
 		AdpNe ne = getNeById(id);
 
 		updateLocationName(body, id, ne);
@@ -122,7 +122,7 @@ public class AdpNesDbMgr {
 		 */
 	}
 
-	private void updateNeRelease(AdpNe body, Integer id, AdpNe ne) {
+	private void updateNeRelease(AdpNe body, String id, AdpNe ne) {
 		String neRelease = body.getNeRelease();
 		String neReleaseFromDb = ne.getNeRelease();
 		if (StringUtils.isEmpty(neRelease) || StringUtils.equals(neRelease, neReleaseFromDb)) {
@@ -132,7 +132,7 @@ public class AdpNesDbMgr {
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "neRelease", neRelease, neReleaseFromDb);
 	}
 
-	private void updateOperationalState(AdpNe body, Integer id, AdpNe ne) {
+	private void updateOperationalState(AdpNe body, String id, AdpNe ne) {
 		String operationalState = body.getOperationalState();
 		String operationalStateFromDb = ne.getOperationalState();
 		if (operationalState == null || StringUtils.equals(operationalStateFromDb, operationalState)) {
@@ -143,7 +143,7 @@ public class AdpNesDbMgr {
 				operationalStateFromDb);
 	}
 
-	private void updateCommunicationState(AdpNe body, Integer id, AdpNe ne) {
+	private void updateCommunicationState(AdpNe body, String id, AdpNe ne) {
 		String communicationState = body.getCommunicationState();
 		String communicationStateFromDb = ne.getCommunicationState();
 		if (communicationState == null || StringUtils.equals(communicationState, communicationStateFromDb)) {
@@ -154,7 +154,7 @@ public class AdpNesDbMgr {
 				communicationStateFromDb);
 	}
 
-	private void updateUserLabel(AdpNe body, Integer id, AdpNe ne) {
+	private void updateUserLabel(AdpNe body, String id, AdpNe ne) {
 		String userLabel = body.getUserLabel();
 		if (userLabel != null && !userLabel.equals(ne.getUserLabel())) {
 			dbc.updateOne(new BasicDBObject("id", id), set("userLabel", userLabel));
@@ -163,7 +163,7 @@ public class AdpNesDbMgr {
 		}
 	}
 
-	private void updateLocationName(AdpNe body, Integer id, AdpNe ne) {
+	private void updateLocationName(AdpNe body, String id, AdpNe ne) {
 		// String locationName = body.getLocationName();
 		// if (locationName != null &&
 		// !locationName.equals(ne.getLocationName())) {
@@ -175,7 +175,7 @@ public class AdpNesDbMgr {
 		// }
 	}
 
-	private void updateQ3Address(AdpNe body, Integer id, AdpNe ne) {
+	private void updateQ3Address(AdpNe body, String id, AdpNe ne) {
 		AdpAddresses addresses = body.getAddresses();
 		AdpAddresses addressesFromDb = ne.getAddresses();
 
@@ -249,7 +249,7 @@ public class AdpNesDbMgr {
 		}
 	}
 
-	private void updateSupervisionState(AdpNe body, Integer id, AdpNe ne) {
+	private void updateSupervisionState(AdpNe body, String id, AdpNe ne) {
 		String supervisionState = body.getSupervisionState();
 		String supervisionStateFromDb = ne.getSupervisionState();
 		if (null == supervisionState || StringUtils.equals(supervisionState, supervisionStateFromDb)) {
@@ -260,7 +260,7 @@ public class AdpNesDbMgr {
 				supervisionStateFromDb);
 	}
 
-	private void updateAlignmentState(AdpNe body, Integer id, AdpNe ne) {
+	private void updateAlignmentState(AdpNe body, String id, AdpNe ne) {
 		String alignmentState = body.getAlignmentState();
 		String alignmentStateFromDb = ne.getAlignmentState();
 		if (StringUtils.equals(alignmentState, alignmentStateFromDb)) {
@@ -340,9 +340,9 @@ public class AdpNesDbMgr {
 		return nes;
 	}
 
-	public List<Integer> getNeIdsByGroupId(String groupId) throws Exception {
+	public List<String> getNeIdsByGroupId(String groupId) throws Exception {
 		List<AdpNe> nes = getNesByGroupId(groupId);
-		List<Integer> neIdList = new ArrayList<Integer>();
+		List<String> neIdList = new ArrayList<String>();
 		for (AdpNe ne : nes) {
 			neIdList.add(ne.getId());
 		}
@@ -367,7 +367,7 @@ public class AdpNesDbMgr {
 	 * MaxNeIdMgr.updateId(body); return Response.ok().build(); }
 	 */
 
-	public boolean isUserLabelExisted(Integer id, String userLabel, MethodOperator operator) throws Exception {
+	public boolean isUserLabelExisted(String id, String userLabel, MethodOperator operator) throws Exception {
 		Date begin = new Date();
 		List<Document> docList = null;
 		if (MethodOperator.ADD == operator) {
@@ -384,7 +384,7 @@ public class AdpNesDbMgr {
 		return true;
 	}
 
-	public Integer getIdByKeyOnNe(String keyOnNe) throws Exception {
+	public String getIdByKeyOnNe(String keyOnNe) throws Exception {
 		List<Document> docList = dbc.find(eq("keyOnNe", keyOnNe)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne, query by keyOnNe = " + keyOnNe);
@@ -395,7 +395,7 @@ public class AdpNesDbMgr {
 		return ne.getId();
 	}
 
-	public Integer getIdByAddress(String address) throws Exception {
+	public String getIdByAddress(String address) throws Exception {
 		List<Document> docList = dbc.find(eq("addresses.snmpAddress.snmpAgent", address))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
@@ -407,16 +407,16 @@ public class AdpNesDbMgr {
 		return ne.getId();
 	}
 
-	public List<Integer> getNeIds() throws Exception {
+	public List<String> getNeIds() throws Exception {
 		Date begin = new Date();
 		List<Document> docList = dbc.find().projection(new Document("id", 1)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
 			log.error("can not find ne");
-			return new ArrayList<Integer>();
+			return new ArrayList<String>();
 		}
-		List<Integer> neList = new ArrayList<Integer>();
+		List<String> neList = new ArrayList<String>();
 		for (Document doc : docList) {
-			neList.add(doc.getInteger("id"));
+			neList.add(doc.getString("id"));
 		}
 		Date end = new Date();
 		log.debug("getNeIds, cost time = " + (end.getTime() - begin.getTime()));

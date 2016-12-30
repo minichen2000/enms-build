@@ -93,7 +93,7 @@ public class NeStateMachineApp {
 	 * neOperationalStateMachine.fire( NeEvent.E_IDLE_2_SUPERVISING, ne ); }
 	 */
 
-	public void afterSuperviseNe(Integer id) {
+	public void afterSuperviseNe(String id) {
 		NeStateCallBack ne = new NeStateCallBack();
 		ne.setId(id);
 		neSupervisionStateMachine.setCurrentState(SupervisionState.NOT_SUPERVISED);
@@ -111,7 +111,7 @@ public class NeStateMachineApp {
 	 * neOperationalStateMachine.fire( NeEvent.E_IDLE_2_SYNCHRONIZING, ne ); }
 	 */
 
-	public void afterSynchData(Integer id) {
+	public void afterSynchData(String id) {
 		NeStateCallBack ne = new NeStateCallBack();
 		ne.setId(id);
 		neAlignmentStateMachine.setCurrentState(AlignmentState.MISALIGNED);

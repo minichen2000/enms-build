@@ -9,8 +9,8 @@ public interface AdpEquApiItf extends AdpCommonApiItf {
 	
 	public AdpEquipment addEquipment(AdpEquipment equipment) throws AdapterException;
 	
-	public AdpEquipment getEquipmentById(Integer eqid) throws AdapterException;
+	public AdpEquipment getEquipmentById(String id) throws AdapterException;
 
-	public List<AdpEquipment> getEquipmentsByNeId(Integer neid) throws AdapterException;
+	public List<AdpEquipment> getEquipmentsByNeId(String neId) throws AdapterException;
 
 }

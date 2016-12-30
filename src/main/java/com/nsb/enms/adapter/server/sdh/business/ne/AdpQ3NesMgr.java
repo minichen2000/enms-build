@@ -112,7 +112,7 @@ public class AdpQ3NesMgr {
 				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 			}
 
-			Integer id = ne.getId();
+			String id = ne.getId();
 			NotificationSender.instance().sendOcNotif(EntityType.NE, id);
 			NotificationSender.instance().sendAlarm(new AlarmNENotSupervised(id));
 			NotificationSender.instance().sendAlarm(new AlarmNEMisalignment(id));
@@ -159,7 +159,7 @@ public class AdpQ3NesMgr {
 		}
 	}
 
-	private AdpNe constructNe(NeEntity entity, Integer id, String neType) {
+	private AdpNe constructNe(NeEntity entity, String id, String neType) {
 		AdpNe ne = new AdpNe();
 		ne.setId(id);
 		ne.setUserLabel(entity.getUserLabel());
@@ -225,7 +225,7 @@ public class AdpQ3NesMgr {
 		}
 	}
 
-	public void deleteNe(Integer id) throws AdapterException {
+	public void deleteNe(String id) throws AdapterException {
 		boolean hasBusiness = checkBusiness();
 		if (hasBusiness) {
 			// TODO 确定错误码是否正确
@@ -248,13 +248,13 @@ public class AdpQ3NesMgr {
 			nesDbMgr.deleteNe(id);
 
 			AdpQ3XcsMgr xcsMgr = new AdpQ3XcsMgr();
-			xcsMgr.deleteXcsByNeId(Integer.valueOf(neId));
+			xcsMgr.deleteXcsByNeId(neId);
 
 			AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
-			tpsDbMgr.deleteTpsbyNeId(Integer.valueOf(neId));
+			tpsDbMgr.deleteTpsbyNeId(neId);
 
 			AdpEqusDbMgr equipmentsDbMgr = new AdpEqusDbMgr();
-			equipmentsDbMgr.deleteEquipmentsByNeId(Integer.valueOf(neId));
+			equipmentsDbMgr.deleteEquipmentsByNeId(neId);
 		} catch (AdapterException e) {
 			if (ErrorCode.FAIL_OBJ_NOT_EXIST != e.errorCode) {
 				throw e;
@@ -269,12 +269,12 @@ public class AdpQ3NesMgr {
 		return false;
 	}
 
-	private AdpNe isNeExisted(Integer neid) throws AdapterException {
+	private AdpNe isNeExisted(String neid) throws AdapterException {
 		AdpNe ne;
 		try {
 			ne = nesDbMgr.getNeById(neid);
 			log.debug("ne = " + ne);
-			if (null == ne || ne.getId() < 0) {
+			if (null == ne || StringUtils.isEmpty(ne.getId())) {
 				throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 			}
 		} catch (Exception e) {
@@ -285,7 +285,7 @@ public class AdpQ3NesMgr {
 		return ne;
 	}
 
-	public void startSupervision(Integer neid) throws AdapterException {
+	public void startSupervision(String neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
 		List<AdpKVPair> pairs = ne.getParams();
 		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);
@@ -318,7 +318,7 @@ public class AdpQ3NesMgr {
 		if (!isSuccess) {
 			throw new AdapterException(ErrorCode.FAIL_SUPERVISE_NE_BY_EMLIM);
 		}
-		Integer id = body.getId();
+		String id = body.getId();
 		NeStateMachineApp.instance().afterSuperviseNe(id);
 
 		NotificationSender.instance().sendAvcNotif(EntityType.NE, id, "supervisionState",
@@ -329,7 +329,7 @@ public class AdpQ3NesMgr {
 				OperationState.SYNCING.name());
 	}
 
-	public void startAlignment(Integer neid) throws AdapterException {
+	public void startAlignment(String neid) throws AdapterException {
 		AdpNe ne = isNeExisted(neid);
 		List<AdpKVPair> pairs = ne.getParams();
 		String[] groupAndNeId = KeyValuePairUtil.getGroupAndNeId(pairs);

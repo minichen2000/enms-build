@@ -3,14 +3,13 @@ package com.nsb.enms.adapter.server.wdm.business.eq;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
-import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpEquEntity;
 import com.nsb.enms.adapter.server.wdm.action.method.eq.GetAllEquipments;
@@ -31,28 +30,25 @@ public class AdpSnmpEqusMgr {
 	private ObjectIdGenerator objectIdGenerator;
 
 	public AdpSnmpEqusMgr(ObjectIdGenerator objectIdGenerator) {
-		this.objectIdGenerator=objectIdGenerator;
+		this.objectIdGenerator = objectIdGenerator;
 	}
 
-	public void syncEqs(Integer neId) throws AdapterException {
+	public void syncEqs(String neId) throws AdapterException {
 		SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 		List<SnmpEquEntity> equs = GetAllEquipments.getEquipments(client);
-
-		// for (SnmpEquEntity equ : equs) {
-		// try {
-		// equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
-		// } catch (Exception e) {
-		// throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		// }
-		// }
 
 		for (SnmpEquEntity equ : equs) {
 			log.debug(equ);
 			try {
-				AdpEquipment eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, equ.getIndex());
-				if (eqFromDb == null || eqFromDb.getId() == null) {
-					AdpEquipment newEqu = constructEqu(equ, equs, neId);
+				AdpEquipment eqFromDb = equsDbMgr.getEquipmentByKeyOnNe(neId, equ.getIndex());
+				AdpEquipment newEqu = constructEqu(equ, neId);
+				if (eqFromDb == null || StringUtils.isEmpty(eqFromDb.getId())) {
+					String id = objectIdGenerator.generateEquipmentId(newEqu);
+					newEqu.setId(id);
 					equsDbMgr.addEquipment(newEqu);
+				} else {
+					newEqu.setId(eqFromDb.getId());
+					equsDbMgr.replaceEquipment(newEqu);
 				}
 			} catch (Exception e) {
 				log.error("syncEq:", e);
@@ -61,14 +57,16 @@ public class AdpSnmpEqusMgr {
 		}
 	}
 
-	public AdpEquipment getEquipment(String address, String index, EquType type) throws AdapterException {
+	public AdpEquipment addEquipment(String address, String index, EquType type) throws AdapterException {
 		try {
-			Integer neId = nesDbMgr.getIdByAddress(address);
-			AdpEquipment eqFromDb = isEqExist(neId, getPosition(index));
-			if (eqFromDb == null) {
+			String neId = nesDbMgr.getIdByAddress(address);
+			AdpEquipment eqFromDb = checkIsEqExistedByNeId(neId, index);
+			if (eqFromDb == null || StringUtils.isEmpty(eqFromDb.getId())) {
 				SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 				SnmpEquEntity equ = GetAllEquipments.getEquipment(client, index, type);
 				AdpEquipment newEqu = constructEqu(equ, neId);
+				String id = objectIdGenerator.generateEquipmentId(newEqu);
+				newEqu.setId(id);
 				equsDbMgr.addEquipment(newEqu);
 				return newEqu;
 			}
@@ -87,18 +85,18 @@ public class AdpSnmpEqusMgr {
 		}
 	}
 
-	public void deleteEquipment(AdpEquipment adpEq) throws AdapterException {
+	public void deleteEquipmentsUnderShelf(AdpEquipment adpEq) throws AdapterException {
 		try {
-			equsDbMgr.deleteEquipment(adpEq);
+			equsDbMgr.deleteEquipmentsUnderShelf(adpEq);
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
 
-	private AdpEquipment isEqExist(Integer neId, String position) throws AdapterException {
+	public AdpEquipment checkIsEqExistedByNeId(String neId, String index) throws AdapterException {
 		try {
-			AdpEquipment eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, position);
-			if (eqFromDb == null || eqFromDb.getId() == null) {
+			AdpEquipment eqFromDb = equsDbMgr.getEquipmentByKeyOnNe(neId, index);
+			if (eqFromDb == null || StringUtils.isEmpty(eqFromDb.getId())) {
 				return null;
 			}
 			return eqFromDb;
@@ -108,96 +106,28 @@ public class AdpSnmpEqusMgr {
 
 	}
 
-	public AdpEquipment isEqExist(String address, String index) throws AdapterException {
+	public AdpEquipment checkIsEqExistedByAddress(String address, String index) throws AdapterException {
 		try {
-			Integer neId = nesDbMgr.getIdByAddress(address);
-			if (index.length() < 2 || index.contains(".")) {
-				index = getPosition(index);
-			}
-			return isEqExist(neId, index);
+			String neId = nesDbMgr.getIdByAddress(address);
+			return checkIsEqExistedByNeId(neId, index);
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
 
-	private AdpEquipment constructEqu(SnmpEquEntity equ, List<SnmpEquEntity> equs, int neId) throws AdapterException {
+	private AdpEquipment constructEqu(SnmpEquEntity equ, String neId) throws AdapterException {
 		AdpEquipment adpEqu = new AdpEquipment();
 		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
-		if (equ.getId() == null) {
-			try {
-				equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
-			} catch (Exception e) {
-				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-			}
-		}
-
-		constructEq(equ, adpEqu, params, neId);
-
-		for (SnmpEquEntity equipment : equs) {
-			String parentIndex = equipment.getIndex();
-			String index = equ.getIndex();
-			if (index.matches(parentIndex + "/[0-9]+")) {
-				if (equipment.getId() == null) {
-					AdpEquipment eqFromDb;
-					try {
-						eqFromDb = equsDbMgr.getEquByKeyOnNe(neId, equipment.getIndex());
-						if (eqFromDb == null || eqFromDb.getId() == null) {
-							equipment.setId(AdpSeqDbMgr.getMaxEquipmentId());
-						} else {
-							equipment.setId(eqFromDb.getId());
-						}
-					} catch (Exception e) {
-						throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-					}
-				}
-				AdpKVPair parentIdPair = new AdpKVPair();
-				parentIdPair.setKey("parentId");
-				parentIdPair.setValue(String.valueOf(equipment.getId()));
-				params.add(parentIdPair);
-			}
-		}
-
-		adpEqu.setParams(params);
-		return adpEqu;
-	}
-
-	private AdpEquipment constructEqu(SnmpEquEntity equ, Integer neId) throws AdapterException {
-		AdpEquipment adpEqu = new AdpEquipment();
-		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
-		if (equ.getId() == null) {
-			try {
-				equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
-			} catch (Exception e) {
-				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-			}
-		}
-		constructEq(equ, adpEqu, params, neId);
-		try {
-			String index = equ.getIndex();
-			String parentIndex = index.substring(0, index.lastIndexOf("/"));
-			Integer parentId = equsDbMgr.getIdByKeyOnNe(neId, parentIndex);
-			if (parentId != null) {
-				AdpKVPair parentIdPair = new AdpKVPair();
-				parentIdPair.setKey("parentId");
-				parentIdPair.setValue(String.valueOf(parentId));
-				params.add(parentIdPair);
-			}
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-
-		adpEqu.setParams(params);
-		return adpEqu;
-	}
-
-	private void constructEq(SnmpEquEntity equ, AdpEquipment adpEqu, List<AdpKVPair> params, Integer neId) {
-		adpEqu.setId(equ.getId());
+		String index = equ.getIndex();
+		String name = equ.getName();
 		adpEqu.setNeId(neId);
-		adpEqu.setPosition(equ.getIndex());
-		adpEqu.setType(getType(equ.getIndex()));
+		adpEqu.setPosition(getPosition(index));
+		adpEqu.setType(getType(index));
 		adpEqu.setExpectedType(equ.getProgrammedType());
 		adpEqu.setActualType(equ.getPresentType());
 		adpEqu.setKeyOnNe(equ.getIndex());
+		adpEqu.setUserLabel(name);
+		adpEqu.setNativeName(name);
 
 		if (!StringUtils.isEmpty(equ.getPresentType()) && !StringUtils.equals("Empty", equ.getPresentType())) {
 			String serialNumber = equ.getSerialNumber();
@@ -267,14 +197,32 @@ public class AdpSnmpEqusMgr {
 			softwarePartNumberPair.setValue(softwarePartNumber);
 			params.add(softwarePartNumberPair);
 		}
+
+		if (index.split(".").length > 1) {
+			String parentIndex = index.substring(0, index.lastIndexOf("."));
+			try {
+				String parentId = equsDbMgr.getIdByKeyOnNe(neId, parentIndex);
+				if (!StringUtils.isEmpty(parentId)) {
+					AdpKVPair parentIdPair = new AdpKVPair();
+					parentIdPair.setKey("parentId");
+					parentIdPair.setKey(parentId);
+					params.add(parentIdPair);
+				}
+			} catch (Exception e) {
+				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+			}
+		}
+		adpEqu.setParams(params);
+		return adpEqu;
 	}
 
-	private String getType(String position) {
-		int len = position.split("/").length;
+	private String getType(String index) {
+		int len = index.split(".").length + 1;
 		return EquType.getEquType(len);
 	}
 
 	private String getPosition(String index) {
-		return "1/" + index.replace(".", "/");
+		String position = index.replace(".", "/");
+		return position;
 	}
 }

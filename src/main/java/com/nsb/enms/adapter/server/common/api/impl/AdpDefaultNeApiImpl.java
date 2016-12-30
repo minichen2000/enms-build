@@ -1,5 +1,6 @@
 package com.nsb.enms.adapter.server.common.api.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,7 +16,7 @@ public abstract class AdpDefaultNeApiImpl implements AdpNeApiItf {
 	private Logger log = LogManager.getLogger(AdpDefaultTpApiImpl.class);
 	protected AdpNe data;
 	private AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
-	private Integer id;
+	private String id;
 
 	public AdpDefaultNeApiImpl(AdpNe ne) {
 		data = ne;
@@ -26,13 +27,13 @@ public abstract class AdpDefaultNeApiImpl implements AdpNeApiItf {
 		return data;
 	}
 
-	protected Integer getId() {
+	protected String getId() {
 		return id;
 	}
 
 	protected void commonValidate(AdpNe body, MethodOperator operate) throws AdapterException {
-		Integer id = body.getId();
-		if (null == id || id < 0) {
+		String id = body.getId();
+		if (StringUtils.isEmpty(id)) {
 			throw new AdapterException(ErrorCode.FAIL_INVALID_ID);
 		}
 
@@ -59,7 +60,7 @@ public abstract class AdpDefaultNeApiImpl implements AdpNeApiItf {
 	public AdpNe getNeById() throws AdapterException {
 		try {
 			AdpNe ne = nesDbMgr.getNeById(data.getId());
-			if (ne.getId() < 0) {
+			if (StringUtils.isEmpty(ne.getId())) {
 				throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 			}
 			return ne;

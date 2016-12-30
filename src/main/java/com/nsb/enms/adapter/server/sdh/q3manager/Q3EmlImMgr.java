@@ -30,7 +30,7 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 public class Q3EmlImMgr {
 	private static final Logger log = LogManager.getLogger(Q3EmlImMgr.class);
 
-	private static List<Integer> neIdList = new LinkedList<Integer>();
+	private static List<String> neIdList = new LinkedList<String>();
 
 	private static Q3EmlImMgr inst_ = new Q3EmlImMgr();
 
@@ -85,7 +85,7 @@ public class Q3EmlImMgr {
 	// "The emlim doesn't has capacity to manager NE!!!");
 	// }
 
-	public synchronized int getGroupId(Integer neId) throws AdapterException {
+	public synchronized int getGroupId(String neId) throws AdapterException {
 		if (neIdList.size() < MAX_NE_NUM) {
 			neIdList.add(neId);
 			return groupId;
@@ -147,7 +147,7 @@ public class Q3EmlImMgr {
 			List<AdpNe> neList = nesDbMgr.getNesByGroupId(String.valueOf(groupId));
 			for (AdpNe ne : neList) {
 				NeStateCallBack callBack = new NeStateCallBack();
-				int id = ne.getId();
+				String id = ne.getId();
 				callBack.setId(id);
 				if (StringUtils.equals(ne.getCommunicationState(), CommunicationState.CONNECTED.name())) {
 					NeStateMachineApp.instance().getNeCommunicationStateMachine()

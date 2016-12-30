@@ -29,7 +29,7 @@ public class AdpEqusMgr {
 	public AdpEqusMgr() {
 	}
 
-	public void syncEquip(String groupId, String neId, int id) throws AdapterException {
+	public void syncEquip(String groupId, String neId, String id) throws AdapterException {
 		Map<String, List<AdpKVPair>> map = GetEquipment.getRIs(groupId, neId);
 
 		if (null != map && !map.isEmpty()) {
@@ -53,7 +53,7 @@ public class AdpEqusMgr {
 
 		for (EquipmentEntity equ : equList) {
 			try {
-				equ.setId(AdpSeqDbMgr.getMaxEquipmentId());
+				equ.setId(String.valueOf(AdpSeqDbMgr.getMaxEquipmentId()));
 			} catch (Exception e) {
 				throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 			}
@@ -84,7 +84,7 @@ public class AdpEqusMgr {
 	}
 
 	private AdpEquipment constructEquip(EquipmentEntity equ, List<EquipmentEntity> equList,
-			List<TptCoordinatorEntity> tptCoordinatorList, Map<String, List<AdpKVPair>> map, int id) {
+			List<TptCoordinatorEntity> tptCoordinatorList, Map<String, List<AdpKVPair>> map, String id) {
 		AdpEquipment adpEqu = new AdpEquipment();
 		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
 		String moc = equ.getMoc();

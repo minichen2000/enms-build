@@ -9,7 +9,7 @@ import com.nsb.enms.restful.model.adapter.AdpNe;
 public abstract class AdpDefaultXcApiImpl implements AdpXcApiItf {
 	private Logger log = LogManager.getLogger(AdpDefaultXcApiImpl.class);
 	protected AdpNe data;
-	private Integer id;
+	private String id;
 
 	public AdpDefaultXcApiImpl(AdpNe ne) {
 		data = ne;
@@ -20,7 +20,7 @@ public abstract class AdpDefaultXcApiImpl implements AdpXcApiItf {
 		return data;
 	}
 
-	protected Integer getId() {
+	protected String getId() {
 		return id;
 	}
 }

@@ -11,10 +11,10 @@ public interface AdpXcApiItf extends AdpCommonApiItf {
 
 	public List<AdpXc> getXcsByNeId() throws AdapterException;
 
-	public AdpXc getXcById(Integer xcId) throws AdapterException;
+	public AdpXc getXcById(String xcId) throws AdapterException;
 
 	public void deleteXcsByNeId() throws AdapterException;
 
-	public void deleteXcById(Integer xcid) throws AdapterException;
+	public void deleteXcById(String xcid) throws AdapterException;
 
 }

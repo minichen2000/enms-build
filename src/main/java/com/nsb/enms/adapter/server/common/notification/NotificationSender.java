@@ -49,11 +49,11 @@ public class NotificationSender {
 		// Long eventTime = TimeUtil.getTime(entity.getEventTime());
 		String moc = entity.getMoc().getMoc();
 		String moi = entity.getMoi().getMoi();
-		Integer neId = Integer.valueOf(moi.split("/")[1].split("=")[1]);
+		String neId = moi.split("/")[1].split("=")[1];
 		EntityType objectType = getObjectType(moc);
 		String keyOnNe = GenerateKeyOnNeUtil.generateKeyOnNe(objectType, moc, moi);
-		Integer objectID = getObjectId(objectType, neId, keyOnNe);
-		if (null == objectID) {
+		String objectID = getObjectId(objectType, neId, keyOnNe);
+		if (StringUtils.isEmpty(objectID)) {
 			return;
 		}
 
@@ -86,15 +86,15 @@ public class NotificationSender {
 		}
 	}
 
-	public void sendAvcNotif(EntityType entityType, Integer objectID, String key, String value, String oldValue) {
+	public void sendAvcNotif(EntityType entityType, String objectID, String key, String value, String oldValue) {
 		publisher.sendAVC(entityType, objectID, key, value, (oldValue == null ? StringUtils.EMPTY : oldValue));
 	}
 
-	public void sendOcNotif(EntityType objectType, Integer objectID) {
+	public void sendOcNotif(EntityType objectType, String objectID) {
 		publisher.sendOC(objectType, objectID);
 	}
 
-	public void sendOdNotif(EntityType objectType, Integer objectID) {
+	public void sendOdNotif(EntityType objectType, String objectID) {
 		publisher.sendOD(objectType, objectID);
 	}
 
@@ -166,7 +166,7 @@ public class NotificationSender {
 		}
 	}
 
-	private Integer getObjectId(EntityType objectType, int neId, String keyOnNe) {
+	private String getObjectId(EntityType objectType, String neId, String keyOnNe) {
 		switch (objectType) {
 		case NE:
 			AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();

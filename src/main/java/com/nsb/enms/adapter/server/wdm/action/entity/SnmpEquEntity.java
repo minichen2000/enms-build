@@ -2,7 +2,7 @@ package com.nsb.enms.adapter.server.wdm.action.entity;
 
 public class SnmpEquEntity
 {
-    private Integer id;
+    private String id;
 
     private String index;
 
@@ -38,12 +38,12 @@ public class SnmpEquEntity
     
     private String factoryID;
 
-    public Integer getId()
+    public String getId()
     {
         return id;
     }
 
-    public void setId( Integer id )
+    public void setId( String id )
     {
         this.id = id;
     }

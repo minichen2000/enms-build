@@ -18,32 +18,32 @@ public class AdpSeqDbMgr {
 	private static final String XC = "xc";
 	private static final String BORAD = "board";
 
-	public static synchronized Integer getMaxNeId() throws Exception {
+	public static synchronized String getMaxNeId() throws Exception {
 		return getMaxIdByType(NE);
 	}
 
-	public static synchronized Integer getMaxTpId(Integer neId) throws Exception {
+	public static synchronized String getMaxTpId(String neId) throws Exception {
 		return getMaxIdByType(TP + "_" + neId);
 	}
 
-	public static synchronized Integer getMaxXcId() throws Exception {
+	public static synchronized String getMaxXcId() throws Exception {
 		return getMaxIdByType(XC);
 	}
 
-	public static synchronized Integer getMaxEquipmentId() throws Exception {
+	public static synchronized String getMaxEquipmentId() throws Exception {
 		return getMaxIdByType(BORAD);
 	}
 
-	private static Integer getMaxIdByType(String type) throws Exception {
+	private static String getMaxIdByType(String type) throws Exception {
 		Document doc = dbc.findOneAndUpdate(dbc.find().first(), new Document("$inc", new Document(type, 1)));
 		if (null == doc) {
 			dbc.insertOne(new Document(type, 1));
-			return 1;
+			return "1";
 		}
 		if (null == doc.getInteger(type)) {
-			return 1;
+			return "1";
 		}
-		return doc.getInteger(type) + 1;
+		return String.valueOf(doc.getInteger(type) + 1);
 	}
 
 	public static void main(String args[]) {

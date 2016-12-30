@@ -29,7 +29,7 @@ public class AdpQ3TpsMgr {
 	public AdpQ3TpsMgr() {
 	}
 
-	public List<AdpTp> syncTu12Ctp(String groupId, Integer neId, String vc4TtpId, AdpTp au4Ctp, Integer ptpDbId)
+	public List<AdpTp> syncTu12Ctp(String groupId, String neId, String vc4TtpId, AdpTp au4Ctp, String ptpDbId)
 			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
 		List<TpEntity> tpList = GetCtp.getTu12Ctps(groupId, String.valueOf(neId), vc4TtpId);
@@ -50,7 +50,7 @@ public class AdpQ3TpsMgr {
 		return tps;
 	}
 
-	public List<AdpTp> syncTu3Ctp(String groupId, Integer neId, String vc4TtpId, AdpTp au4Ctp, Integer ptpDbId)
+	public List<AdpTp> syncTu3Ctp(String groupId, String neId, String vc4TtpId, AdpTp au4Ctp, String ptpDbId)
 			throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
 		List<TpEntity> tpList = GetCtp.getTu3Ctps(groupId, String.valueOf(neId), vc4TtpId);
@@ -75,7 +75,7 @@ public class AdpQ3TpsMgr {
 		try {
 			for (AdpTp tp : tps) {
 				// TODO 添加neid
-				Integer neId = 1;
+				String neId = "1";
 				AdpTp newTp = tpsDbMgr.getTpById(neId, tp.getId());
 				if (null == newTp || newTp.getId() == null) {
 					tpsDbMgr.addTp(tp);
@@ -88,7 +88,7 @@ public class AdpQ3TpsMgr {
 		return tps;
 	}
 
-	public List<AdpTp> syncTtp(String groupId, Integer neId, String vc4TtpId, Integer ptpDbId) throws AdapterException {
+	public List<AdpTp> syncTtp(String groupId, String neId, String vc4TtpId, String ptpDbId) throws AdapterException {
 		List<AdpTp> tps = new ArrayList<AdpTp>();
 		List<TpEntity> tpList = GetTtp.getVc4Ttps(groupId, String.valueOf(neId));
 		log.debug("syncTtp tpList = {}, groupId = {}, neId = {}", tpList.size(), groupId, neId);
@@ -122,10 +122,10 @@ public class AdpQ3TpsMgr {
 	 * @return
 	 * @throws AdapterException
 	 */
-	private AdpTp constructTp(TpEntity tp, Integer neDbId, String userLabel, List<String> layerRates, String tpType,
-			Integer ptpId, Integer parentTpId) throws AdapterException {
+	private AdpTp constructTp(TpEntity tp, String neDbId, String userLabel, List<String> layerRates, String tpType,
+			String ptpId, String parentTpId) throws AdapterException {
 		AdpTp adpTp = new AdpTp();
-		Integer maxTpId;
+		String maxTpId;
 		try {
 			maxTpId = AdpSeqDbMgr.getMaxTpId(neDbId);
 		} catch (Exception e) {
@@ -144,7 +144,7 @@ public class AdpQ3TpsMgr {
 		return adpTp;
 	}
 
-	public void syncTp(String groupId, String neId, Integer neDbId) throws AdapterException {
+	public void syncTp(String groupId, String neId, String neDbId) throws AdapterException {
 		List<TpEntity> tpList = GetTp.getTps(groupId, neId);
 		log.debug("tpList = " + tpList.size() + ", neId = " + neId);
 
@@ -168,7 +168,7 @@ public class AdpQ3TpsMgr {
 			log.debug("tpId = " + tpId);
 			String ptpId = tpId.split("=")[1];
 			log.debug("ptpId = " + ptpId);
-			Integer ptpDbId = tps.get(0).getId();
+			String ptpDbId = tps.get(0).getId();
 			if (tpId.startsWith("opticalSPI")) {
 				syncSdhCtp(groupId, neId, moi, ptpId, ptpDbId, neDbId);
 			} else if (tpId.startsWith("pPI")) {
@@ -181,7 +181,7 @@ public class AdpQ3TpsMgr {
 		log.debug("sync tp end");
 	}
 
-	private void syncSdhCtp(String groupId, String neId, String moi, String ptpId, Integer ptpDbId, Integer neDbId)
+	private void syncSdhCtp(String groupId, String neId, String moi, String ptpId, String ptpDbId, String neDbId)
 			throws AdapterException {
 		List<TpEntity> ctpList = GetCtp.getSdhCtps(groupId, neId, ptpId);
 
@@ -201,7 +201,7 @@ public class AdpQ3TpsMgr {
 		addTps(tps);
 	}
 
-	private void syncPdhCtp(String groupId, String neId, String moi, String ptpId, Integer ptpDbId, Integer neDbId)
+	private void syncPdhCtp(String groupId, String neId, String moi, String ptpId, String ptpDbId, String neDbId)
 			throws AdapterException {
 		Pair<List<String>, List<TpEntity>> pair = GetCtp.getPdhCtp(groupId, neId, ptpId);
 		if (null == pair) {
@@ -229,7 +229,7 @@ public class AdpQ3TpsMgr {
 
 		try {
 			// TODO 添加neid
-			tpsDbMgr.updateTpLayerRate(Integer.valueOf(neId), ptpDbId, layerRates);
+			tpsDbMgr.updateTpLayerRate(neId, ptpDbId, layerRates);
 		} catch (Exception e) {
 			log.error("getTpById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);

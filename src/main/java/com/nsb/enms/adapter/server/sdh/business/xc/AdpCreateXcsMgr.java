@@ -28,11 +28,11 @@ public class AdpCreateXcsMgr {
 	private AdpQ3XcsMgr adpXcMgr = new AdpQ3XcsMgr();
 	private AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
 
-	public AdpXc createXc(Integer neId, AdpXc body) throws AdapterException {
-		List<Integer> atps = body.getAEndPoints();
-		List<Integer> ztps = body.getZEndPoints();
+	public AdpXc createXc(String neId, AdpXc body) throws AdapterException {
+		List<String> atps = body.getAEndPoints();
+		List<String> ztps = body.getZEndPoints();
 		isTpsValid(atps, ztps);
-		List<String> layerrates = body.getLayerrate();
+		List<String> layerrates = body.getLayerRates();
 		isLayerRateValid(layerrates);
 
 		List<Integer> atpTimeSlots = body.getAtpTimeslots();
@@ -58,7 +58,7 @@ public class AdpCreateXcsMgr {
 		return xc;
 	}
 
-	private AdpTp getTimeSlotTpByVc4Tp(Integer neId, Integer ptpId, AdpTp au4Ctp, Integer[] timeSlots,
+	private AdpTp getTimeSlotTpByVc4Tp(String neId, String ptpId, AdpTp au4Ctp, Integer[] timeSlots,
 			LayerRate layerRate) throws AdapterException {
 		log.debug("===============getTimeSlotTpByVc4Tp=================");
 		String vc4TTPId = getVc4TtpIdFromXcs(au4Ctp.getId());
@@ -69,14 +69,14 @@ public class AdpCreateXcsMgr {
 		}
 	}
 
-	private AdpXc createXcBySdhAndPdh(Integer neId, Integer sdhTpId, AdpTp au4Ctp, Integer[] timeSlots, AdpTp tpId,
+	private AdpXc createXcBySdhAndPdh(String neId, String sdhTpId, AdpTp au4Ctp, Integer[] timeSlots, AdpTp tpId,
 			boolean isAtp, LayerRate layerRate) throws AdapterException {
 		log.debug("===============createXcBySdhAndPdh=================");
 		AdpTp timeSlotTp = getTimeSlotTpByVc4Tp(neId, sdhTpId, au4Ctp, timeSlots, layerRate);
 		return createXcByLayerRate(layerRate, neId, timeSlotTp, tpId, isAtp);
 	}
 
-	private AdpXc createXcByBothSdh(Integer neId, AdpTp atp, AdpTp ztp, LayerRate layerRate) throws AdapterException {
+	private AdpXc createXcByBothSdh(String neId, AdpTp atp, AdpTp ztp, LayerRate layerRate) throws AdapterException {
 		log.debug("===============createXcByBothSdh=================");
 		return createXcByLayerRate(layerRate, neId, atp, ztp);
 	}
@@ -98,7 +98,7 @@ public class AdpCreateXcsMgr {
 		return null;
 	}
 
-	private AdpTp handleVc4TpIdExisted(Integer neId, Integer[] timeSlots, LayerRate layerRate, String vc4TTPId)
+	private AdpTp handleVc4TpIdExisted(String neId, Integer[] timeSlots, LayerRate layerRate, String vc4TTPId)
 			throws AdapterException {
 		// TODO 判断传入的时隙是否空闲
 		String timeSlotTpKeyOnNe = constructTpKeyOnNeByTimeSlot(layerRate, timeSlots, neId, vc4TTPId);
@@ -120,7 +120,7 @@ public class AdpCreateXcsMgr {
 		return tp;
 	}
 
-	private AdpTp handleVc4TpIdIsEmpty(Integer neId, AdpTp au4Ctp, Integer ptpId, Integer[] timeSlots,
+	private AdpTp handleVc4TpIdIsEmpty(String neId, AdpTp au4Ctp, String ptpId, Integer[] timeSlots,
 			LayerRate layerRate) throws AdapterException {
 		log.debug("start to createXcVc4 by ctpId = {}", au4Ctp.getId());
 		String vc4TTPId = adpXcMgr.createXcByAu4AndVc4(neId, au4Ctp, ptpId);
@@ -137,9 +137,9 @@ public class AdpCreateXcsMgr {
 		return tp;
 	}
 
-	private AdpXc createXcByAtpIsSdh(List<Integer> atpTimeSlots, List<Integer> atps, List<Integer> ztps, Integer neId,
+	private AdpXc createXcByAtpIsSdh(List<Integer> atpTimeSlots, List<String> atps, List<String> ztps, String neId,
 			LayerRate layerRate) throws AdapterException {
-		Integer sdhTpId = atps.get(0);
+		String sdhTpId = atps.get(0);
 		AdpTp sdhTp = getTpById(sdhTpId);
 		boolean isValid = isTimeSlotValid(atpTimeSlots, layerRate) && isSdhTtp(sdhTp) && isPdhTtp(ztps);
 		if (!isValid) {
@@ -151,10 +151,10 @@ public class AdpCreateXcsMgr {
 		AdpTp au4Ctp = adpXcMgr.getAu4Tp(neId, sdhTp.getKeyOnNe(), timeSlots[0]);
 		log.debug("au4CtpId = " + au4Ctp.getId());
 		AdpTp ztp = adpXcMgr.getPdhSubTp(ztps.get(0), layerRate);
-		Integer ztpId = ztp.getId();
+		String ztpId = ztp.getId();
 		log.debug("ztpId = " + ztpId);
 
-		if (null == ztpId || ztpId < 0) {
+		if (StringUtils.isEmpty(ztpId)) {
 			log.error("can not find pdh sub tp by tpId = " + ztps.get(0) + " and layerRate = " + layerRate);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
@@ -167,9 +167,9 @@ public class AdpCreateXcsMgr {
 		return createXcBySdhAndPdh(neId, sdhTpId, au4Ctp, timeSlots, ztp, false, layerRate);
 	}
 
-	private AdpXc createXcByZtpIsSdh(List<Integer> ztpTimeSlots, List<Integer> atps, List<Integer> ztps, Integer neId,
+	private AdpXc createXcByZtpIsSdh(List<Integer> ztpTimeSlots, List<String> atps, List<String> ztps, String neId,
 			LayerRate layerRate) throws AdapterException {
-		Integer sdhTpId = ztps.get(0);
+		String sdhTpId = ztps.get(0);
 		AdpTp sdhTp = getTpById(sdhTpId);
 		boolean isValid = isTimeSlotValid(ztpTimeSlots, layerRate) && isPdhTtp(atps) && isSdhTtp(sdhTp);
 		if (!isValid) {
@@ -182,9 +182,9 @@ public class AdpCreateXcsMgr {
 		log.debug("au4CtpId = " + au4Ctp.getId());
 
 		AdpTp atp = adpXcMgr.getPdhSubTp(atps.get(0), layerRate);
-		Integer atpId = atp.getId();
+		String atpId = atp.getId();
 		log.debug("atpId = " + atpId);
-		if (null == atpId || atpId < 0) {
+		if (StringUtils.isEmpty(atpId)) {
 			log.error("can not find pdh sub tp by tpId = " + atps.get(0) + " and layerRate = " + layerRate);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
@@ -196,11 +196,11 @@ public class AdpCreateXcsMgr {
 		return createXcBySdhAndPdh(neId, sdhTpId, au4Ctp, timeSlots, atp, true, layerRate);
 	}
 
-	private AdpXc createXcByBothTpIsSdh(List<Integer> atpTimeSlots, List<Integer> ztpTimeSlots, List<Integer> atps,
-			List<Integer> ztps, Integer neId, LayerRate layerRate) throws AdapterException {
-		Integer atpId = atps.get(0);
+	private AdpXc createXcByBothTpIsSdh(List<Integer> atpTimeSlots, List<Integer> ztpTimeSlots, List<String> atps,
+			List<String> ztps, String neId, LayerRate layerRate) throws AdapterException {
+		String atpId = atps.get(0);
 		AdpTp sdhAtp = getTpById(atpId);
-		Integer ztpId = ztps.get(0);
+		String ztpId = ztps.get(0);
 		AdpTp sdhZtp = getTpById(ztpId);
 
 		boolean isValid = isSdhTtp(sdhAtp) && isSdhTtp(sdhZtp) && isTimeSlotValid(atpTimeSlots, layerRate)
@@ -225,7 +225,7 @@ public class AdpCreateXcsMgr {
 		return createXcByBothSdh(neId, a_TuCtp, z_TuCtp, layerRate);
 	}
 
-	private String constructTpKeyOnNeByTimeSlot(LayerRate layerRate, Integer[] timeSlots, Integer neId,
+	private String constructTpKeyOnNeByTimeSlot(LayerRate layerRate, Integer[] timeSlots, String neId,
 			String vc4TpId) {
 		String keyOnNe = StringUtils.EMPTY;
 		if (LayerRate.VC12 == layerRate || LayerRate.TU12 == layerRate) {
@@ -246,7 +246,7 @@ public class AdpCreateXcsMgr {
 		return false;
 	}
 
-	private AdpXc createXcByLayerRate(LayerRate layerRate, Integer neDbId, AdpTp timeSlotTp, AdpTp tp, boolean isAtp)
+	private AdpXc createXcByLayerRate(LayerRate layerRate, String neDbId, AdpTp timeSlotTp, AdpTp tp, boolean isAtp)
 			throws AdapterException {
 		AdpTp atpId, ztpId;
 		if (isAtp) {
@@ -260,7 +260,7 @@ public class AdpCreateXcsMgr {
 		return createXcByLayerRate(layerRate, neDbId, atpId, ztpId);
 	}
 
-	private AdpXc createXcByLayerRate(LayerRate layerRate, Integer neDbId, AdpTp atp, AdpTp ztp)
+	private AdpXc createXcByLayerRate(LayerRate layerRate, String neDbId, AdpTp atp, AdpTp ztp)
 			throws AdapterException {
 		AdpXc xc = null;
 		if (LayerRate.VC3 == layerRate) {
@@ -286,8 +286,8 @@ public class AdpCreateXcsMgr {
 	 * @param ptpId
 	 * @throws AdapterException
 	 */
-	private void terminateTp(Integer neId, LayerRate layerRate, AdpTp au4Ctp, String vc4TTPId, String tug3Id,
-			Integer ptpId) throws AdapterException {
+	private void terminateTp(String neId, LayerRate layerRate, AdpTp au4Ctp, String vc4TTPId, String tug3Id,
+			String ptpId) throws AdapterException {
 		String groupId = "100";
 		TerminateTpMgr terminateMgr = new TerminateTpMgr();
 		AdpQ3TpsMgr adpTpsMgr = new AdpQ3TpsMgr();
@@ -300,8 +300,8 @@ public class AdpCreateXcsMgr {
 		}
 	}
 
-	private boolean isPdhTtp(List<Integer> tpIds) throws AdapterException {
-		Integer tpId = tpIds.get(0);
+	private boolean isPdhTtp(List<String> tpIds) throws AdapterException {
+		String tpId = tpIds.get(0);
 		AdpTp tp = getTpById(tpId);
 		if (null == tp) {
 			return false;
@@ -328,12 +328,13 @@ public class AdpCreateXcsMgr {
 		return isEqual;
 	}
 
-	private AdpTp getTpById(Integer tpId) throws AdapterException {
+	private AdpTp getTpById(String tpId) throws AdapterException {
 		try {
 			// TODO 添加neid
-			Integer neId = 1;
+			String neId = "1";
 			AdpTp tp = tpsDbMgr.getTpById(neId, tpId);
-			if (tp.getId() > -1) {
+			if (tp != null || !StringUtils.isEmpty(tp.getId()))
+			{
 				return tp;
 			}
 		} catch (Exception e) {
@@ -345,7 +346,7 @@ public class AdpCreateXcsMgr {
 		return null;
 	}
 
-	private String getVc4TtpIdFromXcs(Integer au4CtpId) throws AdapterException {
+	private String getVc4TtpIdFromXcs(String au4CtpId) throws AdapterException {
 		List<AdpXc> xcList = getXcsByTpId(au4CtpId);
 		if (null == xcList || xcList.isEmpty()) {
 			log.error("xcList is null or empty");
@@ -353,10 +354,10 @@ public class AdpCreateXcsMgr {
 		}
 
 		AdpXc xc = xcList.get(0);
-		Integer atpId = xc.getAEndPoints().get(0);
+		String atpId = xc.getAEndPoints().get(0);
 		AdpTp atp = getTpById(atpId);
 		if (LayerRatesUtil.isEquals(atp.getLayerRates(), ManagedObjectType.AU4.getLayerRates())) {
-			Integer ztpId = xc.getZEndPoints().get(0);
+			String ztpId = xc.getZEndPoints().get(0);
 			AdpTp ztp = getTpById(ztpId);
 			String vc4TpId = ztp.getKeyOnNe().split("=")[1];
 			return vc4TpId;
@@ -365,7 +366,7 @@ public class AdpCreateXcsMgr {
 		}
 	}
 
-	private AdpTp isTpExisted(Integer neId, String keyOnNe) throws AdapterException {
+	private AdpTp isTpExisted(String neId, String keyOnNe) throws AdapterException {
 		AdpTp tp;
 		try {
 			tp = tpsDbMgr.getTpByKeyOnNe(neId, keyOnNe);
@@ -374,13 +375,13 @@ public class AdpCreateXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
-		if (null == tp || tp.getId() < 0) {
+		if (null == tp || StringUtils.isEmpty(tp.getId())) {
 			return null;
 		}
 		return tp;
 	}
 
-	private void isTpsValid(List<Integer> atps, List<Integer> ztps) throws AdapterException {
+	private void isTpsValid(List<String> atps, List<String> ztps) throws AdapterException {
 		if (null == atps || atps.isEmpty()) {
 			log.error("atps is null or empty");
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_INVALID_PARAM);
@@ -399,7 +400,7 @@ public class AdpCreateXcsMgr {
 		}
 	}
 
-	private boolean isTpUsedByXc(Integer tpId) throws AdapterException {
+	private boolean isTpUsedByXc(String tpId) throws AdapterException {
 		List<AdpXc> xcList = getXcsByTpId(tpId);
 		if (null == xcList || xcList.isEmpty()) {
 			log.error("can not find xc by " + tpId);
@@ -430,7 +431,7 @@ public class AdpCreateXcsMgr {
 		return false;
 	}
 
-	private List<AdpXc> getXcsByTpId(Integer tpid) throws AdapterException {
+	private List<AdpXc> getXcsByTpId(String tpid) throws AdapterException {
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
 		try {
 			xcList = xcsDbMgr.findXcsByTpId(tpid);

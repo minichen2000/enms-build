@@ -16,7 +16,7 @@ public abstract class AdpDefaultTpApiImpl implements AdpTpApiItf {
 	private Logger log = LogManager.getLogger(AdpDefaultTpApiImpl.class);
 	protected AdpNe data;
 	protected AdpTpsDbMgr tpsDbMgr = new AdpTpsDbMgr();
-	private Integer id;
+	private String id;
 
 	public AdpDefaultTpApiImpl(AdpNe ne) {
 		data = ne;
@@ -27,12 +27,12 @@ public abstract class AdpDefaultTpApiImpl implements AdpTpApiItf {
 		return data;
 	}
 
-	protected Integer getId() {
+	protected String getId() {
 		return id;
 	}
 
 	@Override
-	public List<AdpTp> getChildrenTps(Integer tpId) throws AdapterException {
+	public List<AdpTp> getChildrenTps(String tpId) throws AdapterException {
 		try {
 			List<AdpTp> tpList = tpsDbMgr.getChildrenTps(getId(), tpId);
 			return tpList;
@@ -43,7 +43,7 @@ public abstract class AdpDefaultTpApiImpl implements AdpTpApiItf {
 	}
 
 	@Override
-	public AdpTp getTpById(Integer tpid) throws AdapterException {
+	public AdpTp getTpById(String tpid) throws AdapterException {
 		try {
 			AdpTp tp = tpsDbMgr.getTpById(getId(), tpid);
 			return tp;

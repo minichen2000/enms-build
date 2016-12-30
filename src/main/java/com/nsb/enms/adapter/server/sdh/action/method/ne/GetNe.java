@@ -22,11 +22,11 @@ public class GetNe {
 	private static final String SCENARIO = ConfLoader.getInstance().getConf(SdhConfigKey.GET_NE_REQ,
 			SdhConfigKey.DEFAULT_GET_NE_REQ);
 
-	public static NeEntity getNe(int groupId, int neId) throws AdapterException {
+	public static NeEntity getNe(int groupId, String neId) throws AdapterException {
 		log.debug("------------Start getNe-------------------");
 		try {
 			Process process = ExecExternalScript.run(ExternalScriptType.TSTMGR, SCENARIO, String.valueOf(groupId),
-					String.valueOf(neId));
+					neId);
 			InputStream inputStream = process.getInputStream();
 			NeEntity neEntity = new NeEntity();
 			BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));

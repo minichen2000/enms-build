@@ -17,9 +17,9 @@ import com.nsb.enms.common.OperationState;
 public class SnmpSyncThread implements Callable<Object> {
 	private final static Logger log = LogManager.getLogger(SnmpSyncThread.class);
 
-	private Integer neId;
+	private String neId;
 
-	public SnmpSyncThread(Integer neId) {
+	public SnmpSyncThread(String neId) {
 		this.neId = neId;
 	}
 

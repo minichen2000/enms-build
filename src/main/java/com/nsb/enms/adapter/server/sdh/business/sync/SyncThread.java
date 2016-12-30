@@ -16,9 +16,9 @@ public class SyncThread implements Callable<Object> {
 	private final static Logger log = LogManager.getLogger(SyncThread.class);
 
 	private String groupId, neId;
-	private Integer id;
+	private String id;
 
-	public SyncThread(String groupId, String neId, Integer id) {
+	public SyncThread(String groupId, String neId, String id) {
 		this.groupId = groupId;
 		this.neId = neId;
 		this.id = id;
