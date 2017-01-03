@@ -250,7 +250,7 @@ public class AdpSnmpTpsMgr {
 	}
 
 	private void syncCTPs(List<AdpTp> ptpList) throws AdapterException {
-		Get130SCX10Ctps _130SCX10Ctps = new Get130SCX10Ctps();
+		Get130SCX10Ctps _130SCX10Ctps = new Get130SCX10Ctps(objectIdGenerator);
 		GetSFD44Ctps sfd44Ctps = new GetSFD44Ctps();
 		GetAHPHGCtps ahphgCtps = new GetAHPHGCtps();
 		for (AdpTp ptp : ptpList) {
