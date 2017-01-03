@@ -3,46 +3,38 @@ package com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
-import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.wdm.utils.AdpTpWrapperUtil;
-import com.nsb.enms.adapter.server.wdm.utils.SnmpOCHTpNameUtil;
-import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpTp;
 
-public class Get130SCX10Ctps {
-	private final static Logger log = LogManager.getLogger(Get130SCX10Ctps.class);
-	private AdpTpsDbMgr tpDbMgr = new AdpTpsDbMgr();
-	private ObjectIdGenerator objectIdGenerator;
+public class Get130SCX10CTPs {
+	private final static Logger log = LogManager.getLogger(Get130SCX10CTPs.class);
 
-	public Get130SCX10Ctps(ObjectIdGenerator objectIdGenerator) {
-		this.objectIdGenerator = objectIdGenerator;
+	public Get130SCX10CTPs() {
 	}
 
 	public static void main(String[] args) {
 
 	}
 
-	private AdpTp getDsrCtp(String neId, AdpTp ptp) throws AdapterException {
-		List<String> layerRates = new ArrayList<String>();
+	private AdpTp getDSRCTP(String neId, AdpTp ptp) throws AdapterException {
 		String primaryLayerRate = LayerRate.DSR.name();
+		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(primaryLayerRate);
 		return constructCTP(neId, "/dsr=1", layerRates, ptp, primaryLayerRate, null);
 	}
 
 	private AdpTp constructCTP(String neId, String nativeName, List<String> layerRates, AdpTp ptp,
 			String primaryLayerRate, List<AdpKVPair> params) throws AdapterException {
-		return addCtp2Db(AdpTpWrapperUtil.constructCTP(neId, nativeName, layerRates, ptp, primaryLayerRate, params));
+		return AdpTpWrapperUtil.constructCTP(neId, nativeName, layerRates, ptp, primaryLayerRate, params);
 	}
 
-	private AdpTp getODUjCtp(String userLabel, String neId, AdpTp ptp) throws AdapterException {
+	private AdpTp getODUjCTP(String userLabel, String neId, AdpTp ptp) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		String primaryLayerRate = LayerRate.ODU2.name();
 		layerRates.add(primaryLayerRate);
@@ -50,17 +42,17 @@ public class Get130SCX10Ctps {
 	}
 
 	private void getClientCTPs(String neId, AdpTp ptp) throws AdapterException {
-		getDsrCtp(neId, ptp);
-		getODUjCtp("/odu2=1", neId, ptp);
+		getDSRCTP(neId, ptp);
+		getODUjCTP("/odu2=1", neId, ptp);
 	}
 
 	private void getLineCTPs(String neId, AdpTp ptp) throws AdapterException {
 		for (int i = 1; i < 11; i++) {
-			getODUjCtp("/odu4=1/odu2=" + i, neId, ptp);
+			getODUjCTP("/odu4=1/odu2=" + i, neId, ptp);
 		}
 		getODUkCTP(neId, ptp);
 		getOTUkCTPs(neId, ptp);
-		getOCHCTP(neId, ptp);
+		AdpTpWrapperUtil.getOCHCTP(neId, ptp);
 	}
 
 	private AdpTp getODUkCTP(String neId, AdpTp ptp) throws AdapterException {
@@ -70,19 +62,6 @@ public class Get130SCX10Ctps {
 		String userLabel = "/odu4=1";
 		return constructCTP(neId, userLabel, layerRates, ptp, primaryLayerRate, null);
 
-	}
-
-	private AdpTp getOCHCTP(String neId, AdpTp ptp) throws AdapterException {
-		String primaryLayerRate = LayerRate.OCH.name();
-		List<String> layerRates = new ArrayList<String>();
-		layerRates.add(primaryLayerRate);
-		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
-		AdpKVPair kv = new AdpKVPair();
-		kv.setKey("frequency");
-		String nativeName = SnmpOCHTpNameUtil.getNativeName(neId, ptp.getKeyOnNe());
-		kv.setValue(nativeName);
-		params.add(kv);
-		return constructCTP(neId, "/och=1", layerRates, ptp, primaryLayerRate, params);
 	}
 
 	private AdpTp getOTUkCTPs(String neId, AdpTp ptp) throws AdapterException {
@@ -103,33 +82,5 @@ public class Get130SCX10Ctps {
 			System.out.println("xxxxxxxxxxxxxx");
 			getLineCTPs(neId, ptp);
 		}
-	}
-
-	private AdpTp addCtp2Db(AdpTp ctp) throws AdapterException {
-		AdpTp ctpFromDb = isCTPExisted(ctp.getNeId(), ctp.getKeyOnNe());
-		if (null != ctpFromDb) {
-			// TODO 替换已有值
-			return ctpFromDb;
-		}
-		try {
-			ctpFromDb = tpDbMgr.addTp(ctp);
-		} catch (Exception e) {
-			log.error("addTps", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return ctpFromDb;
-	}
-
-	private AdpTp isCTPExisted(String neId, String keyOnNe) throws AdapterException {
-		try {
-			AdpTp tpFromDb = tpDbMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null != tpFromDb && StringUtils.isNotEmpty(tpFromDb.getId())) {
-				return tpFromDb;
-			}
-		} catch (Exception e) {
-			log.error("getTpByKeyOnNe", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return null;
 	}
 }
