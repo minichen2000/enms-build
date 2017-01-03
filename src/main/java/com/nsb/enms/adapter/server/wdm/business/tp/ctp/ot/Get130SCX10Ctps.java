@@ -3,12 +3,14 @@ package com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
+import com.nsb.enms.adapter.server.wdm.utils.AdpTpWrapperUtil;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpOCHTpNameUtil;
 import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
@@ -24,33 +26,17 @@ public class Get130SCX10Ctps {
 
 	}
 
-	private AdpTp getDsrCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getDsrCtp(String neId, String ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.DSR.name());
-		int primaryLayerRate = LayerRate.DSR.ordinal();
+		String primaryLayerRate = LayerRate.DSR.name();
 		return constructCtp(neId, "/dsr=1", layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private AdpTp constructCtp(Integer neId, String nativeName, List<String> layerRates, Integer ptpId, String ptpIndex,
-			Integer primaryLayerRate) throws AdapterException {
-		AdpTp tp = new AdpTp();
-		tp.setId(getMaxId(neId));
-		tp.setNeId(neId);
-		tp.setNativeName(nativeName);
-		tp.setUserLabel(nativeName);
-		tp.setLayerRates(layerRates);
-		String keyOnNe = nativeName + "_" + ptpIndex;
-		tp.setKeyOnNe(keyOnNe);
-		tp.setDirection(Direction.BI.name());
-		tp.setFreeResources(null);
-		tp.setTpType(TpType.CTP.name());
-		tp.setPrimaryLayerRate(primaryLayerRate);
-		tp.setPtpID(ptpId);
-		tp.setParentTpID(ptpId);
-		tp.setParams(null);
-		tp.setObjectType(primaryLayerRate);
-		tp.setAlarmState(null);
-		return addCtp2Db(tp);
+	private AdpTp constructCtp(String neId, String nativeName, List<String> layerRates, String ptpId, String ptpIndex,
+			String primaryLayerRate) throws AdapterException {
+		return addCtp2Db(
+				AdpTpWrapperUtil.constructCtp(tpId, neId, nativeName, layerRates, ptpId, ptpIndex, primaryLayerRate));
 	}
 
 	private Integer getMaxId(Integer neId) throws AdapterException {
@@ -63,19 +49,19 @@ public class Get130SCX10Ctps {
 		return maxTpId;
 	}
 
-	private AdpTp getOdujCtp(String userLabel, Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOdujCtp(String userLabel, String neId, String ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.ODU2.name());
 		int primaryLayerRate = LayerRate.ODU2.ordinal();
 		return constructCtp(neId, userLabel, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private void getClientCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private void getClientCtps(String neId, String ptpId, String ptpIndex) throws AdapterException {
 		getDsrCtp(neId, ptpId, ptpIndex);
 		getOdujCtp("/odu2=1", neId, ptpId, ptpIndex);
 	}
 
-	private void getLineCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private void getLineCtps(String neId, String ptpId, String ptpIndex) throws AdapterException {
 		for (int i = 1; i < 11; i++) {
 			getOdujCtp("/odu4=1/odu2=" + i, neId, ptpId, ptpIndex);
 		}
@@ -84,7 +70,7 @@ public class Get130SCX10Ctps {
 		getOchCtp(neId, ptpId, ptpIndex);
 	}
 
-	private AdpTp getOdukCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOdukCtp(String neId, String ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.ODU4.name());
 		int primaryLayerRate = LayerRate.ODU4.ordinal();
@@ -93,7 +79,7 @@ public class Get130SCX10Ctps {
 
 	}
 
-	private AdpTp getOchCtp(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOchCtp(String neId, String ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OCH.name());
 		int primaryLayerRate = LayerRate.OCH.ordinal();
@@ -101,7 +87,7 @@ public class Get130SCX10Ctps {
 		return constructCtp(neId, nativeName, layerRates, ptpId, ptpIndex, primaryLayerRate);
 	}
 
-	private AdpTp getOtukCtps(Integer neId, Integer ptpId, String ptpIndex) throws AdapterException {
+	private AdpTp getOtukCtps(String neId, String ptpId, String ptpIndex) throws AdapterException {
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(LayerRate.OTU4.name());
 		int primaryLayerRate = LayerRate.OTU4.ordinal();
@@ -116,7 +102,7 @@ public class Get130SCX10Ctps {
 	// getLineCtps(null, neId, ptpId, ptpIndex);
 	// }
 
-	public void syncCtps(AdpTp tp) throws AdapterException {
+	public void syncCTPs(AdpTp tp) throws AdapterException {
 		String userLabel = tp.getNativeName();
 		System.out.println("=========" + userLabel);
 		Integer neId = tp.getNeId();
@@ -145,10 +131,10 @@ public class Get130SCX10Ctps {
 		return ctpFromDb;
 	}
 
-	private AdpTp isCtpExisted(Integer neId, String keyOnNe) throws AdapterException {
+	private AdpTp isCtpExisted(String neId, String keyOnNe) throws AdapterException {
 		try {
 			AdpTp tpFromDb = tpDbMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null != tpFromDb && null != tpFromDb.getId() && -1 < tpFromDb.getId()) {
+			if (null != tpFromDb && StringUtils.isNotEmpty(tpFromDb.getId())) {
 				return tpFromDb;
 			}
 		} catch (Exception e) {

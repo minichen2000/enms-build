@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +16,7 @@ import com.nsb.enms.common.utils.snmp.SnmpClient;
 public class SnmpOCHTpNameUtil {
 	private final static Logger log = LogManager.getLogger(SnmpOCHTpNameUtil.class);
 
-	public static String getNativeName(Integer neId, String index) throws AdapterException {
+	public static String getNativeName(String neId, String index) throws AdapterException {
 		SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 		try {
 			List<String> oids = new ArrayList<String>();
@@ -49,7 +48,7 @@ public class SnmpOCHTpNameUtil {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
 		try {
-			getNativeName(5, "51380480");
+			getNativeName("5", "51380480");
 		} catch (AdapterException e) {
 			e.printStackTrace();
 		}

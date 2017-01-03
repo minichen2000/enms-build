@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpEqusDbMgr;
-import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
@@ -43,7 +42,7 @@ public class AdpSnmpTpsMgr {
 	private AdpTpsDbMgr tpsMgr = new AdpTpsDbMgr();
 	private AdpEqusDbMgr equsMgr = new AdpEqusDbMgr();
 	private AdpSnmpXcsMgr xcsMgr;
-	private Integer neId;
+	private String neId;
 	private List<AdpTp> _130Scx10ClientPtpList = new ArrayList<AdpTp>();
 	private List<AdpTp> _130Scx10LinePtpList = new ArrayList<AdpTp>();
 	private List<AdpTp> sfd44ClientPtpList = new ArrayList<AdpTp>();
@@ -53,7 +52,7 @@ public class AdpSnmpTpsMgr {
 
 	private ObjectIdGenerator objectIdGenerator;
 
-	public AdpSnmpTpsMgr(Integer neId, ObjectIdGenerator objectIdGenerator) {
+	public AdpSnmpTpsMgr(String neId, ObjectIdGenerator objectIdGenerator) {
 		this.neId = neId;
 		this.objectIdGenerator = objectIdGenerator;
 		xcsMgr = new AdpSnmpXcsMgr(objectIdGenerator);
@@ -74,13 +73,13 @@ public class AdpSnmpTpsMgr {
 		return values;
 	}
 
-	public void syncTps() throws AdapterException {
-		List<AdpTp> ptpList = syncPtps();
-		syncCtps(ptpList);
-		createXc();
+	public void syncTPs() throws AdapterException {
+		List<AdpTp> ptpList = syncPTPs();
+		syncCTPs(ptpList);
+		createXC();
 	}
 
-	private void createXc() throws AdapterException {
+	private void createXC() throws AdapterException {
 		if (!_130Scx10ClientPtpList.isEmpty() && !_130Scx10LinePtpList.isEmpty()) {
 			for (AdpTp tp : _130Scx10ClientPtpList) {
 				System.out.println(tp.getNativeName());
@@ -123,15 +122,15 @@ public class AdpSnmpTpsMgr {
 				return;
 			}
 
-			Integer ctpId1 = ctp1.getId();
-			Integer ctpId2 = ctp2.getId();
+			String ctpId1 = ctp1.getId();
+			String ctpId2 = ctp2.getId();
 			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
 				return;
 			}
 
-			List<Integer> atps = new ArrayList<Integer>();
+			List<String> atps = new ArrayList<String>();
 			atps.add(ctpId1);
-			List<Integer> ztps = new ArrayList<Integer>();
+			List<String> ztps = new ArrayList<String>();
 			ztps.add(ctpId2);
 			xcsMgr.createXc(neId, atps, ztps);
 		} catch (AdapterException e) {
@@ -164,15 +163,15 @@ public class AdpSnmpTpsMgr {
 
 			// TODO update ctp2 userlabel
 
-			Integer ctpId1 = ctp1.getId();
-			Integer ctpId2 = ctp2.getId();
+			String ctpId1 = ctp1.getId();
+			String ctpId2 = ctp2.getId();
 			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
 				return;
 			}
 
-			List<Integer> atps = new ArrayList<Integer>();
+			List<String> atps = new ArrayList<String>();
 			atps.add(ctpId1);
-			List<Integer> ztps = new ArrayList<Integer>();
+			List<String> ztps = new ArrayList<String>();
 			ztps.add(ctpId2);
 			xcsMgr.createXc(neId, atps, ztps);
 		} catch (AdapterException e) {
@@ -201,15 +200,15 @@ public class AdpSnmpTpsMgr {
 				return;
 			}
 
-			Integer ctpId1 = ctp1.getId();
-			Integer ctpId2 = ctp2.getId();
+			String ctpId1 = ctp1.getId();
+			String ctpId2 = ctp2.getId();
 			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
 				return;
 			}
 
-			List<Integer> atps = new ArrayList<Integer>();
+			List<String> atps = new ArrayList<String>();
 			atps.add(ctpId1);
-			List<Integer> ztps = new ArrayList<Integer>();
+			List<String> ztps = new ArrayList<String>();
 			ztps.add(ctpId2);
 			xcsMgr.createXc(neId, atps, ztps);
 		} catch (AdapterException e) {
@@ -238,30 +237,30 @@ public class AdpSnmpTpsMgr {
 		return StringUtils.EMPTY;
 	}
 
-	private List<AdpTp> syncPtps() throws AdapterException {
+	private List<AdpTp> syncPTPs() throws AdapterException {
 		List<String> oids = setOidParams();
 		List<List<Pair<String, String>>> values = getTableValues(oids);
-		List<AdpTp> tpList = constructTpList(values);
-		updatePtpConnectedIfIndex(tpList);
+		List<AdpTp> tpList = constructPTPList(values);
+		updatePTPConnectedIfIndex(tpList);
 		return tpList;
 	}
 
-	private void syncCtps(List<AdpTp> ptpList) throws AdapterException {
+	private void syncCTPs(List<AdpTp> ptpList) throws AdapterException {
 		Get130SCX10Ctps _130SCX10Ctps = new Get130SCX10Ctps();
 		GetSFD44Ctps sfd44Ctps = new GetSFD44Ctps();
 		GetAHPHGCtps ahphgCtps = new GetAHPHGCtps();
-		for (AdpTp tp : ptpList) {
-			String keyOnNe = tp.getKeyOnNe();
+		for (AdpTp ptp : ptpList) {
+			String keyOnNe = ptp.getKeyOnNe();
 			String equType = getEquType(keyOnNe);
 			if (isExpectedEqu(SnmpEquType._130SCX10.getEquType(), equType)) {
-				_130SCX10Ctps.syncCtps(tp);
-				save130Scx10Ptp2List(tp);
+				_130SCX10Ctps.syncCTPs(ptp);
+				save130Scx10Ptp2List(ptp);
 			} else if (isExpectedEqu(SnmpEquType.SFD44.getEquType(), equType)) {
-				sfd44Ctps.syncCtps(tp);
-				saveSFD44Ptp2List(tp);
+				sfd44Ctps.syncCtps(ptp);
+				saveSFD44Ptp2List(ptp);
 			} else if (isExpectedEqu(SnmpEquType.AHPHG.getEquType(), equType)) {
-				ahphgCtps.syncCtps(tp);
-				saveAHPHGPtp2List(tp);
+				ahphgCtps.syncCtps(ptp);
+				saveAHPHGPtp2List(ptp);
 			}
 		}
 	}
@@ -315,7 +314,7 @@ public class AdpSnmpTpsMgr {
 		}
 	}
 
-	private List<AdpTp> constructTpList(List<List<Pair<String, String>>> values) throws AdapterException {
+	private List<AdpTp> constructPTPList(List<List<Pair<String, String>>> values) throws AdapterException {
 		SnmpTpEntity entity = new SnmpTpEntity();
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (List<Pair<String, String>> row : values) {
@@ -331,15 +330,15 @@ public class AdpSnmpTpsMgr {
 				continue;
 			}
 
-			constructTpEntity(entity, row, index);
-			tp = constructTp(entity, TpType.PTP, equType, null, 0);
-			addTp2Db(tp);
+			constructPTPEntity(entity, row, index);
+			tp = constructPTP(entity, TpType.PTP, equType, null, StringUtils.EMPTY);
+			addTP2DB(tp);
 			tpList.add(tp);
 		}
 		return tpList;
 	}
 
-	private void constructTpEntity(SnmpTpEntity entity, List<Pair<String, String>> row, String index) {
+	private void constructPTPEntity(SnmpTpEntity entity, List<Pair<String, String>> row, String index) {
 		try {
 			entity.setIndex(index);
 			entity.setTpType(row.get(1).getSecond());
@@ -378,7 +377,7 @@ public class AdpSnmpTpsMgr {
 	private AdpTp isTpExisted(String keyOnNe) throws AdapterException {
 		try {
 			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null != tpFromDb && null != tpFromDb.getId() && -1 < tpFromDb.getId()) {
+			if (null != tpFromDb && StringUtils.isNotEmpty(tpFromDb.getId())) {
 				return tpFromDb;
 			}
 		} catch (Exception e) {
@@ -388,7 +387,7 @@ public class AdpSnmpTpsMgr {
 		return null;
 	}
 
-	private AdpTp addTp2Db(AdpTp tp) throws AdapterException {
+	private AdpTp addTP2DB(AdpTp tp) throws AdapterException {
 		try {
 			tp = tpsMgr.addTp(tp);
 		} catch (Exception e) {
@@ -441,17 +440,10 @@ public class AdpSnmpTpsMgr {
 		return oids;
 	}
 
-	private AdpTp constructTp(SnmpTpEntity tp, TpType tpType, String equType, Integer ptpId, Integer parentTpId)
+	private AdpTp constructPTP(SnmpTpEntity tp, TpType tpType, String equType, String ptpId, String parentTpId)
 			throws AdapterException {
 		AdpTp adpTp = new AdpTp();
-		Integer maxTpId;
-		try {
-			maxTpId = AdpSeqDbMgr.getMaxTpId(neId);
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		Integer tpId = getAdpTpId(tpType, maxTpId);
-		adpTp.setId(tpId);
+
 		adpTp.setNeId(neId);
 		String userLabel = setUserLabel(tp.getIndex(), equType);
 		adpTp.setUserLabel(userLabel);
@@ -465,12 +457,14 @@ public class AdpSnmpTpsMgr {
 		adpTp.setLayerRates(layerRates);
 		adpTp.setKeyOnNe(tp.getIndex());
 		adpTp.setTpType(tpType.name());
+
+		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
+		String tpId = objectIdGenerator.generatePTPId(adpTp);
+		adpTp.setId(tpId);
 		if (TpType.PTP != tpType) {
 			adpTp.setPtpID(tpId);
 			adpTp.setParentTpID(parentTpId);
 		}
-		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
-
 		if (TpType.PTP == tpType)
 			constructPtpParameters(adpTp, tp, tpType, equType);
 
@@ -482,7 +476,7 @@ public class AdpSnmpTpsMgr {
 		String equKeyOnNe = "1/" + position[0] + "/" + position[1];
 		AdpEquipment equ = null;
 		try {
-			equ = equsMgr.getEquByKeyOnNe(neId, equKeyOnNe);
+			equ = equsMgr.getEquipmentByKeyOnNe(neId, equKeyOnNe);
 		} catch (Exception e) {
 			log.error("getEquByKeyOnNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -608,7 +602,7 @@ public class AdpSnmpTpsMgr {
 		}
 	}
 
-	private void updatePtpConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
+	private void updatePTPConnectedIfIndex(List<AdpTp> tpList) throws AdapterException {
 		boolean bUpdate;
 		for (AdpTp tp : tpList) {
 			bUpdate = false;
@@ -652,29 +646,11 @@ public class AdpSnmpTpsMgr {
 		return ret;
 	}
 
-	private Integer getAdpTpId(TpType tpType, Object obj) {
-		Integer adpTpId;
-		if (TpType.PTP == tpType)
-			adpTpId = generatePtpId(obj);
-		else
-			adpTpId = generatePtpId(obj);
-		return adpTpId;
-	}
-
-	public Integer generatePtpId(Object obj) {
-		Integer ptpId;
-		ptpId = new Integer(Integer.valueOf(obj.toString()));
-		return ptpId;
-	}
-
 	private boolean isTpValid(AdpTp tp) {
 		if (null == tp) {
 			return false;
 		}
-		if (null == tp.getId()) {
-			return false;
-		}
-		if (tp.getId() < 0) {
+		if (StringUtils.isEmpty(tp.getId())) {
 			return false;
 		}
 		return true;
@@ -683,9 +659,9 @@ public class AdpSnmpTpsMgr {
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr(5, new WdmObjectIdGenerator());
+		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("5", new WdmObjectIdGenerator());
 		try {
-			mgr.syncTps();
+			mgr.syncTPs();
 		} catch (AdapterException e) {
 			e.printStackTrace();
 		}
