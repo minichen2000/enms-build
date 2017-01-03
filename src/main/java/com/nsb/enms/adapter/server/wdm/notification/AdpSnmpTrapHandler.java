@@ -18,7 +18,7 @@ import com.nsb.enms.adapter.server.common.utils.TimeUtil;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTrapAttribute;
 import com.nsb.enms.adapter.server.common.utils.INotifProcessor;
 import com.nsb.enms.common.utils.snmp.DispatchTrap;
-import com.nsb.enms.mib.pss.def.M_sysUpTime;
+import com.nsb.enms.mib.pss.def.M_system;
 
 public class AdpSnmpTrapHandler implements DispatchTrap {
 	private static final Logger log = LogManager.getLogger(AdpSnmpTrapHandler.class);
@@ -60,7 +60,7 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 		String trapChangeObject = trapInfo.get(SnmpTrapAttribute.tnTrapChangedObject);
 
 		if (!StringUtils.isEmpty(trapChangeObject)) {
-			long sysUpTime = TimeUtil.getSysUpTime(trapInfo.get(M_sysUpTime.oid + ".0"));
+			long sysUpTime = TimeUtil.getSysUpTime(trapInfo.get(M_system.sysUpTime + ".0"));
 			String ip = trapInfo.get("ip");
 			String trapObjectId = trapInfo.get(SnmpTrapAttribute.tnTrapObjectID);
 			String trapData = trapInfo.get(SnmpTrapAttribute.tnTrapData);

@@ -6,11 +6,8 @@ import java.util.Map;
 
 import com.nsb.enms.adapter.server.wdm.constants.SnmpEqAttribute;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTrapAttribute;
-import com.nsb.enms.mib.pss.def.M_ifAdminStatus;
-import com.nsb.enms.mib.pss.def.M_ifOperStatus;
-import com.nsb.enms.mib.pss.def.M_ifType;
-import com.nsb.enms.mib.pss.def.M_tnIfSupportedTypes;
-import com.nsb.enms.mib.pss.def.M_tnIfType;
+import com.nsb.enms.mib.pss.def.M_ifTable;
+import com.nsb.enms.mib.pss.def.M_tnIfTable;
 
 public class NotificationDispatcher {
 
@@ -35,11 +32,11 @@ public class NotificationDispatcher {
 		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnCardManufacturingPartNumber);
 		equAttrOidList.add(SnmpEqAttribute.SlotCardAttribute.tnCardSWPartNum);
 
-		tpAttrOidList.add(M_ifType.oid);
-		tpAttrOidList.add(M_ifAdminStatus.oid);
-		tpAttrOidList.add(M_ifOperStatus.oid);
-		tpAttrOidList.add(M_tnIfType.oid);
-		tpAttrOidList.add(M_tnIfSupportedTypes.oid);
+		tpAttrOidList.add(M_ifTable.ifType);
+		tpAttrOidList.add(M_ifTable.ifAdminStatus);
+		tpAttrOidList.add(M_ifTable.ifOperStatus);
+		tpAttrOidList.add(M_tnIfTable.tnIfType);
+		tpAttrOidList.add(M_tnIfTable.tnIfSupportedTypes);
 	}
 
 	public static NotificationDispatcher getInstance() {
