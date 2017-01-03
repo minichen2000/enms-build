@@ -31,6 +31,10 @@ import com.nsb.enms.common.LayerRate;
 import com.nsb.enms.common.TpType;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmp.SnmpClient;
+import com.nsb.enms.mib.pss.def.M_tnIfType;
+import com.nsb.enms.mib.pss.enums.E_ifAdminStatus;
+import com.nsb.enms.mib.pss.enums.E_ifOperStatus;
+import com.nsb.enms.mib.pss.enums.E_ifType;
 import com.nsb.enms.restful.model.adapter.AdpEquipment;
 import com.nsb.enms.restful.model.adapter.AdpKVPair;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -400,7 +404,6 @@ public class AdpSnmpTpsMgr {
 	private boolean updateTp2Db(AdpTp tp) throws AdapterException {
 		boolean ret = true;
 		try {
-
 			tpsMgr.deleteTpByKeyOnNe(tp.getNeId(), tp.getKeyOnNe());
 			tpsMgr.addTp(tp);
 			// ret = tpsMgr.updateTp(tp);
@@ -413,10 +416,10 @@ public class AdpSnmpTpsMgr {
 
 	private List<String> setOidParams() {
 		List<String> oids = new ArrayList<String>();
-		oids.add("1.3.6.1.2.1.2.2.1.3"); // ifType
-		oids.add("1.3.6.1.2.1.2.2.1.7"); // ifAdminStatus
-		oids.add("1.3.6.1.2.1.2.2.1.8"); // ifOperStatus
-		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.2"); // tnIfType
+		oids.add(E_ifType.oid);
+		oids.add(E_ifAdminStatus.oid);
+		oids.add(E_ifOperStatus.oid);
+		oids.add(M_tnIfType.tnIfType);
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.2.1.3"); // tnIfSupportedTypes
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.5"); // tnAccessPortStateQualifier
 		oids.add("1.3.6.1.4.1.7483.2.2.4.1.2.1.1.6"); // tnAccessPortFarEndAddress
