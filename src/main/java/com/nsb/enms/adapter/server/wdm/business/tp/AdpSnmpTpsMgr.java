@@ -24,7 +24,7 @@ import com.nsb.enms.adapter.server.wdm.constants.SnmpEquType;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.adapter.server.wdm.utils.PSSBoardUtil;
-import com.nsb.enms.adapter.server.wdm.utils.SnmpOCHTpNameUtil;
+import com.nsb.enms.adapter.server.wdm.utils.SnmpOCHFrequencyUtil;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.LayerRate;
@@ -151,7 +151,7 @@ public class AdpSnmpTpsMgr {
 			int index = userLabel.lastIndexOf("-");
 			String tpRate = userLabel.substring(index + 1);
 			String keyOnNe = ptp.getKeyOnNe();
-			String clientCtpkeyOnNe = SnmpOCHTpNameUtil.getFrequency(neId, keyOnNe) + "_" + keyOnNe;
+			String clientCtpkeyOnNe = SnmpOCHFrequencyUtil.getFrequency(neId, keyOnNe) + "_" + keyOnNe;
 			AdpTp ctp1 = tpsMgr.getTpByKeyOnNe(neId, clientCtpkeyOnNe);
 			if (!isTPValid(ctp1)) {
 				log.error("ctp1 is invalid");

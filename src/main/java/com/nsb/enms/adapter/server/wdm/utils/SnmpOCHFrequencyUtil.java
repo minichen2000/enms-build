@@ -12,16 +12,18 @@ import com.nsb.enms.adapter.server.wdm.constants.SnmpChannel;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
 import com.nsb.enms.common.utils.Pair;
 import com.nsb.enms.common.utils.snmp.SnmpClient;
+import com.nsb.enms.mib.pss.def.M_tnNetworkPortConfigTable;
+import com.nsb.enms.mib.pss.def.M_tnSfpPortInfoTable;
 
-public class SnmpOCHTpNameUtil {
-	private final static Logger log = LogManager.getLogger(SnmpOCHTpNameUtil.class);
+public class SnmpOCHFrequencyUtil {
+	private final static Logger log = LogManager.getLogger(SnmpOCHFrequencyUtil.class);
 
 	public static String getFrequency(String neId, String index) throws AdapterException {
 		SnmpClient client = AdpSnmpClientFactory.getInstance().getByNeId(neId);
 		try {
 			List<String> oids = new ArrayList<String>();
-			oids.add("1.3.6.1.4.1.7483.2.2.4.3.5.46.1.6");
-			oids.add("1.3.6.1.4.1.7483.2.2.4.3.4.42.1.3");
+			oids.add(M_tnSfpPortInfoTable.tnSfpPortWavelength);
+			oids.add(M_tnNetworkPortConfigTable.tnNwPortProgrammedChannel);
 			List<Pair<String, String>> values = client.snmpMultiGet(oids, index);
 			if (null == values || values.isEmpty()) {
 				return "/frequency=unknown";

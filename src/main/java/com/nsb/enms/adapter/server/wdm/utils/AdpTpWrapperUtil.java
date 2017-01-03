@@ -84,7 +84,7 @@ public class AdpTpWrapperUtil {
 		List<AdpKVPair> params = new ArrayList<AdpKVPair>();
 		AdpKVPair kv = new AdpKVPair();
 		kv.setKey("frequency");
-		String frequency = SnmpOCHTpNameUtil.getFrequency(neId, ptp.getKeyOnNe());
+		String frequency = SnmpOCHFrequencyUtil.getFrequency(neId, ptp.getKeyOnNe());
 		kv.setValue(frequency);
 		params.add(kv);
 		return constructCTP(neId, nativeName, layerRates, ptp, primaryLayerRate, params);
