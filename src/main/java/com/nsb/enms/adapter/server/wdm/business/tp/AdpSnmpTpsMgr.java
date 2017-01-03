@@ -659,10 +659,14 @@ public class AdpSnmpTpsMgr {
 		return true;
 	}
 
+	public void setTpAttribute() {
+
+	}
+
 	public static void main(String args[]) {
-		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
-		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("5", new WdmObjectIdGenerator());
+		SnmpClient client = new SnmpClient("135.251.96.13", 161, "admin_snmp");
+		AdpSnmpClientFactory.getInstance().add("135.251.96.13:161", client);
+		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("13", new WdmObjectIdGenerator());
 		try {
 			mgr.syncTPs();
 		} catch (AdapterException e) {

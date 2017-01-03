@@ -47,10 +47,10 @@ public class SnmpOCHFrequencyUtil {
 	}
 
 	public static void main(String args[]) {
-		SnmpClient client = new SnmpClient("135.251.96.5", 161, "admin_snmp");
-		AdpSnmpClientFactory.getInstance().add("135.251.96.5:161", client);
+		SnmpClient client = new SnmpClient("135.251.96.13", 161, "admin_snmp");
+		AdpSnmpClientFactory.getInstance().add("135.251.96.13:161", client);
 		try {
-			getFrequency("5", "51380480");
+			getFrequency("13", "51380480");
 		} catch (AdapterException e) {
 			e.printStackTrace();
 		}
