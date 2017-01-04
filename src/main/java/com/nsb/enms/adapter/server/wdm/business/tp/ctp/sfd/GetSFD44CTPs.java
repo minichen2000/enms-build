@@ -30,7 +30,7 @@ public class GetSFD44CTPs {
 
 	private void getMutilCTPs(String neId, AdpTp ptp) throws AdapterException {
 		for (int i = 1; i < 45; i++) {
-			AdpTpWrapperUtil.getOCHCTP(neId, ptp, "/och=1_" + i);
+			AdpTpWrapperUtil.getOCHCTP(neId, ptp, "/och=" + i);
 		}
 		getOMSCTPs(neId, ptp);
 	}
