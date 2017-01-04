@@ -42,9 +42,9 @@ public class AdpMongoDBMgr {
 		String ip = ConfLoader.getInstance().getConf(ConfigKey.DB_IP, ConfigKey.DEFAULT_DB_IP);
 		int port = ConfLoader.getInstance().getInt(ConfigKey.DB_PORT, ConfigKey.DEFAULT_DB_PORT);
 		mongoClient = new MongoClient(ip, port);
-		 mongoClient = new MongoClient("172.24.168.153", 27017);
+//		 mongoClient = new MongoClient("172.24.168.153", 27017);
 		String dbName = ConfLoader.getInstance().getConf(ConfigKey.DB_NAME, ConfigKey.DEFAULT_DB_NAME);
-		dbName = "eNMS";
+//		dbName = "eNMS";
 		database = mongoClient.getDatabase(dbName);
 	}
 
