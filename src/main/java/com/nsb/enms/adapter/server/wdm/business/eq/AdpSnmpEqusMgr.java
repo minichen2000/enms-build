@@ -139,7 +139,7 @@ public class AdpSnmpEqusMgr {
 			}
 		}
 
-		if (index.split(".").length > 1) {
+		if (index.split("\\.").length > 1) {
 			String parentIndex = index.substring(0, index.lastIndexOf("."));
 			try {
 				String parentId = equsDbMgr.getIdByKeyOnNe(neId, parentIndex);
