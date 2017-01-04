@@ -26,7 +26,7 @@ public class AdpSnmpXcsMgr {
 		this.objectIdGenerator = objectIdGenerator;
 	}
 
-	public void createXc(String neId, List<String> atps, List<String> ztps) throws AdapterException {
+	public void createXC(String neId, List<String> atps, List<String> ztps) throws AdapterException {
 		AdpXc xc = new AdpXc();
 		String maxXcId;
 		try {
