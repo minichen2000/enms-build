@@ -128,7 +128,7 @@ public class Q3EmlImMgr {
 			AdpEqusDbMgr equsDbMgr = new AdpEqusDbMgr();
 			List<AdpNe> nes = nesDbMgr.getNesByGroupId(String.valueOf(groupId));
 			for (AdpNe ne : nes) {
-				xcsDbMgr.deleteXcsByNeId(ne.getId());
+				xcsDbMgr.deleteXCsByNeId(ne.getId());
 				tpsDbMgr.deleteTpsbyNeId(ne.getId());
 				equsDbMgr.deleteEquipmentsByNeId(ne.getId());
 				nesDbMgr.deleteNe(ne.getId());

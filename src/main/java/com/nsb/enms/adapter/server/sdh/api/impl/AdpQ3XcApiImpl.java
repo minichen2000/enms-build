@@ -30,7 +30,7 @@ public class AdpQ3XcApiImpl extends AdpDefaultXcApiImpl {
 	@Override
 	public List<AdpXc> getXcsByNeId() throws AdapterException {
 		try {
-			return xcsDbMgr.getXcsByNeId(getId());
+			return xcsDbMgr.getXCsByNeId(getId());
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
@@ -43,13 +43,13 @@ public class AdpQ3XcApiImpl extends AdpDefaultXcApiImpl {
 
 	@Override
 	public void deleteXcById(String xcid) throws AdapterException {
-		adpXcMgr.deleteXcById(getId(), xcid);
+		adpXcMgr.deleteXCByID(getId(), xcid);
 	}
 
 	@Override
 	public AdpXc getXcById(String xcId) throws AdapterException {
 		try {
-			return xcsDbMgr.getXcById(getId(), xcId);
+			return xcsDbMgr.getXCByID(getId(), xcId);
 		} catch (Exception e) {
 			log.error("getXcById", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);

@@ -251,33 +251,17 @@ public class AdpQ3XcsMgr {
 		return tp;
 	}
 
-	public void deleteXcById(String xcId) throws AdapterException {
+	public void deleteXCByID(String neID, String xcID) throws AdapterException {
 		AdpXc xc;
 		try {
-			xc = xcsDbMgr.getXcById(xcId);
+			xc = xcsDbMgr.getXCByID(neID, xcID);
 		} catch (Exception e) {
-			log.error("getXcById", e);
+			log.error("getXCByID", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 
 		if (null == xc || StringUtils.isEmpty(xc.getId())) {
-			log.error("can not find xc by id:" + xcId);
-			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
-		}
-		deleteXc(xc);
-	}
-
-	public void deleteXcById(String neId, String xcId) throws AdapterException {
-		AdpXc xc;
-		try {
-			xc = xcsDbMgr.getXcById(neId, xcId);
-		} catch (Exception e) {
-			log.error("getXcById", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-
-		if (null == xc || StringUtils.isEmpty(xc.getId())) {
-			log.error("can not find xc by id:" + xcId);
+			log.error("can not find xc by id:" + xcID);
 			throw new AdapterException(ErrorCode.FAIL_OBJ_NOT_EXIST);
 		}
 		deleteXc(xc);
@@ -291,9 +275,9 @@ public class AdpQ3XcsMgr {
 		DeleteXc.deleteXc(groupId, neId, corssConnectionId);
 
 		try {
-			xcsDbMgr.deleteXc(xc.getId());
+			xcsDbMgr.deleteXC(xc.getNeId(), xc.getId());
 		} catch (Exception e) {
-			log.error("deleteXc", e);
+			log.error("deleteXC", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
@@ -301,7 +285,7 @@ public class AdpQ3XcsMgr {
 	public void deleteXcsByNeId(String neId) throws AdapterException {
 		List<AdpXc> xcList;
 		try {
-			xcList = xcsDbMgr.getXcsByNeId(neId);
+			xcList = xcsDbMgr.getXCsByNeId(neId);
 		} catch (Exception e) {
 			log.error("getXcsByNeId", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
@@ -359,7 +343,7 @@ public class AdpQ3XcsMgr {
 		xc.setZEndPoints(ztps);
 
 		try {
-			xc = xcsDbMgr.createXc(xc);
+			xc = xcsDbMgr.createXC(xc);
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}

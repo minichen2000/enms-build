@@ -61,7 +61,7 @@ public class AdpCreateXcsMgr {
 	private AdpTp getTimeSlotTpByVc4Tp(String neId, String ptpId, AdpTp au4Ctp, Integer[] timeSlots,
 			LayerRate layerRate) throws AdapterException {
 		log.debug("===============getTimeSlotTpByVc4Tp=================");
-		String vc4TTPId = getVc4TtpIdFromXcs(au4Ctp.getId());
+		String vc4TTPId = getVc4TtpIdFromXcs(neId, au4Ctp.getId());
 		if (StringUtils.isEmpty(vc4TTPId)) {
 			return handleVc4TpIdIsEmpty(neId, au4Ctp, ptpId, timeSlots, layerRate);
 		} else {
@@ -110,7 +110,7 @@ public class AdpCreateXcsMgr {
 		}
 
 		// 判断时隙所在的TUG3中的其他TP是否有创建了交叉业务的
-		if (isTpUsedByXc(tp.getId())) {
+		if (isTpUsedByXc(neId, tp.getId())) {
 			log.error("tp was used by XC," + timeSlotTpKeyOnNe);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
 		}
@@ -159,7 +159,7 @@ public class AdpCreateXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
 
-		if (isTpUsedByXc(ztpId)) {
+		if (isTpUsedByXc(neId, ztpId)) {
 			log.error("tp was used by XC," + ztpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
 		}
@@ -189,7 +189,7 @@ public class AdpCreateXcsMgr {
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_EXISTED);
 		}
 
-		if (isTpUsedByXc(atpId)) {
+		if (isTpUsedByXc(neId, atpId)) {
 			log.error("tp was used by XC," + atpId);
 			throw new AdapterException(ErrorCode.FAIL_CREATE_XC_BY_TP_NOT_FREE);
 		}
@@ -225,8 +225,7 @@ public class AdpCreateXcsMgr {
 		return createXcByBothSdh(neId, a_TuCtp, z_TuCtp, layerRate);
 	}
 
-	private String constructTpKeyOnNeByTimeSlot(LayerRate layerRate, Integer[] timeSlots, String neId,
-			String vc4TpId) {
+	private String constructTpKeyOnNeByTimeSlot(LayerRate layerRate, Integer[] timeSlots, String neId, String vc4TpId) {
 		String keyOnNe = StringUtils.EMPTY;
 		if (LayerRate.VC12 == layerRate || LayerRate.TU12 == layerRate) {
 			keyOnNe = "tu12CTPBidirectionalR1:vc4TTPId=" + vc4TpId + "/tug3Id=" + timeSlots[1] + "/tug2Id="
@@ -333,8 +332,7 @@ public class AdpCreateXcsMgr {
 			// TODO 添加neid
 			String neId = "1";
 			AdpTp tp = tpsDbMgr.getTpById(neId, tpId);
-			if (tp != null || !StringUtils.isEmpty(tp.getId()))
-			{
+			if (tp != null && StringUtils.isNotEmpty(tp.getId())) {
 				return tp;
 			}
 		} catch (Exception e) {
@@ -346,8 +344,8 @@ public class AdpCreateXcsMgr {
 		return null;
 	}
 
-	private String getVc4TtpIdFromXcs(String au4CtpId) throws AdapterException {
-		List<AdpXc> xcList = getXcsByTpId(au4CtpId);
+	private String getVc4TtpIdFromXcs(String neID, String au4CtpId) throws AdapterException {
+		List<AdpXc> xcList = getXCsByTPID(neID, au4CtpId);
 		if (null == xcList || xcList.isEmpty()) {
 			log.error("xcList is null or empty");
 			return null;
@@ -400,10 +398,10 @@ public class AdpCreateXcsMgr {
 		}
 	}
 
-	private boolean isTpUsedByXc(String tpId) throws AdapterException {
-		List<AdpXc> xcList = getXcsByTpId(tpId);
+	private boolean isTpUsedByXc(String neID, String tpID) throws AdapterException {
+		List<AdpXc> xcList = getXCsByTPID(neID, tpID);
 		if (null == xcList || xcList.isEmpty()) {
-			log.error("can not find xc by " + tpId);
+			log.error("can not find xc by " + tpID);
 			return false;
 		}
 		return true;
@@ -431,10 +429,10 @@ public class AdpCreateXcsMgr {
 		return false;
 	}
 
-	private List<AdpXc> getXcsByTpId(String tpid) throws AdapterException {
+	private List<AdpXc> getXCsByTPID(String neID, String tpID) throws AdapterException {
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
 		try {
-			xcList = xcsDbMgr.findXcsByTpId(tpid);
+			xcList = xcsDbMgr.findXCsByTPID(neID, tpID);
 		} catch (Exception e) {
 			log.error("findXcsByTpId", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);

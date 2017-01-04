@@ -130,7 +130,7 @@ public class AdpSnmpTpsMgr {
 
 			String ctpId1 = ctp1.getId();
 			String ctpId2 = ctp2.getId();
-			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
+			if (xcsMgr.isXCExisted(neId, ctpId1) || xcsMgr.isXCExisted(neId, ctpId2)) {
 				return;
 			}
 
@@ -171,7 +171,7 @@ public class AdpSnmpTpsMgr {
 
 			String ctpId1 = ctp1.getId();
 			String ctpId2 = ctp2.getId();
-			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
+			if (xcsMgr.isXCExisted(neId, ctpId1) || xcsMgr.isXCExisted(neId, ctpId2)) {
 				return;
 			}
 
@@ -208,7 +208,7 @@ public class AdpSnmpTpsMgr {
 
 			String ctpId1 = ctp1.getId();
 			String ctpId2 = ctp2.getId();
-			if (xcsMgr.isXcExisted(ctpId1) || xcsMgr.isXcExisted(ctpId2)) {
+			if (xcsMgr.isXCExisted(neId, ctpId1) || xcsMgr.isXCExisted(neId, ctpId2)) {
 				return;
 			}
 
@@ -403,7 +403,7 @@ public class AdpSnmpTpsMgr {
 		return tp;
 	}
 
-	private boolean updateTP2Db(AdpTp tp) throws AdapterException {
+	private boolean updateTP2DB(AdpTp tp) throws AdapterException {
 		boolean ret = true;
 		try {
 			tpsMgr.deleteTpByKeyOnNe(tp.getNeId(), tp.getKeyOnNe());
@@ -628,7 +628,7 @@ public class AdpSnmpTpsMgr {
 				}
 			}
 			if (bUpdate)
-				updateTP2Db(tp);
+				updateTP2DB(tp);
 		}
 	}
 

@@ -1,12 +1,11 @@
 package com.nsb.enms.adapter.server.wdm.business.xc;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
@@ -14,7 +13,6 @@ import com.nsb.enms.common.Direction;
 import com.nsb.enms.common.ErrorCode;
 import com.nsb.enms.common.XcRole;
 import com.nsb.enms.common.XcType;
-import com.nsb.enms.restful.model.adapter.AdpTp;
 import com.nsb.enms.restful.model.adapter.AdpXc;
 
 public class AdpSnmpXcsMgr {
@@ -25,7 +23,7 @@ public class AdpSnmpXcsMgr {
 	private AdpXcsDbMgr xcsMgr = new AdpXcsDbMgr();
 
 	public AdpSnmpXcsMgr(ObjectIdGenerator objectIdGenerator) {
-		this.objectIdGenerator=objectIdGenerator;
+		this.objectIdGenerator = objectIdGenerator;
 	}
 
 	public void createXc(String neId, List<String> atps, List<String> ztps) throws AdapterException {
@@ -46,23 +44,23 @@ public class AdpSnmpXcsMgr {
 		xc.setXcRole(XcRole.FIXED.name());
 		xc.setDirection(Direction.BI.name());
 
-		addXc2Db(xc);
+		addXC2DB(xc);
 	}
 
-	private void addXc2Db(AdpXc xc) throws AdapterException {
+	private void addXC2DB(AdpXc xc) throws AdapterException {
 		try {
-			xcsMgr.createXc(xc);
+			xcsMgr.createXC(xc);
 		} catch (Exception e) {
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
 
-	public boolean isXcExisted(String ctpId) {
+	public boolean isXCExisted(String neID, String ctpID) {
 		List<AdpXc> xcs = null;
 		try {
-			xcs = xcsMgr.findXcsByTpId(ctpId);
+			xcs = xcsMgr.findXCsByTPID(neID, ctpID);
 		} catch (Exception e) {
-			log.error("findXcsByTpId", e);
+			log.error("findXCsByTPID", e);
 		}
 		if (null == xcs || xcs.isEmpty()) {
 			return false;
