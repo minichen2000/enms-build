@@ -30,13 +30,13 @@ public class AdpTpWrapperUtil {
 		tp.setNativeName(nativeName);
 		tp.setUserLabel(nativeName);
 		tp.setLayerRates(layerRates);
-		String keyOnNe = nativeName + "_" + ptp.getKeyOnNe();
-		tp.setKeyOnNe(keyOnNe);
 		tp.setDirection(Direction.BI.name());
 		tp.setFreeResources(null);
 		tp.setTpType(TpType.CTP.name());
 		tp.setPrimaryLayerRate(primaryLayerRate);
-		tp.setId(objectIdGenerator.generateCTPId(ptp, tp));
+		String ctpID = objectIdGenerator.generateCTPId(ptp, tp);
+		tp.setId(ctpID);
+		tp.setKeyOnNe(ctpID);
 		String ptpID = ptp.getId();
 		tp.setPtpID(ptpID);
 		tp.setParentTpID(ptpID);

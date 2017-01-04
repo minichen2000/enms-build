@@ -39,8 +39,8 @@ public class GetSFD44CTPs {
 		String primaryLayerRate = LayerRate.OMS.name();
 		List<String> layerRates = new ArrayList<String>();
 		layerRates.add(primaryLayerRate);
-		String userLabel = "/oms=1";
-		return constructCTP(neId, userLabel, layerRates, ptp, primaryLayerRate, null);
+		String nativeName = "/oms=1";
+		return constructCTP(neId, nativeName, layerRates, ptp, primaryLayerRate, null);
 	}
 
 	public void syncCTPs(AdpTp ptp) throws AdapterException {
