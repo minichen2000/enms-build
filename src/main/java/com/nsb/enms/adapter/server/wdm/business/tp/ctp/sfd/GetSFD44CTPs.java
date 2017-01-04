@@ -28,9 +28,9 @@ public class GetSFD44CTPs {
 		AdpTpWrapperUtil.getOCHCTP(neId, ptp);
 	}
 
-	private void getMutilCTPs(String neId, AdpTp ptp, String nativeName) throws AdapterException {
+	private void getMutilCTPs(String neId, AdpTp ptp) throws AdapterException {
 		for (int i = 1; i < 45; i++) {
-			AdpTpWrapperUtil.getOCHCTP(neId, ptp, nativeName + "_" + i);
+			AdpTpWrapperUtil.getOCHCTP(neId, ptp, "/och=1_" + i);
 		}
 		getOMSCTPs(neId, ptp);
 	}
@@ -47,7 +47,7 @@ public class GetSFD44CTPs {
 		String nativeName = ptp.getNativeName();
 		String neId = ptp.getNeId();
 		if (nativeName.endsWith("-OMD")) {
-			getMutilCTPs(neId, ptp, nativeName);
+			getMutilCTPs(neId, ptp);
 		} else {
 			getSingleCTPs(neId, ptp);
 		}

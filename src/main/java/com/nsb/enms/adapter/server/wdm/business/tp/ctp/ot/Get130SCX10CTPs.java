@@ -74,12 +74,10 @@ public class Get130SCX10CTPs {
 
 	public void syncCTPs(AdpTp ptp) throws AdapterException {
 		String nativeName = ptp.getNativeName();
-		System.out.println("=========" + nativeName);
 		String neId = ptp.getNeId();
 		if (nativeName.indexOf("-C") != -1) {
 			getClientCTPs(neId, ptp);
 		} else if (nativeName.indexOf("-L1") != -1) {
-			System.out.println("xxxxxxxxxxxxxx");
 			getLineCTPs(neId, ptp);
 		}
 	}
