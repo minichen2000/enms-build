@@ -117,6 +117,7 @@ public class Main {
 
 	private static void register2Controller() {
 		long period = ConfLoader.getInstance().getInt(ConfigKey.REG_PERIOD, ConfigKey.DEFAULT_REG_PERIOD);
+		if(period<=0) return;
 		final Timer timer = new Timer();
 		final RegisterManager register = new RegisterManager();
 		timer.scheduleAtFixedRate(new TimerTask() {
