@@ -23,6 +23,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
+import com.nsb.enms.adapter.server.common.conf.ConfLoader;
+import com.nsb.enms.adapter.server.common.constants.ConfigKey;
 import com.nsb.enms.adapter.server.common.db.mongodb.bean.AdpCommonBean;
 
 public class AdpMongoDBMgr {
@@ -37,9 +39,12 @@ public class AdpMongoDBMgr {
 	private MongoCollection<Document> dbc = null;
 
 	private AdpMongoDBMgr() {
-		mongoClient = new MongoClient("localhost", 27017);
-//		mongoClient = new MongoClient("172.24.168.153", 27017);
-		database = mongoClient.getDatabase("eNMS");
+		String ip = ConfLoader.getInstance().getConf(ConfigKey.DB_IP, ConfigKey.DEFAULT_DB_IP);
+		int port = ConfLoader.getInstance().getInt(ConfigKey.DB_PORT, ConfigKey.DEFAULT_DB_PORT);
+		mongoClient = new MongoClient(ip, port);
+		// mongoClient = new MongoClient("172.24.168.153", 27017);
+		String dbName = ConfLoader.getInstance().getConf(ConfigKey.DB_NAME, ConfigKey.DEFAULT_DB_NAME);
+		database = mongoClient.getDatabase(dbName);
 	}
 
 	public void getDefaultDbc(String dbName) {

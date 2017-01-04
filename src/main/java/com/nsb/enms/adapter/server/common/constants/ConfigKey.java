@@ -34,16 +34,28 @@ public class ConfigKey {
 	public static final int DEFAULT_REG_PERIOD = 60 * 1000;
 
 	public static final int DEFAULT_SNMP_PORT = 162;
-	
+
 	public static final String MAX_SYSUP_TIME = "MAX_SYSUP_TIME";
 
 	public static final int DEFAULT_MAX_SYSUP_TIME = 50;
-	
+
 	public static final String MAX_CLEAN_TIME = "MAX_CLEAN_TIME";
 
 	public static final int DEFAULT_MAX_CLEAN_TIME = 5 * 1000;
-	
+
 	public static final String NOTIF_CLEAN_PERIOD = "NOTIF_CLEAN_PERIOD";
 
 	public static final int DEFAULT_NOTIF_CLEAN_PERIOD = 1 * 1000;
+
+	public static final String DB_IP = "DB_IP";
+
+	public static final String DEFAULT_DB_IP = "localhost";
+
+	public static final String DB_PORT = "DB_PORT";
+
+	public static final int DEFAULT_DB_PORT = 27017;
+
+	public static final String DB_NAME = "DB_NAME";
+
+	public static final String DEFAULT_DB_NAME = "eNMS";
 }
