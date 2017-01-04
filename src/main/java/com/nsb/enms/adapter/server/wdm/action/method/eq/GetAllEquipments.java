@@ -67,6 +67,7 @@ public class GetAllEquipments {
 				shelfs.add(shelf);
 			}
 		} catch (IOException e) {
+			log.error("getShelfs", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
 		}
 		log.debug("--------------End getShelfs--------------");
@@ -84,6 +85,7 @@ public class GetAllEquipments {
 			shelf.setIndex(index);
 			constructShelf(shelf, row);
 		} catch (IOException e) {
+			log.error("getShelf", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
 		}
 		log.debug("--------------End getShelf--------------");
@@ -108,6 +110,7 @@ public class GetAllEquipments {
 				slotCards.add(slotCard);
 			}
 		} catch (IOException e) {
+			log.error("getSlotCards", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
 		}
 		log.debug("--------------End getSlotCards--------------");
@@ -125,6 +128,7 @@ public class GetAllEquipments {
 			slotCard.setIndex(index);
 			constructSlotCard(slotCard, row);
 		} catch (IOException e) {
+			log.error("getSlotCard", e);
 			throw new AdapterException(ErrorCode.FAIL_GET_EQUIPMENT_BY_SNMP);
 		}
 		log.debug("--------------End getSlotCard--------------");
