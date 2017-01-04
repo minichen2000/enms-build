@@ -421,7 +421,7 @@ public class AdpSnmpTpsMgr {
 		oids.add(E_ifType.oid);
 		oids.add(E_ifAdminStatus.oid);
 		oids.add(E_ifOperStatus.oid);
-		oids.add(M_tnIfTable.tnIfType); 
+		oids.add(M_tnIfTable.tnIfType);
 		oids.add(M_tnIfTable.tnIfSupportedTypes); // tnIfSupportedTypes
 		oids.add(M_tnAccessPortTable.tnAccessPortStateQualifier); // tnAccessPortStateQualifier
 		oids.add(M_tnAccessPortTable.tnAccessPortFarEndAddress); // tnAccessPortFarEndAddress
@@ -478,7 +478,7 @@ public class AdpSnmpTpsMgr {
 
 	private String getEquType(String index) throws AdapterException {
 		Integer[] position = SnmpTpUserLabelUtil.string2Hex(index);
-		String equKeyOnNe = "1/" + position[0] + "/" + position[1];
+		String equKeyOnNe = position[0] + "." + position[1];
 		AdpEquipment equ = null;
 		try {
 			equ = equsMgr.getEquipmentByKeyOnNe(neId, equKeyOnNe);
@@ -668,7 +668,7 @@ public class AdpSnmpTpsMgr {
 	public static void main(String args[]) {
 		SnmpClient client = new SnmpClient("135.251.96.13", 161, "admin_snmp");
 		AdpSnmpClientFactory.getInstance().add("135.251.96.13:161", client);
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("13", new WdmObjectIdGenerator());
+		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("1", new WdmObjectIdGenerator());
 		try {
 			mgr.syncTPs();
 		} catch (AdapterException e) {
