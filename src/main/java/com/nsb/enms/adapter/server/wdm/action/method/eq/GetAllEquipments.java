@@ -136,8 +136,8 @@ public class GetAllEquipments {
 		shelf.setName(row.get(0).getSecond());
 		shelf.setProgrammedType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(1).getSecond()));
 		shelf.setPresentType(SnmpEqShelfSlotTypeMapUtil.getShelfType(row.get(2).getSecond()));
-		shelf.setUnitPartNumber(row.get(3).getSecond());
-		shelf.setSoftwarePartNumber(row.get(4).getSecond());
+		shelf.setManufacturingPartNumber(row.get(3).getSecond());
+		shelf.setSWPartNum(row.get(4).getSecond());
 		shelf.setSerialNumber(row.get(5).getSecond());
 		shelf.setClei(row.get(6).getSecond());
 		shelf.setCompanyID(row.get(7).getSecond());
@@ -155,8 +155,8 @@ public class GetAllEquipments {
 		slotCard.setOperationalState(SnmpSlotState.getSlotState(row.get(3).getSecond()));
 		slotCard.setName(row.get(4).getSecond());
 		slotCard.setSerialNumber(row.get(5).getSecond());
-		slotCard.setUnitPartNumber(row.get(6).getSecond());
-		slotCard.setSoftwarePartNumber(row.get(7).getSecond());
+		slotCard.setManufacturingPartNumber(row.get(6).getSecond());
+		slotCard.setSWPartNum(row.get(7).getSecond());
 		slotCard.setClei(row.get(8).getSecond());
 		slotCard.setCompanyID(row.get(9).getSecond());
 		slotCard.setDate(row.get(10).getSecond());

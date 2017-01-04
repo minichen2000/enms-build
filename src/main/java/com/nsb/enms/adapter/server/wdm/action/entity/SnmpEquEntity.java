@@ -12,9 +12,9 @@ public class SnmpEquEntity
 
     private String presentType;
     
-    private String unitPartNumber;
+    private String manufacturingPartNumber;
 
-    private String softwarePartNumber;
+    private String swPartNum;
 
     private String serialNumber;
     
@@ -88,24 +88,24 @@ public class SnmpEquEntity
         this.presentType = presentType;
     }
 
-    public String getUnitPartNumber()
+    public String getManufacturingPartNumber()
     {
-        return unitPartNumber;
+        return manufacturingPartNumber;
     }
 
-    public void setUnitPartNumber( String unitPartNumber )
+    public void setManufacturingPartNumber( String manufacturingPartNumber )
     {
-        this.unitPartNumber = unitPartNumber;
+        this.manufacturingPartNumber = manufacturingPartNumber;
     }
 
-    public String getSoftwarePartNumber()
+    public String getSWPartNum()
     {
-        return softwarePartNumber;
+        return swPartNum;
     }
 
-    public void setSoftwarePartNumber( String softwarePartNumber )
+    public void setSWPartNum( String swPartNum )
     {
-        this.softwarePartNumber = softwarePartNumber;
+        this.swPartNum = swPartNum;
     }
 
     public String getSerialNumber()
@@ -209,8 +209,8 @@ public class SnmpEquEntity
         sb.append("    name: ").append(name).append("\n");
         sb.append("    programmedType: ").append(programmedType).append("\n");
         sb.append("    presentType: ").append(presentType).append("\n");
-        sb.append("    unitPartNumber: ").append(unitPartNumber).append("\n");
-        sb.append("    softwarePartNumber: ").append(softwarePartNumber).append("\n");
+        sb.append("    manufacturingPartNumber: ").append(manufacturingPartNumber).append("\n");
+        sb.append("    swPartNum: ").append(swPartNum).append("\n");
         sb.append("    serialNumber: ").append(serialNumber).append("\n");
         sb.append("    adminState: ").append(adminState).append("\n");
         sb.append("    clei: ").append(clei).append("\n");

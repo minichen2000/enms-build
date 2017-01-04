@@ -122,7 +122,8 @@ public class AdpSnmpEqusMgr {
 		String name = equ.getName();
 		adpEqu.setNeId(neId);
 		adpEqu.setPosition(getPosition(index));
-		adpEqu.setType(getType(index));
+		String type = getType(index);
+		adpEqu.setType(type);
 		adpEqu.setExpectedType(equ.getProgrammedType());
 		adpEqu.setActualType(equ.getPresentType());
 		adpEqu.setKeyOnNe(equ.getIndex());
@@ -130,72 +131,12 @@ public class AdpSnmpEqusMgr {
 		adpEqu.setNativeName(name);
 
 		if (!StringUtils.isEmpty(equ.getPresentType()) && !StringUtils.equals("Empty", equ.getPresentType())) {
-			String serialNumber = equ.getSerialNumber();
-			String unitPartNumber = equ.getUnitPartNumber();
-			String softwarePartNumber = equ.getSoftwarePartNumber();
-			String clei = equ.getClei();
-			String hfd = equ.getHfd();
-			String marketingPartNumber = equ.getMarketingPartNumber();
-			String companyID = equ.getCompanyID();
-			String mnemonic = equ.getMnemonic();
-			String date = equ.getDate();
-			String extraData = equ.getExtraData();
-			String factoryID = equ.getFactoryID();
 
-			AdpKVPair cleiPair = new AdpKVPair();
-			cleiPair.setKey("CLEI");
-			cleiPair.setValue(clei);
-			params.add(cleiPair);
-
-			AdpKVPair hfdPair = new AdpKVPair();
-			hfdPair.setKey("HFD");
-			hfdPair.setValue(hfd);
-			params.add(hfdPair);
-
-			AdpKVPair marketingPartNumberPair = new AdpKVPair();
-			marketingPartNumberPair.setKey("MarketingPartNumber");
-			marketingPartNumberPair.setValue(marketingPartNumber);
-			params.add(marketingPartNumberPair);
-
-			AdpKVPair companyIDPair = new AdpKVPair();
-			companyIDPair.setKey("CompanyID");
-			companyIDPair.setValue(companyID);
-			params.add(companyIDPair);
-
-			AdpKVPair serialNumberPair = new AdpKVPair();
-			serialNumberPair.setKey("serialNumber");
-			serialNumberPair.setValue(serialNumber);
-			params.add(serialNumberPair);
-
-			AdpKVPair mnemonicPair = new AdpKVPair();
-			mnemonicPair.setKey("Mnemonic");
-			mnemonicPair.setValue(mnemonic);
-			params.add(mnemonicPair);
-
-			AdpKVPair datePair = new AdpKVPair();
-			datePair.setKey("Date");
-			datePair.setValue(date);
-			params.add(datePair);
-
-			AdpKVPair extraDataPair = new AdpKVPair();
-			extraDataPair.setKey("ExtraData");
-			extraDataPair.setValue(extraData);
-			params.add(extraDataPair);
-
-			AdpKVPair factoryIDPair = new AdpKVPair();
-			factoryIDPair.setKey("FactoryID");
-			factoryIDPair.setValue(factoryID);
-			params.add(factoryIDPair);
-
-			AdpKVPair unitPartNumberPair = new AdpKVPair();
-			unitPartNumberPair.setKey("unitPartNumber");
-			unitPartNumberPair.setValue(unitPartNumber);
-			params.add(unitPartNumberPair);
-
-			AdpKVPair softwarePartNumberPair = new AdpKVPair();
-			softwarePartNumberPair.setKey("softwarePartNumber");
-			softwarePartNumberPair.setValue(softwarePartNumber);
-			params.add(softwarePartNumberPair);
+			if (StringUtils.equals(EquType.shelf.name(), type)) {
+				constructShelfParams(params, equ);
+			} else if (StringUtils.equals(EquType.slot.name(), type)) {
+				constructSlotCardParams(params, equ);
+			}
 		}
 
 		if (index.split(".").length > 1) {
@@ -216,8 +157,134 @@ public class AdpSnmpEqusMgr {
 		return adpEqu;
 	}
 
+	private void constructShelfParams(List<AdpKVPair> params, SnmpEquEntity equ) {
+		String companyID = equ.getCompanyID();
+		String mnemonic = equ.getMnemonic();
+		String clei = equ.getClei();
+		String manufacturingPartNumber = equ.getManufacturingPartNumber();
+		String swPartNum = equ.getSWPartNum();
+		String factoryID = equ.getFactoryID();
+		String serialNumber = equ.getSerialNumber();
+		String date = equ.getDate();
+		String extraData = equ.getExtraData();
+
+		AdpKVPair companyIDPair = new AdpKVPair();
+		companyIDPair.setKey("riCompanyID");
+		companyIDPair.setValue(companyID);
+		params.add(companyIDPair);
+
+		AdpKVPair mnemonicPair = new AdpKVPair();
+		mnemonicPair.setKey("riMnemonic");
+		mnemonicPair.setValue(mnemonic);
+		params.add(mnemonicPair);
+
+		AdpKVPair cleiPair = new AdpKVPair();
+		cleiPair.setKey("riCLEI");
+		cleiPair.setValue(clei);
+		params.add(cleiPair);
+
+		AdpKVPair unitPartNumberPair = new AdpKVPair();
+		unitPartNumberPair.setKey("riManufacturingPartNumber");
+		unitPartNumberPair.setValue(manufacturingPartNumber);
+		params.add(unitPartNumberPair);
+
+		AdpKVPair softwarePartNumberPair = new AdpKVPair();
+		softwarePartNumberPair.setKey("riSWPartNum");
+		softwarePartNumberPair.setValue(swPartNum);
+		params.add(softwarePartNumberPair);
+
+		AdpKVPair factoryIDPair = new AdpKVPair();
+		factoryIDPair.setKey("riFactoryID");
+		factoryIDPair.setValue(factoryID);
+		params.add(factoryIDPair);
+
+		AdpKVPair serialNumberPair = new AdpKVPair();
+		serialNumberPair.setKey("riSerialNumber");
+		serialNumberPair.setValue(serialNumber);
+		params.add(serialNumberPair);
+
+		AdpKVPair datePair = new AdpKVPair();
+		datePair.setKey("riDate");
+		datePair.setValue(date);
+		params.add(datePair);
+
+		AdpKVPair extraDataPair = new AdpKVPair();
+		extraDataPair.setKey("riExtraData");
+		extraDataPair.setValue(extraData);
+		params.add(extraDataPair);
+	}
+
+	private void constructSlotCardParams(List<AdpKVPair> params, SnmpEquEntity equ) {
+		String companyID = equ.getCompanyID();
+		String mnemonic = equ.getMnemonic();
+		String clei = equ.getClei();
+		String manufacturingPartNumber = equ.getManufacturingPartNumber();
+		String swPartNum = equ.getSWPartNum();
+		String factoryID = equ.getFactoryID();
+		String serialNumber = equ.getSerialNumber();
+		String date = equ.getDate();
+		String extraData = equ.getExtraData();
+		String hfd = equ.getHfd();
+		String marketingPartNumber = equ.getMarketingPartNumber();
+
+		AdpKVPair cleiPair = new AdpKVPair();
+		cleiPair.setKey("cardCLEI");
+		cleiPair.setValue(clei);
+		params.add(cleiPair);
+
+		AdpKVPair hfdPair = new AdpKVPair();
+		hfdPair.setKey("cardHFD");
+		hfdPair.setValue(hfd);
+		params.add(hfdPair);
+
+		AdpKVPair serialNumberPair = new AdpKVPair();
+		serialNumberPair.setKey("cardSerialNumber");
+		serialNumberPair.setValue(serialNumber);
+		params.add(serialNumberPair);
+
+		AdpKVPair manufacturingPartNumberPair = new AdpKVPair();
+		manufacturingPartNumberPair.setKey("cardManufacturingPartNumber");
+		manufacturingPartNumberPair.setValue(manufacturingPartNumber);
+		params.add(manufacturingPartNumberPair);
+
+		AdpKVPair marketingPartNumberPair = new AdpKVPair();
+		marketingPartNumberPair.setKey("cardMarketingPartNumber");
+		marketingPartNumberPair.setValue(marketingPartNumber);
+		params.add(marketingPartNumberPair);
+
+		AdpKVPair companyIDPair = new AdpKVPair();
+		companyIDPair.setKey("cardCompanyID");
+		companyIDPair.setValue(companyID);
+		params.add(companyIDPair);
+
+		AdpKVPair mnemonicPair = new AdpKVPair();
+		mnemonicPair.setKey("cardMnemonic");
+		mnemonicPair.setValue(mnemonic);
+		params.add(mnemonicPair);
+
+		AdpKVPair swPartNumberPair = new AdpKVPair();
+		swPartNumberPair.setKey("cardSWPartNum");
+		swPartNumberPair.setValue(swPartNum);
+		params.add(swPartNumberPair);
+
+		AdpKVPair datePair = new AdpKVPair();
+		datePair.setKey("cardDate");
+		datePair.setValue(date);
+		params.add(datePair);
+
+		AdpKVPair extraDataPair = new AdpKVPair();
+		extraDataPair.setKey("cardExtraData");
+		extraDataPair.setValue(extraData);
+		params.add(extraDataPair);
+
+		AdpKVPair factoryIDPair = new AdpKVPair();
+		factoryIDPair.setKey("cardFactoryID");
+		factoryIDPair.setValue(factoryID);
+		params.add(factoryIDPair);
+	}
+
 	private String getType(String index) {
-		int len = index.split(".").length + 1;
+		int len = index.split("\\.").length + 1;
 		return EquType.getEquType(len);
 	}
 

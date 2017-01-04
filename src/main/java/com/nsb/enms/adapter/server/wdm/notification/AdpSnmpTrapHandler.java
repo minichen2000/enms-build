@@ -72,7 +72,7 @@ public class AdpSnmpTrapHandler implements DispatchTrap {
 				map.get(ip).put("lastSysUpTime", sysUpTime);
 			}
 
-			String key = ip + trapObjectId + trapData + trapChangeObject;
+			String key = trapObjectId + trapData + trapChangeObject;
 			if (map.get(ip).containsKey(key)) {
 				long oldSysUpTime = map.get(ip).get(key);
 				long time = sysUpTime - oldSysUpTime;
