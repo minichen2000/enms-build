@@ -88,7 +88,6 @@ public class AdpSnmpTpsMgr {
 	private void createXC() throws AdapterException {
 		if (!_130Scx10ClientPtpList.isEmpty() && !_130Scx10LinePtpList.isEmpty()) {
 			for (AdpTp tp : _130Scx10ClientPtpList) {
-				System.out.println(tp.getNativeName());
 				create130SCX10FixedXC(tp);
 			}
 		}
@@ -96,14 +95,12 @@ public class AdpSnmpTpsMgr {
 		if (!sfd44ClientPtpList.isEmpty() && !sfd44LinePtpList.isEmpty()) {
 			int i = 0;
 			for (AdpTp tp : sfd44ClientPtpList) {
-				System.out.println(tp.getNativeName());
 				createSFD44FixedXC(tp, ++i);
 			}
 		}
 
 		if (!ahphgSigPtpList.isEmpty() && !ahphgLinePtpList.isEmpty()) {
 			for (AdpTp tp : ahphgSigPtpList) {
-				System.out.println(tp.getNativeName());
 				createAHPHGFixedXC(tp);
 			}
 		}
