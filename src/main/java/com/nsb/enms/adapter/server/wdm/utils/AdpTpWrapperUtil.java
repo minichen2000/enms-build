@@ -40,7 +40,7 @@ public class AdpTpWrapperUtil {
 		String ptpID = ptp.getId();
 		tp.setPtpID(ptpID);
 		tp.setParentTpID(ptpID);
-		tp.setParams(null);
+		tp.setParams(params);
 		tp.setAlarmState(null);
 		return addCTP2DB(tp);
 	}

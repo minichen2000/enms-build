@@ -192,14 +192,14 @@ public class AdpSnmpNesMgr {
 			throw new AdapterException(ErrorCode.FAIL_INVALID_SNMP_ADDRESS);
 		}
 
-		String agent[] = snmpAgent.split(":");
-		if (!ValidationUtil.isValidIpAddress(agent[0])) {
+		// String agent[] = snmpAgent.split(":");
+		if (!ValidationUtil.isValidIpAddress(snmpAgent)) {
 			throw new AdapterException(ErrorCode.FAIL_INVALID_SNMP_ADDRESS);
 		}
 
-		if (!ValidationUtil.isValidPort(agent[1])) {
-			throw new AdapterException(ErrorCode.FAIL_INVALID_PORT);
-		}
+		// if (!ValidationUtil.isValidPort(agent[1])) {
+		// throw new AdapterException(ErrorCode.FAIL_INVALID_PORT);
+		// }
 	}
 
 	private List<AdpKVPair> constructParams(NeEntity entity) {
