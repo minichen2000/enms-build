@@ -2,7 +2,9 @@ package com.nsb.enms.adapter.server.wdm.business.tp;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +16,6 @@ import com.nsb.enms.adapter.server.common.db.mgr.AdpTpsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.adapter.server.common.utils.Object2IntegerUtil;
 import com.nsb.enms.adapter.server.wdm.action.entity.SnmpTpEntity;
-import com.nsb.enms.adapter.server.wdm.business.objectIdGenerator.WdmObjectIdGenerator;
 import com.nsb.enms.adapter.server.wdm.business.tp.ctp.oa.GetAHPHGCTPs;
 import com.nsb.enms.adapter.server.wdm.business.tp.ctp.ot.Get130SCX10CTPs;
 import com.nsb.enms.adapter.server.wdm.business.tp.ctp.sfd.GetSFD44CTPs;
@@ -52,6 +53,7 @@ public class AdpSnmpTpsMgr {
 	private List<AdpTp> _130SCX10LinePTPList = new ArrayList<AdpTp>();
 	private List<AdpTp> sfd44ClientPTPList = new ArrayList<AdpTp>();
 	private List<AdpTp> sfd44LinePTPList = new ArrayList<AdpTp>();
+	private Map<String, Integer> usedSFD44LineCTPList = new HashMap<String, Integer>();
 	private List<AdpTp> ahphgSigPTPList = new ArrayList<AdpTp>();
 	private List<AdpTp> ahphgLinePTPList = new ArrayList<AdpTp>();
 
@@ -92,9 +94,8 @@ public class AdpSnmpTpsMgr {
 		}
 
 		if (!sfd44ClientPTPList.isEmpty() && !sfd44LinePTPList.isEmpty()) {
-			int i = 0;
 			for (AdpTp tp : sfd44ClientPTPList) {
-				createSFD44FixedXC(tp, ++i);
+				createSFD44FixedXC(tp);
 			}
 		}
 
@@ -115,13 +116,13 @@ public class AdpSnmpTpsMgr {
 		createXC(clientCTPkeyOnNe, lineCTPKeyOnNe, LayerRate.ODU2.name());
 	}
 
-	private void createSFD44FixedXC(AdpTp ptp, int portNumber) throws AdapterException {
+	private void createSFD44FixedXC(AdpTp ptp) throws AdapterException {
 		String keyOnNe = ptp.getKeyOnNe();
 		String clientCTPKeyOnNe = keyOnNe + "_/och=1";
 		String nativeName = ptp.getNativeName();
 		int index = nativeName.lastIndexOf("-");
 		String userLabel_Line = nativeName.substring(0, index) + "-OMD";
-		String lineCTPKeyOnNe = findSFD444LinePTPIndex(userLabel_Line) + "_/och=" + portNumber;
+		String lineCTPKeyOnNe = findSFD44LineCTPKeyOnNe(userLabel_Line);
 		createXC(clientCTPKeyOnNe, lineCTPKeyOnNe, LayerRate.OCH.name());
 	}
 
@@ -175,11 +176,19 @@ public class AdpSnmpTpsMgr {
 		return StringUtils.EMPTY;
 	}
 
-	private String findSFD444LinePTPIndex(String nativeName) {
+	private String findSFD44LineCTPKeyOnNe(String ptpNativeName) {
 		for (AdpTp tp : sfd44LinePTPList) {
-			if (tp.getNativeName().equalsIgnoreCase(nativeName)) {
-				return tp.getKeyOnNe();
+			if (!tp.getNativeName().equalsIgnoreCase(ptpNativeName)) {
+				continue;
 			}
+			String keyOnNe = tp.getKeyOnNe();
+			Integer used = usedSFD44LineCTPList.get(keyOnNe);
+			if (used == null || used < 0) {
+				used = 0;
+			}
+			used++;
+			usedSFD44LineCTPList.put(keyOnNe, used);
+			return keyOnNe + "_/och=" + used;
 		}
 		return StringUtils.EMPTY;
 	}
@@ -616,13 +625,19 @@ public class AdpSnmpTpsMgr {
 	}
 
 	public static void main(String args[]) {
-		SnmpClient client = new SnmpClient("135.251.96.13", 161, "admin_snmp");
-		AdpSnmpClientFactory.getInstance().add("135.251.96.13:161", client);
-		AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("1", new WdmObjectIdGenerator());
-		try {
-			mgr.syncTPs();
-		} catch (AdapterException e) {
-			e.printStackTrace();
-		}
+		// SnmpClient client = new SnmpClient("135.251.96.13", 161,
+		// "admin_snmp");
+		// AdpSnmpClientFactory.getInstance().add("135.251.96.13:161", client);
+		// AdpSnmpTpsMgr mgr = new AdpSnmpTpsMgr("1", new
+		// WdmObjectIdGenerator());
+		// try {
+		// mgr.syncTPs();
+		// } catch (AdapterException e) {
+		// e.printStackTrace();
+		// }
+
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		Integer x = map.get("xx");
+		System.out.println(x);
 	}
 }
