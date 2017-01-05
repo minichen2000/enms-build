@@ -529,6 +529,9 @@
 							<mainClass>com.nsb.enms.restful.adapterserver.api.Main</mainClass>
 						</manifest>
 					</archive>
+					<descriptors>
+						<descriptor>src/assembly/distribution.xml</descriptor>
+					</descriptors>
 				</configuration>
 			</plugin>
 
