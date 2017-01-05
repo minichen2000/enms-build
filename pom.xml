@@ -48,10 +48,10 @@
 			<artifactId>common.def</artifactId>
 		</dependency>
 
-		<dependency>
+<!--		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -135,6 +135,11 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-1.2-api</artifactId>
 		</dependency>
 
 		<dependency>
