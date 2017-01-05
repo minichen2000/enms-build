@@ -38,9 +38,6 @@ public class SnmpTpUserLabelUtil {
 		result[1] = (hex & 0x00ff0000) >> 16;
 		result[2] = (hex & 0x0000ff00) >> 8;
 		result[3] = hex & 0x000000ff;
-		for (Integer i : result) {
-			System.out.println(i);
-		}
 		return result;
 	}
 }
