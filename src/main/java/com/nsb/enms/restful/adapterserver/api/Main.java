@@ -28,6 +28,7 @@ public class Main {
 	private static Logger log;
 
 	public static void main(String[] args) throws AdapterException {
+		System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 		String confPath = loadConf();
 
 		System.setProperty("log4j.configurationFile", confPath + "/log4j2.xml");
