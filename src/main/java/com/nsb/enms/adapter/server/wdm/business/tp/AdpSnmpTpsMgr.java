@@ -112,7 +112,7 @@ public class AdpSnmpTpsMgr {
 		String userLabel_L1 = userLabel.substring(0, index) + "-L1";
 		String portNumber = userLabel.substring(index + 2);
 		String lineCTPKeyOnNe = find130SCX10L1PTPIndex(userLabel_L1) + "_/odu4=1/odu2=" + portNumber;
-		createXC(clientCTPkeyOnNe, lineCTPKeyOnNe);
+		createXC(clientCTPkeyOnNe, lineCTPKeyOnNe, LayerRate.ODU2.name());
 	}
 
 	private void createSFD44FixedXC(AdpTp ptp, int portNumber) throws AdapterException {
@@ -122,7 +122,7 @@ public class AdpSnmpTpsMgr {
 		int index = nativeName.lastIndexOf("-");
 		String userLabel_Line = nativeName.substring(0, index) + "-OMD";
 		String lineCTPKeyOnNe = findSFD444LinePTPIndex(userLabel_Line) + "_/och=" + portNumber;
-		createXC(clientCTPKeyOnNe, lineCTPKeyOnNe);
+		createXC(clientCTPKeyOnNe, lineCTPKeyOnNe, LayerRate.OCH.name());
 	}
 
 	private void createAHPHGFixedXC(AdpTp ptp) throws AdapterException {
@@ -131,10 +131,10 @@ public class AdpSnmpTpsMgr {
 		String nativeName = ptp.getNativeName();
 		String nativeName_Line = nativeName.replace("-SIG", "-LINE");
 		String lineCTPKeyOnNe = findAHPHGLinePTPIndex(nativeName_Line) + "_/oms=1";
-		createXC(sigCTPKeyOnNe, lineCTPKeyOnNe);
+		createXC(sigCTPKeyOnNe, lineCTPKeyOnNe, LayerRate.OMS.name());
 	}
 
-	private void createXC(String atpName, String ztpName) throws AdapterException {
+	private void createXC(String atpName, String ztpName, String layerRate) throws AdapterException {
 		try {
 			AdpTp ctp1 = tpsMgr.getTpByKeyOnNe(neId, atpName);
 			if (!isTPValid(ctp1)) {
@@ -157,7 +157,9 @@ public class AdpSnmpTpsMgr {
 			atps.add(ctpId1);
 			List<String> ztps = new ArrayList<String>();
 			ztps.add(ctpId2);
-			xcsMgr.createXC(neId, atps, ztps);
+			List<String> layerRates = new ArrayList<String>();
+			layerRates.add(layerRate);
+			xcsMgr.createXC(neId, atps, ztps, layerRates);
 		} catch (Exception e) {
 			log.error("createXC", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);

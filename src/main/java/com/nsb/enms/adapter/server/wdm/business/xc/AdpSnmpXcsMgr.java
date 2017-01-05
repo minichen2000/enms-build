@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.nsb.enms.adapter.server.common.business.itf.ObjectIdGenerator;
-import com.nsb.enms.adapter.server.common.db.mgr.AdpSeqDbMgr;
 import com.nsb.enms.adapter.server.common.db.mgr.AdpXcsDbMgr;
 import com.nsb.enms.adapter.server.common.exception.AdapterException;
 import com.nsb.enms.common.Direction;
@@ -26,25 +25,33 @@ public class AdpSnmpXcsMgr {
 		this.objectIdGenerator = objectIdGenerator;
 	}
 
-	public void createXC(String neId, List<String> atps, List<String> ztps) throws AdapterException {
+	public void createXC(String neId, List<String> atps, List<String> ztps, List<String> layerRates)
+			throws AdapterException {
 		AdpXc xc = new AdpXc();
-		String maxXcId;
-		try {
-			maxXcId = AdpSeqDbMgr.getMaxTpId(neId);
-		} catch (Exception e) {
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		xc.setId(maxXcId);
+		String keyOnNe = getKeyOnNe(atps, ztps);
+		xc.setId(keyOnNe);
 		xc.setAEndPoints(atps);
 		xc.setZEndPoints(ztps);
 		xc.setNeId(neId);
-		// xc.setKeyOnNe(keyOnNe);
+		xc.setKeyOnNe(keyOnNe);
 		xc.setType(XcType.SIMPLE.name());
-		// xc.setLayerrate(layerrate);
+		xc.setLayerRates(layerRates);
 		xc.setXcRole(XcRole.FIXED.name());
 		xc.setDirection(Direction.BI.name());
 
 		addXC2DB(xc);
+	}
+
+	private String getKeyOnNe(List<String> atps, List<String> ztps) {
+		StringBuffer sb = new StringBuffer();
+		for (String atp : atps) {
+			sb.append(atp).append("-");
+		}
+		for (String ztp : ztps) {
+			sb.append(ztp).append("-");
+		}
+		String keyOnNe = sb.toString();
+		return keyOnNe.substring(0, keyOnNe.lastIndexOf("-"));
 	}
 
 	private void addXC2DB(AdpXc xc) throws AdapterException {
