@@ -263,7 +263,7 @@ public class AdpNesDbMgr {
 	private void updateAlignmentState(AdpNe body, String id, AdpNe ne) {
 		String alignmentState = body.getAlignmentState();
 		String alignmentStateFromDb = ne.getAlignmentState();
-		if (StringUtils.equals(alignmentState, alignmentStateFromDb)) {
+		if (null == alignmentState || StringUtils.equals(alignmentState, alignmentStateFromDb)) {
 			return;
 		}
 		dbc.updateOne(new BasicDBObject("id", id), set("alignmentState", alignmentState));
