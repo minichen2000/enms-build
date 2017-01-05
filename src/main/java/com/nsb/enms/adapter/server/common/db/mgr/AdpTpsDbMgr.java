@@ -6,7 +6,6 @@ import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Updates.set;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,7 +24,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import com.nsb.enms.adapter.server.common.constants.AdpDBConst;
 import com.nsb.enms.adapter.server.common.constants.Protocols;
-import com.nsb.enms.adapter.server.common.db.mgr.AdpNesDbMgr;
 import com.nsb.enms.adapter.server.common.db.mongodb.mgr.AdpMongoDBMgr;
 import com.nsb.enms.common.ManagedObjectType;
 import com.nsb.enms.restful.model.adapter.AdpTp;
@@ -158,29 +156,11 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public boolean updateTp(AdpTp body) throws Exception {
-		for (Field f : body.getClass().getDeclaredFields()) {
-			f.setAccessible(true);
-			try {
-				if (List.class == f.getType()) {
-					if (!((List) f.get(body)).isEmpty()) {
-						// TODO 更新list中的数据
-					}
-				} else {
-					Object obj = f.get(body);
-					if (null != obj && !(obj.toString().equalsIgnoreCase("id"))) {
-						getCollection(body.getNeId()).updateOne(new BasicDBObject("id", body.getId()),
-								set(f.getName(), f.get(body).toString()));
-					}
-				}
-
-			} catch (Exception e) {
-				log.error("updateTp", e);
-				return false;
-			}
-		}
-		return true;
+	public void updateTP(AdpTp body) throws Exception {
+		String tpID = body.getId();
+		String neID = body.getNeId();
+		getCollection(neID).deleteOne(new Document("id", tpID));
+		addTp(body);
 	}
 
 	public void updateTpLayerRate(String neId, String tpId, List<String> layerRates) throws Exception {

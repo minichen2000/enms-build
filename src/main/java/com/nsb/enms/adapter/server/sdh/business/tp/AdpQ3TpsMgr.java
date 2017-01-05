@@ -238,7 +238,7 @@ public class AdpQ3TpsMgr {
 
 	private void updateTps(AdpTp tp) throws AdapterException {
 		try {
-			tpsDbMgr.updateTp(tp);
+			tpsDbMgr.updateTP(tp);
 		} catch (Exception e) {
 			log.error("updateTps", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);

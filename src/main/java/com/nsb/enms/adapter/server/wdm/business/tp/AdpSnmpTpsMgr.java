@@ -284,20 +284,18 @@ public class AdpSnmpTpsMgr {
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (List<Pair<String, String>> row : values) {
 			String index = row.get(0).getSecond();
-			AdpTp tp = isTPExisted(index);
-			if (null != tp) {
-				tpList.add(tp);
-				continue;
-			}
-
 			String equType = getEquType(index);
 			if (StringUtils.isEmpty(equType)) {
 				continue;
 			}
 
 			constructPTPEntity(entity, row, index);
-			tp = constructPTP(entity, TpType.PTP, equType, null, StringUtils.EMPTY);
-			addTP2DB(tp);
+			AdpTp tp = constructPTP(entity, equType);
+			if (isTPExisted(index)) {
+				updateTP2DB(tp);
+			} else {
+				addTP2DB(tp);
+			}
 			tpList.add(tp);
 		}
 		return tpList;
@@ -339,17 +337,17 @@ public class AdpSnmpTpsMgr {
 		}
 	}
 
-	private AdpTp isTPExisted(String keyOnNe) throws AdapterException {
+	private boolean isTPExisted(String keyOnNe) throws AdapterException {
 		try {
 			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
 			if (null != tpFromDb && StringUtils.isNotEmpty(tpFromDb.getId())) {
-				return tpFromDb;
+				return true;
 			}
 		} catch (Exception e) {
 			log.error("getTpByKeyOnNe", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return null;
+		return false;
 	}
 
 	private AdpTp addTP2DB(AdpTp tp) throws AdapterException {
@@ -362,17 +360,13 @@ public class AdpSnmpTpsMgr {
 		return tp;
 	}
 
-	private boolean updateTP2DB(AdpTp tp) throws AdapterException {
-		boolean ret = true;
+	private void updateTP2DB(AdpTp tp) throws AdapterException {
 		try {
-			tpsMgr.deleteTpByKeyOnNe(tp.getNeId(), tp.getKeyOnNe());
-			tpsMgr.addTp(tp);
-			// ret = tpsMgr.updateTp(tp);
+			tpsMgr.updateTP(tp);
 		} catch (Exception e) {
-			log.error("updateTp", e);
+			log.error("updateTP", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return ret;
 	}
 
 	private List<String> setOidParams() {
@@ -404,10 +398,8 @@ public class AdpSnmpTpsMgr {
 		return oids;
 	}
 
-	private AdpTp constructPTP(SnmpTpEntity tp, TpType tpType, String equType, String ptpId, String parentTpId)
-			throws AdapterException {
+	private AdpTp constructPTP(SnmpTpEntity tp, String equType) throws AdapterException {
 		AdpTp adpTp = new AdpTp();
-
 		adpTp.setNeId(neId);
 		String userLabel = setUserLabel(tp.getIndex(), equType);
 		adpTp.setUserLabel(userLabel);
@@ -415,23 +407,17 @@ public class AdpSnmpTpsMgr {
 		List<String> layerRates = new ArrayList<String>();
 		String actualTpType = SnmpTpType.getTpType(tp.getInternalType());
 		layerRates.add(actualTpType);
-		if (TpType.PTP == tpType && !actualTpType.equalsIgnoreCase(SnmpTpType.PHN.name())) {
+		if (!actualTpType.equalsIgnoreCase(SnmpTpType.PHN.name())) {
 			layerRates.add(LayerRate.PHYSICAL.name());
 		}
 		adpTp.setLayerRates(layerRates);
 		adpTp.setKeyOnNe(tp.getIndex());
-		adpTp.setTpType(tpType.name());
+		adpTp.setTpType(TpType.PTP.name());
 
 		adpTp.setDirection(SnmpDirection.getDirection(tp.getDirection()));
 		String tpId = objectIdGenerator.generatePTPId(adpTp);
 		adpTp.setId(tpId);
-		if (TpType.PTP != tpType) {
-			adpTp.setPtpID(tpId);
-			adpTp.setParentTpID(parentTpId);
-		}
-		if (TpType.PTP == tpType)
-			constructPTPParameters(adpTp, tp, tpType, equType);
-
+		constructPTPParameters(adpTp, tp, equType);
 		return adpTp;
 	}
 
@@ -475,7 +461,7 @@ public class AdpSnmpTpsMgr {
 		return false;
 	}
 
-	private void constructPTPParameters(AdpTp adpTp, SnmpTpEntity tp, TpType tpType, String equType) {
+	private void constructPTPParameters(AdpTp adpTp, SnmpTpEntity tp, String equType) {
 		setPTPParameter(adpTp, "adminState", String.valueOf(tp.getAdminStatus()));
 		setPTPParameter(adpTp, "operStatus", String.valueOf(tp.getOperStatus()));
 		setPTPParameter(adpTp, "secondaryState", String.valueOf(tp.getSecondaryState()));
@@ -503,7 +489,7 @@ public class AdpSnmpTpsMgr {
 		setPTPParameter(adpTp, "sfpPortExtraData", tp.getSfpPortExtraData());
 
 		// 130SCX10 Client PTP specail Param
-		if (TpType.PTP == tpType && true == is130SCX10ClientPTP(adpTp, equType))
+		if (true == is130SCX10ClientPTP(adpTp, equType))
 			setPTPParameter(adpTp, "supportedContainer", "ODU2");
 	}
 
