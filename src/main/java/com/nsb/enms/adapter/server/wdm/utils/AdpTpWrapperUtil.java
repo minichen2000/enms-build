@@ -42,35 +42,43 @@ public class AdpTpWrapperUtil {
 		tp.setParentTpID(ptpID);
 		tp.setParams(params);
 		tp.setAlarmState(null);
-		return addCTP2DB(tp);
+		return addTP2DB(tp);
 	}
 
-	private static AdpTp addCTP2DB(AdpTp ctp) throws AdapterException {
-		AdpTp ctpFromDb = isCTPExisted(ctp.getNeId(), ctp.getKeyOnNe());
-		if (null != ctpFromDb) {
-			// TODO 替换已有值
-			return ctpFromDb;
-		}
+	public static AdpTp addTP2DB(AdpTp tp) throws AdapterException {
 		try {
-			ctpFromDb = tpDbMgr.addTp(ctp);
+			if (isTPExisted(tp.getNeId(), tp.getKeyOnNe())) {
+				tp = tpDbMgr.updateTP(tp);
+			} else {
+				tp = tpDbMgr.addTp(tp);
+			}
 		} catch (Exception e) {
-			log.error("addTps", e);
+			log.error("addTP2DB", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return ctpFromDb;
+		return tp;
 	}
 
-	public static AdpTp isCTPExisted(String neId, String keyOnNe) throws AdapterException {
+	public static boolean isTPExisted(String neId, String keyOnNe) throws AdapterException {
 		try {
 			AdpTp tpFromDb = tpDbMgr.getTpByKeyOnNe(neId, keyOnNe);
 			if (null != tpFromDb && StringUtils.isNotEmpty(tpFromDb.getId())) {
-				return tpFromDb;
+				return true;
 			}
 		} catch (Exception e) {
-			log.error("getTpByKeyOnNe", e);
+			log.error("isTPExisted", e);
 			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
-		return null;
+		return false;
+	}
+
+	public static void updateTP2DB(AdpTp tp) throws AdapterException {
+		try {
+			tpDbMgr.updateTP(tp);
+		} catch (Exception e) {
+			log.error("updateTP2DB", e);
+			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
+		}
 	}
 
 	public static AdpTp getOCHCTP(String neId, AdpTp ptp) throws AdapterException {

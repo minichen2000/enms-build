@@ -24,6 +24,7 @@ import com.nsb.enms.adapter.server.wdm.constants.SnmpDirection;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpEquType;
 import com.nsb.enms.adapter.server.wdm.constants.SnmpTpType;
 import com.nsb.enms.adapter.server.wdm.factory.AdpSnmpClientFactory;
+import com.nsb.enms.adapter.server.wdm.utils.AdpTpWrapperUtil;
 import com.nsb.enms.adapter.server.wdm.utils.PSSBoardUtil;
 import com.nsb.enms.adapter.server.wdm.utils.SnmpTpUserLabelUtil;
 import com.nsb.enms.common.ErrorCode;
@@ -291,11 +292,7 @@ public class AdpSnmpTpsMgr {
 
 			constructPTPEntity(entity, row, index);
 			AdpTp tp = constructPTP(entity, equType);
-			if (isTPExisted(index)) {
-				updateTP2DB(tp);
-			} else {
-				addTP2DB(tp);
-			}
+			AdpTpWrapperUtil.addTP2DB(tp);
 			tpList.add(tp);
 		}
 		return tpList;
@@ -334,38 +331,6 @@ public class AdpSnmpTpsMgr {
 
 		} catch (Exception e) {
 			log.error("constructTpEntity", e);
-		}
-	}
-
-	private boolean isTPExisted(String keyOnNe) throws AdapterException {
-		try {
-			AdpTp tpFromDb = tpsMgr.getTpByKeyOnNe(neId, keyOnNe);
-			if (null != tpFromDb && StringUtils.isNotEmpty(tpFromDb.getId())) {
-				return true;
-			}
-		} catch (Exception e) {
-			log.error("getTpByKeyOnNe", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return false;
-	}
-
-	private AdpTp addTP2DB(AdpTp tp) throws AdapterException {
-		try {
-			tp = tpsMgr.addTp(tp);
-		} catch (Exception e) {
-			log.error("addTp", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
-		}
-		return tp;
-	}
-
-	private void updateTP2DB(AdpTp tp) throws AdapterException {
-		try {
-			tpsMgr.updateTP(tp);
-		} catch (Exception e) {
-			log.error("updateTP", e);
-			throw new AdapterException(ErrorCode.FAIL_DB_OPERATION);
 		}
 	}
 
@@ -573,7 +538,7 @@ public class AdpSnmpTpsMgr {
 				}
 			}
 			if (bUpdate)
-				updateTP2DB(tp);
+				AdpTpWrapperUtil.updateTP2DB(tp);
 		}
 	}
 

@@ -156,11 +156,11 @@ public class AdpTpsDbMgr {
 		return tpList;
 	}
 
-	public void updateTP(AdpTp body) throws Exception {
+	public AdpTp updateTP(AdpTp body) throws Exception {
 		String tpID = body.getId();
 		String neID = body.getNeId();
 		getCollection(neID).deleteOne(new Document("id", tpID));
-		addTp(body);
+		return addTp(body);
 	}
 
 	public void updateTpLayerRate(String neId, String tpId, List<String> layerRates) throws Exception {
