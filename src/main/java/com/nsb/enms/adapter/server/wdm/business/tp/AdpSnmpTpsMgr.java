@@ -138,12 +138,12 @@ public class AdpSnmpTpsMgr {
 		try {
 			AdpTp ctp1 = tpsMgr.getTpByKeyOnNe(neId, atpName);
 			if (!isTPValid(ctp1)) {
-				log.error("ctp1 is invalid");
+				log.error("ctp1 is invalid, " + atpName);
 				return;
 			}
 			AdpTp ctp2 = tpsMgr.getTpByKeyOnNe(neId, ztpName);
 			if (!isTPValid(ctp2)) {
-				log.error("ctp2 is invalid");
+				log.error("ctp2 is invalid, " + ztpName);
 				return;
 			}
 

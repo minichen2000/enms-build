@@ -33,10 +33,6 @@ import com.nsb.enms.restful.model.adapter.AdpTp;
 public class AdpTpsDbMgr {
 	private final static Logger log = LogManager.getLogger(AdpTpsDbMgr.class);
 	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
-	// private MongoCollection<Document> dbc =
-	// db.getCollection(AdpDBConst.DB_NAME_TP);
-	// private MongoCollection<BasicDBObject> dbc1 =
-	// db.getCollection(AdpDBConst.DB_NAME_TP, BasicDBObject.class);
 	private Gson gson = new Gson();
 
 	public AdpTpsDbMgr() {
@@ -71,13 +67,7 @@ public class AdpTpsDbMgr {
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by tpid = " + tpid);
 			return new AdpTp();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		Document doc = docList.get(0);
@@ -91,13 +81,7 @@ public class AdpTpsDbMgr {
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by keyOnNe = " + keyOnNe);
 			return new AdpTp();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		Document doc = docList.get(0);
@@ -119,11 +103,6 @@ public class AdpTpsDbMgr {
 			docList = getTpsBySnmpNe(neid);
 		}
 
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
-		}
-
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
 		for (Document doc : docList) {
 			AdpTp tp = constructTp(doc);
@@ -140,7 +119,6 @@ public class AdpTpsDbMgr {
 								ManagedObjectType.STM256_OPTICAL, ManagedObjectType.STM1_ELECTRICAL)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find q3 tp, query by neid = " + neId);
 			return new ArrayList<Document>();
 		}
 		return docList;
@@ -149,7 +127,6 @@ public class AdpTpsDbMgr {
 	private List<Document> getTpsBySnmpNe(String neId) {
 		List<Document> docList = getCollection(neId).find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find snmp tp, query by neid = " + neId);
 			return new ArrayList<Document>();
 		}
 		return docList;
@@ -170,13 +147,7 @@ public class AdpTpsDbMgr {
 		}
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by neid = " + neId + ", layerRate = " + layerrate);
 			return new ArrayList<AdpTp>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -221,7 +192,6 @@ public class AdpTpsDbMgr {
 		AdpNesDbMgr nesDbMgr = new AdpNesDbMgr();
 		List<String> idList = nesDbMgr.getNeIds();
 		if (null == idList || idList.isEmpty()) {
-			log.error("there is no ne found");
 			return new ArrayList<AdpTp>();
 		}
 
@@ -229,7 +199,6 @@ public class AdpTpsDbMgr {
 		for (String i : idList) {
 			List<AdpTp> tpList = getTpsByNeId(i, protocol);
 			if (null == tpList || tpList.isEmpty()) {
-				log.error("can not find tp list by neid :" + i);
 				continue;
 			}
 			allTpList.addAll(tpList);
@@ -246,13 +215,7 @@ public class AdpTpsDbMgr {
 		docList = getCollection(neId).find(and(eq("neId", neId), eq("tpType", tptype))).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by neid = " + neId + ", tptype = " + tptype);
 			return new ArrayList<AdpTp>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -276,13 +239,7 @@ public class AdpTpsDbMgr {
 		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find ctp, query by neid = {} and ptpid = {}", neId, ptpid);
 			return new ArrayList<AdpTp>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -308,13 +265,7 @@ public class AdpTpsDbMgr {
 		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find children tps, query by tpid = {}", tpId);
 			return new ArrayList<AdpTp>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		List<AdpTp> tpList = new ArrayList<AdpTp>();
@@ -340,13 +291,7 @@ public class AdpTpsDbMgr {
 		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by suffixId = {}", suffixId);
 			return new AdpTp();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		AdpTp tp = constructTp(docList.get(0));
@@ -366,7 +311,6 @@ public class AdpTpsDbMgr {
 		List<Document> docList = getCollection(neId).find(filter).into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by suffixId = {}", suffixId);
 			return new AdpTp();
 		}
 
@@ -387,7 +331,6 @@ public class AdpTpsDbMgr {
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by keyOnNe = " + keyOnNe + " and neId = " + neId);
 			return null;
 		}
 
@@ -403,7 +346,6 @@ public class AdpTpsDbMgr {
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by parentId = " + parentId);
 			return null;
 		}
 
@@ -418,7 +360,6 @@ public class AdpTpsDbMgr {
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find tp, query by tpId = " + tpId);
 			return null;
 		}
 

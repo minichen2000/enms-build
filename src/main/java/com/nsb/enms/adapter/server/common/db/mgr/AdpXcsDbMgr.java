@@ -24,10 +24,6 @@ import com.nsb.enms.restful.model.adapter.AdpXc;
 public class AdpXcsDbMgr {
 	private final static Logger log = LogManager.getLogger(AdpXcsDbMgr.class);
 	private MongoDatabase db = AdpMongoDBMgr.getInstance().getDatabase();
-	// private MongoCollection<Document> dbc =
-	// db.getCollection(AdpDBConst.DB_NAME_XC);
-	// private MongoCollection<BasicDBObject> dbc1 =
-	// db.getCollection(AdpDBConst.DB_NAME_XC, BasicDBObject.class);
 	private Gson gson = new Gson();
 
 	private MongoCollection<BasicDBObject> getCustomCollection(String neId) {
@@ -53,13 +49,7 @@ public class AdpXcsDbMgr {
 		List<Document> docList = getCollection(neID).find(or(in("aEndPoints", tpid), in("zEndPoints", tpid)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find xc, query by tpid = {}", tpid);
 			return new ArrayList<AdpXc>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
@@ -75,13 +65,7 @@ public class AdpXcsDbMgr {
 				.into(new ArrayList<Document>());
 
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find xc, query by id = {}", xcID);
 			return new AdpXc();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		Document doc = docList.get(0);
@@ -99,16 +83,9 @@ public class AdpXcsDbMgr {
 	}
 
 	public List<AdpXc> getXCsByNeId(String neId) throws Exception {
-		System.out.println("getXcsByNeId, neId = " + neId);
 		List<Document> docList = getCollection(neId).find(eq("neId", neId)).into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find xc, query by neid = " + neId);
 			return new ArrayList<AdpXc>();
-		}
-
-		log.debug(docList.size());
-		for (Document doc : docList) {
-			log.debug(doc.toJson());
 		}
 
 		List<AdpXc> xcList = new ArrayList<AdpXc>();
@@ -123,7 +100,6 @@ public class AdpXcsDbMgr {
 		List<Document> docList = getCollection(neId).find(and(eq("keyOnNe", keyOnNe), eq("neId", neId)))
 				.into(new ArrayList<Document>());
 		if (null == docList || docList.isEmpty()) {
-			log.error("can not find xc, query by keyOnNe = " + keyOnNe + " and neId = " + neId);
 			return null;
 		}
 
